@@ -2,6 +2,8 @@
 
 import type { LevelFile } from '../sim/types';
 import { SENSORS } from '../sim/types';
+import { MAX_DEPTH, MAX_TIMES, MIN_TIMES, loopHeight, parseReference } from '../sim/program';
+import { FUNCTION_NAMES } from '../sim/types';
 
 const TILE_CHARS = new Set(['.', '#', '_', 's', 'd', 'e', 'r', 'g', 'b', 'y']);
 const FACINGS = ['north', 'east', 'south', 'west'];
@@ -43,6 +45,11 @@ export function validateLevel(l: LevelFile): string[] {
   for (const s of l.sensors ?? []) if (!(SENSORS as readonly string[]).includes(s)) e(`unknown sensor ${s}`);
   for (let i = 0; i < words.length; i++) {
     const word = words[i];
+    if (word === 'repeat') {
+      const n = Number(words[i + 1]);
+      // The editor's repeat block only goes this far, so a par that needs more can't be reached.
+      if (n < MIN_TIMES || n > MAX_TIMES) e(`reference repeats ${n} times; the block goes from ${MIN_TIMES} to ${MAX_TIMES}`);
+    }
     if (/^\d+$/.test(word) || word === 'def' || word === 'not' || word === 'else') continue; // a count, a function body, or part of a condition
     if (word === 'if' || word === 'while') {
       if (!l.commands.includes(word)) e(`reference uses '${word}', which this floor does not allow`);
@@ -52,6 +59,13 @@ export function validateLevel(l: LevelFile): string[] {
       continue;
     }
     if (!l.commands.includes(word as never)) e(`reference uses '${word}', which this floor does not allow`);
+  }
+  // The editor nests blocks at most MAX_DEPTH deep, so the reference must too.
+  try {
+    const p = parseReference(l.reference);
+    for (const r of ['main', ...FUNCTION_NAMES] as const) if (p[r].some((b) => loopHeight(b) > MAX_DEPTH)) e(`reference nests deeper than ${MAX_DEPTH} in ${r}`);
+  } catch (err) {
+    e(String(err));
   }
   for (const link of l.links ?? []) {
     if (l.tiles[link.switch.y]?.[link.switch.x] !== 's') e(`link switch ${link.switch.x},${link.switch.y} is not a switch tile`);

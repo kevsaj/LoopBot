@@ -1,0 +1,91 @@
+{
+  "id": "t1-f46",
+  "title": "Drone Loading",
+  "band": "rooftop",
+  "size": {
+    "w": 7,
+    "h": 3
+  },
+  "tiles": [
+    "#..##.#",
+    ".gg..g.",
+    "#..##.#"
+  ],
+  "heights": null,
+  "boxes": [
+    {
+      "x": 1,
+      "y": 0,
+      "count": 1
+    },
+    {
+      "x": 2,
+      "y": 0,
+      "count": 1
+    },
+    {
+      "x": 5,
+      "y": 0,
+      "count": 1
+    }
+  ],
+  "targets": [
+    {
+      "x": 1,
+      "y": 2,
+      "count": 1
+    },
+    {
+      "x": 2,
+      "y": 2,
+      "count": 1
+    },
+    {
+      "x": 5,
+      "y": 2,
+      "count": 1
+    }
+  ],
+  "bot": {
+    "x": 0,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "all_targets_filled"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "if",
+    "F1"
+  ],
+  "sensors": [
+    "tile_is"
+  ],
+  "slots": {
+    "main": 4,
+    "F1": 6
+  },
+  "par": {
+    "commands": 10,
+    "steps": 22
+  },
+  "reference": "repeat 5 { forward if tile_is g { F1 } } def F1 { turn_left pick_up turn_right turn_right drop turn_left }",
+  "hints": [
+    "Green tiles mark a crate bay. Move each crate straight across the corridor.",
+    "Main: forward, and if on green, call F1. F1 grabs the crate on the left and drops it on the right.",
+    "repeat 5 { forward if tile_is g { F1 } } def F1 { turn_left pick_up turn_right turn_right drop turn_left }"
+  ],
+  "story": {
+    "intro": "VANTA: \"Load the drones. Every crate in this tower is mine.\"",
+    "outro": "PATCH: \"Those crates were going nowhere. Nice.\""
+  },
+  "typing": true
+}

@@ -1,0 +1,81 @@
+{
+  "id": "t1-f42",
+  "title": "Hatch Run",
+  "band": "rooftop",
+  "size": {
+    "w": 8,
+    "h": 1
+  },
+  "tiles": [
+    ".sd..sde"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "if"
+  ],
+  "sensors": [
+    "on_switch"
+  ],
+  "slots": {
+    "main": 4
+  },
+  "par": {
+    "commands": 4,
+    "steps": 9
+  },
+  "reference": "repeat 7 { forward if on_switch { activate } }",
+  "hints": [
+    "Each switch opens the hatch right after it. The gaps between them aren't even.",
+    "Step forward, then if you're on a switch, activate it. Loop that.",
+    "repeat 7 { forward if on_switch { activate } }"
+  ],
+  "story": {
+    "intro": "VANTA: \"The drones lift off at the top of the hour. You won't make it.\"",
+    "outro": null
+  },
+  "typing": true,
+  "links": [
+    {
+      "switch": {
+        "x": 1,
+        "y": 0
+      },
+      "doors": [
+        {
+          "x": 2,
+          "y": 0
+        }
+      ]
+    },
+    {
+      "switch": {
+        "x": 5,
+        "y": 0
+      },
+      "doors": [
+        {
+          "x": 6,
+          "y": 0
+        }
+      ]
+    }
+  ]
+}

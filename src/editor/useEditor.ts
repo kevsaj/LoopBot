@@ -21,6 +21,7 @@ type Act =
   | { t: 'move'; r: Routine; id: string; to: Spot }
   | { t: 'times'; r: Routine; id: string; times: number }
   | { t: 'cond'; r: Routine; id: string; cond: Condition }
+  | { t: 'set'; program: Program }
   | { t: 'clear' }
   | { t: 'cursor'; r: Routine; spot: Spot | null }
   | { t: 'undo' }
@@ -79,6 +80,8 @@ export function reducer(s: EditorState, a: Act): EditorState {
         s,
         updateBlock(s.program, a.r, a.id, (b) => (b.kind === 'if' || b.kind === 'while' ? { ...b, cond: a.cond } : b)),
       );
+    case 'set':
+      return commit(s, a.program, {}); // typed code replaces the program, and undo brings the blocks back
     case 'clear':
       return commit(s, emptyProgram(), {}); // ED-6: still reachable through undo
     case 'cursor':
@@ -138,6 +141,7 @@ export function useEditor(floorId: string) {
     move: useCallback((r: Routine, id: string, to: Spot) => dispatch({ t: 'move', r, id, to }), []),
     setTimes: useCallback((r: Routine, id: string, times: number) => dispatch({ t: 'times', r, id, times }), []),
     setCond: useCallback((r: Routine, id: string, cond: Condition) => dispatch({ t: 'cond', r, id, cond }), []),
+    setProgram: useCallback((program: Program) => dispatch({ t: 'set', program }), []),
     clear: useCallback(() => dispatch({ t: 'clear' }), []),
     setCursor: useCallback((r: Routine, spot: Spot | null) => dispatch({ t: 'cursor', r, spot }), []),
     undo: useCallback(() => dispatch({ t: 'undo' }), []),

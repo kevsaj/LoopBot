@@ -86,6 +86,8 @@ export interface LevelFile {
   links?: Array<{ switch: Pos; doors: Pos[] }>;
   /** Sensors the if and while blocks can ask about on this floor (CR-5); defaults to wall_ahead. */
   sensors?: Sensor[];
+  /** Rooftop pro mode (ED-11): the code view can be edited as text on this floor. */
+  typing?: boolean;
 }
 
 export interface World {

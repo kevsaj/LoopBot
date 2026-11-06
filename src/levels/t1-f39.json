@@ -3,22 +3,21 @@
   "title": "Relay Room",
   "band": "control",
   "size": {
-    "w": 8,
-    "h": 5
+    "w": 6,
+    "h": 4
   },
   "tiles": [
-    "########",
-    "########",
-    "..sb##be",
-    "###.##s#",
-    "###r.sr#"
+    "######",
+    ".sb#be",
+    "##.#s#",
+    "##rsr#"
   ],
   "heights": null,
   "boxes": [],
   "targets": [],
   "bot": {
     "x": 0,
-    "y": 2,
+    "y": 1,
     "facing": "east"
   },
   "goals": [
@@ -45,13 +44,13 @@
   },
   "par": {
     "commands": 8,
-    "steps": 18
+    "steps": 16
   },
-  "reference": "repeat 11 { forward if on_switch { activate } if tile_is r { turn_left } if tile_is b { turn_right } }",
+  "reference": "repeat 9 { forward if on_switch { activate } if tile_is r { turn_left } if tile_is b { turn_right } }",
   "hints": [
     "Coloured tiles mark the turns. Switches sit between them.",
     "Each step: forward, activate if on a switch, turn left on red, turn right on blue. An if with no else is fine.",
-    "repeat 11 { forward if on_switch { activate } if tile_is r { turn_left } if tile_is b { turn_right } }"
+    "repeat 9 { forward if on_switch { activate } if tile_is r { turn_left } if tile_is b { turn_right } }"
   ],
   "story": {
     "intro": null,

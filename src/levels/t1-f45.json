@@ -1,0 +1,68 @@
+{
+  "id": "t1-f45",
+  "title": "Crate Lift",
+  "band": "rooftop",
+  "size": {
+    "w": 7,
+    "h": 2
+  },
+  "tiles": [
+    ".##.###",
+    "......e"
+  ],
+  "heights": [
+    "0000000",
+    "0020020"
+  ],
+  "boxes": [
+    {
+      "x": 0,
+      "y": 0,
+      "count": 1
+    },
+    {
+      "x": 3,
+      "y": 0,
+      "count": 1
+    }
+  ],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "F1"
+  ],
+  "slots": {
+    "main": 2,
+    "F1": 7
+  },
+  "par": {
+    "commands": 9,
+    "steps": 14
+  },
+  "reference": "repeat 2 { F1 } def F1 { turn_left pick_up turn_right drop jump jump jump }",
+  "hints": [
+    "Each ledge is two high. A crate makes it one step at a time.",
+    "F1: turn left, pick up the crate, turn back, drop it ahead, then jump twice. Main repeats F1.",
+    "repeat 2 { F1 } def F1 { turn_left pick_up turn_right drop jump jump jump }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": "PATCH: \"Building your own stairs. VANTA didn't plan for that.\""
+  },
+  "typing": true
+}

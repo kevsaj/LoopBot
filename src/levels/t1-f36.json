@@ -3,15 +3,14 @@
   "title": "Signal Lights",
   "band": "control",
   "size": {
-    "w": 8,
-    "h": 5
+    "w": 6,
+    "h": 4
   },
   "tiles": [
-    "########",
-    "##b..b##",
-    "##.##.##",
-    "..r##.##",
-    "#####r.e"
+    "######",
+    "##b.b#",
+    "##.#.#",
+    "..r#re"
   ],
   "heights": null,
   "boxes": [],
@@ -43,13 +42,13 @@
   },
   "par": {
     "commands": 6,
-    "steps": 16
+    "steps": 13
   },
-  "reference": "repeat 12 { if tile_is r { turn_left } else { if tile_is b { turn_right } } forward }",
+  "reference": "repeat 9 { if tile_is r { turn_left } else { if tile_is b { turn_right } } forward }",
   "hints": [
     "Red turns left, blue turns right, plain floor goes straight. Every tile is a step.",
     "An if can sit in another if's else: if red turn left, else if blue turn right. Then forward.",
-    "repeat 12 { if tile_is r { turn_left } else { if tile_is b { turn_right } } forward }"
+    "repeat 9 { if tile_is r { turn_left } else { if tile_is b { turn_right } } forward }"
   ],
   "story": {
     "intro": null,
