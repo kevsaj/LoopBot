@@ -1,0 +1,85 @@
+{
+  "id": "t1-f49",
+  "title": "Lightning Rod",
+  "band": "rooftop",
+  "size": {
+    "w": 7,
+    "h": 5
+  },
+  "tiles": [
+    ".......",
+    "######y",
+    ".y..e#.",
+    ".#####.",
+    "..y...."
+  ],
+  "heights": [
+    "0000000",
+    "0000000",
+    "2233301",
+    "2000001",
+    "2211111"
+  ],
+  "boxes": [
+    {
+      "x": 3,
+      "y": 0,
+      "count": 1
+    },
+    {
+      "x": 4,
+      "y": 4,
+      "count": 1
+    },
+    {
+      "x": 0,
+      "y": 3,
+      "count": 1
+    }
+  ],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "while",
+    "if",
+    "F1"
+  ],
+  "sensors": [
+    "box_ahead",
+    "tile_is"
+  ],
+  "slots": {
+    "main": 4,
+    "F1": 6
+  },
+  "par": {
+    "commands": 10,
+    "steps": 26
+  },
+  "reference": "repeat 5 { while not wall_ahead { F1 } turn_right } def F1 { if box_ahead { jump jump } else { if tile_is y { jump } else { forward } } }",
+  "hints": [
+    "The last climb: hop crates, jump on yellow, walk the rest, turn at walls.",
+    "One while per side. Inside: if a crate is ahead jump twice; else if on yellow jump; else forward.",
+    "repeat 5 { while not wall_ahead { F1 } turn_right } def F1 { if box_ahead { jump jump } else { if tile_is y { jump } else { forward } } }"
+  ],
+  "story": {
+    "intro": "VANTA: \"Fine. Come up and get me.\"",
+    "outro": null
+  },
+  "typing": true
+}

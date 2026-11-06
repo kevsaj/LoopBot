@@ -176,6 +176,10 @@ export interface Spot {
   index: number;
 }
 
+/** The counts a repeat block can be set to. */
+export const MIN_TIMES = 2;
+export const MAX_TIMES = 9;
+
 /** How deep blocks may nest (a loop inside a loop inside a loop). */
 export const MAX_DEPTH = 3;
 

@@ -1,0 +1,65 @@
+{
+  "id": "t1-f44",
+  "title": "Signal Tower",
+  "band": "rooftop",
+  "size": {
+    "w": 6,
+    "h": 3
+  },
+  "tiles": [
+    ".yb#be",
+    "##s#s#",
+    "##rsr#"
+  ],
+  "heights": [
+    "001011",
+    "001010",
+    "001110"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "all_switches_on",
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "if",
+    "F1"
+  ],
+  "sensors": [
+    "tile_is",
+    "on_switch"
+  ],
+  "slots": {
+    "main": 5,
+    "F1": 6
+  },
+  "par": {
+    "commands": 11,
+    "steps": 16
+  },
+  "reference": "repeat 9 { if tile_is y { jump } else { forward } F1 } def F1 { if tile_is r { turn_left } if tile_is b { turn_right } if on_switch { activate } }",
+  "hints": [
+    "After every move, read the tile: red turns left, blue turns right, a switch gets flipped.",
+    "Put the three checks in F1. Main moves once (jump on yellow, else forward), then calls F1.",
+    "repeat 9 { if tile_is y { jump } else { forward } F1 } def F1 { if tile_is r { turn_left } if tile_is b { turn_right } if on_switch { activate } }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "typing": true
+}

@@ -89,6 +89,19 @@ const BANDS: Record<string, Partial<typeof C>> = {
     edge: 0x111626,
     void: 0x0b1020,
   },
+  // Rooftop: wet concrete and helipad paint under a night sky, with dark parapet walls.
+  rooftop: {
+    floorTop: 0x8f96a8,
+    floorL: 0x666d80,
+    floorR: 0x4f5566,
+    floorEdge: 0xc4cad8,
+    wallTop: 0x2f3443,
+    wallL: 0x22262f,
+    wallR: 0x1a1d25,
+    wallCap: 0xe8b04a,
+    edge: 0x0c0e14,
+    void: 0x070912,
+  },
 };
 
 /** Switches the board to a band's palette. Call before the board draws a floor. */

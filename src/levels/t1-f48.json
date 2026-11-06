@@ -1,0 +1,61 @@
+{
+  "id": "t1-f48",
+  "title": "Antenna Array",
+  "band": "rooftop",
+  "size": {
+    "w": 6,
+    "h": 4
+  },
+  "tiles": [
+    ".g.g.g",
+    "#.#.#s",
+    "#.#s##",
+    "#s####"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "all_switches_on"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "while",
+    "if",
+    "F1"
+  ],
+  "sensors": [
+    "tile_is"
+  ],
+  "slots": {
+    "main": 4,
+    "F1": 9
+  },
+  "par": {
+    "commands": 13,
+    "steps": 28
+  },
+  "reference": "repeat 5 { forward if tile_is g { F1 } } def F1 { turn_right while not wall_ahead { forward } activate turn_right turn_right while not wall_ahead { forward } turn_right }",
+  "hints": [
+    "Green marks an antenna. Each one is a different length, with a switch at the end.",
+    "F1 walks down an antenna with a while, flips the switch, turns around and walks back. Main calls it on green.",
+    "repeat 5 { forward if tile_is g { F1 } } def F1 { turn_right while not wall_ahead { forward } activate turn_right turn_right while not wall_ahead { forward } turn_right }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": "PATCH: \"Antennas are jammed. The drones can't get a signal now.\""
+  },
+  "typing": true
+}

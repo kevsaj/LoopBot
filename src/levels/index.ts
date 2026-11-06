@@ -40,9 +40,19 @@ import f37 from './t1-f37.json';
 import f38 from './t1-f38.json';
 import f39 from './t1-f39.json';
 import f40 from './t1-f40.json';
+import f41 from './t1-f41.json';
+import f42 from './t1-f42.json';
+import f43 from './t1-f43.json';
+import f44 from './t1-f44.json';
+import f45 from './t1-f45.json';
+import f46 from './t1-f46.json';
+import f47 from './t1-f47.json';
+import f48 from './t1-f48.json';
+import f49 from './t1-f49.json';
+import f50 from './t1-f50.json';
 
 /** Floors in play order. Adding a floor is a JSON file plus one line here. */
-const ALL = [f01, f02, f03, f04, f05, f06, f07, f08, f09, f10, f11, f12, f13, f14, f15, f16, f17, f18, f19, f20, f21, f22, f23, f24, f25, f26, f27, f28, f29, f30, f31, f32, f33, f34, f35, f36, f37, f38, f39, f40] as unknown as LevelFile[];
+const ALL = [f01, f02, f03, f04, f05, f06, f07, f08, f09, f10, f11, f12, f13, f14, f15, f16, f17, f18, f19, f20, f21, f22, f23, f24, f25, f26, f27, f28, f29, f30, f31, f32, f33, f34, f35, f36, f37, f38, f39, f40, f41, f42, f43, f44, f45, f46, f47, f48, f49, f50] as unknown as LevelFile[];
 
 /** Floors in play: the whole tower, or just the Lobby in the web demo. */
 export const LEVELS = DEMO ? ALL.slice(0, DEMO_FLOORS) : ALL;

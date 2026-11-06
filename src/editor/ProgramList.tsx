@@ -3,6 +3,8 @@
 // Tap a line to move the cursor (ED-2), long-press and drag to move it (ED-2), swipe left to delete (ED-3).
 // The drag context itself lives in dnd.tsx, so palette commands can be dropped in here too.
 
+import { MIN_TIMES, MAX_TIMES } from '../sim/program';
+export { MIN_TIMES, MAX_TIMES };
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { KeyboardEvent, PointerEvent, ReactNode } from 'react';
 import { useDraggable, useDroppable } from '@dnd-kit/core';
@@ -32,8 +34,6 @@ interface Props {
 }
 
 const SWIPE_DELETE_PX = 72;
-export const MIN_TIMES = 2;
-export const MAX_TIMES = 9;
 
 export function Tile({ block, line, lifted }: { block: Block; line?: number; lifted?: boolean }) {
   const meta = COMMAND_META[blockCommand(block)];

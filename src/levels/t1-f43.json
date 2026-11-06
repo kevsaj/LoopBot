@@ -1,0 +1,66 @@
+{
+  "id": "t1-f43",
+  "title": "Gutter Climb",
+  "band": "rooftop",
+  "size": {
+    "w": 6,
+    "h": 5
+  },
+  "tiles": [
+    "..y...",
+    "#####.",
+    "...e#y",
+    ".####.",
+    "..y..."
+  ],
+  "heights": [
+    "000111",
+    "000001",
+    "333301",
+    "300002",
+    "332222"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "while",
+    "if"
+  ],
+  "sensors": [
+    "tile_is"
+  ],
+  "slots": {
+    "main": 6
+  },
+  "par": {
+    "commands": 6,
+    "steps": 23
+  },
+  "reference": "repeat 5 { while not wall_ahead { if tile_is y { jump } else { forward } } turn_right }",
+  "hints": [
+    "The gutter spirals up. Yellow means a step up ahead, and every side is a different length.",
+    "Walk each side with a while. Inside it: on yellow jump, else forward. Turn right at the wall.",
+    "repeat 5 { while not wall_ahead { if tile_is y { jump } else { forward } } turn_right }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": "PATCH: \"Halfway up. I can see the drone lights from here.\""
+  },
+  "typing": true
+}

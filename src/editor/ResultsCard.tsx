@@ -122,6 +122,12 @@ export function ResultsCard({ floorNumber, floorCount, earned, prevBest, command
             Maintenance floors, functions in the Workshop, and all the way to the Rooftop.
           </p>
         )}
+        {!DEMO && floorNumber === floorCount && (
+          <p className="demo-end">
+            <strong>Tower 1 cleared!</strong> Meridian Spire is back online and VANTA's drones are grounded. LoopBot rides the elevator
+            down to meet PATCH at last. More towers are on the way.
+          </p>
+        )}
         <div className="results-actions">
           <button type="button" className="pill" onClick={() => (fx.tap(), onRetry())}>
             Try again

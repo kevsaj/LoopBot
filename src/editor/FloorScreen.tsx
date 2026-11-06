@@ -12,7 +12,7 @@ import type { Block } from '../sim/types';
 import { useEditor } from './useEditor';
 import { ProgramList } from './ProgramList';
 import { EditorDnd, PaletteChip } from './dnd';
-import { CodeView } from './CodeView';
+import { CodeEditor, CodeView } from './CodeView';
 import { Terminal } from './Terminal';
 import { COMMAND_META, CONTROL_ORDER, PALETTE_ORDER, blockCommand } from './commands';
 import { Board } from '../board/Board';
@@ -67,6 +67,8 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
   // The program tab being edited, and whether the read-only code view is showing over it.
   const [routine, setRoutine] = useState<Routine>('main');
   const [showCode, setShowCode] = useState(false);
+  // Rooftop pro mode: a non-zero number while the code is being typed (it also keys a fresh text box).
+  const [typing, setTyping] = useState(0);
   const tab: Routine | 'code' = showCode ? 'code' : routine;
 
   // --- run state ---
@@ -298,6 +300,8 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
   useEffect(() => {
     const onKey = (e: globalThis.KeyboardEvent) => {
       const mod = e.ctrlKey || e.metaKey;
+      // Typing code: the text box keeps its own undo.
+      if (e.target instanceof HTMLTextAreaElement) return;
       if (mod && e.key.toLowerCase() === 'z') {
         e.preventDefault();
         if (e.shiftKey) undoRef.current.redo();
@@ -382,7 +386,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
 
         <div className="tabs" role="tablist">
           {routines.map((r) => (
-            <button key={r} type="button" role="tab" aria-selected={tab === r} className={`tab${tab === r ? ' on' : ''}`} onClick={() => (fx.tap(), setShowCode(false), setRoutine(r))}>
+            <button key={r} type="button" role="tab" aria-selected={tab === r} className={`tab${tab === r ? ' on' : ''}`} onClick={() => (fx.tap(), setShowCode(false), setTyping(0), setRoutine(r))}>
               {r === 'main' ? 'Main' : r}
             </button>
           ))}
@@ -396,7 +400,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
           <button type="button" className={`tab-tool clear${confirmClear ? ' confirm' : ''}`} onClick={clear} disabled={total === 0 && !confirmClear}>
             {confirmClear ? 'Clear all?' : 'Clear'}
           </button>
-          <button type="button" role="tab" aria-selected={tab === 'code'} className={`tab${tab === 'code' ? ' on' : ''}`} onClick={() => (fx.tap(), setShowCode((v) => !v))}
+          <button type="button" role="tab" aria-selected={tab === 'code'} className={`tab${tab === 'code' ? ' on' : ''}`} onClick={() => (fx.tap(), setTyping(0), setShowCode((v) => !v))}
             aria-label={showCode ? 'Code (tap again to go back to the program)' : 'Code'}>
             Code
           </button>
@@ -408,8 +412,32 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
               {TUTORIAL_TEXT[tut]}
             </div>
           )}
-          {tab === 'code' ? (
-            <CodeView program={program} routines={routines} activeIds={activeIds} crashId={crashId} />
+          {tab === 'code' && typing ? (
+            <CodeEditor
+              key={typing}
+              program={program}
+              routines={routines}
+              level={level}
+              onApply={(p, n) => {
+                fx.snap();
+                editor.setProgram(p);
+                setTerminal(`> code loaded: ${n} command${n === 1 ? '' : 's'}`);
+              }}
+              onError={(msg) => {
+                fx.denied();
+                setTerminal(`> ${msg}`);
+              }}
+              onClose={() => setTyping(0)}
+            />
+          ) : tab === 'code' ? (
+            <>
+              <CodeView program={program} routines={routines} activeIds={activeIds} crashId={crashId} />
+              {level.typing && (
+                <button type="button" className="pill type-btn" onClick={() => (fx.tap(), reset(true), setTyping((n) => n + 1))}>
+                  ✎ Type code
+                </button>
+              )}
+            </>
           ) : (
             <ProgramList
               blocks={list}

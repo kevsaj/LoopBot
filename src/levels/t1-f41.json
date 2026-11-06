@@ -1,0 +1,57 @@
+{
+  "id": "t1-f41",
+  "title": "Roof Access",
+  "band": "rooftop",
+  "size": {
+    "w": 8,
+    "h": 1
+  },
+  "tiles": [
+    ".y..yy.e"
+  ],
+  "heights": [
+    "00111233"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "if"
+  ],
+  "sensors": [
+    "tile_is"
+  ],
+  "slots": {
+    "main": 4
+  },
+  "par": {
+    "commands": 4,
+    "steps": 7
+  },
+  "reference": "repeat 7 { if tile_is y { jump } else { forward } }",
+  "hints": [
+    "Yellow tiles sit right before a step up. Everything else is flat.",
+    "Each move: if you're on yellow, jump, else forward. Try typing it: open Code, then Type code.",
+    "repeat 7 { if tile_is y { jump } else { forward } }"
+  ],
+  "story": {
+    "intro": "PATCH: \"You made the roof! Up here you can type your program, not just build it. Open Code and tap Type code. Blocks still work too.\"",
+    "outro": null
+  },
+  "typing": true
+}

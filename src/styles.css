@@ -153,6 +153,17 @@ select:focus-visible {
   opacity: 0.32;
   background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300' preserveAspectRatio='none'><g fill='%23140b07'><rect x='94' y='0' width='4' height='26'/><path d='M80 26h32l-6 12h-20z'/><rect x='302' y='0' width='4' height='26'/><path d='M288 26h32l-6 12h-20z'/><path d='M20 300V250h18v-10h10v10h40v50z'/><path d='M330 300v-36h50v36z'/><circle cx='360' cy='120' r='26'/><circle cx='34' cy='160' r='18'/></g><g fill='%2324160f'><circle cx='360' cy='120' r='9'/><circle cx='34' cy='160' r='6'/></g></svg>") center / 100% 100% no-repeat;
 }
+/* Rooftop band: night sky, a few stars, the city skyline below and a drone's lights. */
+.board-wrap.band-rooftop {
+  background:
+    radial-gradient(circle at 82% 14%, rgba(255, 244, 214, 0.9) 0 10px, rgba(255, 236, 190, 0.18) 11px, transparent 40px),
+    linear-gradient(180deg, #04060f 0%, #0b1130 50%, #1c1f45 80%, #3a2b4a 100%);
+}
+.board-wrap.band-rooftop::after {
+  height: 100%;
+  opacity: 0.55;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300' preserveAspectRatio='none'><g fill='%23ffffff' fill-opacity='0.7'><circle cx='30' cy='20' r='1.2'/><circle cx='90' cy='46' r='1'/><circle cx='150' cy='14' r='1.4'/><circle cx='210' cy='38' r='1'/><circle cx='260' cy='12' r='1.2'/><circle cx='370' cy='60' r='1'/><circle cx='60' cy='80' r='0.9'/><circle cx='300' cy='90' r='0.9'/></g><path fill='%23060814' d='M0 300V250h22v-20h16v20h20v-34h14v34h26v-16h18v16h30v-44h12v44h24v-24h20v24h40v-30h16v30h28v-18h22v18h30v-40h14v40h28v-22h20v58z'/><g fill='%23e8b04a' fill-opacity='0.8'><rect x='64' y='226' width='3' height='3'/><rect x='136' y='214' width='3' height='3'/><rect x='300' y='236' width='3' height='3'/><rect x='346' y='246' width='3' height='3'/></g><g fill='%23ff5b5b'><circle cx='120' cy='70' r='2.2'/><circle cx='138' cy='70' r='2.2'/></g></svg>") center / 100% 100% no-repeat;
+}
 /* Control Room band: a wall of monitors glowing in the dark, cool screen light on the floor. */
 .board-wrap.band-control {
   background:
@@ -618,6 +629,66 @@ select:focus-visible {
   font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
   font-size: 14px;
   line-height: 1.7;
+}
+.type-btn {
+  display: block;
+  margin: 4px 8px 10px auto;
+}
+/* Rooftop pro mode: the program as a text box with line numbers. */
+.code-editor {
+  padding: 8px 0;
+}
+.code-edit-area {
+  display: flex;
+  border: 1px solid #3a4266;
+  border-radius: 10px;
+  background: #11142a;
+  overflow: auto;
+  max-height: 46vh;
+}
+.code-gutter,
+.code-input {
+  margin: 0;
+  padding: 8px 0;
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 14px;
+  line-height: 1.7;
+}
+.code-gutter {
+  flex: none;
+  width: 34px;
+  text-align: right;
+  padding-right: 8px;
+  color: var(--quiet);
+  user-select: none;
+}
+.code-gutter .bad {
+  color: #ff8a8a;
+  font-weight: 700;
+}
+.code-input {
+  flex: 1;
+  min-width: 0;
+  padding-left: 6px;
+  border: 0;
+  outline: none;
+  resize: none;
+  overflow: hidden;
+  background: transparent;
+  color: inherit;
+  white-space: pre;
+  tab-size: 4;
+}
+.code-error {
+  margin: 8px 4px 0;
+  color: #ff9a9a;
+  font-size: 14px;
+}
+.code-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 10px;
 }
 .code-line {
   padding: 0 8px;
@@ -1318,6 +1389,13 @@ select:focus-visible {
 }
 .band-control .tower-band {
   color: #8fc4f0;
+}
+.band-rooftop .tower-floors {
+  background: linear-gradient(#0b0f22, #14182c);
+  border-color: #4a4466;
+}
+.band-rooftop .tower-band {
+  color: #f0c46a;
 }
 .tower-ground {
   text-align: center;
