@@ -43,8 +43,10 @@ export function FloorScreen({ level, floorNumber, floorCount, onGo, onCleared }:
     () => (['main', ...FUNCTION_NAMES] as Routine[]).filter((r) => (level.slots[r] ?? 0) > 0),
     [level],
   );
-  const [tab, setTab] = useState<Routine | 'code'>('main');
-  const routine: Routine = tab === 'code' ? 'main' : tab;
+  // The program tab being edited, and whether the read-only code view is showing over it.
+  const [routine, setRoutine] = useState<Routine>('main');
+  const [showCode, setShowCode] = useState(false);
+  const tab: Routine | 'code' = showCode ? 'code' : routine;
 
   // --- run state ---
   const runner = useRef<Runner | null>(null);
@@ -319,7 +321,7 @@ export function FloorScreen({ level, floorNumber, floorCount, onGo, onCleared }:
 
         <div className="tabs" role="tablist">
           {routines.map((r) => (
-            <button key={r} type="button" role="tab" aria-selected={tab === r} className={`tab${tab === r ? ' on' : ''}`} onClick={() => (fx.tap(), setTab(r))}>
+            <button key={r} type="button" role="tab" aria-selected={tab === r} className={`tab${tab === r ? ' on' : ''}`} onClick={() => (fx.tap(), setShowCode(false), setRoutine(r))}>
               {r === 'main' ? 'Main' : r}
             </button>
           ))}
@@ -333,7 +335,8 @@ export function FloorScreen({ level, floorNumber, floorCount, onGo, onCleared }:
           <button type="button" className={`tab-tool clear${confirmClear ? ' confirm' : ''}`} onClick={clear} disabled={total === 0 && !confirmClear}>
             {confirmClear ? 'Clear all?' : 'Clear'}
           </button>
-          <button type="button" role="tab" aria-selected={tab === 'code'} className={`tab${tab === 'code' ? ' on' : ''}`} onClick={() => (fx.tap(), setTab('code'))}>
+          <button type="button" role="tab" aria-selected={tab === 'code'} className={`tab${tab === 'code' ? ' on' : ''}`} onClick={() => (fx.tap(), setShowCode((v) => !v))}
+            aria-label={showCode ? 'Code (tap again to go back to the program)' : 'Code'}>
             Code
           </button>
         </div>
