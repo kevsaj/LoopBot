@@ -6,10 +6,11 @@ import { FUNCTION_NAMES } from '../sim/types';
 import { Runner } from '../sim/interpreter';
 import type { Outcome } from '../sim/interpreter';
 import { createWorld } from '../sim/world';
-import { countCommands } from '../sim/program';
+import { countCommands, makeBlock } from '../sim/program';
 import type { Block } from '../sim/types';
 import { useEditor } from './useEditor';
 import { ProgramList } from './ProgramList';
+import { EditorDnd, PaletteChip } from './dnd';
 import { CodeView } from './CodeView';
 import { Terminal } from './Terminal';
 import { COMMAND_META, PALETTE_ORDER, blockCommand } from './commands';
@@ -190,18 +191,27 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
   const deletedTimer = useRef<number | undefined>(undefined);
   const [confirmClear, setConfirmClear] = useState(false);
 
-  const add = (cmd: PaletteCommand) => {
+  const canAdd = (cmd: PaletteCommand) => {
     if (!level.commands.includes(cmd)) {
       fx.denied();
       setTerminal(`> ${COMMAND_META[cmd].label} unlocks on a later floor`);
-      return;
+      return false;
     }
     if (full) {
       fx.denied();
       setTerminal(`> no empty slots left in ${routine}`);
-      return;
+      return false;
     }
+    return true;
+  };
+  const add = (cmd: PaletteCommand) => {
+    if (!canAdd(cmd)) return;
     editor.insert(routine, cmd);
+    fx.snap();
+  };
+  // Dragged in from the palette: lands where it was dropped.
+  const drop = (cmd: PaletteCommand, index: number) => {
+    editor.restore(routine, index, makeBlock(cmd));
     fx.snap();
   };
 
@@ -314,6 +324,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
       </section>
 
       <section className="editor">
+        <EditorDnd blocks={list} canAdd={canAdd} onDrop={drop} onMove={(from, to) => editor.move(routine, from, to)}>
         <div className="run-controls">
           <button type="button" className={`pill primary${playing ? ' on' : ''}${tut === 'run' ? ' pulse' : ''}`} onClick={run}>
             {playing ? '❚❚ Pause' : '▶ Run'}
@@ -375,7 +386,6 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
                 editor.setCursor(routine, null);
               }}
               onDelete={del}
-              onMove={(from, to) => editor.move(routine, from, to)}
             />
           )}
           {deleted && (
@@ -393,22 +403,24 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
             const meta = COMMAND_META[cmd];
             const allowed = level.commands.includes(cmd);
             return (
-              <button
+              <PaletteChip
                 key={cmd}
-                type="button"
+                cmd={cmd}
+                allowed={allowed && tab !== 'code'}
+                inactive={!allowed || full}
                 className={`chip tone-${meta.tone}${allowed ? '' : ' locked'}${allowed && full ? ' full' : ''}${pulse(cmd) ? ' pulse' : ''}`}
-                aria-disabled={!allowed || full}
-                aria-label={allowed ? `Add ${meta.label}` : `${meta.label}, locked on this floor`}
+                label={allowed ? `Add ${meta.label} (tap, or drag it into the program)` : `${meta.label}, locked on this floor`}
                 onClick={() => add(cmd)}
               >
                 <span className="glyph" aria-hidden="true">
                   {meta.glyph}
                 </span>
                 <span>{meta.label}</span>
-              </button>
+              </PaletteChip>
             );
           })}
         </div>
+        </EditorDnd>
       </section>
 
       {sheet === 'hints' && <HintSheet level={level} progress={progress} setProgress={setProgress} onClose={() => setSheet(null)} />}

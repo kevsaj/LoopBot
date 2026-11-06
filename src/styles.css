@@ -383,6 +383,20 @@ select:focus-visible {
   border-top: 2px dashed var(--accent);
   margin: -2px 4px;
 }
+/* Where a command dragged from the palette will land. */
+.cursor.drop {
+  border-top: 3px solid var(--accent);
+  border-radius: 2px;
+  box-shadow: 0 0 8px var(--accent);
+}
+.program.receiving .row.empty-slot.over .row-btn {
+  border-color: var(--accent);
+}
+.program.no-room {
+  outline: 2px dashed var(--line);
+  outline-offset: 2px;
+  opacity: 0.7;
+}
 
 .tone-move {
   --tone: var(--move);
@@ -483,6 +497,17 @@ select:focus-visible {
 }
 .chip:active {
   transform: scale(0.92);
+}
+/* Chips can be dragged straight into the program, so a press on one never pans the page. */
+.chip[data-palette] {
+  touch-action: none;
+}
+.chip.dragging {
+  opacity: 0.4;
+}
+.line-tile.ghost {
+  min-width: 140px;
+  pointer-events: none;
 }
 .chip.locked {
   opacity: 0.3;
