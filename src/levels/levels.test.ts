@@ -3,7 +3,7 @@ import { LEVELS } from './index';
 import { validateLevel } from './validate';
 import { Runner } from '../sim/interpreter';
 import { countCommands, parseReference } from '../sim/program';
-import { shortestActionPath } from '../sim/solver';
+import { shortestActionPath, smallestProgram } from '../sim/solver';
 
 describe.each(LEVELS.map((l) => [l.id, l] as const))('floor %s', (_id, level) => {
   it('LV-1: matches the floor format', () => {
@@ -23,6 +23,10 @@ describe.each(LEVELS.map((l) => [l.id, l] as const))('floor %s', (_id, level) =>
     const path = shortestActionPath(level);
     expect(path).not.toBeNull();
     expect(path!.length).toBe(level.par.steps);
+  });
+
+  it('LV-4: the command par is the true minimum, loops included', () => {
+    expect(smallestProgram(level, level.par.commands - 1)).toBeNull();
   });
 
   it('the solution hint, if any, clears the floor', () => {

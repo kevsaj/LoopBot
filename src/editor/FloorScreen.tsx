@@ -328,8 +328,8 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
         </button>
       </header>
 
-      <section className="board-wrap">
-        <Board update={board} rotateSignal={rotateSignal} />
+      <section className={`board-wrap band-${level.band}`}>
+        <Board update={board} rotateSignal={rotateSignal} band={level.band} />
         <div className="step-counter" aria-live="polite">
           <span>
             {total} / {Object.values(level.slots).reduce((a, b) => a + (b ?? 0), 0)} commands · par {level.par.commands}

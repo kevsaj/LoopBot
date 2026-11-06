@@ -1,0 +1,76 @@
+{
+  "id": "t1-f19",
+  "title": "Double Haul",
+  "band": "maintenance",
+  "size": {
+    "w": 5,
+    "h": 5
+  },
+  "tiles": [
+    ".....",
+    "###.#",
+    "###.#",
+    "###.#",
+    "###.#"
+  ],
+  "heights": null,
+  "boxes": [
+    {
+      "x": 1,
+      "y": 0,
+      "count": 1
+    },
+    {
+      "x": 3,
+      "y": 1,
+      "count": 1
+    }
+  ],
+  "targets": [
+    {
+      "x": 4,
+      "y": 0,
+      "count": 1
+    },
+    {
+      "x": 3,
+      "y": 4,
+      "count": 1
+    }
+  ],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "all_targets_filled"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat"
+  ],
+  "slots": {
+    "main": 7
+  },
+  "par": {
+    "commands": 6,
+    "steps": 11
+  },
+  "reference": "repeat 2 { pick_up repeat 3 { forward } drop turn_right }",
+  "hints": [
+    "Both cells travel the same distance, then you turn the corner.",
+    "Carry one: pick up, walk three, drop, turn. Then do it again.",
+    "repeat 2 { pick_up repeat 3 { forward } drop turn_right }"
+  ],
+  "story": {
+    "intro": "PATCH: \"Two cells, one corner. Same haul twice.\"",
+    "outro": null
+  }
+}

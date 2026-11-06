@@ -1,0 +1,54 @@
+{
+  "id": "t1-f13",
+  "title": "Zigzag Shaft",
+  "band": "maintenance",
+  "size": {
+    "w": 5,
+    "h": 5
+  },
+  "tiles": [
+    "..###",
+    "#..##",
+    "##..#",
+    "###..",
+    "####e"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat"
+  ],
+  "slots": {
+    "main": 6
+  },
+  "par": {
+    "commands": 5,
+    "steps": 15
+  },
+  "reference": "repeat 4 { forward turn_right forward turn_left }",
+  "hints": [
+    "The shaft zigzags the same way all the way down.",
+    "One zig and one zag is four commands. Repeat them.",
+    "repeat 4 { forward turn_right forward turn_left }"
+  ],
+  "story": {
+    "intro": "PATCH: \"Shaft's crooked, but it's crooked the same way every time.\"",
+    "outro": null
+  }
+}

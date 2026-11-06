@@ -1,0 +1,88 @@
+{
+  "id": "t1-f15",
+  "title": "Lockstep",
+  "band": "maintenance",
+  "size": {
+    "w": 7,
+    "h": 1
+  },
+  "tiles": [
+    "sdsdsde"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat"
+  ],
+  "slots": {
+    "main": 5
+  },
+  "par": {
+    "commands": 4,
+    "steps": 9
+  },
+  "reference": "repeat 3 { activate forward forward }",
+  "hints": [
+    "Every switch opens the door right after it.",
+    "Activate, then walk through the door onto the next switch. Three times.",
+    "repeat 3 { activate forward forward }"
+  ],
+  "story": {
+    "intro": "VANTA: \"Security lockdown. Every door on this level answers to its own switch. Enjoy.\"",
+    "outro": null
+  },
+  "links": [
+    {
+      "switch": {
+        "x": 0,
+        "y": 0
+      },
+      "doors": [
+        {
+          "x": 1,
+          "y": 0
+        }
+      ]
+    },
+    {
+      "switch": {
+        "x": 2,
+        "y": 0
+      },
+      "doors": [
+        {
+          "x": 3,
+          "y": 0
+        }
+      ]
+    },
+    {
+      "switch": {
+        "x": 4,
+        "y": 0
+      },
+      "doors": [
+        {
+          "x": 5,
+          "y": 0
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "id": "t1-f16",
+  "title": "Long Haul",
+  "band": "maintenance",
+  "size": {
+    "w": 8,
+    "h": 1
+  },
+  "tiles": [
+    "........"
+  ],
+  "heights": null,
+  "boxes": [
+    {
+      "x": 1,
+      "y": 0,
+      "count": 1
+    }
+  ],
+  "targets": [
+    {
+      "x": 7,
+      "y": 0,
+      "count": 1
+    }
+  ],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "all_targets_filled"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat"
+  ],
+  "slots": {
+    "main": 5
+  },
+  "par": {
+    "commands": 4,
+    "steps": 8
+  },
+  "reference": "pick_up repeat 6 { forward } drop",
+  "hints": [
+    "Only the walk in the middle repeats.",
+    "Pick up, loop the walk, then drop.",
+    "pick_up repeat 6 { forward } drop"
+  ],
+  "story": {
+    "intro": "PATCH: \"Cell's at this end, the socket's at the far end. Long walk.\"",
+    "outro": null
+  }
+}
