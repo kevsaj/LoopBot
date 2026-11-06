@@ -1,0 +1,61 @@
+{
+  "id": "t1-f20",
+  "title": "Machine Room",
+  "band": "maintenance",
+  "size": {
+    "w": 5,
+    "h": 5
+  },
+  "tiles": [
+    "....s",
+    "####.",
+    "####.",
+    "####.",
+    "e...s"
+  ],
+  "heights": [
+    "00001",
+    "00001",
+    "00001",
+    "00001",
+    "32222"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "all_switches_on",
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat"
+  ],
+  "slots": {
+    "main": 7
+  },
+  "par": {
+    "commands": 6,
+    "steps": 16
+  },
+  "reference": "repeat 3 { repeat 3 { forward } jump activate turn_right }",
+  "hints": [
+    "The room spirals up. Each side is the same: walk, climb, hit the switch, turn.",
+    "Loop the walk inside a loop of sides. The last climb lands on the exit.",
+    "repeat 3 { repeat 3 { forward } jump activate turn_right }"
+  ],
+  "story": {
+    "intro": "VANTA: \"The machine room. Every switch you flip here, I flip back. Good luck.\"",
+    "outro": "PATCH: \"Machine room's ours. Elevator's moving again. Next stop, the Workshop.\""
+  }
+}

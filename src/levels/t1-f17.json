@@ -1,0 +1,53 @@
+{
+  "id": "t1-f17",
+  "title": "Pipe Square",
+  "band": "maintenance",
+  "size": {
+    "w": 4,
+    "h": 4
+  },
+  "tiles": [
+    "....",
+    "###.",
+    "###.",
+    "e..."
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat"
+  ],
+  "slots": {
+    "main": 5
+  },
+  "par": {
+    "commands": 4,
+    "steps": 11
+  },
+  "reference": "repeat 3 { repeat 3 { forward } turn_right }",
+  "hints": [
+    "Three straight sides, the same length, each ending in a turn.",
+    "A side is a loop of forwards. Loop the sides too.",
+    "repeat 3 { repeat 3 { forward } turn_right }"
+  ],
+  "story": {
+    "intro": "PATCH: \"Loops inside loops. A side is a loop, and the square is a loop of sides.\"",
+    "outro": null
+  }
+}

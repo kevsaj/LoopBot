@@ -131,6 +131,17 @@ select:focus-visible {
 .board-canvas {
   z-index: 1;
 }
+/* Maintenance band: the service ducts. Dark teal air, a warm work-lamp glow, pipes behind. */
+.board-wrap.band-maintenance {
+  background:
+    radial-gradient(ellipse 55% 40% at 50% 60%, rgba(255, 190, 110, 0.22), transparent 70%),
+    linear-gradient(180deg, #0f1d24 0%, #173039 45%, #24413f 75%, #4a4632 100%);
+}
+.board-wrap.band-maintenance::after {
+  height: 100%;
+  opacity: 0.3;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300' preserveAspectRatio='none'><g fill='none' stroke='%230a1418' stroke-width='9'><path d='M0 40H150q20 0 20 20V120q0 20 20 20H400'/><path d='M0 250H90q16 0 16-16V200q0-16 16-16H260q16 0 16 16V300'/><path d='M330 0V70q0 14 14 14H400'/></g><g fill='%230a1418'><rect x='20' y='150' width='60' height='34' rx='4'/><rect x='300' y='210' width='70' height='40' rx='4'/><rect x='146' y='34' width='8' height='14'/><rect x='240' y='134' width='8' height='14'/></g></svg>") center / 100% 100% no-repeat;
+}
 .board-canvas {
   position: absolute;
   inset: 0;
@@ -1212,6 +1223,14 @@ select:focus-visible {
 }
 .tf-stars .on {
   color: var(--warn);
+}
+/* Each band of the tower map gets its own wall colour, like floors of a real building. */
+.band-maintenance .tower-floors {
+  background: linear-gradient(#17262c, #142027);
+  border-color: #2c4a4f;
+}
+.band-maintenance .tower-band {
+  color: #7fb6b0;
 }
 .tower-ground {
   text-align: center;

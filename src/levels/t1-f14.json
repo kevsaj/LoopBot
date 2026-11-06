@@ -1,0 +1,72 @@
+{
+  "id": "t1-f14",
+  "title": "Cell Relay",
+  "band": "maintenance",
+  "size": {
+    "w": 8,
+    "h": 1
+  },
+  "tiles": [
+    "........"
+  ],
+  "heights": null,
+  "boxes": [
+    {
+      "x": 1,
+      "y": 0,
+      "count": 1
+    },
+    {
+      "x": 4,
+      "y": 0,
+      "count": 1
+    }
+  ],
+  "targets": [
+    {
+      "x": 2,
+      "y": 0,
+      "count": 1
+    },
+    {
+      "x": 5,
+      "y": 0,
+      "count": 1
+    }
+  ],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "all_targets_filled"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat"
+  ],
+  "slots": {
+    "main": 7
+  },
+  "par": {
+    "commands": 6,
+    "steps": 8
+  },
+  "reference": "repeat 2 { pick_up forward drop jump jump }",
+  "hints": [
+    "Each cell moves one tile on, then you hop over it to the next one.",
+    "Pick up, step, drop, then jump up onto the cell and down past it. Twice.",
+    "repeat 2 { pick_up forward drop jump jump }"
+  ],
+  "story": {
+    "intro": "PATCH: \"Two power cells, two pads. Shuffle them along.\"",
+    "outro": null
+  }
+}
