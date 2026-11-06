@@ -4,6 +4,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { fx } from '../audio/feedback';
 import { burst, reducedMotion, stop } from '../fx/confetti';
+import { DEMO } from '../demo';
 
 interface Props {
   floorNumber: number;
@@ -115,6 +116,12 @@ export function ResultsCard({ floorNumber, floorCount, earned, prevBest, command
         </table>
         {tip && <p className="tip">{tip}</p>}
         {outro && <p className="story">{outro}</p>}
+        {DEMO && floorNumber === floorCount && (
+          <p className="demo-end">
+            <strong>You cleared the Lobby!</strong> That's the end of the free demo. LoopBot's climb continues in the full game: loops in the
+            Maintenance floors, functions in the Workshop, and all the way to the Rooftop.
+          </p>
+        )}
         <div className="results-actions">
           <button type="button" className="pill" onClick={() => (fx.tap(), onRetry())}>
             Try again
