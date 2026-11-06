@@ -1,0 +1,24 @@
+{
+  "id": "t1-f02",
+  "title": "Boiler Room",
+  "band": "lobby",
+  "size": { "w": 6, "h": 5 },
+  "tiles": [
+    "######",
+    "#...##",
+    "###.##",
+    "###e##",
+    "######"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": { "x": 1, "y": 1, "facing": "east" },
+  "goals": ["bot_on_exit"],
+  "commands": ["forward", "turn_left", "turn_right"],
+  "slots": { "main": 8 },
+  "par": { "commands": 5, "steps": 5 },
+  "reference": "forward forward turn_right forward forward",
+  "hints": [],
+  "story": { "intro": "PATCH: \"Is somebody down there?\"", "outro": null }
+}

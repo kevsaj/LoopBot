@@ -1,0 +1,26 @@
+{
+  "id": "t1-f03",
+  "title": "First Delivery",
+  "band": "lobby",
+  "size": { "w": 6, "h": 3 },
+  "tiles": [
+    "######",
+    "#....#",
+    "######"
+  ],
+  "heights": null,
+  "boxes": [{ "x": 2, "y": 1, "count": 1 }],
+  "targets": [{ "x": 4, "y": 1, "count": 1 }],
+  "bot": { "x": 1, "y": 1, "facing": "east" },
+  "goals": ["all_targets_filled"],
+  "commands": ["forward", "turn_left", "turn_right", "pick_up", "drop"],
+  "slots": { "main": 8 },
+  "par": { "commands": 4, "steps": 4 },
+  "reference": "pick_up forward forward drop",
+  "hints": [
+    "Boxes are picked up from the tile in front of you.",
+    "You need 4 commands: one pickup, two moves, one drop.",
+    "pick_up, forward, forward, drop"
+  ],
+  "story": { "intro": "PATCH: That crate's got a power cell. Bring it to the pad.", "outro": null }
+}

@@ -1,0 +1,22 @@
+{
+  "id": "t1-f01",
+  "title": "Boot Sequence",
+  "band": "lobby",
+  "size": { "w": 6, "h": 3 },
+  "tiles": [
+    "######",
+    "#...e#",
+    "######"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": { "x": 1, "y": 1, "facing": "east" },
+  "goals": ["bot_on_exit"],
+  "commands": ["forward"],
+  "slots": { "main": 5 },
+  "par": { "commands": 3, "steps": 3 },
+  "reference": "forward forward forward",
+  "hints": [],
+  "story": { "intro": "> hello, world?", "outro": "LoopBot powers on in the sub-basement." }
+}
