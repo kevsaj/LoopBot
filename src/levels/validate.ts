@@ -40,6 +40,11 @@ export function validateLevel(l: LevelFile): string[] {
   for (const word of l.reference.trim().split(/\s+/)) {
     if (!l.commands.includes(word as never)) e(`reference uses '${word}', which this floor does not allow`);
   }
+  for (const link of l.links ?? []) {
+    if (l.tiles[link.switch.y]?.[link.switch.x] !== 's') e(`link switch ${link.switch.x},${link.switch.y} is not a switch tile`);
+    for (const d of link.doors) if (l.tiles[d.y]?.[d.x] !== 'd') e(`link door ${d.x},${d.y} is not a door tile`);
+  }
+  if (l.hints.length && l.hints.length !== 3) e('hints should be Nudge, Structure, Solution (3 entries)');
   if (l.par.commands < 1 || l.par.steps < 1) e('par values must be positive');
   return errs;
 }

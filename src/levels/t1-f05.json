@@ -1,0 +1,28 @@
+{
+  "id": "t1-f05",
+  "title": "Two Crates",
+  "band": "lobby",
+  "size": {"w": 7, "h": 5},
+  "tiles": [
+    "#######",
+    "#.....#",
+    "###.###",
+    "#.....#",
+    "#######"
+  ],
+  "heights": null,
+  "boxes": [{"x": 2, "y": 1, "count": 1}, {"x": 4, "y": 3, "count": 1}],
+  "targets": [{"x": 4, "y": 1, "count": 1}, {"x": 2, "y": 3, "count": 1}],
+  "bot": {"x": 1, "y": 1, "facing": "east"},
+  "goals": ["all_targets_filled"],
+  "commands": ["forward", "turn_left", "turn_right", "jump", "pick_up", "drop"],
+  "slots": {"main": 16},
+  "par": {"commands": 12, "steps": 12},
+  "reference": "pick_up forward forward drop turn_right forward forward turn_left pick_up turn_left turn_left drop",
+  "hints": [
+    "Deliver the top crate first. A crate on a pad blocks the way, so plan your route.",
+    "12 commands: deliver one crate (4), go down the middle (4), deliver the other (4).",
+    "pick_up, forward, forward, drop, turn_right, forward, forward, turn_left, pick_up, turn_left, turn_left, drop"
+  ],
+  "story": {"intro": "PATCH: \"The building's in lockdown. Nobody gets in or out. Except, apparently, you.\"", "outro": null}
+}

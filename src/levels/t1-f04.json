@@ -1,0 +1,30 @@
+{
+  "id": "t1-f04",
+  "title": "Step Up",
+  "band": "lobby",
+  "size": {"w": 7, "h": 3},
+  "tiles": [
+    "#######",
+    "#....e#",
+    "#######"
+  ],
+  "heights": [
+    "0000000",
+    "0001000",
+    "0000000"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {"x": 1, "y": 1, "facing": "east"},
+  "goals": ["bot_on_exit"],
+  "commands": ["forward", "turn_left", "turn_right", "jump"],
+  "slots": {"main": 6},
+  "par": {"commands": 4, "steps": 4},
+  "reference": "forward jump jump forward",
+  "hints": [
+    "forward only works on level ground. Use jump to go up or down a step.",
+    "4 commands: walk, jump up, jump down, walk.",
+    "forward, jump, jump, forward"
+  ],
+  "story": {"intro": "PATCH: \"Hear that buzzing upstairs? Repo drones. Keep moving.\"", "outro": null}
+}

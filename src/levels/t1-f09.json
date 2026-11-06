@@ -1,0 +1,26 @@
+{
+  "id": "t1-f09",
+  "title": "Service Lock",
+  "band": "lobby",
+  "size": {"w": 8, "h": 3},
+  "tiles": [
+    "########",
+    "#.s.d.e#",
+    "########"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {"x": 1, "y": 1, "facing": "east"},
+  "goals": ["bot_on_exit"],
+  "commands": ["forward", "turn_left", "turn_right", "jump", "pick_up", "drop", "activate"],
+  "slots": {"main": 8},
+  "par": {"commands": 6, "steps": 6},
+  "reference": "forward activate forward forward forward forward",
+  "hints": [
+    "Stand on the switch and activate it to open the door.",
+    "6 commands: step, activate, then walk to the exit.",
+    "forward, activate, forward, forward, forward, forward"
+  ],
+  "story": {"intro": "PATCH: \"Old security doors. Hit the floor switch and it should open.\"", "outro": null}
+}

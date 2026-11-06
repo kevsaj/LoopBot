@@ -1,0 +1,35 @@
+{
+  "id": "t1-f10",
+  "title": "Fire Alarm",
+  "band": "lobby",
+  "size": {"w": 8, "h": 5},
+  "tiles": [
+    "########",
+    "#s..#..#",
+    "#...d..#",
+    "#...#.s#",
+    "########"
+  ],
+  "heights": [
+    "00000000",
+    "00000000",
+    "00000000",
+    "00000020",
+    "00000000"
+  ],
+  "boxes": [{"x": 3, "y": 3, "count": 1}],
+  "targets": [],
+  "bot": {"x": 1, "y": 3, "facing": "east"},
+  "goals": ["all_switches_on"],
+  "commands": ["forward", "turn_left", "turn_right", "jump", "pick_up", "drop", "activate"],
+  "slots": {"main": 20},
+  "par": {"commands": 18, "steps": 18},
+  "reference": "turn_left forward forward turn_right activate forward forward turn_right forward pick_up turn_left forward forward drop jump turn_right jump activate",
+  "hints": [
+    "The alarm switch sits on a 2-high ledge in the next room. Open the door first, and bring a crate.",
+    "18 commands: open the door (5), fetch the crate (4), carry it through (4), climb and hit the alarm (5).",
+    "turn_left, forward, forward, turn_right, activate, forward, forward, turn_right, forward, pick_up, turn_left, forward, forward, drop, jump, turn_right, jump, activate"
+  ],
+  "story": {"intro": "PATCH: \"Pull that fire alarm and every door in the Spire unlocks. Including the ones they don't want opened.\"", "outro": "The alarm blares. VANTA, over the PA: \"Someone is loose in my building.\""},
+  "links": [{"switch": {"x": 1, "y": 1}, "doors": [{"x": 4, "y": 2}]}, {"switch": {"x": 6, "y": 3}, "doors": []}]
+}
