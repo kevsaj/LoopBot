@@ -14,7 +14,8 @@ import { CodeView } from './CodeView';
 import { COMMAND_META, PALETTE_ORDER, blockCommand } from './commands';
 import { Board } from '../board/Board';
 import type { BoardUpdate } from '../board/BoardScene';
-import { fx, isMuted, setMuted } from '../audio/feedback';
+import { fx } from '../audio/feedback';
+import { SettingsSheet } from '../SettingsSheet';
 import type { Progress } from '../progress';
 import { recordClear, recordFail } from '../progress';
 import { HintSheet } from './HintSheet';
@@ -33,6 +34,7 @@ interface Props {
   progress: Progress;
   setProgress(update: (p: Progress) => Progress): void;
   onGo(index: number): void;
+  onTower(): void;
 }
 
 export function stars(level: LevelFile, commands: number, steps: number) {
@@ -41,7 +43,7 @@ export function stars(level: LevelFile, commands: number, steps: number) {
   return 1;
 }
 
-export function FloorScreen({ level, floorNumber, floorCount, progress, setProgress, onGo }: Props) {
+export function FloorScreen({ level, floorNumber, floorCount, progress, setProgress, onGo, onTower }: Props) {
   const editor = useEditor(level.id);
   const { program } = editor.state;
   const routines = useMemo(
@@ -65,7 +67,6 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
   const [outcome, setOutcome] = useState<Outcome | null>(null);
   const [showResults, setShowResults] = useState(false);
   const [rotateSignal, setRotateSignal] = useState(0);
-  const [muted, setMutedState] = useState(isMuted());
   const [sheet, setSheet] = useState<'hints' | 'settings' | null>(null);
   const [hasRun, setHasRun] = useState(false);
 
@@ -282,18 +283,9 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
     <div className="floor">
       <header className="topbar">
         <div className="floor-title">
-          <select
-            aria-label="Choose floor"
-            value={floorNumber - 1}
-            onChange={(e) => onGo(Number(e.target.value))}
-            className="floor-pick"
-          >
-            {Array.from({ length: floorCount }, (_, i) => (
-              <option key={i} value={i}>
-                Floor {i + 1}
-              </option>
-            ))}
-          </select>
+          <button type="button" className="back-btn" onClick={() => (fx.tap(), onTower())} aria-label="Back to the tower map">
+            ‹ Tower · Floor {floorNumber}
+          </button>
           <span className="floor-name">{level.title}</span>
         </div>
         {level.hints.length > 0 && (
@@ -422,33 +414,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
 
       {sheet === 'hints' && <HintSheet level={level} progress={progress} setProgress={setProgress} onClose={() => setSheet(null)} />}
 
-      {sheet === 'settings' && (
-        <div className="results-backdrop" onClick={() => setSheet(null)}>
-          <div className="results sheet" role="dialog" aria-label="Settings" onClick={(e) => e.stopPropagation()}>
-            <h2>Settings</h2>
-            <label className="setting">
-              <span>Sound and vibration</span>
-              <input
-                type="checkbox"
-                checked={!muted}
-                onChange={() => {
-                  setMuted(!muted);
-                  setMutedState(!muted);
-                }}
-              />
-            </label>
-            <label className="setting">
-              <span>First-run tutorial tips</span>
-              <input type="checkbox" checked={progress.tutorial} onChange={() => setProgress((p) => ({ ...p, tutorial: !p.tutorial }))} />
-            </label>
-            <div className="results-actions">
-              <button type="button" className="pill primary" onClick={() => setSheet(null)}>
-                Done
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {sheet === 'settings' && <SettingsSheet progress={progress} setProgress={setProgress} onClose={() => setSheet(null)} />}
 
       {showResults && outcome?.status === 'cleared' && (
         <div className="results-backdrop" onClick={() => setShowResults(false)}>
@@ -481,6 +447,11 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
               <button type="button" className="pill" onClick={() => (fx.tap(), reset())}>
                 Try again
               </button>
+              {floorNumber === floorCount && (
+                <button type="button" className="pill primary" onClick={() => (fx.tap(), onTower())}>
+                  Tower
+                </button>
+              )}
               {floorNumber < floorCount && (
                 <button type="button" className="pill primary" onClick={() => (fx.tap(), onGo(floorNumber))}>
                   Next floor →
