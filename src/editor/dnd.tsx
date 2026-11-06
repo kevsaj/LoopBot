@@ -1,27 +1,26 @@
-// One drag-and-drop context for the editor: long-press a line to reorder it (ED-2),
-// or drag a palette command straight into the program at the spot you drop it.
-// Tapping a palette command still adds it at the cursor.
+// One drag-and-drop context for the editor: long-press a line to move it (ED-2), into or out
+// of loops too, or drag a palette command straight into the program at the spot you drop it.
+// Either way a glowing line shows where it will land. Tapping a palette command still adds it at the cursor.
 
 import { createContext, useContext, useState } from 'react';
 import type { ReactNode } from 'react';
 import {
   DndContext,
   DragOverlay,
-  KeyboardSensor,
   MouseSensor,
   PointerSensor,
   TouchSensor,
-  closestCenter,
   pointerWithin,
   useDraggable,
   useSensor,
   useSensors,
 } from '@dnd-kit/core';
 import type { CollisionDetection, DragEndEvent, DragMoveEvent, DragStartEvent, Modifier, UniqueIdentifier } from '@dnd-kit/core';
-import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { restrictToParentElement, restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import { getEventCoordinates } from '@dnd-kit/utilities';
 import type { Block, PaletteCommand } from '../sim/types';
+import type { Spot } from '../sim/program';
+import { canPlace, findBlock, makeBlock } from '../sim/program';
 import { COMMAND_META } from './commands';
 import { fx } from '../audio/feedback';
 import { Tile } from './ProgramList';
@@ -51,23 +50,22 @@ class RowTouch extends TouchSensor {
 class RowMouse extends MouseSensor {
   static activators = only(MouseSensor.activators as never, false) as never;
 }
-class RowKeys extends KeyboardSensor {
-  static activators = only(KeyboardSensor.activators as never, false) as never;
-}
 
 interface DragState {
   /** Id of the line or palette chip being dragged. */
   dragId: string | null;
   /** True while a command from the palette is being dragged. */
   fromPalette: boolean;
-  /** Where a palette command would land if dropped now, or null when not over the program. */
-  dropIndex: number | null;
+  /** Where the dragged command would land if dropped now, or null when it can't land here. */
+  dropSpot: Spot | null;
 }
-const Ctx = createContext<DragState>({
-  dragId: null,
-  fromPalette: false,
-  dropIndex: null,
-});
+const Ctx = createContext<DragState>({ dragId: null, fromPalette: false, dropSpot: null });
+
+/** What each program row tells the drag: the spot above its middle and the spot below. */
+export interface DropData {
+  before: Spot;
+  after: Spot;
+}
 export const useDragState = () => useContext(Ctx);
 
 // Lines only move up and down inside the list; palette commands travel freely.
@@ -77,13 +75,6 @@ const forRows =
     paletteCmd(args.active?.id) ? args.transform : m(args);
 
 const collide: CollisionDetection = (args) => {
-  if (!paletteCmd(args.active.id)) {
-    // Reorder: only the program lines are targets.
-    return closestCenter({
-      ...args,
-      droppableContainers: args.droppableContainers.filter((c) => !String(c.id).startsWith(EMPTY_PREFIX) && c.id !== LIST_ID),
-    });
-  }
   // Lines scrolled out of the program box can sit under the palette, so only count
   // a drop when the finger is inside the visible part of the program.
   const list = args.droppableContainers.find((c) => c.id === LIST_ID)?.node.current;
@@ -98,78 +89,71 @@ const collide: CollisionDetection = (args) => {
 interface Props {
   blocks: Block[];
   /** Checks a dropped command; returns false (after giving feedback) when it cannot go in. */
-  canAdd(cmd: PaletteCommand): boolean;
-  onDrop(cmd: PaletteCommand, index: number): void;
-  onMove(from: number, to: number): void;
+  canAdd(cmd: PaletteCommand, spot: Spot): boolean;
+  onDrop(cmd: PaletteCommand, spot: Spot): void;
+  onMove(id: string, to: Spot): void;
   children: ReactNode;
 }
 
 export function EditorDnd({ blocks, canAdd, onDrop, onMove, children }: Props) {
   const [dragId, setDragId] = useState<string | null>(null);
-  const [dropIndex, setDropIndex] = useState<number | null>(null);
+  const [dropSpot, setDropSpot] = useState<Spot | null>(null);
   const sensors = useSensors(
     useSensor(ChipSensor, { activationConstraint: { distance: 10 } }),
     useSensor(RowTouch, { activationConstraint: { delay: 220, tolerance: 6 } }),
     useSensor(RowMouse, { activationConstraint: { delay: 160, tolerance: 6 } }),
-    useSensor(RowKeys, {
-      coordinateGetter: sortableKeyboardCoordinates,
-      keyboardCodes: {
-        start: ['Space'],
-        cancel: ['Escape'],
-        end: ['Space', 'Enter'],
-      },
-    }),
   );
   const fromPalette = paletteCmd(dragId);
 
-  const whereDrop = (e: DragMoveEvent): number | null => {
+  const whereDrop = (e: DragMoveEvent): Spot | null => {
     const over = e.over;
     if (!over) return null;
     const id = String(over.id);
-    if (id === LIST_ID || id.startsWith(EMPTY_PREFIX)) return blocks.length;
-    const i = blocks.findIndex((b) => b.id === id);
-    if (i < 0) return null;
-    // Above the middle of a line goes before it, below goes after it.
-    const start = getEventCoordinates(e.activatorEvent);
-    const y = (start?.y ?? 0) + e.delta.y;
-    return y > over.rect.top + over.rect.height / 2 ? i + 1 : i;
+    let spot: Spot;
+    if (id === LIST_ID || id.startsWith(EMPTY_PREFIX)) spot = { parent: null, index: blocks.length };
+    else {
+      const data = over.data.current as DropData | undefined;
+      if (!data) return null;
+      // Above the middle of a row goes before it, below goes after it.
+      const start = getEventCoordinates(e.activatorEvent);
+      const y = (start?.y ?? 0) + e.delta.y;
+      spot = y > over.rect.top + over.rect.height / 2 ? data.after : data.before;
+    }
+    // Never into itself, and never deeper than loops may nest.
+    const cmd = paletteCmd(e.active.id);
+    const block = cmd ? makeBlock(cmd) : findBlock(blocks, String(e.active.id));
+    return block && canPlace(blocks, spot, block) ? spot : null;
   };
 
   const start = (e: DragStartEvent) => {
     setDragId(String(e.active.id));
-    setDropIndex(null);
+    setDropSpot(null);
     fx.lift();
   };
   const move = (e: DragMoveEvent) => {
-    if (!paletteCmd(e.active.id)) return;
     const at = whereDrop(e);
-    if (at !== dropIndex) setDropIndex(at);
+    if (at?.parent !== dropSpot?.parent || at?.index !== dropSpot?.index) setDropSpot(at);
   };
   const end = (e: DragEndEvent) => {
     const cmd = paletteCmd(e.active.id);
-    const at = cmd ? whereDrop(e) : null;
+    const at = whereDrop(e);
     setDragId(null);
-    setDropIndex(null);
+    setDropSpot(null);
+    if (!at) return;
     if (cmd) {
-      if (at != null && canAdd(cmd)) onDrop(cmd, at);
+      if (canAdd(cmd, at)) onDrop(cmd, at);
       return;
     }
-    if (!e.over) return;
-    const from = blocks.findIndex((b) => b.id === e.active.id);
-    const to = blocks.findIndex((b) => b.id === e.over!.id);
-    if (from >= 0 && to >= 0 && from !== to) {
-      onMove(from, to);
-      fx.snap();
-    }
+    onMove(String(e.active.id), at);
   };
   const cancel = () => {
     setDragId(null);
-    setDropIndex(null);
+    setDropSpot(null);
   };
 
-  const dragIndex = dragId && !fromPalette ? blocks.findIndex((b) => b.id === dragId) : -1;
+  const dragged = dragId && !fromPalette ? findBlock(blocks, dragId) : null;
   return (
-    <Ctx.Provider value={{ dragId, fromPalette: !!fromPalette, dropIndex }}>
+    <Ctx.Provider value={{ dragId, fromPalette: !!fromPalette, dropSpot }}>
       <DndContext
         sensors={sensors}
         collisionDetection={collide}
@@ -180,8 +164,8 @@ export function EditorDnd({ blocks, canAdd, onDrop, onMove, children }: Props) {
         onDragCancel={cancel}
       >
         {children}
-        <DragOverlay dropAnimation={fromPalette ? null : undefined}>
-          {fromPalette ? <PaletteGhost cmd={fromPalette} /> : dragIndex >= 0 ? <Tile block={blocks[dragIndex]} index={dragIndex} lifted /> : null}
+        <DragOverlay dropAnimation={null}>
+          {fromPalette ? <PaletteGhost cmd={fromPalette} /> : dragged ? <Tile block={dragged} lifted /> : null}
         </DragOverlay>
       </DndContext>
     </Ctx.Provider>
