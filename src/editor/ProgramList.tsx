@@ -6,9 +6,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { KeyboardEvent, PointerEvent, ReactNode } from 'react';
 import { useDraggable, useDroppable } from '@dnd-kit/core';
-import type { Block } from '../sim/types';
+import type { Block, Condition } from '../sim/types';
 import type { Spot } from '../sim/program';
-import { countBlocks, findBlock } from '../sim/program';
+import { childLists, countBlocks, elseKey, findBlock } from '../sim/program';
 import { COMMAND_META, blockCommand } from './commands';
 import type { DropData } from './dnd';
 import { EMPTY_PREFIX, LIST_ID, useDragState } from './dnd';
@@ -26,6 +26,9 @@ interface Props {
   onDelete(id: string): void;
   onMove(id: string, to: Spot): void;
   onTimes(id: string, times: number): void;
+  /** The conditions an if or while can ask on this floor, in the order a tap cycles them. */
+  conditions: Condition[];
+  onCond(id: string, cond: Condition): void;
 }
 
 const SWIPE_DELETE_PX = 72;
@@ -34,7 +37,7 @@ export const MAX_TIMES = 9;
 
 export function Tile({ block, line, lifted }: { block: Block; line?: number; lifted?: boolean }) {
   const meta = COMMAND_META[blockCommand(block)];
-  const inside = block.kind === 'repeat' || block.kind === 'while' ? countBlocks(block.body) : 0;
+  const inside = childLists(block).reduce((n, c) => n + countBlocks(c.list), 0);
   return (
     <span className={`line-tile tone-${meta.tone}${lifted ? ' lifted' : ''}`}>
       {line != null && <span className="line-no">{line}</span>}
@@ -136,7 +139,9 @@ function LineRow({
   };
 
   const armed = dx < -SWIPE_DELETE_PX;
-  const label = COMMAND_META[blockCommand(block)].label + (block.kind === 'repeat' ? ` ${block.times} times` : '');
+  const label =
+    COMMAND_META[blockCommand(block)].label +
+    (block.kind === 'repeat' ? ` ${block.times} times` : block.kind === 'if' || block.kind === 'while' ? ` ${condLabel(block.cond)}` : '');
   return (
     <li
       ref={(el) => {
@@ -188,10 +193,59 @@ function Times({ times, onChange }: { times: number; onChange(n: number): void }
   );
 }
 
+const COLOUR_NAMES: Record<string, string> = { r: 'red', g: 'green', b: 'blue', y: 'yellow' };
+const SENSOR_LABEL: Record<string, string> = {
+  wall_ahead: 'wall ahead',
+  box_ahead: 'crate ahead',
+  carrying: 'carrying',
+  on_target: 'on target',
+  on_switch: 'on switch',
+};
+/** A condition in words: "wall ahead", "not on red". */
+export function condLabel(c: Condition): string {
+  const s = c.sensor === 'tile_is' ? `on ${COLOUR_NAMES[c.colour ?? ''] ?? c.colour}` : SENSOR_LABEL[c.sensor];
+  return c.not ? `not ${s}` : s;
+}
+const sameCond = (a: Condition, b: Condition) => a.sensor === b.sensor && (a.colour ?? '') === (b.colour ?? '');
+
+/** The question on an if or while header: tap "not" to flip it, tap the sensor to try the next one. */
+function CondPicker({ cond, options, onChange }: { cond: Condition; options: Condition[]; onChange(c: Condition): void }) {
+  const stop = (e: PointerEvent) => e.stopPropagation();
+  const next = () => {
+    const i = options.findIndex((o) => sameCond(o, cond));
+    const o = options[(i + 1) % options.length] ?? cond;
+    onChange({ ...o, not: cond.not || undefined });
+  };
+  const base = condLabel({ ...cond, not: false });
+  return (
+    <span className="cond" onPointerDown={stop} onPointerUp={stop}>
+      <button type="button" className={`cond-not${cond.not ? ' on' : ''}`} aria-pressed={!!cond.not} onClick={() => onChange({ ...cond, not: !cond.not || undefined })}>
+        not
+      </button>
+      <button type="button" className="cond-sensor" disabled={options.length < 2} aria-label={`Condition: ${condLabel(cond)}. Tap for the next sensor.`} onClick={next}>
+        {base}?
+      </button>
+    </span>
+  );
+}
+
+/** The "else" row of an if: its upper half ends the then branch, its lower half starts the else branch. */
+function ElseRow({ row, dimmed, onTap }: { row: Extract<EditorRow, { kind: 'else' }>; dimmed: boolean; onTap(): void }) {
+  const drop = useDroppable({ id: row.key, data: { before: row.before, after: row.after } satisfies DropData });
+  return (
+    <li ref={drop.setNodeRef} style={{ ['--depth' as string]: row.depth }} className={`row else-row${row.depth ? ' nested' : ''}${dimmed ? ' placeholder' : ''}`}>
+      <button type="button" className="row-btn" onClick={onTap} aria-label="Else: what happens when the condition is false. Tap to add commands here.">
+        else
+      </button>
+    </li>
+  );
+}
+
 /** The foot of a loop. Tapping it moves the cursor out of the loop (or into it, while it's empty). */
 function EndRow({ row, dimmed, onTap }: { row: Extract<EditorRow, { kind: 'end' }>; dimmed: boolean; onTap(): void }) {
   const drop = useDroppable({ id: row.key, data: { before: row.before, after: row.after } satisfies DropData });
-  const empty = row.block.body.length === 0;
+  const empty = childLists(row.block).every((c) => c.list.length === 0);
+  const what = row.block.kind === 'if' ? 'if' : 'loop';
   return (
     <li
       ref={drop.setNodeRef}
@@ -202,9 +256,9 @@ function EndRow({ row, dimmed, onTap }: { row: Extract<EditorRow, { kind: 'end' 
         type="button"
         className="row-btn"
         onClick={onTap}
-        aria-label={empty ? 'Empty loop. Tap to add commands inside it.' : 'End of loop. Tap to add commands after the loop.'}
+        aria-label={empty ? `Empty ${what}. Tap to add commands inside it.` : `End of ${what}. Tap to add commands after it.`}
       >
-        {empty ? 'Drop or tap commands into the loop' : ''}
+        {empty ? `Drop or tap commands into the ${what}` : ''}
       </button>
     </li>
   );
@@ -225,7 +279,7 @@ function EmptySlot({ n, onTap }: { n: number; onTap(): void }) {
   );
 }
 
-export function ProgramList({ blocks, limit, cursor, activeIds, crashId, onCursor, onDelete, onMove, onTimes }: Props) {
+export function ProgramList({ blocks, limit, cursor, activeIds, crashId, onCursor, onDelete, onMove, onTimes, conditions, onCond }: Props) {
   const { dragId, fromPalette, dropSpot } = useDragState();
   const { setNodeRef } = useDroppable({ id: LIST_ID });
   const rows = useMemo(() => flatten(blocks), [blocks]);
@@ -251,15 +305,25 @@ export function ProgramList({ blocks, limit, cursor, activeIds, crashId, onCurso
         const here = sameSpot(lineAt, row.before) ? (
           <Cursor key={`c-${row.key}`} drop={!!dragId} depth={row.kind === 'end' ? row.depth + 1 : row.depth} />
         ) : null;
+        if (row.kind === 'else') {
+          return (
+            <Fragment key={row.key}>
+              {here}
+              <ElseRow row={row} dimmed={dimmed.has(row.block.id)} onTap={() => onCursor({ parent: elseKey(row.block.id), index: row.block.else.length })} />
+            </Fragment>
+          );
+        }
         if (row.kind === 'end') {
-          const inside = row.block.body.length === 0;
+          const inside = childLists(row.block).every((c) => c.list.length === 0);
           return (
             <Fragment key={row.key}>
               {here}
               <EndRow
                 row={row}
                 dimmed={dimmed.has(row.block.id)}
-                onTap={() => onCursor(inside ? row.before : row.after.parent == null && row.after.index === blocks.length ? null : row.after)}
+                onTap={() =>
+                  onCursor(inside ? { parent: row.block.id, index: 0 } : row.after.parent == null && row.after.index === blocks.length ? null : row.after)
+                }
               />
             </Fragment>
           );
@@ -273,11 +337,11 @@ export function ProgramList({ blocks, limit, cursor, activeIds, crashId, onCurso
               active={activeIds.has(block.id)}
               crashed={crashId === block.id}
               dimmed={dimmed.has(block.id)}
-              // A line puts the cursor after it; a loop header puts it at the end of the loop's body.
+              // A line puts the cursor after it; a header puts it at the end of the first body.
               onTap={() =>
                 onCursor(
                   row.kind === 'loop'
-                    ? { parent: block.id, index: row.block.body.length }
+                    ? { parent: block.id, index: childLists(row.block)[0].list.length }
                     : row.after.parent == null && row.after.index === blocks.length
                       ? null
                       : row.after,
@@ -285,7 +349,13 @@ export function ProgramList({ blocks, limit, cursor, activeIds, crashId, onCurso
               }
               onDelete={() => onDelete(block.id)}
               onNudge={(dir) => nudge(row, dir)}
-              extra={block.kind === 'repeat' ? <Times times={block.times} onChange={(n) => onTimes(block.id, n)} /> : undefined}
+              extra={
+                block.kind === 'repeat' ? (
+                  <Times times={block.times} onChange={(n) => onTimes(block.id, n)} />
+                ) : block.kind === 'if' || block.kind === 'while' ? (
+                  <CondPicker cond={block.cond} options={conditions} onChange={(c) => onCond(block.id, c)} />
+                ) : undefined
+              }
             />
           </Fragment>
         );

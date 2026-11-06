@@ -109,3 +109,38 @@ describe('function references', () => {
     expect(p.F2.map((b) => b.kind)).toEqual(['call', 'repeat']);
   });
 });
+
+describe('if blocks', () => {
+  it('parses conditions, if and else', () => {
+    const p = parseReference('repeat 9 { if wall_ahead { turn_right } else { forward } } while not tile_is r { forward }');
+    const r = p.main[0];
+    expect(r.kind).toBe('repeat');
+    const i = r.kind === 'repeat' ? r.body[0] : null;
+    expect(i && i.kind === 'if' && i.cond).toEqual({ sensor: 'wall_ahead' });
+    expect(i && i.kind === 'if' && [i.then.length, i.else.length]).toEqual([1, 1]);
+    const w = p.main[1];
+    expect(w.kind === 'while' && w.cond).toEqual({ sensor: 'tile_is', colour: 'r', not: true });
+  });
+
+  it('inserts into, moves between and removes from both branches', () => {
+    let p: Program = emptyProgram();
+    const ifb = makeBlock('if');
+    p = insertBlock(p, 'main', { parent: null, index: 0 }, ifb);
+    const a = makeBlock('forward');
+    const b = makeBlock('jump');
+    p = insertBlock(p, 'main', { parent: ifb.id, index: 0 }, a);
+    p = insertBlock(p, 'main', { parent: `${ifb.id}:else`, index: 0 }, b);
+    const got = p.main[0] as Extract<Block, { kind: 'if' }>;
+    expect(got.then.map((x) => x.id)).toEqual([a.id]);
+    expect(got.else.map((x) => x.id)).toEqual([b.id]);
+    expect(spotOf(p.main, b.id)).toEqual({ parent: `${ifb.id}:else`, index: 0 });
+    p = moveBlock(p, 'main', a.id, { parent: `${ifb.id}:else`, index: 1 });
+    const moved = p.main[0] as Extract<Block, { kind: 'if' }>;
+    expect(moved.then).toEqual([]);
+    expect(moved.else.map((x) => x.id)).toEqual([b.id, a.id]);
+    // An if can't go inside its own else branch.
+    expect(canPlace(p.main, { parent: `${ifb.id}:else`, index: 0 }, ifb)).toBe(false);
+    p = removeBlock(p, 'main', b.id);
+    expect((p.main[0] as Extract<Block, { kind: 'if' }>).else.map((x) => x.id)).toEqual([a.id]);
+  });
+});

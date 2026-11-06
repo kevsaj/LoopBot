@@ -1,5 +1,5 @@
-import { ACTIONS, FUNCTION_NAMES } from './types';
-import type { Action, Block, Condition, FunctionName, PaletteCommand, Program, Routine } from './types';
+import { ACTIONS, FUNCTION_NAMES, SENSORS } from './types';
+import type { Action, Block, Colour, Condition, FunctionName, PaletteCommand, Program, Routine, Sensor } from './types';
 
 let counter = 0;
 /** Block ids only need to be unique within a session's program. */
@@ -46,20 +46,50 @@ export function countCommands(p: Program): number {
  * Parses a level's `reference` string. Words are commands; loops use braces:
  * "repeat 3 { forward turn_right } pick_up", and they can nest.
  * Function bodies come after main: "F1 turn_right F1 def F1 { forward jump }".
+ * Conditions: "while not wall_ahead { forward }", "if tile_is r { turn_left } else { forward }".
  */
 export function parseReference(ref: string): Program {
   const words = ref.replace(/[{}]/g, ' $& ').trim().split(/\s+/).filter(Boolean);
   let i = 0;
+  // "not wall_ahead {", "on_switch {", "tile_is r {"
+  const condition = (): Condition => {
+    const not = words[i] === 'not';
+    if (not) i++;
+    const sensor = words[i++] as Sensor;
+    if (!(SENSORS as readonly string[]).includes(sensor)) throw new Error(`unknown sensor ${sensor} in reference: ${ref}`);
+    const cond: Condition = { sensor };
+    if (sensor === 'tile_is') cond.colour = words[i++] as Colour;
+    if (not) cond.not = true;
+    return cond;
+  };
+  const braced = (): Block[] => {
+    if (words[i++] !== '{') throw new Error(`missing { in reference: ${ref}`);
+    const body = list();
+    if (words[i++] !== '}') throw new Error(`missing } in reference: ${ref}`);
+    return body;
+  };
   const list = (): Block[] => {
     const out: Block[] = [];
     while (i < words.length && words[i] !== '}' && words[i] !== 'def') {
       const w = words[i++];
       if (w === 'repeat') {
         const times = Number(words[i++]);
-        if (!Number.isInteger(times) || words[i++] !== '{') throw new Error(`bad repeat in reference: ${ref}`);
-        const body = list();
-        if (words[i++] !== '}') throw new Error(`missing } in reference: ${ref}`);
-        out.push({ id: newId(), kind: 'repeat', times, body });
+        if (!Number.isInteger(times)) throw new Error(`bad repeat in reference: ${ref}`);
+        out.push({ id: newId(), kind: 'repeat', times, body: braced() });
+      } else if (w === 'while') {
+        const cond = condition();
+        out.push({ id: newId(), kind: 'while', cond, body: braced() });
+      } else if (w === 'if') {
+        const cond = condition();
+        const then = braced();
+        let other: Block[] = [];
+        if (words[i] === 'else') {
+          i++;
+          if (words[i++] !== '{') throw new Error(`bad else in reference: ${ref}`);
+          other = list();
+          if (words[i++] !== '}') throw new Error(`missing } in reference: ${ref}`);
+        }
+        out.push({ id: newId(), kind: 'if', cond, then, else: other });
       } else {
         out.push(makeBlock(w as PaletteCommand));
       }
@@ -137,83 +167,104 @@ export function toCode(p: Program, routines: Routine[] = ['main', ...FUNCTION_NA
 }
 
 // --- Editing helpers (pure; the editor keeps history of whole programs) ---
-// A program is a tree: repeat and while blocks hold a body (ED-5). A Spot names a place in it:
-// `parent` is the id of the loop whose body it's in, or null for the routine's top level.
+// A program is a tree: repeat and while blocks hold a body, and an if holds a then list and an
+// else list (ED-5). A Spot names a place in it: `parent` is the key of the list it's in, or null
+// for the routine's top level. A list's key is its block's id, or "<id>:else" for an if's else.
 
 export interface Spot {
   parent: string | null;
   index: number;
 }
 
-/** How deep loops may nest (a loop inside a loop inside a loop). */
+/** How deep blocks may nest (a loop inside a loop inside a loop). */
 export const MAX_DEPTH = 3;
 
-type WithBody = Extract<Block, { body: Block[] }>;
-const hasBody = (b: Block): b is WithBody => b.kind === 'repeat' || b.kind === 'while';
+export type Container = Extract<Block, { kind: 'repeat' | 'while' | 'if' }>;
+export const isContainer = (b: Block): b is Container => b.kind === 'repeat' || b.kind === 'while' || b.kind === 'if';
+
+const ELSE = ':else';
+/** The block a list key belongs to. */
+export const ownerOf = (key: string) => (key.endsWith(ELSE) ? key.slice(0, -ELSE.length) : key);
+export const elseKey = (id: string) => id + ELSE;
+
+/** The lists inside a block, with their keys. */
+export function childLists(b: Block): { key: string; list: Block[] }[] {
+  if (b.kind === 'repeat' || b.kind === 'while') return [{ key: b.id, list: b.body }];
+  if (b.kind === 'if') return [{ key: b.id, list: b.then }, { key: elseKey(b.id), list: b.else }];
+  return [];
+}
+
+function withList(b: Block, key: string, list: Block[]): Block {
+  if (b.kind === 'repeat' || b.kind === 'while') return { ...b, body: list };
+  if (b.kind === 'if') return key === b.id ? { ...b, then: list } : { ...b, else: list };
+  return b;
+}
 
 /** Finds a block anywhere in the tree. */
 export function findBlock(blocks: Block[], id: string): Block | null {
   for (const b of blocks) {
     if (b.id === id) return b;
-    if (hasBody(b)) {
-      const f = findBlock(b.body, id);
+    for (const c of childLists(b)) {
+      const f = findBlock(c.list, id);
       if (f) return f;
     }
   }
   return null;
 }
 
-/** Where a block sits: its parent loop (or null) and its index there. */
+/** Where a block sits: the key of its list (or null) and its index there. */
 export function spotOf(blocks: Block[], id: string, parent: string | null = null): Spot | null {
   for (let i = 0; i < blocks.length; i++) {
     const b = blocks[i];
     if (b.id === id) return { parent, index: i };
-    if (hasBody(b)) {
-      const f = spotOf(b.body, id, b.id);
+    for (const c of childLists(b)) {
+      const f = spotOf(c.list, id, c.key);
       if (f) return f;
     }
   }
   return null;
 }
 
-/** The list a spot points into, or null if its parent loop is gone. */
+/** The list a spot points into, or null if its block is gone. */
 export function listAt(blocks: Block[], parent: string | null): Block[] | null {
   if (parent == null) return blocks;
-  const b = findBlock(blocks, parent);
-  return b && hasBody(b) ? b.body : null;
+  const b = findBlock(blocks, ownerOf(parent));
+  return b ? (childLists(b).find((c) => c.key === parent)?.list ?? null) : null;
 }
 
-/** How many loops a spot is inside (top level is 0). */
+/** How many blocks a spot is inside (top level is 0). */
 export function depthOf(blocks: Block[], parent: string | null): number {
   let d = 0;
   let p = parent;
   while (p != null) {
     d++;
-    p = spotOf(blocks, p)?.parent ?? null;
+    p = spotOf(blocks, ownerOf(p))?.parent ?? null;
   }
   return d;
 }
 
-/** How many loop levels a block brings with it (an action is 0, a loop of actions is 1). */
+/** How many nesting levels a block brings with it (an action is 0, a loop of actions is 1). */
 export function loopHeight(b: Block): number {
-  return hasBody(b) ? 1 + Math.max(0, ...b.body.map(loopHeight)) : 0;
+  return isContainer(b) ? 1 + Math.max(0, ...childLists(b).flatMap((c) => c.list.map(loopHeight))) : 0;
 }
 
-/** Copies the path down to `parent` and applies `edit` to that list. */
+/** Copies the path down to the list `parent` and applies `edit` to it. */
 function editList(blocks: Block[], parent: string | null, edit: (list: Block[]) => Block[]): Block[] {
   if (parent == null) return edit(blocks);
   return blocks.map((b) => {
-    if (!hasBody(b)) return b;
-    if (b.id === parent) return { ...b, body: edit(b.body) };
-    const body = editList(b.body, parent, edit);
-    return body === b.body ? b : { ...b, body };
+    let out = b;
+    for (const c of childLists(b)) {
+      const list = c.key === parent ? edit(c.list) : editList(c.list, parent, edit);
+      if (list !== c.list) out = withList(out, c.key, list);
+    }
+    return out;
   });
 }
 
 /** Can `block` go at `spot`? Not inside itself, and not deeper than MAX_DEPTH. */
 export function canPlace(blocks: Block[], spot: Spot, block: Block): boolean {
   if (!listAt(blocks, spot.parent)) return false;
-  for (let p = spot.parent; p != null; p = spotOf(blocks, p)?.parent ?? null) if (p === block.id) return false;
+  for (let p = spot.parent; p != null; p = spotOf(blocks, ownerOf(p))?.parent ?? null) if (ownerOf(p) === block.id) return false;
   return depthOf(blocks, spot.parent) + loopHeight(block) <= MAX_DEPTH;
 }
 

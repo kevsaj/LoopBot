@@ -1,0 +1,55 @@
+{
+  "id": "t1-f33",
+  "title": "Switch Sweep",
+  "band": "control",
+  "size": {
+    "w": 8,
+    "h": 1
+  },
+  "tiles": [
+    "..ss..s."
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "all_switches_on"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "while",
+    "if"
+  ],
+  "sensors": [
+    "on_switch"
+  ],
+  "slots": {
+    "main": 4
+  },
+  "par": {
+    "commands": 4,
+    "steps": 9
+  },
+  "reference": "repeat 6 { forward if on_switch { activate } }",
+  "hints": [
+    "The switches aren't evenly spaced. Check every tile instead.",
+    "Step forward, then if you're on a switch, activate it. Do that six times.",
+    "repeat 6 { forward if on_switch { activate } }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": "PATCH: \"Check, then act. That's the whole Control Room in one line.\""
+  }
+}

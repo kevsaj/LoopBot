@@ -1,6 +1,7 @@
 // LV-1: a floor file matches the format, and its reference only uses allowed commands.
 
 import type { LevelFile } from '../sim/types';
+import { SENSORS } from '../sim/types';
 
 const TILE_CHARS = new Set(['.', '#', '_', 's', 'd', 'e', 'r', 'g', 'b', 'y']);
 const FACINGS = ['north', 'east', 'south', 'west'];
@@ -37,8 +38,19 @@ export function validateLevel(l: LevelFile): string[] {
   if (l.goals.includes('all_targets_filled') && !l.targets.length) e('all_targets_filled needs targets');
   if (l.goals.includes('bot_on_exit') && !l.tiles.some((r) => r.includes('e'))) e('bot_on_exit needs an exit tile');
   if (!l.slots.main || l.slots.main < 1) e('slots.main is required');
-  for (const word of l.reference.replace(/[{}]/g, ' ').trim().split(/\s+/)) {
-    if (/^\d+$/.test(word) || word === 'def') continue; // a repeat count, or a function body
+  const words = l.reference.replace(/[{}]/g, ' ').trim().split(/\s+/);
+  const sensors = new Set<string>(['wall_ahead', ...(l.sensors ?? [])]);
+  for (const s of l.sensors ?? []) if (!(SENSORS as readonly string[]).includes(s)) e(`unknown sensor ${s}`);
+  for (let i = 0; i < words.length; i++) {
+    const word = words[i];
+    if (/^\d+$/.test(word) || word === 'def' || word === 'not' || word === 'else') continue; // a count, a function body, or part of a condition
+    if (word === 'if' || word === 'while') {
+      if (!l.commands.includes(word)) e(`reference uses '${word}', which this floor does not allow`);
+      const sensor = words[i + 1] === 'not' ? words[(i += 2)] : words[(i += 1)];
+      if (!sensors.has(sensor)) e(`reference asks '${sensor}', which this floor's sensors do not include`);
+      if (sensor === 'tile_is') i++; // the colour
+      continue;
+    }
     if (!l.commands.includes(word as never)) e(`reference uses '${word}', which this floor does not allow`);
   }
   for (const link of l.links ?? []) {

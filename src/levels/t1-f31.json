@@ -1,0 +1,55 @@
+{
+  "id": "t1-f31",
+  "title": "Blind Spiral",
+  "band": "control",
+  "size": {
+    "w": 6,
+    "h": 5
+  },
+  "tiles": [
+    "......",
+    "#####.",
+    "#..e#.",
+    "#.###.",
+    "#....."
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "while"
+  ],
+  "slots": {
+    "main": 4
+  },
+  "par": {
+    "commands": 4,
+    "steps": 21
+  },
+  "reference": "repeat 5 { while not wall_ahead { forward } turn_right }",
+  "hints": [
+    "The corridor winds inward, and every side is a different length. Counting won't fit in four slots.",
+    "A while block keeps going as long as its sensor says so. Walk while there's no wall ahead, then turn right.",
+    "repeat 5 { while not wall_ahead { forward } turn_right }"
+  ],
+  "story": {
+    "intro": "PATCH: \"The Control Room. Bots up here don't count steps, they check. Try a while block: it repeats until a sensor says stop.\"",
+    "outro": null
+  }
+}

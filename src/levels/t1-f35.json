@@ -1,0 +1,59 @@
+{
+  "id": "t1-f35",
+  "title": "Switchback",
+  "band": "control",
+  "size": {
+    "w": 6,
+    "h": 5
+  },
+  "tiles": [
+    "...s..",
+    "#####.",
+    "...s#s",
+    "s####.",
+    "..s..."
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "all_switches_on"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "while",
+    "if"
+  ],
+  "sensors": [
+    "on_switch"
+  ],
+  "slots": {
+    "main": 6
+  },
+  "par": {
+    "commands": 6,
+    "steps": 28
+  },
+  "reference": "repeat 5 { while not wall_ahead { forward if on_switch { activate } } turn_right }",
+  "hints": [
+    "A spiral with switches on the way. Walk each side, checking every tile.",
+    "Put an if inside a while: forward, then activate if you're on a switch. Turn right at each wall.",
+    "repeat 5 { while not wall_ahead { forward if on_switch { activate } } turn_right }"
+  ],
+  "story": {
+    "intro": "VANTA: \"Cute. You can see a wall. Let's see you think.\"",
+    "outro": null
+  }
+}
