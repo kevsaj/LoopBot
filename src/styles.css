@@ -153,6 +153,17 @@ select:focus-visible {
   opacity: 0.32;
   background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300' preserveAspectRatio='none'><g fill='%23140b07'><rect x='94' y='0' width='4' height='26'/><path d='M80 26h32l-6 12h-20z'/><rect x='302' y='0' width='4' height='26'/><path d='M288 26h32l-6 12h-20z'/><path d='M20 300V250h18v-10h10v10h40v50z'/><path d='M330 300v-36h50v36z'/><circle cx='360' cy='120' r='26'/><circle cx='34' cy='160' r='18'/></g><g fill='%2324160f'><circle cx='360' cy='120' r='9'/><circle cx='34' cy='160' r='6'/></g></svg>") center / 100% 100% no-repeat;
 }
+/* Control Room band: a wall of monitors glowing in the dark, cool screen light on the floor. */
+.board-wrap.band-control {
+  background:
+    radial-gradient(ellipse 60% 30% at 50% 12%, rgba(110, 200, 255, 0.22), transparent 70%),
+    linear-gradient(180deg, #080d1c 0%, #111a33 45%, #1a2547 78%, #22305a 100%);
+}
+.board-wrap.band-control::after {
+  height: 100%;
+  opacity: 0.35;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300' preserveAspectRatio='none'><g fill='%23050914'><rect x='14' y='14' width='70' height='44' rx='4'/><rect x='92' y='14' width='70' height='44' rx='4'/><rect x='238' y='14' width='70' height='44' rx='4'/><rect x='316' y='14' width='70' height='44' rx='4'/><path d='M0 300v-40h120v40z'/><path d='M280 300v-40h120v40z'/></g><g fill='%2366c9ff' fill-opacity='0.5'><rect x='22' y='24' width='30' height='3'/><rect x='22' y='32' width='46' height='3'/><rect x='100' y='24' width='50' height='3'/><rect x='246' y='40' width='40' height='3'/><rect x='324' y='24' width='22' height='3'/><rect x='324' y='32' width='50' height='3'/><circle cx='20' cy='276' r='3'/><circle cx='34' cy='276' r='3'/><circle cx='380' cy='276' r='3'/></g></svg>") center / 100% 100% no-repeat;
+}
 .board-canvas {
   position: absolute;
   inset: 0;
@@ -460,6 +471,57 @@ select:focus-visible {
   text-align: center;
   font-weight: 800;
   font-variant-numeric: tabular-nums;
+}
+.cond {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: #4a2030;
+  border-radius: 999px;
+  padding: 2px;
+  touch-action: manipulation;
+}
+.cond button {
+  height: 34px;
+  border-radius: 999px;
+  border: 0;
+  background: #6a2a36;
+  color: var(--ink);
+  font-weight: 700;
+  font-size: 14px;
+  padding: 0 12px;
+}
+.cond .cond-not {
+  opacity: 0.45;
+  padding: 0 10px;
+}
+.cond .cond-not.on {
+  opacity: 1;
+  background: #e0706a;
+  color: #2b1a20;
+}
+.cond .cond-sensor:disabled {
+  opacity: 1;
+}
+.row.else-row {
+  height: 30px;
+}
+.row.else-row .row-btn {
+  border-radius: 4px;
+  background: #4a2030;
+  border-left: 6px solid var(--flow);
+  color: #e9b9c6;
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-align: left;
+  padding-left: 14px;
 }
 .row.loop-foot {
   height: 22px;
@@ -1249,6 +1311,13 @@ select:focus-visible {
 }
 .band-workshop .tower-band {
   color: #e0a978;
+}
+.band-control .tower-floors {
+  background: linear-gradient(#141c33, #0f1528);
+  border-color: #33437a;
+}
+.band-control .tower-band {
+  color: #8fc4f0;
 }
 .tower-ground {
   text-align: center;

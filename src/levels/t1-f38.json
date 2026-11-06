@@ -1,0 +1,75 @@
+{
+  "id": "t1-f38",
+  "title": "Night Patrol",
+  "band": "control",
+  "size": {
+    "w": 7,
+    "h": 4
+  },
+  "tiles": [
+    ".......",
+    "######.",
+    "######.",
+    "e......"
+  ],
+  "heights": null,
+  "boxes": [
+    {
+      "x": 2,
+      "y": 0,
+      "count": 1
+    },
+    {
+      "x": 6,
+      "y": 2,
+      "count": 1
+    },
+    {
+      "x": 2,
+      "y": 3,
+      "count": 1
+    }
+  ],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "while",
+    "if",
+    "F1"
+  ],
+  "sensors": [
+    "box_ahead"
+  ],
+  "slots": {
+    "main": 5,
+    "F1": 6
+  },
+  "par": {
+    "commands": 10,
+    "steps": 17
+  },
+  "reference": "F1 turn_right F1 turn_right F1 def F1 { while not wall_ahead { if box_ahead { jump jump } else { forward } } }",
+  "hints": [
+    "Three sides, the same rule on each: walk to the wall, hopping crates.",
+    "Teach F1 one side: while no wall ahead, if a crate is ahead jump twice, else forward. Main calls it and turns.",
+    "F1 turn_right F1 turn_right F1 def F1 { while not wall_ahead { if box_ahead { jump jump } else { forward } } }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": "PATCH: \"Routines that look before they leap. You're getting dangerous.\""
+  }
+}

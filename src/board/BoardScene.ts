@@ -76,6 +76,19 @@ const BANDS: Record<string, Partial<typeof C>> = {
     edge: 0x2a1712,
     void: 0x1d120f,
   },
+  // Control Room: cool glass-blue panels between slate consoles, lit by screens.
+  control: {
+    floorTop: 0xa9c4dc,
+    floorL: 0x7b97b3,
+    floorR: 0x5f7a96,
+    floorEdge: 0xd9e8f5,
+    wallTop: 0x3a4566,
+    wallL: 0x2a3350,
+    wallR: 0x20283f,
+    wallCap: 0x5b6a96,
+    edge: 0x111626,
+    void: 0x0b1020,
+  },
 };
 
 /** Switches the board to a band's palette. Call before the board draws a floor. */

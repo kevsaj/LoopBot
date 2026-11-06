@@ -1,0 +1,70 @@
+{
+  "id": "t1-f34",
+  "title": "Crate Hop",
+  "band": "control",
+  "size": {
+    "w": 8,
+    "h": 1
+  },
+  "tiles": [
+    ".......e"
+  ],
+  "heights": null,
+  "boxes": [
+    {
+      "x": 1,
+      "y": 0,
+      "count": 1
+    },
+    {
+      "x": 4,
+      "y": 0,
+      "count": 1
+    },
+    {
+      "x": 6,
+      "y": 0,
+      "count": 1
+    }
+  ],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "if"
+  ],
+  "sensors": [
+    "box_ahead"
+  ],
+  "slots": {
+    "main": 5
+  },
+  "par": {
+    "commands": 5,
+    "steps": 7
+  },
+  "reference": "repeat 4 { if box_ahead { jump jump } else { forward } }",
+  "hints": [
+    "Crates are scattered along the belt. Hop the crates, walk the gaps.",
+    "If a crate is ahead, jump on and jump off. Else, forward. Loop it.",
+    "repeat 4 { if box_ahead { jump jump } else { forward } }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

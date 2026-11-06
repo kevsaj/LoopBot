@@ -1,0 +1,77 @@
+{
+  "id": "t1-f40",
+  "title": "Control Core",
+  "band": "control",
+  "size": {
+    "w": 7,
+    "h": 5
+  },
+  "tiles": [
+    ".....s.",
+    "######.",
+    ".s..e#.",
+    ".#####.",
+    "s.....s"
+  ],
+  "heights": null,
+  "boxes": [
+    {
+      "x": 3,
+      "y": 0,
+      "count": 1
+    },
+    {
+      "x": 6,
+      "y": 2,
+      "count": 1
+    },
+    {
+      "x": 2,
+      "y": 4,
+      "count": 1
+    }
+  ],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "all_switches_on",
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "while",
+    "if"
+  ],
+  "sensors": [
+    "box_ahead",
+    "on_switch"
+  ],
+  "slots": {
+    "main": 9
+  },
+  "par": {
+    "commands": 9,
+    "steps": 30
+  },
+  "reference": "repeat 5 { while not wall_ahead { if box_ahead { jump jump } else { forward } if on_switch { activate } } turn_right }",
+  "hints": [
+    "The core spirals inward: crates to hop, switches to throw, and nothing evenly spaced.",
+    "Walk each side with a while. Inside: hop a crate or step forward, then activate if on a switch. Turn right at each wall.",
+    "repeat 5 { while not wall_ahead { if box_ahead { jump jump } else { forward } if on_switch { activate } } turn_right }"
+  ],
+  "story": {
+    "intro": "VANTA: \"The Control Core. Every sensor in this tower reports to me. Come and look.\"",
+    "outro": "PATCH: \"Control Room's ours. Only the roof is left. VANTA's up there, and so is the way out.\""
+  }
+}

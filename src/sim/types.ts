@@ -31,6 +31,7 @@ export type FunctionName = 'F1' | 'F2' | 'F3';
 export const FUNCTION_NAMES: readonly FunctionName[] = ['F1', 'F2', 'F3'];
 
 export type Sensor = 'wall_ahead' | 'box_ahead' | 'carrying' | 'on_target' | 'on_switch' | 'tile_is';
+export const SENSORS: readonly Sensor[] = ['wall_ahead', 'box_ahead', 'carrying', 'on_target', 'on_switch', 'tile_is'];
 
 export interface Condition {
   sensor: Sensor;
@@ -83,6 +84,8 @@ export interface LevelFile {
    * every switch toggles every door on the floor.
    */
   links?: Array<{ switch: Pos; doors: Pos[] }>;
+  /** Sensors the if and while blocks can ask about on this floor (CR-5); defaults to wall_ahead. */
+  sensors?: Sensor[];
 }
 
 export interface World {

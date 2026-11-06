@@ -2,9 +2,9 @@
 // Every change autosaves to local storage (ED-7). Runs never touch this state (ED-15).
 
 import { useCallback, useEffect, useReducer } from 'react';
-import type { Block, PaletteCommand, Program, Routine } from '../sim/types';
+import type { Block, Condition, PaletteCommand, Program, Routine } from '../sim/types';
 import type { Spot } from '../sim/program';
-import { emptyProgram, insertBlock, listAt, makeBlock, moveBlock, removeBlock, spotOf, updateBlock } from '../sim/program';
+import { emptyProgram, insertBlock, isContainer, listAt, makeBlock, moveBlock, removeBlock, spotOf, updateBlock } from '../sim/program';
 
 export interface EditorState {
   program: Program;
@@ -20,6 +20,7 @@ type Act =
   | { t: 'remove'; r: Routine; id: string }
   | { t: 'move'; r: Routine; id: string; to: Spot }
   | { t: 'times'; r: Routine; id: string; times: number }
+  | { t: 'cond'; r: Routine; id: string; cond: Condition }
   | { t: 'clear' }
   | { t: 'cursor'; r: Routine; spot: Spot | null }
   | { t: 'undo' }
@@ -52,8 +53,8 @@ export function reducer(s: EditorState, a: Act): EditorState {
       const at = cur ?? { parent: null, index: s.program[a.r].length };
       const block = makeBlock(a.cmd);
       const program = insertBlock(s.program, a.r, at, block);
-      // A new loop takes the cursor inside it, so the next commands go in its body.
-      const next: Spot | null = block.kind === 'repeat' || block.kind === 'while' ? { parent: block.id, index: 0 } : cur ? { ...cur, index: cur.index + 1 } : null;
+      // A new loop or if takes the cursor inside it, so the next commands go in its body.
+      const next: Spot | null = isContainer(block) ? { parent: block.id, index: 0 } : cur ? { ...cur, index: cur.index + 1 } : null;
       return commit(s, program, { ...s.cursor, [a.r]: next });
     }
     case 'place':
@@ -72,6 +73,11 @@ export function reducer(s: EditorState, a: Act): EditorState {
       return commit(
         s,
         updateBlock(s.program, a.r, a.id, (b) => (b.kind === 'repeat' ? { ...b, times: a.times } : b)),
+      );
+    case 'cond':
+      return commit(
+        s,
+        updateBlock(s.program, a.r, a.id, (b) => (b.kind === 'if' || b.kind === 'while' ? { ...b, cond: a.cond } : b)),
       );
     case 'clear':
       return commit(s, emptyProgram(), {}); // ED-6: still reachable through undo
@@ -131,6 +137,7 @@ export function useEditor(floorId: string) {
     remove: useCallback((r: Routine, id: string) => dispatch({ t: 'remove', r, id }), []),
     move: useCallback((r: Routine, id: string, to: Spot) => dispatch({ t: 'move', r, id, to }), []),
     setTimes: useCallback((r: Routine, id: string, times: number) => dispatch({ t: 'times', r, id, times }), []),
+    setCond: useCallback((r: Routine, id: string, cond: Condition) => dispatch({ t: 'cond', r, id, cond }), []),
     clear: useCallback(() => dispatch({ t: 'clear' }), []),
     setCursor: useCallback((r: Routine, spot: Spot | null) => dispatch({ t: 'cursor', r, spot }), []),
     undo: useCallback(() => dispatch({ t: 'undo' }), []),

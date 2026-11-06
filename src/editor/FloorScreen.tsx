@@ -1,7 +1,7 @@
 // The floor screen: board on top, program below (see "Floor screen sketch" in the doc).
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { LevelFile, PaletteCommand, Routine, World } from '../sim/types';
+import type { Condition, LevelFile, PaletteCommand, Routine, World } from '../sim/types';
 import { FUNCTION_NAMES } from '../sim/types';
 import { Runner } from '../sim/interpreter';
 import type { Outcome } from '../sim/interpreter';
@@ -50,6 +50,16 @@ export function stars(level: LevelFile, commands: number, steps: number) {
 export function FloorScreen({ level, floorNumber, floorCount, progress, setProgress, onGo, onTower }: Props) {
   const editor = useEditor(level.id);
   const { program } = editor.state;
+  // The questions if and while can ask here: wall ahead always, plus the floor's own sensors.
+  const conditions = useMemo<Condition[]>(() => {
+    const out: Condition[] = [];
+    for (const sensor of ['wall_ahead', ...(level.sensors ?? [])] as const) {
+      if (sensor === 'tile_is') {
+        for (const colour of ['r', 'g', 'b', 'y'] as const) if (level.tiles.some((row) => row.includes(colour))) out.push({ sensor, colour });
+      } else if (!out.some((c) => c.sensor === sensor)) out.push({ sensor });
+    }
+    return out;
+  }, [level]);
   const routines = useMemo(
     () => (['main', ...FUNCTION_NAMES] as Routine[]).filter((r) => (level.slots[r] ?? 0) > 0),
     [level],
@@ -420,6 +430,11 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
                 editor.setTimes(routine, id, n);
               }}
               onDelete={del}
+              conditions={conditions}
+              onCond={(id, c) => {
+                fx.tap();
+                editor.setCond(routine, id, c);
+              }}
             />
           )}
           {deleted && (

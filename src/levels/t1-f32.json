@@ -1,0 +1,59 @@
+{
+  "id": "t1-f32",
+  "title": "Junction Box",
+  "band": "control",
+  "size": {
+    "w": 8,
+    "h": 5
+  },
+  "tiles": [
+    "#####..e",
+    "#####.##",
+    "##...r##",
+    "##.#####",
+    "..r#####"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 4,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "while",
+    "if"
+  ],
+  "sensors": [
+    "tile_is"
+  ],
+  "slots": {
+    "main": 6
+  },
+  "par": {
+    "commands": 6,
+    "steps": 15
+  },
+  "reference": "repeat 5 { while not wall_ahead { forward } if tile_is r { turn_left } else { turn_right } }",
+  "hints": [
+    "Walk to each wall. Red floor means turn left; anywhere else, turn right.",
+    "Inside a loop: while no wall ahead, forward. Then an if: on red turn left, else turn right.",
+    "repeat 5 { while not wall_ahead { forward } if tile_is r { turn_left } else { turn_right } }"
+  ],
+  "story": {
+    "intro": "PATCH: \"An if block asks once and picks a branch. Tap its sensor to change what it asks.\"",
+    "outro": null
+  }
+}
