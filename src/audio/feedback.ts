@@ -144,6 +144,36 @@ export const fx = {
     tone(180, 0.3, { type: 'sawtooth', slideTo: 60, gain: 0.12 });
     buzz('error');
   },
+  /** A star landing on the results card; each one rings a step higher. */
+  star(n: number) {
+    const base = [659, 784, 1047][Math.min(2, Math.max(0, n - 1))];
+    tone(base, 0.16, { gain: 0.11 });
+    tone(base * 2, 0.22, { type: 'sine', gain: 0.04, delay: 0.04 });
+    buzz(n === 3 ? 'medium' : 'light');
+  },
+  /** An empty star slot: a soft, low tick. */
+  starMiss() {
+    tone(220, 0.07, { type: 'sine', gain: 0.05 });
+  },
+  /** The 3-star moment: a bright fanfare with a pop of noise for the confetti. */
+  cheer() {
+    noise(0.12, 0.06, 3000);
+    [784, 988, 1175, 1568].forEach((f, i) => tone(f, 0.22, { gain: 0.09, delay: 0.05 + i * 0.07 }));
+    tone(392, 0.7, { type: 'sine', gain: 0.06, delay: 0.05 });
+    buzz('success');
+  },
+  /** The elevator arriving at a floor. */
+  ding() {
+    tone(1319, 0.5, { type: 'sine', gain: 0.07 });
+    tone(1047, 0.7, { type: 'sine', gain: 0.06, delay: 0.18 });
+  },
+  /** A floor unlocking on the tower map. */
+  unlock() {
+    tone(500, 0.06, { type: 'square', gain: 0.04 });
+    tone(760, 0.12, { gain: 0.09, delay: 0.07 });
+    tone(1140, 0.18, { gain: 0.06, delay: 0.14 });
+    buzz('medium');
+  },
   win() {
     [523, 659, 784, 1047].forEach((f, i) => tone(f, 0.18, { gain: 0.1, delay: i * 0.09 }));
     // a low "lift" chord under the arpeggio

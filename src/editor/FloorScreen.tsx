@@ -21,6 +21,7 @@ import { SettingsSheet } from '../SettingsSheet';
 import type { Progress } from '../progress';
 import { recordClear, recordFail } from '../progress';
 import { HintSheet } from './HintSheet';
+import { ResultsCard } from './ResultsCard';
 import { tutorialStep, TUTORIAL_TEXT } from './tutorial';
 
 const SPEEDS = [
@@ -68,6 +69,10 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
   const [terminal, setTerminal] = useState<string>(level.story.intro ?? '> ready');
   const [outcome, setOutcome] = useState<Outcome | null>(null);
   const [showResults, setShowResults] = useState(false);
+  // Best stars before the latest clear, so the results card can say "New best!".
+  const [prevBest, setPrevBest] = useState(0);
+  const progressRef = useRef(progress);
+  progressRef.current = progress;
   const [rotateSignal, setRotateSignal] = useState(0);
   const [sheet, setSheet] = useState<'hints' | 'settings' | null>(null);
   const [hasRun, setHasRun] = useState(false);
@@ -125,6 +130,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
         const s = stars(level, countCommands(program), o.steps);
         setTerminal(`> floor cleared in ${o.steps} steps`);
         fx.win();
+        setPrevBest(progressRef.current.stars[level.id] ?? 0);
         setProgress((p) => recordClear(p, level.id, s));
         window.setTimeout(() => setShowResults(true), SPEEDS[speed].ms + 900); // let the light-up wave play first
       } else {
@@ -428,49 +434,20 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
       {sheet === 'settings' && <SettingsSheet progress={progress} setProgress={setProgress} onClose={() => setSheet(null)} />}
 
       {showResults && outcome?.status === 'cleared' && (
-        <div className="results-backdrop" onClick={() => setShowResults(false)}>
-          <div className="results" role="dialog" aria-label="Floor cleared" onClick={(e) => e.stopPropagation()}>
-            <h2>Floor {floorNumber} cleared</h2>
-            <div className="stars" aria-label={`${earned} of 3 stars`}>
-              {[1, 2, 3].map((i) => (
-                <span key={i} className={i <= earned ? 'star on' : 'star'}>
-                  ★
-                </span>
-              ))}
-            </div>
-            <table className="score">
-              <tbody>
-                <tr>
-                  <td>Commands</td>
-                  <td>{total}</td>
-                  <td className="par">par {level.par.commands}</td>
-                </tr>
-                <tr>
-                  <td>Steps</td>
-                  <td>{outcome.steps}</td>
-                  <td className="par">par {level.par.steps}</td>
-                </tr>
-              </tbody>
-            </table>
-            {earned < 3 && <p className="tip">Fewer commands = more stars.</p>}
-            {level.story.outro && <p className="story">{level.story.outro}</p>}
-            <div className="results-actions">
-              <button type="button" className="pill" onClick={() => (fx.tap(), reset())}>
-                Try again
-              </button>
-              {floorNumber === floorCount && (
-                <button type="button" className="pill primary" onClick={() => (fx.tap(), onTower())}>
-                  Tower
-                </button>
-              )}
-              {floorNumber < floorCount && (
-                <button type="button" className="pill primary" onClick={() => (fx.tap(), onGo(floorNumber))}>
-                  Next floor →
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
+        <ResultsCard
+          floorNumber={floorNumber}
+          floorCount={floorCount}
+          earned={earned}
+          prevBest={prevBest}
+          commands={total}
+          steps={outcome.steps}
+          par={level.par}
+          outro={level.story.outro}
+          onClose={() => setShowResults(false)}
+          onRetry={reset}
+          onNext={() => onGo(floorNumber)}
+          onTower={onTower}
+        />
       )}
     </div>
   );

@@ -1,10 +1,12 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { LEVELS } from './levels';
 import { FloorScreen } from './editor/FloorScreen';
 import { TowerMap } from './TowerMap';
 import { SettingsSheet } from './SettingsSheet';
 import { isUnlocked, loadProgress, saveProgress } from './progress';
 import type { Progress } from './progress';
+import { fx } from './audio/feedback';
+import { reducedMotion } from './fx/confetti';
 
 function loadIndex() {
   try {
@@ -29,16 +31,36 @@ export default function App() {
       return next;
     });
   }, []);
+  // Elevator doors: they close, the floor changes behind them, and they open with a ding.
+  const [doors, setDoors] = useState<'closing' | 'opening' | null>(null);
+  const doorTimer = useRef<number | undefined>(undefined);
   const go = useCallback((i: number) => {
     const n = Math.max(0, Math.min(LEVELS.length - 1, i));
-    setIndex(n);
-    setScreen('floor');
-    try {
-      localStorage.setItem('loopbot.floor', String(n));
-    } catch {
-      /* ignore */
-    }
+    const arrive = () => {
+      setIndex(n);
+      setScreen('floor');
+      try {
+        localStorage.setItem('loopbot.floor', String(n));
+      } catch {
+        /* ignore */
+      }
+    };
+    if (reducedMotion()) return arrive();
+    window.clearTimeout(doorTimer.current);
+    setDoors('closing');
+    doorTimer.current = window.setTimeout(() => {
+      arrive();
+      fx.ding();
+      setDoors('opening');
+      doorTimer.current = window.setTimeout(() => setDoors(null), 520);
+    }, 380);
   }, []);
+  const elevator = doors && (
+    <div className={`elevator ${doors}`} aria-hidden="true">
+      <span className="door left" />
+      <span className="door right" />
+    </div>
+  );
 
   const ids = LEVELS.map((l) => l.id);
   // Never open a locked floor (e.g. a saved index from before progress existed).
@@ -50,20 +72,24 @@ export default function App() {
       <>
         <TowerMap levels={LEVELS} progress={progress} current={safeIndex} onPick={go} onSettings={() => setSettings(true)} />
         {settings && <SettingsSheet progress={progress} setProgress={setProgress} onClose={() => setSettings(false)} />}
+        {elevator}
       </>
     );
   }
   // Keyed by floor, so each floor mounts its own editor and autosave slot.
   return (
-    <FloorScreen
-      key={level.id}
-      level={level}
-      floorNumber={safeIndex + 1}
-      floorCount={LEVELS.length}
-      progress={progress}
-      setProgress={setProgress}
-      onGo={go}
-      onTower={() => setScreen('map')}
-    />
+    <>
+      <FloorScreen
+        key={level.id}
+        level={level}
+        floorNumber={safeIndex + 1}
+        floorCount={LEVELS.length}
+        progress={progress}
+        setProgress={setProgress}
+        onGo={go}
+        onTower={() => setScreen('map')}
+      />
+      {elevator}
+    </>
   );
 }
