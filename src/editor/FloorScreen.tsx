@@ -15,6 +15,10 @@ import { COMMAND_META, PALETTE_ORDER, blockCommand } from './commands';
 import { Board } from '../board/Board';
 import type { BoardUpdate } from '../board/BoardScene';
 import { fx, isMuted, setMuted } from '../audio/feedback';
+import type { Progress } from '../progress';
+import { recordClear, recordFail } from '../progress';
+import { HintSheet } from './HintSheet';
+import { tutorialStep, TUTORIAL_TEXT } from './tutorial';
 
 const SPEEDS = [
   { label: '1x', ms: 520 },
@@ -26,8 +30,9 @@ interface Props {
   level: LevelFile;
   floorNumber: number;
   floorCount: number;
+  progress: Progress;
+  setProgress(update: (p: Progress) => Progress): void;
   onGo(index: number): void;
-  onCleared(stars: number): void;
 }
 
 export function stars(level: LevelFile, commands: number, steps: number) {
@@ -36,7 +41,7 @@ export function stars(level: LevelFile, commands: number, steps: number) {
   return 1;
 }
 
-export function FloorScreen({ level, floorNumber, floorCount, onGo, onCleared }: Props) {
+export function FloorScreen({ level, floorNumber, floorCount, progress, setProgress, onGo }: Props) {
   const editor = useEditor(level.id);
   const { program } = editor.state;
   const routines = useMemo(
@@ -61,6 +66,8 @@ export function FloorScreen({ level, floorNumber, floorCount, onGo, onCleared }:
   const [showResults, setShowResults] = useState(false);
   const [rotateSignal, setRotateSignal] = useState(0);
   const [muted, setMutedState] = useState(isMuted());
+  const [sheet, setSheet] = useState<'hints' | 'settings' | null>(null);
+  const [hasRun, setHasRun] = useState(false);
 
   const reset = useCallback(
     (quiet = false) => {
@@ -110,21 +117,23 @@ export function FloorScreen({ level, floorNumber, floorCount, onGo, onCleared }:
         setCrashId(o.blockId);
         setTerminal(o.error);
         fx.crash();
+        setProgress((p) => recordFail(p, level.id));
       } else if (o.status === 'cleared') {
         const s = stars(level, countCommands(program), o.steps);
         setTerminal(`> floor cleared in ${o.steps} steps`);
         fx.win();
-        onCleared(s);
+        setProgress((p) => recordClear(p, level.id, s));
         window.setTimeout(() => setShowResults(true), SPEEDS[speed].ms + 250);
       } else {
         setActiveIds(new Set());
         setTerminal(`> program ended after ${o.steps} steps. Not there yet: add more commands.`);
         fx.denied();
+        setProgress((p) => recordFail(p, level.id));
       }
     } else if (!ev) {
       setPlaying(false);
     }
-  }, [program, level, speed, onCleared]);
+  }, [program, level, speed, setProgress]);
 
   // Run loop
   const stepRef = useRef(stepOnce);
@@ -151,6 +160,7 @@ export function FloorScreen({ level, floorNumber, floorCount, onGo, onCleared }:
       reset(true);
       setTerminal('> running');
     }
+    setHasRun(true);
     setPlaying(true);
     // first step right away, so a tap feels instant
     window.setTimeout(() => stepRef.current(), 0);
@@ -165,6 +175,7 @@ export function FloorScreen({ level, floorNumber, floorCount, onGo, onCleared }:
       return;
     }
     if (runner.current?.done) reset(true);
+    setHasRun(true);
     stepOnce();
   };
 
@@ -255,6 +266,17 @@ export function FloorScreen({ level, floorNumber, floorCount, onGo, onCleared }:
   const palette = [...PALETTE_ORDER, ...FUNCTION_NAMES.filter((f) => (level.slots[f] ?? 0) > 0)];
   const status = outcome?.status ?? (playing ? 'running' : steps > 0 ? 'paused' : 'ready');
   const earned = outcome?.status === 'cleared' ? stars(level, total, outcome.steps) : 0;
+  const tut = tutorialStep({
+    enabled: progress.tutorial,
+    floorId: level.id,
+    clearedBefore: (progress.stars[level.id] ?? 0) > 0,
+    program,
+    hasRun,
+    playing,
+    outcome: outcome?.status ?? null,
+  });
+  const pulse = (cmd: PaletteCommand) =>
+    (tut === 'tap' && cmd === 'forward') || (tut === 'turn' && (cmd === 'turn_left' || cmd === 'turn_right'));
 
   return (
     <div className="floor">
@@ -274,26 +296,23 @@ export function FloorScreen({ level, floorNumber, floorCount, onGo, onCleared }:
           </select>
           <span className="floor-name">{level.title}</span>
         </div>
-        <div className="par-meter" aria-live="polite">
-          {total} / {Object.values(level.slots).reduce((a, b) => a + (b ?? 0), 0)} commands, par {level.par.commands}
-        </div>
-        <button
-          type="button"
-          className="icon-btn"
-          aria-label={muted ? 'Sound off' : 'Sound on'}
-          onClick={() => {
-            setMuted(!muted);
-            setMutedState(!muted);
-          }}
-        >
-          {muted ? '🔇' : '🔊'}
+        {level.hints.length > 0 && (
+          <button type="button" className="hint-btn" onClick={() => (fx.tap(), setSheet('hints'))} aria-label={`Hint, ${progress.hints} left`}>
+            Hint <span className="hint-count">{progress.hints}</span>
+          </button>
+        )}
+        <button type="button" className="icon-btn" aria-label="Settings" onClick={() => (fx.tap(), setSheet('settings'))}>
+          ⚙
         </button>
       </header>
 
       <section className="board-wrap">
         <Board update={board} rotateSignal={rotateSignal} />
         <div className="step-counter" aria-live="polite">
-          step {steps}
+          <span>
+            {total} / {Object.values(level.slots).reduce((a, b) => a + (b ?? 0), 0)} commands · par {level.par.commands}
+          </span>
+          <span>step {steps}</span>
         </div>
         <button type="button" className="rotate-btn" onClick={() => (fx.tap(), setRotateSignal((n) => n + 1))} aria-label="Turn the board 90 degrees">
           ⟲ Turn 90
@@ -305,7 +324,7 @@ export function FloorScreen({ level, floorNumber, floorCount, onGo, onCleared }:
 
       <section className="editor">
         <div className="run-controls">
-          <button type="button" className={`pill primary${playing ? ' on' : ''}`} onClick={run}>
+          <button type="button" className={`pill primary${playing ? ' on' : ''}${tut === 'run' ? ' pulse' : ''}`} onClick={run}>
             {playing ? '❚❚ Pause' : '▶ Run'}
           </button>
           <button type="button" className="pill" onClick={step}>
@@ -342,6 +361,11 @@ export function FloorScreen({ level, floorNumber, floorCount, onGo, onCleared }:
         </div>
 
         <div className="program-wrap">
+          {tut && (
+            <div className={`tutorial-bubble tut-${tut}`} role="status">
+              {TUTORIAL_TEXT[tut]}
+            </div>
+          )}
           {tab === 'code' ? (
             <CodeView program={program} routines={routines} activeIds={activeIds} crashId={crashId} />
           ) : (
@@ -381,7 +405,7 @@ export function FloorScreen({ level, floorNumber, floorCount, onGo, onCleared }:
               <button
                 key={cmd}
                 type="button"
-                className={`chip tone-${meta.tone}${allowed ? '' : ' locked'}${allowed && full ? ' full' : ''}`}
+                className={`chip tone-${meta.tone}${allowed ? '' : ' locked'}${allowed && full ? ' full' : ''}${pulse(cmd) ? ' pulse' : ''}`}
                 aria-disabled={!allowed || full}
                 aria-label={allowed ? `Add ${meta.label}` : `${meta.label}, locked on this floor`}
                 onClick={() => add(cmd)}
@@ -395,6 +419,36 @@ export function FloorScreen({ level, floorNumber, floorCount, onGo, onCleared }:
           })}
         </div>
       </section>
+
+      {sheet === 'hints' && <HintSheet level={level} progress={progress} setProgress={setProgress} onClose={() => setSheet(null)} />}
+
+      {sheet === 'settings' && (
+        <div className="results-backdrop" onClick={() => setSheet(null)}>
+          <div className="results sheet" role="dialog" aria-label="Settings" onClick={(e) => e.stopPropagation()}>
+            <h2>Settings</h2>
+            <label className="setting">
+              <span>Sound and vibration</span>
+              <input
+                type="checkbox"
+                checked={!muted}
+                onChange={() => {
+                  setMuted(!muted);
+                  setMutedState(!muted);
+                }}
+              />
+            </label>
+            <label className="setting">
+              <span>First-run tutorial tips</span>
+              <input type="checkbox" checked={progress.tutorial} onChange={() => setProgress((p) => ({ ...p, tutorial: !p.tutorial }))} />
+            </label>
+            <div className="results-actions">
+              <button type="button" className="pill primary" onClick={() => setSheet(null)}>
+                Done
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {showResults && outcome?.status === 'cleared' && (
         <div className="results-backdrop" onClick={() => setShowResults(false)}>
