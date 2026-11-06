@@ -6,14 +6,15 @@ import { FUNCTION_NAMES } from '../sim/types';
 import { Runner } from '../sim/interpreter';
 import type { Outcome } from '../sim/interpreter';
 import { createWorld } from '../sim/world';
-import { countCommands, makeBlock } from '../sim/program';
+import type { Spot } from '../sim/program';
+import { MAX_DEPTH, canPlace, countBlocks, countCommands, findBlock, makeBlock, spotOf } from '../sim/program';
 import type { Block } from '../sim/types';
 import { useEditor } from './useEditor';
 import { ProgramList } from './ProgramList';
 import { EditorDnd, PaletteChip } from './dnd';
 import { CodeView } from './CodeView';
 import { Terminal } from './Terminal';
-import { COMMAND_META, PALETTE_ORDER, blockCommand } from './commands';
+import { COMMAND_META, CONTROL_ORDER, PALETTE_ORDER, blockCommand } from './commands';
 import { Board } from '../board/Board';
 import type { BoardUpdate } from '../board/BoardScene';
 import { fx } from '../audio/feedback';
@@ -192,12 +193,13 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
   const limit = level.slots[routine] ?? 0;
   const total = countCommands(program);
   const list = program[routine];
-  const full = list.length >= limit;
-  const [deleted, setDeleted] = useState<{ r: Routine; index: number; block: Block } | null>(null);
+  const full = countBlocks(list) >= limit;
+  const [deleted, setDeleted] = useState<{ r: Routine; spot: Spot; block: Block } | null>(null);
   const deletedTimer = useRef<number | undefined>(undefined);
   const [confirmClear, setConfirmClear] = useState(false);
 
-  const canAdd = (cmd: PaletteCommand) => {
+  const cursorSpot = (): Spot => editor.state.cursor[routine] ?? { parent: null, index: list.length };
+  const canAdd = (cmd: PaletteCommand, spot: Spot = cursorSpot()) => {
     if (!level.commands.includes(cmd)) {
       fx.denied();
       setTerminal(`> ${COMMAND_META[cmd].label} unlocks on a later floor`);
@@ -208,6 +210,11 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
       setTerminal(`> no empty slots left in ${routine}`);
       return false;
     }
+    if (!canPlace(list, spot, makeBlock(cmd))) {
+      fx.denied();
+      setTerminal(`> loops can only nest ${MAX_DEPTH} deep`);
+      return false;
+    }
     return true;
   };
   const add = (cmd: PaletteCommand) => {
@@ -216,23 +223,25 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
     fx.snap();
   };
   // Dragged in from the palette: lands where it was dropped.
-  const drop = (cmd: PaletteCommand, index: number) => {
-    editor.restore(routine, index, makeBlock(cmd));
+  const drop = (cmd: PaletteCommand, spot: Spot) => {
+    editor.place(routine, spot, makeBlock(cmd));
     fx.snap();
   };
 
-  const del = (index: number) => {
-    const block = list[index];
-    editor.remove(routine, index);
+  const del = (id: string) => {
+    const spot = spotOf(list, id);
+    const removed = findBlock(list, id);
+    if (!spot || !removed) return;
+    editor.remove(routine, id);
     fx.remove();
-    setDeleted({ r: routine, index, block });
+    setDeleted({ r: routine, spot, block: removed });
     window.clearTimeout(deletedTimer.current);
     deletedTimer.current = window.setTimeout(() => setDeleted(null), 4000); // ED-3
   };
 
   const undoDelete = () => {
     if (!deleted) return;
-    editor.restore(deleted.r, deleted.index, deleted.block);
+    editor.place(deleted.r, deleted.spot, deleted.block);
     setDeleted(null);
     fx.undo();
   };
@@ -281,7 +290,11 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
-  const palette = [...PALETTE_ORDER, ...FUNCTION_NAMES.filter((f) => (level.slots[f] ?? 0) > 0)];
+  const palette = [
+    ...PALETTE_ORDER,
+    ...CONTROL_ORDER.filter((c) => level.commands.includes(c)),
+    ...FUNCTION_NAMES.filter((f) => (level.slots[f] ?? 0) > 0),
+  ];
   const status = outcome?.status ?? (playing ? 'running' : steps > 0 ? 'paused' : 'ready');
   const earned = outcome?.status === 'cleared' ? stars(level, total, outcome.steps) : 0;
   const tut = tutorialStep({
@@ -330,7 +343,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
       </section>
 
       <section className="editor">
-        <EditorDnd blocks={list} canAdd={canAdd} onDrop={drop} onMove={(from, to) => editor.move(routine, from, to)}>
+        <EditorDnd blocks={list} canAdd={canAdd} onDrop={drop} onMove={(id, to) => (editor.move(routine, id, to), fx.snap())}>
         <div className="run-controls">
           <button type="button" className={`pill primary${playing ? ' on' : ''}${tut === 'run' ? ' pulse' : ''}`} onClick={run}>
             {playing ? '❚❚ Pause' : '▶ Run'}
@@ -383,13 +396,17 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
               cursor={editor.state.cursor[routine] ?? null}
               activeIds={activeIds}
               crashId={crashId}
-              onTap={(i) => {
+              onCursor={(spot) => {
                 fx.tap();
-                editor.setCursor(routine, i + 1 >= list.length ? null : i + 1);
+                editor.setCursor(routine, spot);
               }}
-              onTapEnd={() => {
+              onMove={(id, to) => {
+                editor.move(routine, id, to);
+                fx.snap();
+              }}
+              onTimes={(id, n) => {
                 fx.tap();
-                editor.setCursor(routine, null);
+                editor.setTimes(routine, id, n);
               }}
               onDelete={del}
             />

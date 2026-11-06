@@ -37,7 +37,8 @@ export function validateLevel(l: LevelFile): string[] {
   if (l.goals.includes('all_targets_filled') && !l.targets.length) e('all_targets_filled needs targets');
   if (l.goals.includes('bot_on_exit') && !l.tiles.some((r) => r.includes('e'))) e('bot_on_exit needs an exit tile');
   if (!l.slots.main || l.slots.main < 1) e('slots.main is required');
-  for (const word of l.reference.trim().split(/\s+/)) {
+  for (const word of l.reference.replace(/[{}]/g, ' ').trim().split(/\s+/)) {
+    if (/^\d+$/.test(word)) continue; // a repeat count
     if (!l.commands.includes(word as never)) e(`reference uses '${word}', which this floor does not allow`);
   }
   for (const link of l.links ?? []) {

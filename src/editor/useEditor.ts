@@ -3,23 +3,25 @@
 
 import { useCallback, useEffect, useReducer } from 'react';
 import type { Block, PaletteCommand, Program, Routine } from '../sim/types';
-import { emptyProgram, insertAt, makeBlock, move, removeAt } from '../sim/program';
+import type { Spot } from '../sim/program';
+import { emptyProgram, insertBlock, listAt, makeBlock, moveBlock, removeBlock, spotOf, updateBlock } from '../sim/program';
 
 export interface EditorState {
   program: Program;
   past: Program[];
   future: Program[];
-  /** Insert position per routine; null means "end of the program" (ED-1). */
-  cursor: Partial<Record<Routine, number | null>>;
+  /** Insert position per routine; null means "end of the program" (ED-1). It can sit inside a loop. */
+  cursor: Partial<Record<Routine, Spot | null>>;
 }
 
 type Act =
   | { t: 'insert'; r: Routine; cmd: PaletteCommand }
-  | { t: 'restore'; r: Routine; index: number; block: Block }
-  | { t: 'remove'; r: Routine; index: number }
-  | { t: 'move'; r: Routine; from: number; to: number }
+  | { t: 'place'; r: Routine; spot: Spot; block: Block }
+  | { t: 'remove'; r: Routine; id: string }
+  | { t: 'move'; r: Routine; id: string; to: Spot }
+  | { t: 'times'; r: Routine; id: string; times: number }
   | { t: 'clear' }
-  | { t: 'cursor'; r: Routine; index: number | null }
+  | { t: 'cursor'; r: Routine; spot: Spot | null }
   | { t: 'undo' }
   | { t: 'redo' };
 
@@ -29,32 +31,52 @@ function commit(s: EditorState, program: Program, cursor = s.cursor): EditorStat
   return { program, past: [...s.past, s.program].slice(-HISTORY_CAP), future: [], cursor };
 }
 
-function clampCursor(s: EditorState, r: Routine, delta: number, at: number): EditorState['cursor'] {
-  const c = s.cursor[r];
-  if (c == null) return s.cursor;
-  return { ...s.cursor, [r]: c > at || (delta > 0 && c === at) ? c + delta : c };
+/** Keeps a cursor pointing at the same place after a block is added (+1) or removed (-1) at `at`. */
+function shift(cur: Spot | null | undefined, at: Spot, delta: 1 | -1): Spot | null {
+  if (!cur) return null;
+  if (cur.parent !== at.parent) return cur;
+  return cur.index > at.index || (delta > 0 && cur.index === at.index) ? { ...cur, index: cur.index + delta } : cur;
 }
 
-function reducer(s: EditorState, a: Act): EditorState {
+/** Drops a cursor whose loop no longer exists. */
+function valid(p: Program, r: Routine, cur: Spot | null | undefined): Spot | null {
+  if (!cur) return null;
+  const list = listAt(p[r], cur.parent);
+  return list ? { parent: cur.parent, index: Math.min(cur.index, list.length) } : null;
+}
+
+export function reducer(s: EditorState, a: Act): EditorState {
   switch (a.t) {
     case 'insert': {
-      const list = s.program[a.r];
-      const at = s.cursor[a.r] ?? list.length;
-      const next = commit(s, insertAt(s.program, a.r, at, makeBlock(a.cmd)));
-      next.cursor = s.cursor[a.r] == null ? s.cursor : { ...s.cursor, [a.r]: at + 1 };
-      return next;
+      const cur = valid(s.program, a.r, s.cursor[a.r]);
+      const at = cur ?? { parent: null, index: s.program[a.r].length };
+      const block = makeBlock(a.cmd);
+      const program = insertBlock(s.program, a.r, at, block);
+      // A new loop takes the cursor inside it, so the next commands go in its body.
+      const next: Spot | null = block.kind === 'repeat' || block.kind === 'while' ? { parent: block.id, index: 0 } : cur ? { ...cur, index: cur.index + 1 } : null;
+      return commit(s, program, { ...s.cursor, [a.r]: next });
     }
-    case 'restore':
-      return commit(s, insertAt(s.program, a.r, Math.min(a.index, s.program[a.r].length), a.block), clampCursor(s, a.r, 1, a.index));
-    case 'remove':
-      return commit(s, removeAt(s.program, a.r, a.index), clampCursor(s, a.r, -1, a.index));
-    case 'move':
-      if (a.from === a.to) return s;
-      return commit(s, move(s.program, a.r, a.from, a.to));
+    case 'place':
+      return commit(s, insertBlock(s.program, a.r, a.spot, a.block), { ...s.cursor, [a.r]: shift(s.cursor[a.r], a.spot, 1) });
+    case 'remove': {
+      const at = spotOf(s.program[a.r], a.id);
+      if (!at) return s;
+      const program = removeBlock(s.program, a.r, a.id);
+      return commit(s, program, { ...s.cursor, [a.r]: valid(program, a.r, shift(s.cursor[a.r], at, -1)) });
+    }
+    case 'move': {
+      const program = moveBlock(s.program, a.r, a.id, a.to);
+      return program === s.program ? s : commit(s, program, { ...s.cursor, [a.r]: null });
+    }
+    case 'times':
+      return commit(
+        s,
+        updateBlock(s.program, a.r, a.id, (b) => (b.kind === 'repeat' ? { ...b, times: a.times } : b)),
+      );
     case 'clear':
       return commit(s, emptyProgram(), {}); // ED-6: still reachable through undo
     case 'cursor':
-      return { ...s, cursor: { ...s.cursor, [a.r]: a.index } };
+      return { ...s, cursor: { ...s.cursor, [a.r]: a.spot } };
     case 'undo': {
       if (!s.past.length) return s;
       const prev = s.past[s.past.length - 1];
@@ -105,11 +127,12 @@ export function useEditor(floorId: string) {
   return {
     state,
     insert: useCallback((r: Routine, cmd: PaletteCommand) => dispatch({ t: 'insert', r, cmd }), []),
-    restore: useCallback((r: Routine, index: number, block: Block) => dispatch({ t: 'restore', r, index, block }), []),
-    remove: useCallback((r: Routine, index: number) => dispatch({ t: 'remove', r, index }), []),
-    move: useCallback((r: Routine, from: number, to: number) => dispatch({ t: 'move', r, from, to }), []),
+    place: useCallback((r: Routine, spot: Spot, block: Block) => dispatch({ t: 'place', r, spot, block }), []),
+    remove: useCallback((r: Routine, id: string) => dispatch({ t: 'remove', r, id }), []),
+    move: useCallback((r: Routine, id: string, to: Spot) => dispatch({ t: 'move', r, id, to }), []),
+    setTimes: useCallback((r: Routine, id: string, times: number) => dispatch({ t: 'times', r, id, times }), []),
     clear: useCallback(() => dispatch({ t: 'clear' }), []),
-    setCursor: useCallback((r: Routine, index: number | null) => dispatch({ t: 'cursor', r, index }), []),
+    setCursor: useCallback((r: Routine, spot: Spot | null) => dispatch({ t: 'cursor', r, spot }), []),
     undo: useCallback(() => dispatch({ t: 'undo' }), []),
     redo: useCallback(() => dispatch({ t: 'redo' }), []),
   };
