@@ -1,0 +1,60 @@
+{
+  "id": "t1-f24",
+  "title": "Belt Stairs",
+  "band": "workshop",
+  "size": {
+    "w": 7,
+    "h": 4
+  },
+  "tiles": [
+    "###...e",
+    "###.###",
+    "###.###",
+    "....###"
+  ],
+  "heights": [
+    "0002223",
+    "0001000",
+    "0001000",
+    "0001000"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 3,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "F1"
+  ],
+  "slots": {
+    "main": 5,
+    "F1": 3
+  },
+  "par": {
+    "commands": 8,
+    "steps": 11
+  },
+  "reference": "F1 turn_left F1 turn_right F1 def F1 { forward forward jump }",
+  "hints": [
+    "The belt climbs in three flights, and each flight is the same: two steps and a hop up.",
+    "F1 climbs one flight. Turn between flights in main.",
+    "F1 turn_left F1 turn_right F1 def F1 { forward forward jump }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": "PATCH: \"Up and over. You're getting the hang of this.\""
+  }
+}

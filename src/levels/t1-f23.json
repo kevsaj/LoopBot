@@ -1,0 +1,86 @@
+{
+  "id": "t1-f23",
+  "title": "Crate Line",
+  "band": "workshop",
+  "size": {
+    "w": 5,
+    "h": 3
+  },
+  "tiles": [
+    "..#.#",
+    ".....",
+    "..#.#"
+  ],
+  "heights": null,
+  "boxes": [
+    {
+      "x": 0,
+      "y": 0,
+      "count": 1
+    },
+    {
+      "x": 1,
+      "y": 0,
+      "count": 1
+    },
+    {
+      "x": 3,
+      "y": 0,
+      "count": 1
+    }
+  ],
+  "targets": [
+    {
+      "x": 0,
+      "y": 2,
+      "count": 1
+    },
+    {
+      "x": 1,
+      "y": 2,
+      "count": 1
+    },
+    {
+      "x": 3,
+      "y": 2,
+      "count": 1
+    }
+  ],
+  "bot": {
+    "x": 0,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "all_targets_filled"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "F1"
+  ],
+  "slots": {
+    "main": 6,
+    "F1": 6
+  },
+  "par": {
+    "commands": 12,
+    "steps": 20
+  },
+  "reference": "F1 forward F1 forward forward F1 def F1 { turn_left pick_up turn_right turn_right drop turn_left }",
+  "hints": [
+    "Each crate goes straight across the corridor. The crates aren't evenly spaced.",
+    "F1 moves one crate: face it, pick it up, turn around, drop it, face along the corridor again. Main walks between crates.",
+    "F1 forward F1 forward forward F1 def F1 { turn_left pick_up turn_right turn_right drop turn_left }"
+  ],
+  "story": {
+    "intro": "PATCH: \"Parts crates on the wrong side of the line. Same move for every one of them.\"",
+    "outro": null
+  }
+}

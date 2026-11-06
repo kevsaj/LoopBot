@@ -1,0 +1,62 @@
+{
+  "id": "t1-f26",
+  "title": "Assembly Line",
+  "band": "workshop",
+  "size": {
+    "w": 3,
+    "h": 5
+  },
+  "tiles": [
+    "..s",
+    "##.",
+    "s.s",
+    ".##",
+    "s##"
+  ],
+  "heights": [
+    "001",
+    "001",
+    "100",
+    "100",
+    "200"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "all_switches_on"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "F1"
+  ],
+  "slots": {
+    "main": 6,
+    "F1": 3
+  },
+  "par": {
+    "commands": 9,
+    "steps": 15
+  },
+  "reference": "repeat 2 { F1 turn_right } F1 turn_left F1 def F1 { forward jump activate }",
+  "hints": [
+    "Every platform is the same: one step, a hop up or down, then the switch. Only the turns change.",
+    "F1 does step, hop, switch. The first two turns are both right, so a loop can do them.",
+    "repeat 2 { F1 turn_right } F1 turn_left F1 def F1 { forward jump activate }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": "PATCH: \"Assembly line's humming. VANTA won't like that.\""
+  }
+}

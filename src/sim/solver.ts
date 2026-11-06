@@ -31,55 +31,60 @@ export function shortestActionPath(level: LevelFile, maxStates = 200_000): Actio
   return null;
 }
 
-// --- LV-4: the fewest commands (blocks) that clear a floor, with repeat loops ---
+// --- LV-4: the fewest commands (blocks) that clear a floor, with repeat loops and functions ---
 
-/** A block in the search, kept tiny: an action, or a repeat of a body. */
-type SBlock = Action | { times: number; body: SBlock[] };
+type Call = 'F1' | 'F2';
+/** A block in the search, kept tiny: an action, a function call, or a repeat of a body. */
+type Atom = Action | Call;
+type SBlock = Atom | { times: number; body: SBlock[] };
+type Bodies = Partial<Record<Call, SBlock[]>>;
 
 type Exec = 'ok' | 'crash' | 'clear';
 
-function execList(w: World, list: SBlock[], steps: { n: number }): Exec {
+function execList(w: World, list: SBlock[], steps: { n: number }, fns: Bodies): Exec {
   for (const b of list) {
-    const r = execBlock(w, b, steps);
+    const r = execBlock(w, b, steps, fns);
     if (r !== 'ok') return r;
   }
   return 'ok';
 }
 
-function execBlock(w: World, b: SBlock, steps: { n: number }): Exec {
+function execBlock(w: World, b: SBlock, steps: { n: number }, fns: Bodies): Exec {
+  if (b === 'F1' || b === 'F2') return execList(w, fns[b] ?? [], steps, fns);
   if (typeof b === 'string') {
     if (++steps.n > STEP_LIMIT) return 'crash';
     if (!applyAction(w, b).ok) return 'crash';
     return goalsMet(w) ? 'clear' : 'ok';
   }
   for (let i = 0; i < b.times; i++) {
-    const r = execList(w, b.body, steps);
+    const r = execList(w, b.body, steps, fns);
     if (r !== 'ok') return r;
   }
   return 'ok';
 }
 
-const TURNS = new Set<Action>(['turn_left', 'turn_right']);
+const TURNS = new Set<Atom>(['turn_left', 'turn_right']);
 const onlyTurns = (list: SBlock[]): boolean => list.every((b) => typeof b === 'string' && TURNS.has(b));
+
+type Memo = Map<string, SBlock[][]>;
 
 /**
  * All block lists of exactly `size` blocks, loops nested at most `depth` deep.
  * Skips lists that a shorter list always matches (a loop of only turns, left right pairs),
  * which never changes the minimum.
  */
-function lists(actions: Action[], size: number, depth: number, memo: Map<string, SBlock[][]>): SBlock[][] {
-  const k = `${size}/${depth}`;
+function lists(atoms: Atom[], size: number, depth: number, memo: Memo, cap = Infinity): SBlock[][] {
+  const k = `${size}/${depth}/${cap}`;
   const hit = memo.get(k);
   if (hit) return hit;
   const out: SBlock[][] = [];
   if (size === 0) out.push([]);
   else {
     for (let first = 1; first <= size; first++) {
-      for (const b of blocks(actions, first, depth, memo)) {
-        for (const rest of lists(actions, size - first, depth, memo)) {
-          const prev = b;
+      for (const b of blocks(atoms, first, depth, memo, cap)) {
+        for (const rest of lists(atoms, size - first, depth, memo, cap)) {
           const nx = rest[0];
-          if ((prev === 'turn_left' && nx === 'turn_right') || (prev === 'turn_right' && nx === 'turn_left')) continue;
+          if ((b === 'turn_left' && nx === 'turn_right') || (b === 'turn_right' && nx === 'turn_left')) continue;
           out.push([b, ...rest]);
         }
       }
@@ -89,11 +94,11 @@ function lists(actions: Action[], size: number, depth: number, memo: Map<string,
   return out;
 }
 
-function blocks(actions: Action[], size: number, depth: number, memo: Map<string, SBlock[][]>): SBlock[] {
-  if (size === 1) return actions;
-  if (depth === 0) return [];
+function blocks(atoms: Atom[], size: number, depth: number, memo: Memo, cap = Infinity): SBlock[] {
+  if (size === 1) return atoms;
+  if (depth === 0 || size - 1 > cap) return [];
   const out: SBlock[] = [];
-  for (const body of lists(actions, size - 1, depth - 1, memo)) {
+  for (const body of lists(atoms, size - 1, depth - 1, memo, cap)) {
     if (onlyTurns(body)) continue;
     for (let times = 2; times <= 9; times++) out.push({ times, body });
   }
@@ -104,41 +109,165 @@ function toRef(list: SBlock[]): string {
   return list.map((b) => (typeof b === 'string' ? b : `repeat ${b.times} { ${toRef(b.body)} }`)).join(' ');
 }
 
-/**
- * The smallest program (by block count, CR-7) that clears the floor using only actions and
- * repeat, up to `maxSize` blocks. Returns it as a reference string, or null if none fits.
- * Searches top-level blocks one at a time and remembers (world, blocks left) states that
- * already failed, so it stays fast for the Maintenance band's pars.
- */
-export function smallestProgram(level: LevelFile, maxSize: number, maxDepth = 2): string | null {
-  const actions = ACTIONS.filter((a) => level.commands.includes(a));
-  const loops = level.commands.includes('repeat') ? maxDepth : 0;
-  const memo = new Map<string, SBlock[][]>();
-  const failed = new Set<string>();
-  const start = createWorld(level);
+function withDefs(main: SBlock[], fns: Bodies): string {
+  const defs = (['F1', 'F2'] as Call[]).filter((f) => fns[f]).map((f) => ` def ${f} { ${toRef(fns[f]!)} }`);
+  return toRef(main) + defs.join('');
+}
 
-  const search = (w: World, left: number, steps: number, path: SBlock[]): SBlock[] | null => {
-    if (left === 0) return null;
-    const key = `${worldKey(w)}#${left}`;
-    if (failed.has(key)) return null;
-    for (let size = 1; size <= left; size++) {
-      for (const b of blocks(actions, size, loops, memo)) {
-        const next = cloneWorld(w);
-        const s = { n: steps };
-        const r = execBlock(next, b, s);
-        if (r === 'clear') return [...path, b];
-        if (r === 'crash') continue;
-        const found = search(next, left - size, s.n, [...path, b]);
-        if (found) return found;
+/**
+ * The floor's actions that can ever succeed here. A minimal program never holds a block that
+ * fails or never runs, so leaving the rest out of the search cannot change the answer.
+ */
+function usefulActions(level: LevelFile): Action[] {
+  const w = createWorld(level);
+  const hasBoxes = w.boxes.some((row) => row.some((n) => n > 0));
+  const hasSwitch = w.tiles.some((row) => row.some((t) => t.type === 'switch'));
+  // Boxes can be stacked, so any floor with boxes may have steps to jump.
+  let steps = hasBoxes;
+  for (let y = 0; y < w.h; y++)
+    for (let x = 0; x < w.w; x++)
+      for (const [dx, dy] of [[1, 0], [0, 1]])
+        if (x + dx < w.w && y + dy < w.h && w.tiles[y][x].height !== w.tiles[y + dy][x + dx].height) steps = true;
+  const can: Record<Action, boolean> = {
+    forward: true,
+    turn_left: true,
+    turn_right: true,
+    jump: steps,
+    pick_up: hasBoxes,
+    drop: hasBoxes,
+    activate: hasSwitch,
+  };
+  return ACTIONS.filter((a) => level.commands.includes(a) && can[a]);
+}
+
+/**
+ * The smallest program (by block count, CR-7) that clears the floor and fits its slots, up to `maxSize` blocks.
+ * It uses the floor's actions, repeat loops and the F1 and F2 functions where the floor allows them.
+ * Function bodies count toward the size, and each call is one block.
+ * Returns it as a reference string, or null if none fits.
+ *
+ * Main is searched one top-level block at a time, remembering (world, blocks left) states that
+ * already failed. With functions, every possible body (smallest first) gets its own main search.
+ * F2's body may call F1 but not the other way round, which loses nothing: names can be swapped.
+ */
+export function smallestProgram(
+  level: LevelFile,
+  maxSize: number,
+  maxDepth = 2,
+  limits: { loopBody?: number; fnBody?: number } = {},
+): string | null {
+  const actions = usefulActions(level);
+  const loopCap = limits.loopBody ?? Infinity;
+  // Each routine has to fit its slots on the floor (LS-1), so the search respects them too.
+  const mainSlots = level.slots.main ?? Infinity;
+  const f1Cap = Math.min(limits.fnBody ?? Infinity, level.slots.F1 ?? Infinity);
+  const f2Cap = Math.min(limits.fnBody ?? Infinity, level.slots.F2 ?? Infinity);
+  const loops = level.commands.includes('repeat') ? maxDepth : 0;
+  const hasF1 = level.commands.includes('F1');
+  const hasF2 = hasF1 && level.commands.includes('F2');
+  const start = createWorld(level);
+  const memos = new Map<string, Memo>();
+  const memoFor = (atoms: Atom[]) => {
+    const k = atoms.join(',');
+    if (!memos.has(k)) memos.set(k, new Map());
+    return memos.get(k)!;
+  };
+
+  /** Main fitting in exactly `n` blocks or fewer, with these function bodies. */
+  // For each set of function bodies: per world, the most blocks left with which main already failed.
+  // Failing with L blocks left means failing with fewer too, and it holds across sizes n.
+  const failures = new Map<string, Map<string, number>>();
+  const mainFits = (total: number, fns: Bodies, atoms: Atom[]): SBlock[] | null => {
+    const n = Math.min(total, mainSlots);
+    if (n < 1) return null;
+    const memo = memoFor(atoms);
+    const fk = withDefs([], fns);
+    if (!failures.has(fk)) failures.set(fk, new Map());
+    const failed = failures.get(fk)!;
+    const search = (w: World, left: number, steps: number, path: SBlock[]): SBlock[] | null => {
+      if (left === 0) return null;
+      const key = worldKey(w);
+      if ((failed.get(key) ?? 0) >= left) return null;
+      for (let size = 1; size <= left; size++) {
+        for (const b of blocks(atoms, size, loops, memo, loopCap)) {
+          const next = cloneWorld(w);
+          const s = { n: steps };
+          const r = execBlock(next, b, s, fns);
+          if (r === 'clear') return [...path, b];
+          if (r === 'crash') continue;
+          const found = search(next, left - size, s.n, [...path, b]);
+          if (found) return found;
+        }
+      }
+      failed.set(key, Math.max(left, failed.get(key) ?? 0));
+      return null;
+    };
+    return search(cloneWorld(start), n, 0, []);
+  };
+
+  // Every state LoopBot can reach. A function body that crashes from all of them can never be
+  // called in a winning program, so it is skipped.
+  const reachable: World[] = [];
+  if (hasF1) {
+    const seen = new Set([worldKey(start)]);
+    let frontier = [start];
+    while (frontier.length && reachable.length < 5000) {
+      const next: World[] = [];
+      for (const w of frontier) {
+        reachable.push(w);
+        for (const a of actions) {
+          const n = cloneWorld(w);
+          if (!applyAction(n, a).ok) continue;
+          const k = worldKey(n);
+          if (seen.has(k)) continue;
+          seen.add(k);
+          next.push(n);
+        }
+      }
+      frontier = next;
+    }
+  }
+  // A minimal program calls a function at least twice, from two different states (a call that
+  // changed nothing would be wasted), so the body must run cleanly from at least two of them.
+  const runsSomewhere = (body: SBlock[], fns: Bodies) => {
+    let ok = 0;
+    for (const w of reachable) if (execList(cloneWorld(w), body, { n: 0 }, fns) !== 'crash' && ++ok >= 2) return true;
+    return false;
+  };
+
+  // A function only pays off when called at least twice, and a one-block body never beats inlining it.
+  const fits = (n: number): string | null => {
+    const plain = mainFits(n, {}, actions);
+    if (plain) return toRef(plain);
+    if (!hasF1) return null;
+    const f1Atoms: Atom[] = [...actions, 'F1'];
+    for (let s1 = 2; s1 <= Math.min(n - 2, f1Cap); s1++) {
+      for (const b1 of lists(actions, s1, loops, memoFor(actions), loopCap)) {
+        if (onlyTurns(b1) || !runsSomewhere(b1, {})) continue;
+        const main = mainFits(n - s1, { F1: b1 }, f1Atoms);
+        if (main) return withDefs(main, { F1: b1 });
       }
     }
-    failed.add(key);
+    if (!hasF2) return null;
+    const f2Atoms: Atom[] = [...actions, 'F1', 'F2'];
+    for (let s1 = 2; s1 <= Math.min(n - 4, f1Cap); s1++) {
+      for (let s2 = 2; s1 + s2 <= n - 2 && s2 <= f2Cap; s2++) {
+        for (const b1 of lists(actions, s1, loops, memoFor(actions), loopCap)) {
+          if (onlyTurns(b1) || !runsSomewhere(b1, {})) continue;
+          for (const b2 of lists(f1Atoms, s2, loops, memoFor(f1Atoms), loopCap)) {
+            if (onlyTurns(b2) || !runsSomewhere(b2, { F1: b1 })) continue;
+            const main = mainFits(n - s1 - s2, { F1: b1, F2: b2 }, f2Atoms);
+            if (main) return withDefs(main, { F1: b1, F2: b2 });
+          }
+        }
+      }
+    }
     return null;
   };
 
   for (let n = 1; n <= maxSize; n++) {
-    const found = search(cloneWorld(start), n, 0, []);
-    if (found) return toRef(found);
+    const found = fits(n);
+    if (found) return found;
   }
   return null;
 }

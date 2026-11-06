@@ -1,0 +1,58 @@
+{
+  "id": "t1-f29",
+  "title": "Night Shift",
+  "band": "workshop",
+  "size": {
+    "w": 7,
+    "h": 5
+  },
+  "tiles": [
+    "..s####",
+    "##.####",
+    "##s.s##",
+    "####.##",
+    "####s.s"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "all_switches_on"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "F1",
+    "F2"
+  ],
+  "slots": {
+    "main": 3,
+    "F1": 3,
+    "F2": 4
+  },
+  "par": {
+    "commands": 10,
+    "steps": 19
+  },
+  "reference": "F2 F2 F1 def F1 { forward forward activate } def F2 { F1 turn_right F1 turn_left }",
+  "hints": [
+    "The switches step down like stairs. Two stairs make the same shape twice.",
+    "F1 walks two and switches. F2 is one stair pair: F1, turn right, F1, turn left.",
+    "F2 F2 F1 def F1 { forward forward activate } def F2 { F1 turn_right F1 turn_left }"
+  ],
+  "story": {
+    "intro": "VANTA: \"Night shift. The lights are off and so are your chances.\"",
+    "outro": null
+  }
+}

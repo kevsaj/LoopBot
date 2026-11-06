@@ -1,0 +1,57 @@
+{
+  "id": "t1-f27",
+  "title": "Second Shift",
+  "band": "workshop",
+  "size": {
+    "w": 5,
+    "h": 5
+  },
+  "tiles": [
+    "..s.s",
+    "####.",
+    "####s",
+    "####.",
+    "s.s.s"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "all_switches_on"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "F1",
+    "F2"
+  ],
+  "slots": {
+    "main": 3,
+    "F1": 3,
+    "F2": 3
+  },
+  "par": {
+    "commands": 9,
+    "steps": 20
+  },
+  "reference": "F2 F2 F2 def F1 { forward forward activate } def F2 { F1 F1 turn_right }",
+  "hints": [
+    "Main has three slots, but there are six switches round three sides. A routine can call another routine.",
+    "F1 walks two and switches. F2 does a whole side: F1, F1, turn. Main calls F2 three times.",
+    "F2 F2 F2 def F1 { forward forward activate } def F2 { F1 F1 turn_right }"
+  ],
+  "story": {
+    "intro": "PATCH: \"Second shift starts now. Routines can call routines, so a big job breaks into small ones.\"",
+    "outro": null
+  }
+}
