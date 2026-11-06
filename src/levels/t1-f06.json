@@ -1,0 +1,27 @@
+{
+  "id": "t1-f06",
+  "title": "Stack It",
+  "band": "lobby",
+  "size": {"w": 5, "h": 4},
+  "tiles": [
+    "#####",
+    "#...#",
+    "#...#",
+    "#####"
+  ],
+  "heights": null,
+  "boxes": [{"x": 1, "y": 1, "count": 1}, {"x": 2, "y": 2, "count": 1}],
+  "targets": [{"x": 3, "y": 1, "count": 2}],
+  "bot": {"x": 2, "y": 1, "facing": "west"},
+  "goals": ["all_targets_filled"],
+  "commands": ["forward", "turn_left", "turn_right", "jump", "pick_up", "drop"],
+  "slots": {"main": 12},
+  "par": {"commands": 8, "steps": 8},
+  "reference": "pick_up turn_left turn_left drop turn_right pick_up turn_left drop",
+  "hints": [
+    "The pad needs two crates, one on top of the other. You can drop a crate onto another crate.",
+    "8 commands. You never need to walk: turn to face each crate, then the pad.",
+    "pick_up, turn_left, turn_left, drop, turn_right, pick_up, turn_left, drop"
+  ],
+  "story": {"intro": "PATCH: \"Stack two cells on that pad and the lobby lights come back.\"", "outro": "The lobby lights flicker on."}
+}
