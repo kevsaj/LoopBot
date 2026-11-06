@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import type Phaser from 'phaser';
 import type { BoardScene, BoardUpdate } from './BoardScene';
 import { createBoard, setBand } from './BoardScene';
+import { fx } from '../audio/feedback';
 
 interface Props {
   update: BoardUpdate;
@@ -46,5 +47,11 @@ export function Board({ update, rotateSignal, band }: Props) {
     if (rotateSignal) scene.current?.rotate();
   }, [rotateSignal]);
 
-  return <div className="board-canvas" ref={host} aria-hidden="true" />;
+  // Tap LoopBot and it chirps back.
+  const poke = (e: React.PointerEvent<HTMLDivElement>) => {
+    const r = e.currentTarget.getBoundingClientRect();
+    if (scene.current?.poke(e.clientX - r.left, e.clientY - r.top)) fx.voice('poke');
+  };
+
+  return <div className="board-canvas" ref={host} aria-hidden="true" onPointerDown={poke} />;
 }

@@ -76,11 +76,18 @@ export interface BoardUpdate {
   action?: string;
   crashed?: boolean;
   cleared?: boolean;
+  /** Stars earned when the floor is cleared: LoopBot celebrates more for more stars. */
+  stars?: number;
   /** Milliseconds per step at the current speed. */
   stepMs: number;
 }
 
 type Grid = { rx: number; ry: number };
+
+/** How LoopBot's eye looks right now. */
+type Mood = 'idle' | 'happy' | 'crash' | 'nervous';
+
+const FACINGS: Facing[] = ['north', 'east', 'south', 'west'];
 
 export class BoardScene extends Phaser.Scene {
   private rot = 0;
@@ -90,6 +97,21 @@ export class BoardScene extends Phaser.Scene {
   private botBody!: Phaser.GameObjects.Graphics;
   private botInner!: Phaser.GameObjects.Container;
   private botShadow!: Phaser.GameObjects.Ellipse;
+  /** Holds the body for hops and tilts, separate from the idle bob on botInner. */
+  private botPose!: Phaser.GameObjects.Container;
+  private botEye!: Phaser.GameObjects.Graphics;
+  /** The antenna pivots at its base, so it can wobble and lag behind moves. */
+  private antenna!: Phaser.GameObjects.Container;
+  private antennaG!: Phaser.GameObjects.Graphics;
+  private mood: Mood = 'idle';
+  /** 0 = eye open, 1 = shut. */
+  private blink = 0;
+  /** Sideways glance, -1 to 1. */
+  private look = 0;
+  /** Facing drawn right now; differs from the world's while LoopBot twirls. */
+  private shownFacing: Facing = 'north';
+  private crashedNow = false;
+  private reduced = false;
   /** The facing arrow on the floor, drawn under LoopBot inside its container. */
   private botArrow!: Phaser.GameObjects.Graphics;
   private ready = false;
@@ -104,12 +126,17 @@ export class BoardScene extends Phaser.Scene {
     this.botBody = this.add.graphics();
     this.botShadow = this.add.ellipse(0, 0, TW * 0.42, TH * 0.42, 0x2b2440, 0.28);
     this.botArrow = this.add.graphics();
-    this.botInner = this.add.container(0, 0, [this.botBody]);
-    this.bot = this.add.container(0, 0, [this.botShadow, this.botArrow, this.botInner]);
+    this.botEye = this.add.graphics();
+    this.antennaG = this.add.graphics();
+    this.antenna = this.add.container(0, -36, [this.antennaG]);
+    this.botInner = this.add.container(0, 0, [this.botBody, this.botEye, this.antenna]);
+    this.botPose = this.add.container(0, 0, [this.botInner]);
+    this.bot = this.add.container(0, 0, [this.botShadow, this.botArrow, this.botPose]);
+    this.reduced = !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
     // idle bob: LoopBot hovers gently, like a toy
-    const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-    if (!reduced) this.tweens.add({ targets: this.botInner, y: -2.5, yoyo: true, repeat: -1, duration: 900, ease: 'Sine.easeInOut' });
+    if (!this.reduced) this.tweens.add({ targets: this.botInner, y: -2.5, yoyo: true, repeat: -1, duration: 900, ease: 'Sine.easeInOut' });
     this.layer.add(this.bot);
+    this.idleLife();
     this.scale.on('resize', () => this.fit());
     this.ready = true;
     if (this.pending) this.show(this.pending);
@@ -406,33 +433,191 @@ export class BoardScene extends Phaser.Scene {
     g.strokePoints([tip, r, notch, l], true);
   }
 
-  private drawBot(w: World, crashed: boolean) {
+  private drawBot(w: World, crashed: boolean, facing: Facing = w.bot.facing) {
     const g = this.botBody;
     g.clear();
+    this.shownFacing = facing;
+    this.crashedNow = crashed;
     const body = crashed ? C.crash : C.bot;
-    const { fx, fy } = this.screenFacing(w.bot.facing);
+    const { fx, fy } = this.screenFacing(facing);
     this.drawArrow(w, crashed);
-    // body: a rounded little block on short legs
+    // body: a rounded little block
     this.prism(g, 0, -16, 12, body, C.botL, C.botR, 0.44);
+    // a warm status light on the body: LoopBot's "heart"
+    g.fillStyle(0xf2b84b, crashed ? 0.4 : 1);
+    g.fillCircle(-5, -5, 1.6);
     // head
     this.prism(g, 0, -30, 10, body, C.botL, C.botR, 0.36);
-    // visor on the side LoopBot faces, with a glowing eye: the facing reads at a glance
+    // visor on the side LoopBot faces: the facing reads at a glance
     g.fillStyle(C.visor, 1);
-    g.fillEllipse(fx * 0.34, -27 + fy * 0.34, 12, 7);
-    // Facing away from the camera, the eye is on the far side of the head: dim it so it does not read as facing us.
-    g.fillStyle(crashed ? C.crash : C.eye, fy < 0 ? 0.35 : 1);
-    g.fillEllipse(fx * 0.4, -27 + fy * 0.4, 5, 3.4);
-    // antenna
-    g.lineStyle(1.5, C.botR, 1);
-    g.lineBetween(0, -36, 0, -44);
-    g.fillStyle(crashed ? C.crash : C.eye, 1);
-    g.fillCircle(0, -45, 2.4);
+    g.fillEllipse(fx * 0.34, -27 + fy * 0.34, 13.5, 8.5);
     if (w.bot.carrying) this.crate(g, 0, -56, 0.5);
+    this.drawEye();
+    this.drawAntenna();
+  }
+
+  /** The eye carries LoopBot's mood: open and blinking, happy arcs, a dizzy cross, or wide with worry. */
+  private drawEye() {
+    const g = this.botEye;
+    g.clear();
+    const { fx, fy, sx, sy } = this.screenFacing(this.shownFacing);
+    // Facing away from the camera the eye is on the far side of the head: dim it so it does not read as facing us.
+    const alpha = fy < 0 ? 0.35 : 1;
+    const ex = fx * 0.4 + sx * 0.12 * this.look;
+    const ey = -27 + fy * 0.4 + sy * 0.12 * this.look;
+    const color = this.mood === 'crash' ? C.crash : C.eye;
+    if (this.mood === 'happy') {
+      g.lineStyle(2, color, alpha);
+      g.beginPath();
+      g.moveTo(ex - 3.6, ey + 1.5);
+      g.lineTo(ex, ey - 1.8);
+      g.lineTo(ex + 3.6, ey + 1.5);
+      g.strokePath();
+    } else if (this.mood === 'crash') {
+      g.lineStyle(1.8, color, alpha);
+      g.lineBetween(ex - 2.6, ey - 2.2, ex + 2.6, ey + 2.2);
+      g.lineBetween(ex - 2.6, ey + 2.2, ex + 2.6, ey - 2.2);
+    } else {
+      const wide = this.mood === 'nervous' ? 1.2 : 1;
+      const h = Math.max(0.6, 4.4 * wide * (1 - this.blink));
+      g.fillStyle(color, alpha);
+      g.fillEllipse(ex, ey, 6.4 * wide, h);
+      if (this.mood === 'nervous' && this.blink < 0.5) {
+        g.fillStyle(C.visor, alpha);
+        g.fillCircle(ex, ey, 1.2);
+      }
+    }
+  }
+
+  private drawAntenna() {
+    const g = this.antennaG;
+    g.clear();
+    g.lineStyle(1.5, C.botR, 1);
+    g.lineBetween(0, 0, 0, -8);
+    const lit = this.mood === 'crash' || this.crashedNow ? C.crash : this.mood === 'happy' ? 0xf2b84b : C.eye;
+    g.fillStyle(lit, 1);
+    g.fillCircle(0, -9, 2.4);
+  }
+
+  /** Small things LoopBot does while you build: blinks, glances, antenna twitches. */
+  private idleLife() {
+    const next = () => this.time.delayedCall(1800 + Math.random() * 2600, act);
+    const act = () => {
+      if (this.mood === 'idle' || this.mood === 'nervous') {
+        const r = Math.random();
+        if (r < 0.55) this.doBlink();
+        else if (r < 0.85 && this.mood === 'idle') this.glance();
+        else this.wiggleAntenna(10);
+      }
+      next();
+    };
+    next();
+  }
+
+  private doBlink() {
+    this.tweens.addCounter({
+      from: 0,
+      to: 1,
+      duration: 70,
+      yoyo: true,
+      onUpdate: (tw) => {
+        this.blink = tw.getValue() ?? 0;
+        this.drawEye();
+      },
+      onComplete: () => {
+        this.blink = 0;
+        this.drawEye();
+      },
+    });
+  }
+
+  private glance() {
+    if (this.reduced) return this.doBlink();
+    const side = Math.random() < 0.5 ? -1 : 1;
+    this.tweens.addCounter({
+      from: 0,
+      to: side,
+      duration: 180,
+      hold: 600,
+      yoyo: true,
+      ease: 'Sine.easeInOut',
+      onUpdate: (tw) => {
+        this.look = tw.getValue() ?? 0;
+        this.drawEye();
+      },
+      onComplete: () => {
+        this.look = 0;
+        this.drawEye();
+      },
+    });
+  }
+
+  private wiggleAntenna(deg: number) {
+    if (this.reduced) return;
+    this.tweens.killTweensOf(this.antenna);
+    this.antenna.angle = 0;
+    this.tweens.add({ targets: this.antenna, angle: { from: deg, to: 0 }, duration: 520, ease: 'Elastic.easeOut', easeParams: [1.4, 0.35] });
+  }
+
+  private setMood(m: Mood) {
+    this.mood = m;
+    this.drawEye();
+    this.drawAntenna();
+  }
+
+  /** True when the floor right in front of LoopBot drops away or is a gap. */
+  private atLedge(w: World) {
+    const n = ahead(w);
+    if (n.x < 0 || n.y < 0 || n.x >= w.w || n.y >= w.h) return true;
+    const t = w.tiles[n.y][n.x];
+    return t.type === 'gap' || (isWalkable(w, n) && surfaceHeight(w, n) < surfaceHeight(w, { x: w.bot.x, y: w.bot.y }));
+  }
+
+  /** Tap LoopBot on the board and it answers. Coordinates are relative to the canvas. Returns true on a hit. */
+  poke(x: number, y: number): boolean {
+    if (!this.ready || !this.world) return false;
+    const p = this.cameras.main.getWorldPoint(x, y);
+    const dx = p.x - this.bot.x;
+    const dy = p.y - (this.bot.y - 24);
+    if (dx * dx + dy * dy > 26 * 26) return false;
+    if (this.mood === 'crash') return true;
+    const before = this.mood;
+    this.setMood('happy');
+    this.wiggleAntenna(18);
+    this.hop(8, 1);
+    this.time.delayedCall(700, () => this.mood === 'happy' && this.setMood(before === 'happy' ? 'happy' : 'idle'));
+    return true;
+  }
+
+  private hop(height: number, times: number, delay = 0) {
+    if (this.reduced) return;
+    this.tweens.killTweensOf(this.botPose);
+    this.botPose.y = 0;
+    this.tweens.add({ targets: this.botPose, y: -height, duration: 150, yoyo: true, repeat: times - 1, delay, ease: 'Quad.easeOut' });
+    this.tweens.add({ targets: this.botShadow, scale: 0.7, duration: 150, yoyo: true, repeat: times - 1, delay, ease: 'Quad.easeOut' });
+  }
+
+  /** A full spin on the spot: LoopBot shows each side in turn, then faces the way it really faces. */
+  private twirl(w: World, delay: number) {
+    if (this.reduced) return;
+    const from = FACINGS.indexOf(w.bot.facing);
+    for (let i = 1; i <= 4; i++) {
+      this.time.delayedCall(delay + i * 90, () => {
+        if (this.world !== w) return;
+        this.drawBot(w, false, FACINGS[(from + i) % 4]);
+      });
+    }
   }
 
   private moveBot(prev: World | null, u: BoardUpdate) {
     const w = u.world;
     const to = this.botPos(w);
+    const fresh = !prev || u.stepMs === 0;
+    this.mood = u.crashed ? 'crash' : u.cleared ? 'happy' : this.atLedge(w) ? 'nervous' : 'idle';
+    this.tweens.killTweensOf(this.botPose);
+    this.botPose.setPosition(0, 0).setAngle(0);
+    this.botShadow.setScale(1);
+    if (fresh) this.look = 0;
     this.drawBot(w, !!u.crashed);
     this.tweens.killTweensOf(this.bot);
     const dur = Math.max(0, u.stepMs * 0.8);
@@ -443,6 +628,8 @@ export class BoardScene extends Phaser.Scene {
       const from = this.botPos(prev);
       this.bot.setPosition(from.sx, from.sy);
       const lift = u.action === 'jump' ? 22 : 4;
+      // The antenna lags behind the move, then springs back.
+      this.wiggleAntenna(to.sx > from.sx ? -16 : to.sx < from.sx ? 16 : u.action === 'jump' ? 20 : 8);
       this.tweens.add({ targets: this.bot, x: to.sx, duration: dur, ease: 'Sine.easeInOut' });
       this.tweens.addCounter({
         from: 0,
@@ -461,8 +648,26 @@ export class BoardScene extends Phaser.Scene {
     if (u.crashed) {
       this.cameras.main.shake(180, 0.006);
       this.tweens.add({ targets: this.bot, x: to.sx + 3, yoyo: true, repeat: 3, duration: 40, delay: dur });
+      // a dizzy wobble after the bump
+      if (!this.reduced) {
+        this.tweens.chain({
+          targets: this.botPose,
+          tweens: [
+            { angle: -12, duration: 90, delay: dur + 120 },
+            { angle: 9, duration: 120 },
+            { angle: -5, duration: 120 },
+            { angle: 0, duration: 140 },
+          ],
+        });
+        this.time.delayedCall(dur + 120, () => this.wiggleAntenna(24));
+      }
     } else if (u.cleared) {
-      this.tweens.add({ targets: this.bot, scale: 1.25, yoyo: true, duration: 180, delay: dur, ease: 'Back.easeOut' });
+      const n = u.stars ?? 1;
+      this.tweens.add({ targets: this.bot, scale: 1.18, yoyo: true, duration: 180, delay: dur, ease: 'Back.easeOut' });
+      // More stars, bigger joy: 1 star is a nod, 2 a hop, 3 a double hop and a spin.
+      if (n >= 2) this.time.delayedCall(dur + 200, () => this.hop(n >= 3 ? 14 : 10, n >= 3 ? 2 : 1));
+      if (n >= 3) this.twirl(w, dur + 260);
+      this.time.delayedCall(dur + 200, () => this.wiggleAntenna(22));
       this.lightUp(w, dur);
     } else if (u.action === 'turn_left' || u.action === 'turn_right' || u.action === 'pick_up' || u.action === 'drop' || u.action === 'activate') {
       this.tweens.add({ targets: this.bot, scaleY: 0.88, yoyo: true, duration: Math.min(90, dur / 2 || 90) });
