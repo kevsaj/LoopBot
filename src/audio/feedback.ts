@@ -174,6 +174,29 @@ export const fx = {
     tone(1140, 0.18, { gain: 0.06, delay: 0.14 });
     buzz('medium');
   },
+  /**
+   * LoopBot's voice: short synthesised chirps, so it reacts like a character.
+   * ready: two rising blips as a run starts. uhoh: a falling two-note "uh-oh".
+   * yay: a quick happy trill. poke: a random little "bip-boop" when you tap LoopBot.
+   */
+  voice(kind: 'ready' | 'uhoh' | 'yay' | 'poke', delay = 0) {
+    const v = (f: number, d: number, at: number, slideTo?: number) => tone(f, d, { type: 'sine', gain: 0.07, delay: delay + at, slideTo });
+    if (kind === 'ready') {
+      v(900, 0.05, 0);
+      v(1350, 0.07, 0.07, 1500);
+    } else if (kind === 'uhoh') {
+      v(700, 0.11, 0, 760);
+      v(520, 0.2, 0.15, 330);
+    } else if (kind === 'yay') {
+      [1050, 1320, 1180, 1570].forEach((f, i) => v(f, 0.06, i * 0.055));
+    } else {
+      const n = 2 + Math.floor(Math.random() * 2);
+      for (let i = 0; i < n; i++) {
+        const f = 800 + Math.random() * 900;
+        v(f, 0.06, i * 0.08, f * (Math.random() < 0.5 ? 1.25 : 0.8));
+      }
+    }
+  },
   win() {
     [523, 659, 784, 1047].forEach((f, i) => tone(f, 0.18, { gain: 0.1, delay: i * 0.09 }));
     // a low "lift" chord under the arpeggio

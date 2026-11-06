@@ -105,6 +105,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
   const stepOnce = useCallback(() => {
     if (!runner.current || runner.current.done) {
       runner.current = new Runner(program, level);
+      fx.voice('ready');
       setOutcome(null);
       setCrashId(null);
       setShowResults(false);
@@ -118,7 +119,15 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
       if (ev.ok) fx.step(ev.action);
     }
     const o = r.outcome;
-    setBoard({ world, action: ev?.action, crashed: o?.status === 'crashed', cleared: o?.status === 'cleared', stepMs: SPEEDS[speed].ms });
+    const cleared = o?.status === 'cleared';
+    setBoard({
+      world,
+      action: ev?.action,
+      crashed: o?.status === 'crashed',
+      cleared,
+      stars: cleared ? stars(level, countCommands(program), o.steps) : undefined,
+      stepMs: SPEEDS[speed].ms,
+    });
     if (o) {
       setPlaying(false);
       setOutcome(o);
@@ -126,11 +135,13 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
         setCrashId(o.blockId);
         setTerminal(o.error);
         fx.crash();
+        fx.voice('uhoh', 0.35);
         setProgress((p) => recordFail(p, level.id));
       } else if (o.status === 'cleared') {
         const s = stars(level, countCommands(program), o.steps);
         setTerminal(`> floor cleared in ${o.steps} steps`);
         fx.win();
+        fx.voice('yay', 0.55);
         setPrevBest(progressRef.current.stars[level.id] ?? 0);
         setProgress((p) => recordClear(p, level.id, s));
         window.setTimeout(() => setShowResults(true), SPEEDS[speed].ms + 900); // let the light-up wave play first
