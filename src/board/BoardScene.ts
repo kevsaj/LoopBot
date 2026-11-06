@@ -4,6 +4,7 @@
 
 import Phaser from 'phaser';
 import type { Facing, World } from '../sim/types';
+import { ahead, isWalkable, surfaceHeight } from '../sim/world';
 
 const TW = 64; // tile width on screen
 const TH = 32; // tile height on screen
@@ -62,10 +63,8 @@ export class BoardScene extends Phaser.Scene {
   private botBody!: Phaser.GameObjects.Graphics;
   private botInner!: Phaser.GameObjects.Container;
   private botShadow!: Phaser.GameObjects.Ellipse;
-  /** Facing arrow when it points away from the camera: drawn under LoopBot. */
+  /** The facing arrow on the floor, drawn under LoopBot inside its container. */
   private botArrow!: Phaser.GameObjects.Graphics;
-  /** Facing arrow when it points toward the camera: drawn over the tiles in front, so it is never hidden. */
-  private botArrowFront!: Phaser.GameObjects.Graphics;
   private ready = false;
   private pending: BoardUpdate | null = null;
 
@@ -83,17 +82,10 @@ export class BoardScene extends Phaser.Scene {
     // idle bob: LoopBot hovers gently, like a toy
     const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
     if (!reduced) this.tweens.add({ targets: this.botInner, y: -2.5, yoyo: true, repeat: -1, duration: 900, ease: 'Sine.easeInOut' });
-    this.botArrowFront = this.add.graphics();
-    this.layer.add([this.bot, this.botArrowFront]);
+    this.layer.add(this.bot);
     this.scale.on('resize', () => this.fit());
     this.ready = true;
     if (this.pending) this.show(this.pending);
-  }
-
-  update() {
-    // The front arrow lives outside LoopBot's container (for depth), so it follows by hand.
-    this.botArrowFront.setPosition(this.bot.x, this.bot.y);
-    this.botArrowFront.setDepth(1e6);
   }
 
   /** Rotate the view 90 degrees (the board turns in 90-degree steps only). */
@@ -215,7 +207,7 @@ export class BoardScene extends Phaser.Scene {
 
   private drawStatic(w: World) {
     for (const child of [...this.layer.list]) {
-      if (child === this.bot || child === this.botArrowFront) continue;
+      if (child === this.bot) continue;
       this.tweens.killTweensOf(child);
       child.destroy();
     }
@@ -361,24 +353,29 @@ export class BoardScene extends Phaser.Scene {
   }
 
   /**
-   * A glowing chevron painted on the floor in front of LoopBot. It lies flat on the tile,
-   * so it points the right way from every one of the four views.
+   * A small glowing chevron on the floor in front of LoopBot. It lies flat, so it points the
+   * right way from all four views. It stays on LoopBot's own tile, so it never paints over a
+   * wall, crate or step. The one exception: facing away from the camera, the body would hide
+   * it, so it sits just across the edge on the next tile, but only when that tile is clear floor.
    */
-  private drawArrow(f: Facing, crashed: boolean) {
-    const { fx, fy, sx, sy } = this.screenFacing(f);
-    this.botArrow.clear();
-    this.botArrowFront.clear();
-    const g = fy > 0 ? this.botArrowFront : this.botArrow;
+  private drawArrow(w: World, crashed: boolean) {
+    const g = this.botArrow;
+    g.clear();
+    const { fx, fy, sx, sy } = this.screenFacing(w.bot.facing);
     const at = (along: number, across: number) => ({ x: fx * along + sx * across, y: fy * along + sy * across });
-    // On the floor just past LoopBot's feet, reaching onto the next tile, clear of the body from every view.
-    const tip = at(2, 0);
-    const l = at(1.05, -0.75);
-    const r = at(1.05, 0.75);
-    const notch = at(1.35, 0);
-    const color = crashed ? C.crash : C.eye;
-    g.fillStyle(color, 0.95);
+    const next = ahead(w);
+    const clear =
+      isWalkable(w, next) && w.boxes[next.y][next.x] === 0 && surfaceHeight(w, next) === surfaceHeight(w, { x: w.bot.x, y: w.bot.y });
+    // Front-facing it fills the front half of LoopBot's tile (the next tile is drawn over
+    // anything past the edge); back-facing it sits on the next tile, clear of the body.
+    const [from, to] = fy > 0 ? [0.46, 0.98] : clear ? [1.0, 1.52] : [0.46, 0.98];
+    const tip = at(to, 0);
+    const l = at(from, -0.42);
+    const r = at(from, 0.42);
+    const notch = at(from + 0.16, 0);
+    g.fillStyle(crashed ? C.crash : C.eye, 0.95);
     g.fillPoints([tip, r, notch, l], true);
-    g.lineStyle(1, 0x2b2440, 0.45);
+    g.lineStyle(1, 0x2b2440, 0.5);
     g.strokePoints([tip, r, notch, l], true);
   }
 
@@ -387,7 +384,7 @@ export class BoardScene extends Phaser.Scene {
     g.clear();
     const body = crashed ? C.crash : C.bot;
     const { fx, fy } = this.screenFacing(w.bot.facing);
-    this.drawArrow(w.bot.facing, crashed);
+    this.drawArrow(w, crashed);
     // body: a rounded little block on short legs
     this.prism(g, 0, -16, 12, body, C.botL, C.botR, 0.44);
     // head
