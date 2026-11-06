@@ -1,21 +1,24 @@
 import { useEffect, useRef } from 'react';
 import type Phaser from 'phaser';
 import type { BoardScene, BoardUpdate } from './BoardScene';
-import { createBoard } from './BoardScene';
+import { createBoard, setBand } from './BoardScene';
 
 interface Props {
   update: BoardUpdate;
   rotateSignal: number;
+  /** The floor's band, which picks the board's palette. */
+  band: string;
 }
 
 /** Mounts the Phaser board inside React and pushes simulation snapshots into it. */
-export function Board({ update, rotateSignal }: Props) {
+export function Board({ update, rotateSignal, band }: Props) {
   const host = useRef<HTMLDivElement>(null);
   const scene = useRef<BoardScene | null>(null);
   const latest = useRef(update);
   latest.current = update;
 
   useEffect(() => {
+    setBand(band);
     const el = host.current!;
     let game: Phaser.Game | null = createBoard(el, (s) => {
       scene.current = s;
@@ -32,6 +35,7 @@ export function Board({ update, rotateSignal }: Props) {
       game = null;
       scene.current = null;
     };
+    // The board is mounted once per floor (the floor screen is keyed by floor id).
   }, []);
 
   useEffect(() => {

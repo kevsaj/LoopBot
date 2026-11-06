@@ -20,6 +20,9 @@ export const COMMAND_META: Record<PaletteCommand, { label: string; glyph: string
 /** The Lobby palette, always shown so locked commands appear greyed out (ED-8). */
 export const PALETTE_ORDER: PaletteCommand[] = ['forward', 'turn_left', 'turn_right', 'jump', 'pick_up', 'drop', 'activate'];
 
+/** Control blocks join the palette on the floors that allow them (repeat from Floor 11). */
+export const CONTROL_ORDER: PaletteCommand[] = ['repeat', 'while', 'if'];
+
 export function blockCommand(b: Block): PaletteCommand {
   switch (b.kind) {
     case 'action':

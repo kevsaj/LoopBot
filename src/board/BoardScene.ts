@@ -42,6 +42,33 @@ const C = {
   crash: 0xff6b6b,
   void: 0x2a2140,
 };
+const LOBBY = { ...C };
+
+/**
+ * Each band of the tower has its own look (art list: 5 band palettes). Only the building
+ * changes; LoopBot, crates and the "on" teal stay the same everywhere.
+ */
+const BANDS: Record<string, Partial<typeof C>> = {
+  lobby: {},
+  // Maintenance: brushed-steel walkways between teal duct walls, in a dim service light.
+  maintenance: {
+    floorTop: 0xc6d1da,
+    floorL: 0x97a6b4,
+    floorR: 0x7a8a99,
+    floorEdge: 0xe3eaf0,
+    wallTop: 0x3e7174,
+    wallL: 0x2c5558,
+    wallR: 0x214245,
+    wallCap: 0x5f9a9c,
+    edge: 0x18262d,
+    void: 0x10202a,
+  },
+};
+
+/** Switches the board to a band's palette. Call before the board draws a floor. */
+export function setBand(band: string) {
+  Object.assign(C, LOBBY, BANDS[band] ?? {});
+}
 
 export interface BoardUpdate {
   world: World;

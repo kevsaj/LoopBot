@@ -19,6 +19,28 @@ interface Props {
 
 const SEEN_KEY = 'loopbot.seenUnlocked';
 
+/** Display names for the five bands of Tower 1 (doc: Bands table). */
+const BAND_NAMES: Record<string, string> = {
+  lobby: 'The Lobby',
+  maintenance: 'Maintenance',
+  workshop: 'Workshop',
+  control: 'Control Room',
+  rooftop: 'Rooftop',
+};
+
+/** Splits the floors into their bands, in play order. */
+function bandsOf(levels: LevelFile[]) {
+  const bands: { key: string; first: number; last: number; floors: number[] }[] = [];
+  levels.forEach((l, i) => {
+    const last = bands[bands.length - 1];
+    if (last && last.key === l.band) {
+      last.last = i;
+      last.floors.push(i);
+    } else bands.push({ key: l.band, first: i, last: i, floors: [i] });
+  });
+  return bands;
+}
+
 function readSeen(): number {
   try {
     const n = Number(localStorage.getItem(SEEN_KEY));
@@ -61,6 +83,8 @@ export function TowerMap({ levels, progress, current, onPick, onSettings }: Prop
   const noteTimer = useRef<number | undefined>(undefined);
 
   const currentRef = useRef<HTMLLIElement>(null);
+  // Rows count from the top of the tower, for the slide-in stagger.
+  const rowOf = (i: number) => levels.length - 1 - i;
   useEffect(() => {
     currentRef.current?.scrollIntoView({ block: 'center' });
     try {
@@ -110,63 +134,72 @@ export function TowerMap({ levels, progress, current, onPick, onSettings }: Prop
         <div className="tower-roof" aria-hidden="true">
           <span className="beacon" />
         </div>
-        <div className="tower-band">The Lobby · Floors 1 to 10</div>
-        <ol className="tower-floors" reversed>
-          {levels
-            .map((l, i) => ({ l, i }))
-            .reverse()
-            .map(({ l, i }, row) => {
-              const open = isUnlocked(progress, ids, i);
-              const stars = progress.stars[l.id] ?? 0;
-              const boss = (i + 1) % 10 === 0;
-              const here = i === current;
-              const cls = [
-                'tower-floor',
-                stars ? 'cleared' : '',
-                stars === 3 ? 'perfect' : '',
-                open ? '' : 'locked',
-                boss ? 'boss' : '',
-                here ? 'current' : '',
-                open && fresh(i) ? 'fresh' : '',
-                shaking === i ? 'shake' : '',
-              ]
-                .filter(Boolean)
-                .join(' ');
-              return (
-                <li key={l.id} ref={here ? currentRef : undefined} style={{ ['--row' as string]: row }}>
-                  <button
-                    type="button"
-                    className={cls}
-                    aria-disabled={!open}
-                    onClick={() => {
-                      if (!open) return lockedTap(i);
-                      fx.tap();
-                      onPick(i);
-                    }}
-                    aria-label={open ? `Floor ${i + 1}, ${l.title}, ${stars} stars${here ? ', you are here' : ''}` : `Floor ${i + 1}, locked`}
-                  >
-                    <span className="tf-num">{i + 1}</span>
-                    {here && <MiniBot />}
-                    <span className="tf-title">{open ? l.title : 'Locked'}</span>
-                    {open ? (
-                      <span className="tf-stars" aria-hidden="true">
-                        {[1, 2, 3].map((s) => (
-                          <span key={s} className={s <= stars ? 'on' : ''}>
-                            ★
-                          </span>
-                        ))}
-                      </span>
-                    ) : (
-                      <svg className="tf-lock" viewBox="0 0 16 18" aria-hidden="true">
-                        <path d="M4 8V5.5a4 4 0 0 1 8 0V8" fill="none" stroke="currentColor" strokeWidth="2" />
-                        <rect x="2" y="8" width="12" height="9" rx="2" fill="currentColor" />
-                      </svg>
-                    )}
-                  </button>
-                </li>
-              );
-            })}
-        </ol>
+        {bandsOf(levels)
+          .reverse()
+          .map((band) => (
+            <section key={band.key} className={`tower-section band-${band.key}`}>
+              <div className="tower-band">
+                {BAND_NAMES[band.key] ?? band.key} · Floors {band.first + 1} to {band.last + 1}
+              </div>
+              <ol className="tower-floors" reversed>
+                {band.floors
+                  .map((i) => ({ l: levels[i], i }))
+                  .reverse()
+                  .map(({ l, i }) => {
+                    const row = rowOf(i);
+                    const open = isUnlocked(progress, ids, i);
+                    const stars = progress.stars[l.id] ?? 0;
+                    const boss = (i + 1) % 10 === 0;
+                    const here = i === current;
+                    const cls = [
+                      'tower-floor',
+                      stars ? 'cleared' : '',
+                      stars === 3 ? 'perfect' : '',
+                      open ? '' : 'locked',
+                      boss ? 'boss' : '',
+                      here ? 'current' : '',
+                      open && fresh(i) ? 'fresh' : '',
+                      shaking === i ? 'shake' : '',
+                    ]
+                      .filter(Boolean)
+                      .join(' ');
+                    return (
+                      <li key={l.id} ref={here ? currentRef : undefined} style={{ ['--row' as string]: row }}>
+                        <button
+                          type="button"
+                          className={cls}
+                          aria-disabled={!open}
+                          onClick={() => {
+                            if (!open) return lockedTap(i);
+                            fx.tap();
+                            onPick(i);
+                          }}
+                          aria-label={open ? `Floor ${i + 1}, ${l.title}, ${stars} stars${here ? ', you are here' : ''}` : `Floor ${i + 1}, locked`}
+                        >
+                          <span className="tf-num">{i + 1}</span>
+                          {here && <MiniBot />}
+                          <span className="tf-title">{open ? l.title : 'Locked'}</span>
+                          {open ? (
+                            <span className="tf-stars" aria-hidden="true">
+                              {[1, 2, 3].map((s) => (
+                                <span key={s} className={s <= stars ? 'on' : ''}>
+                                  ★
+                                </span>
+                              ))}
+                            </span>
+                          ) : (
+                            <svg className="tf-lock" viewBox="0 0 16 18" aria-hidden="true">
+                              <path d="M4 8V5.5a4 4 0 0 1 8 0V8" fill="none" stroke="currentColor" strokeWidth="2" />
+                              <rect x="2" y="8" width="12" height="9" rx="2" fill="currentColor" />
+                            </svg>
+                          )}
+                        </button>
+                      </li>
+                    );
+                  })}
+              </ol>
+            </section>
+          ))}
         <div className="tower-ground">Sub-basement</div>
       </div>
       <div className="tower-footer">

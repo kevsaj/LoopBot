@@ -131,6 +131,17 @@ select:focus-visible {
 .board-canvas {
   z-index: 1;
 }
+/* Maintenance band: the service ducts. Dark teal air, a warm work-lamp glow, pipes behind. */
+.board-wrap.band-maintenance {
+  background:
+    radial-gradient(ellipse 55% 40% at 50% 60%, rgba(255, 190, 110, 0.22), transparent 70%),
+    linear-gradient(180deg, #0f1d24 0%, #173039 45%, #24413f 75%, #4a4632 100%);
+}
+.board-wrap.band-maintenance::after {
+  height: 100%;
+  opacity: 0.3;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300' preserveAspectRatio='none'><g fill='none' stroke='%230a1418' stroke-width='9'><path d='M0 40H150q20 0 20 20V120q0 20 20 20H400'/><path d='M0 250H90q16 0 16-16V200q0-16 16-16H260q16 0 16 16V300'/><path d='M330 0V70q0 14 14 14H400'/></g><g fill='%230a1418'><rect x='20' y='150' width='60' height='34' rx='4'/><rect x='300' y='210' width='70' height='40' rx='4'/><rect x='146' y='34' width='8' height='14'/><rect x='240' y='134' width='8' height='14'/></g></svg>") center / 100% 100% no-repeat;
+}
 .board-canvas {
   position: absolute;
   inset: 0;
@@ -381,7 +392,92 @@ select:focus-visible {
 .cursor {
   height: 0;
   border-top: 2px dashed var(--accent);
-  margin: -2px 4px;
+  margin: -2px 4px -2px calc(4px + var(--depth, 0) * var(--indent));
+}
+
+/* --- loops (ED-5): body indented under a header, closed by a foot --- */
+.program {
+  --indent: 18px;
+}
+.row {
+  margin-left: calc(var(--depth, 0) * var(--indent));
+}
+/* A rail down the left of a loop's body, in the loop colour. */
+.row.nested::before {
+  content: '';
+  position: absolute;
+  left: calc(var(--indent) * -1 + 7px);
+  top: -6px;
+  bottom: -6px;
+  width: 4px;
+  background: var(--flow);
+  opacity: 0.55;
+}
+.row.loop-head .line-tile {
+  border-bottom-left-radius: 2px;
+  padding-right: 120px;
+}
+.times {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: #4a2030;
+  border-radius: 999px;
+  padding: 2px;
+  touch-action: manipulation;
+}
+.times button {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 0;
+  background: #6a2a36;
+  color: var(--ink);
+  font-size: 18px;
+  font-weight: 700;
+}
+.times button:disabled {
+  opacity: 0.35;
+}
+.times-n {
+  min-width: 30px;
+  text-align: center;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.row.loop-foot {
+  height: 22px;
+}
+.row.loop-foot .row-btn {
+  border-radius: 2px 2px 10px 10px;
+  background: #4a2030;
+  border-left: 6px solid var(--flow);
+  color: #e9b9c6;
+  font-size: 12px;
+  padding-left: 10px;
+}
+.row.loop-foot.empty {
+  height: 40px;
+  margin-left: calc((var(--depth, 0) + 1) * var(--indent));
+}
+.row.loop-foot.empty .row-btn {
+  border: 1.5px dashed var(--flow);
+  background: transparent;
+  border-radius: 10px;
+}
+/* Short phones: slimmer rows so a loop and its body fit in the program box. */
+@media (max-height: 820px) {
+  :root {
+    --row-h: 42px;
+  }
+}
+.row.loop-foot.placeholder {
+  opacity: 0.3;
 }
 /* Where a command dragged from the palette will land. */
 .cursor.drop {
@@ -1127,6 +1223,14 @@ select:focus-visible {
 }
 .tf-stars .on {
   color: var(--warn);
+}
+/* Each band of the tower map gets its own wall colour, like floors of a real building. */
+.band-maintenance .tower-floors {
+  background: linear-gradient(#17262c, #142027);
+  border-color: #2c4a4f;
+}
+.band-maintenance .tower-band {
+  color: #7fb6b0;
 }
 .tower-ground {
   text-align: center;

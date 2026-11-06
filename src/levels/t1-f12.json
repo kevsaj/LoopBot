@@ -1,0 +1,52 @@
+{
+  "id": "t1-f12",
+  "title": "Vent Stairs",
+  "band": "maintenance",
+  "size": {
+    "w": 7,
+    "h": 1
+  },
+  "tiles": [
+    "......e"
+  ],
+  "heights": [
+    "0011223"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat"
+  ],
+  "slots": {
+    "main": 5
+  },
+  "par": {
+    "commands": 3,
+    "steps": 6
+  },
+  "reference": "repeat 3 { forward jump }",
+  "hints": [
+    "The climb repeats: one step along, one step up.",
+    "Loop forward and jump together, three times.",
+    "repeat 3 { forward jump }"
+  ],
+  "story": {
+    "intro": "PATCH: \"The vents climb in steps. Same move, over and over. You know what to do.\"",
+    "outro": null
+  }
+}

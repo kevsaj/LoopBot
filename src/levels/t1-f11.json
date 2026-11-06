@@ -1,0 +1,24 @@
+{
+  "id": "t1-f11",
+  "title": "The Long Duct",
+  "band": "maintenance",
+  "size": {"w": 8, "h": 1},
+  "tiles": [
+    ".......e"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {"x": 0, "y": 0, "facing": "east"},
+  "goals": ["bot_on_exit"],
+  "commands": ["forward", "turn_left", "turn_right", "jump", "pick_up", "drop", "activate", "repeat"],
+  "slots": {"main": 3},
+  "par": {"commands": 2, "steps": 7},
+  "reference": "repeat 7 { forward }",
+  "hints": [
+    "Seven steps, but only three slots. One block can do the same thing many times.",
+    "Put one forward inside a repeat, and set the repeat to 7.",
+    "repeat 7 { forward }"
+  ],
+  "story": {"intro": "PATCH: \"Service ducts. Long, straight, and VANTA's drones don't fit in here. Keep moving.\"", "outro": "PATCH: \"Nice. Work smarter, not longer.\""}
+}

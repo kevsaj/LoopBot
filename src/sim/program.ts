@@ -42,14 +42,32 @@ export function countCommands(p: Program): number {
   return (['main', ...FUNCTION_NAMES] as Routine[]).reduce((n, r) => n + countBlocks(p[r]), 0);
 }
 
-/** Parses a level's flat `reference` string, e.g. "pick_up forward forward drop". */
+/**
+ * Parses a level's `reference` string. Words are commands; loops use braces:
+ * "repeat 3 { forward turn_right } pick_up", and they can nest.
+ */
 export function parseReference(ref: string): Program {
+  const words = ref.replace(/[{}]/g, ' $& ').trim().split(/\s+/).filter(Boolean);
+  let i = 0;
+  const list = (): Block[] => {
+    const out: Block[] = [];
+    while (i < words.length && words[i] !== '}') {
+      const w = words[i++];
+      if (w === 'repeat') {
+        const times = Number(words[i++]);
+        if (!Number.isInteger(times) || words[i++] !== '{') throw new Error(`bad repeat in reference: ${ref}`);
+        const body = list();
+        if (words[i++] !== '}') throw new Error(`missing } in reference: ${ref}`);
+        out.push({ id: newId(), kind: 'repeat', times, body });
+      } else {
+        out.push(makeBlock(w as PaletteCommand));
+      }
+    }
+    return out;
+  };
   const p = emptyProgram();
-  p.main = ref
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean)
-    .map((w) => makeBlock(w as PaletteCommand));
+  p.main = list();
+  if (i < words.length) throw new Error(`unexpected } in reference: ${ref}`);
   return p;
 }
 
@@ -110,22 +128,116 @@ export function toCode(p: Program, routines: Routine[] = ['main', ...FUNCTION_NA
 }
 
 // --- Editing helpers (pure; the editor keeps history of whole programs) ---
+// A program is a tree: repeat and while blocks hold a body (ED-5). A Spot names a place in it:
+// `parent` is the id of the loop whose body it's in, or null for the routine's top level.
 
-export function insertAt(p: Program, r: Routine, index: number, block: Block): Program {
-  const list = [...p[r]];
-  list.splice(index, 0, block);
-  return { ...p, [r]: list };
+export interface Spot {
+  parent: string | null;
+  index: number;
 }
 
-export function removeAt(p: Program, r: Routine, index: number): Program {
-  const list = [...p[r]];
-  list.splice(index, 1);
-  return { ...p, [r]: list };
+/** How deep loops may nest (a loop inside a loop inside a loop). */
+export const MAX_DEPTH = 3;
+
+type WithBody = Extract<Block, { body: Block[] }>;
+const hasBody = (b: Block): b is WithBody => b.kind === 'repeat' || b.kind === 'while';
+
+/** Finds a block anywhere in the tree. */
+export function findBlock(blocks: Block[], id: string): Block | null {
+  for (const b of blocks) {
+    if (b.id === id) return b;
+    if (hasBody(b)) {
+      const f = findBlock(b.body, id);
+      if (f) return f;
+    }
+  }
+  return null;
 }
 
-export function move(p: Program, r: Routine, from: number, to: number): Program {
-  const list = [...p[r]];
-  const [b] = list.splice(from, 1);
-  list.splice(to, 0, b);
-  return { ...p, [r]: list };
+/** Where a block sits: its parent loop (or null) and its index there. */
+export function spotOf(blocks: Block[], id: string, parent: string | null = null): Spot | null {
+  for (let i = 0; i < blocks.length; i++) {
+    const b = blocks[i];
+    if (b.id === id) return { parent, index: i };
+    if (hasBody(b)) {
+      const f = spotOf(b.body, id, b.id);
+      if (f) return f;
+    }
+  }
+  return null;
+}
+
+/** The list a spot points into, or null if its parent loop is gone. */
+export function listAt(blocks: Block[], parent: string | null): Block[] | null {
+  if (parent == null) return blocks;
+  const b = findBlock(blocks, parent);
+  return b && hasBody(b) ? b.body : null;
+}
+
+/** How many loops a spot is inside (top level is 0). */
+export function depthOf(blocks: Block[], parent: string | null): number {
+  let d = 0;
+  let p = parent;
+  while (p != null) {
+    d++;
+    p = spotOf(blocks, p)?.parent ?? null;
+  }
+  return d;
+}
+
+/** How many loop levels a block brings with it (an action is 0, a loop of actions is 1). */
+export function loopHeight(b: Block): number {
+  return hasBody(b) ? 1 + Math.max(0, ...b.body.map(loopHeight)) : 0;
+}
+
+/** Copies the path down to `parent` and applies `edit` to that list. */
+function editList(blocks: Block[], parent: string | null, edit: (list: Block[]) => Block[]): Block[] {
+  if (parent == null) return edit(blocks);
+  return blocks.map((b) => {
+    if (!hasBody(b)) return b;
+    if (b.id === parent) return { ...b, body: edit(b.body) };
+    const body = editList(b.body, parent, edit);
+    return body === b.body ? b : { ...b, body };
+  });
+}
+
+/** Can `block` go at `spot`? Not inside itself, and not deeper than MAX_DEPTH. */
+export function canPlace(blocks: Block[], spot: Spot, block: Block): boolean {
+  if (!listAt(blocks, spot.parent)) return false;
+  for (let p = spot.parent; p != null; p = spotOf(blocks, p)?.parent ?? null) if (p === block.id) return false;
+  return depthOf(blocks, spot.parent) + loopHeight(block) <= MAX_DEPTH;
+}
+
+export function insertBlock(p: Program, r: Routine, spot: Spot, block: Block): Program {
+  return {
+    ...p,
+    [r]: editList(p[r], spot.parent, (list) => {
+      const next = [...list];
+      next.splice(Math.max(0, Math.min(spot.index, list.length)), 0, block);
+      return next;
+    }),
+  };
+}
+
+export function removeBlock(p: Program, r: Routine, id: string): Program {
+  const spot = spotOf(p[r], id);
+  if (!spot) return p;
+  return { ...p, [r]: editList(p[r], spot.parent, (list) => list.filter((b) => b.id !== id)) };
+}
+
+/** Moves a block (with everything inside it) to a spot, read as positions before the move. */
+export function moveBlock(p: Program, r: Routine, id: string, to: Spot): Program {
+  const from = spotOf(p[r], id);
+  const block = findBlock(p[r], id);
+  if (!from || !block || !canPlace(p[r], to, block)) return p;
+  const index = from.parent === to.parent && from.index < to.index ? to.index - 1 : to.index;
+  if (from.parent === to.parent && index === from.index) return p;
+  return insertBlock(removeBlock(p, r, id), r, { parent: to.parent, index }, block);
+}
+
+/** Replaces one block (for example to change a repeat count). */
+export function updateBlock(p: Program, r: Routine, id: string, change: (b: Block) => Block): Program {
+  const spot = spotOf(p[r], id);
+  if (!spot) return p;
+  return { ...p, [r]: editList(p[r], spot.parent, (list) => list.map((b) => (b.id === id ? change(b) : b))) };
 }
