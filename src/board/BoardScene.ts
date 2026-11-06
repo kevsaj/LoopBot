@@ -288,9 +288,39 @@ export class BoardScene extends Phaser.Scene {
       this.tweens.add({ targets: this.bot, x: to.sx + 3, yoyo: true, repeat: 3, duration: 40, delay: dur });
     } else if (u.cleared) {
       this.tweens.add({ targets: this.bot, scale: 1.25, yoyo: true, duration: 180, delay: dur, ease: 'Back.easeOut' });
+      this.lightUp(w, dur);
     } else if (u.action === 'turn_left' || u.action === 'turn_right' || u.action === 'pick_up' || u.action === 'drop' || u.action === 'activate') {
       this.tweens.add({ targets: this.bot, scaleY: 0.88, yoyo: true, duration: Math.min(90, dur / 2 || 90) });
     }
+  }
+
+  /** Clearing a floor transforms it: a wave of light runs out from the bot across every walkable tile. */
+  private lightUp(w: World, delay: number) {
+    const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    for (let y = 0; y < w.h; y++) {
+      for (let x = 0; x < w.w; x++) {
+        const t = w.tiles[y][x];
+        if (t.type === 'wall' || t.type === 'gap') continue;
+        const grid = this.toGrid(w, x, y);
+        const { sx, sy } = this.screen(grid, t.height + w.boxes[y][x]);
+        const g = this.add.graphics();
+        g.setDepth((grid.rx + grid.ry) * 10 + 5);
+        this.diamond(g, sx, sy, C.exit, 0.95, 1);
+        g.setAlpha(0);
+        this.layer.add(g);
+        const dist = Math.abs(x - w.bot.x) + Math.abs(y - w.bot.y);
+        this.tweens.add({
+          targets: g,
+          alpha: { from: 0, to: 0.55 },
+          yoyo: true,
+          hold: reduced ? 400 : 120,
+          duration: reduced ? 1 : 220,
+          delay: delay + (reduced ? 0 : dist * 70),
+          onComplete: () => g.destroy(),
+        });
+      }
+    }
+    this.layer.sort('depth');
   }
 }
 

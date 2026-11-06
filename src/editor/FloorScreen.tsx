@@ -11,6 +11,7 @@ import type { Block } from '../sim/types';
 import { useEditor } from './useEditor';
 import { ProgramList } from './ProgramList';
 import { CodeView } from './CodeView';
+import { Terminal } from './Terminal';
 import { COMMAND_META, PALETTE_ORDER, blockCommand } from './commands';
 import { Board } from '../board/Board';
 import type { BoardUpdate } from '../board/BoardScene';
@@ -124,7 +125,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
         setTerminal(`> floor cleared in ${o.steps} steps`);
         fx.win();
         setProgress((p) => recordClear(p, level.id, s));
-        window.setTimeout(() => setShowResults(true), SPEEDS[speed].ms + 250);
+        window.setTimeout(() => setShowResults(true), SPEEDS[speed].ms + 900); // let the light-up wave play first
       } else {
         setActiveIds(new Set());
         setTerminal(`> program ended after ${o.steps} steps. Not there yet: add more commands.`);
@@ -309,9 +310,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
         <button type="button" className="rotate-btn" onClick={() => (fx.tap(), setRotateSignal((n) => n + 1))} aria-label="Turn the board 90 degrees">
           ⟲ Turn 90
         </button>
-        <div className={`terminal status-${status}`} role="status">
-          {terminal}
-        </div>
+        <Terminal text={terminal} status={status} />
       </section>
 
       <section className="editor">

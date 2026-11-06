@@ -769,3 +769,35 @@ select:focus-visible {
   text-align: left;
   min-height: 24px;
 }
+
+/* --- story lines --- */
+.terminal.story {
+  color: #dfe6ff;
+}
+.speaker {
+  display: inline-block;
+  margin-right: 8px;
+  padding: 0 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  vertical-align: 1px;
+}
+.speaker-patch {
+  background: #2f6390;
+  color: #d6ecff;
+}
+.speaker-vanta {
+  background: #7a2232;
+  color: #ffd6dc;
+}
+.caret {
+  animation: blink 0.8s steps(1) infinite;
+  color: var(--accent);
+}
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
