@@ -1,25 +1,15 @@
 // The program as visible slots (LS-1): filled lines, a dashed insert cursor, and empty boxes up to the limit.
 // Tap a line to move the cursor (ED-2), long-press and drag to reorder (ED-2), swipe left to delete (ED-3).
+// The drag context itself lives in dnd.tsx, so palette commands can be dropped in here too.
 
 import { useEffect, useRef, useState } from 'react';
 import type { KeyboardEvent, PointerEvent, ReactNode } from 'react';
-import {
-  DndContext,
-  DragOverlay,
-  KeyboardSensor,
-  MouseSensor,
-  TouchSensor,
-  closestCenter,
-  useSensor,
-  useSensors,
-} from '@dnd-kit/core';
-import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
-import { SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { useDroppable } from '@dnd-kit/core';
+import { SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { restrictToVerticalAxis, restrictToParentElement } from '@dnd-kit/modifiers';
 import type { Block } from '../sim/types';
 import { COMMAND_META, blockCommand } from './commands';
-import { fx } from '../audio/feedback';
+import { EMPTY_PREFIX, LIST_ID, useDragState } from './dnd';
 
 interface Props {
   blocks: Block[];
@@ -30,12 +20,11 @@ interface Props {
   onTap(index: number): void;
   onTapEnd(): void;
   onDelete(index: number): void;
-  onMove(from: number, to: number): void;
 }
 
 const SWIPE_DELETE_PX = 72;
 
-function Tile({ block, index, lifted }: { block: Block; index: number; lifted?: boolean }) {
+export function Tile({ block, index, lifted }: { block: Block; index: number; lifted?: boolean }) {
   const meta = COMMAND_META[blockCommand(block)];
   return (
     <span className={`line-tile tone-${meta.tone}${lifted ? ' lifted' : ''}`}>
@@ -65,6 +54,8 @@ function Row({
   onDelete(): void;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: block.id });
+  // A command dragged in from the palette shows a drop line instead of shuffling the rows.
+  const { fromPalette } = useDragState();
   const [dx, setDx] = useState(0);
   const self = useRef<HTMLLIElement | null>(null);
   // Keep the running (or crashing) line in view on a small screen.
@@ -123,8 +114,8 @@ function Row({
   };
 
   const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
+    transform: fromPalette ? undefined : CSS.Transform.toString(transform),
+    transition: fromPalette ? undefined : transition,
   };
   const armed = dx < -SWIPE_DELETE_PX;
   return (
@@ -158,82 +149,58 @@ function Row({
   );
 }
 
-function Cursor() {
-  return <li className="cursor" aria-hidden="true" />;
+function Cursor({ drop }: { drop?: boolean }) {
+  return <li className={`cursor${drop ? ' drop' : ''}`} aria-hidden="true" />;
 }
 
-export function ProgramList({ blocks, limit, cursor, activeIds, crashId, onTap, onTapEnd, onDelete, onMove }: Props) {
-  const [dragId, setDragId] = useState<string | null>(null);
-  const sensors = useSensors(
-    // Long-press to drag on touch, so a quick swipe or scroll never starts a drag by accident.
-    useSensor(TouchSensor, { activationConstraint: { delay: 220, tolerance: 6 } }),
-    useSensor(MouseSensor, { activationConstraint: { delay: 160, tolerance: 6 } }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-      keyboardCodes: { start: ['Space'], cancel: ['Escape'], end: ['Space', 'Enter'] },
-    }),
+function EmptySlot({ n, onTap }: { n: number; onTap(): void }) {
+  const { setNodeRef, isOver } = useDroppable({ id: `${EMPTY_PREFIX}${n}` });
+  return (
+    <li ref={setNodeRef} className={`row empty-slot${isOver ? ' over' : ''}`}>
+      <button type="button" className="row-btn" onClick={onTap} aria-label="Empty slot. Tap to add commands at the end.">
+        <span className="line-no">{n + 1}</span>
+      </button>
+    </li>
   );
+}
+
+export function ProgramList({ blocks, limit, cursor, activeIds, crashId, onTap, onTapEnd, onDelete }: Props) {
+  const { dragId, fromPalette, dropIndex } = useDragState();
+  const { setNodeRef } = useDroppable({ id: LIST_ID });
   const cur = cursor ?? blocks.length;
   const empty = Math.max(0, limit - blocks.length);
-  const dragIndex = dragId ? blocks.findIndex((b) => b.id === dragId) : -1;
-
-  const start = (e: DragStartEvent) => {
-    setDragId(String(e.active.id));
-    fx.lift();
-  };
-  const end = (e: DragEndEvent) => {
-    setDragId(null);
-    if (!e.over) return;
-    const from = blocks.findIndex((b) => b.id === e.active.id);
-    const to = blocks.findIndex((b) => b.id === e.over!.id);
-    if (from >= 0 && to >= 0 && from !== to) {
-      onMove(from, to);
-      fx.snap();
-    }
-  };
+  const room = blocks.length < limit;
+  // While dragging from the palette the dashed line follows your finger; otherwise it marks the tap cursor.
+  const lineAt = fromPalette ? (room ? dropIndex : null) : dragId ? null : cur;
 
   return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={closestCenter}
-      modifiers={[restrictToVerticalAxis, restrictToParentElement]}
-      onDragStart={start}
-      onDragEnd={end}
-      onDragCancel={() => setDragId(null)}
-    >
-      <SortableContext items={blocks.map((b) => b.id)} strategy={verticalListSortingStrategy}>
-        <ol className="program" aria-label="Program">
-          {blocks.map((b, i) => (
-            <FragmentRow key={b.id} showCursor={!dragId && cur === i}>
-              <Row
-                block={b}
-                index={i}
-                active={activeIds.has(b.id)}
-                crashed={crashId === b.id}
-                onTap={() => onTap(i)}
-                onDelete={() => onDelete(i)}
-              />
-            </FragmentRow>
-          ))}
-          {!dragId && cur === blocks.length && <Cursor />}
-          {Array.from({ length: empty }, (_, i) => (
-            <li key={`empty-${i}`} className="row empty-slot">
-              <button type="button" className="row-btn" onClick={onTapEnd} aria-label="Empty slot. Tap to add commands at the end.">
-                <span className="line-no">{blocks.length + i + 1}</span>
-              </button>
-            </li>
-          ))}
-        </ol>
-      </SortableContext>
-      <DragOverlay>{dragIndex >= 0 ? <Tile block={blocks[dragIndex]} index={dragIndex} lifted /> : null}</DragOverlay>
-    </DndContext>
+    <SortableContext items={blocks.map((b) => b.id)} strategy={verticalListSortingStrategy}>
+      <ol ref={setNodeRef} className={`program${fromPalette ? (room ? ' receiving' : ' no-room') : ''}`} aria-label="Program">
+        {blocks.map((b, i) => (
+          <FragmentRow key={b.id} cursor={lineAt === i} drop={fromPalette}>
+            <Row
+              block={b}
+              index={i}
+              active={activeIds.has(b.id)}
+              crashed={crashId === b.id}
+              onTap={() => onTap(i)}
+              onDelete={() => onDelete(i)}
+            />
+          </FragmentRow>
+        ))}
+        {lineAt === blocks.length && <Cursor drop={fromPalette} />}
+        {Array.from({ length: empty }, (_, i) => (
+          <EmptySlot key={`empty-${i}`} n={blocks.length + i} onTap={onTapEnd} />
+        ))}
+      </ol>
+    </SortableContext>
   );
 }
 
-function FragmentRow({ showCursor, children }: { showCursor: boolean; children: ReactNode }) {
+function FragmentRow({ cursor, drop, children }: { cursor: boolean; drop: boolean; children: ReactNode }) {
   return (
     <>
-      {showCursor && <Cursor />}
+      {cursor && <Cursor drop={drop} />}
       {children}
     </>
   );
