@@ -100,3 +100,12 @@ describe('editor reducer with loops', () => {
     expect(code(s.program)).toBe('repeat 2: | pass');
   });
 });
+
+describe('function references', () => {
+  it('parses function bodies after main', () => {
+    const p = parseReference('F2 F1 def F1 { forward jump } def F2 { F1 repeat 2 { turn_left } }');
+    expect(p.main.map((b) => (b.kind === 'call' ? b.fn : b.kind))).toEqual(['F2', 'F1']);
+    expect(p.F1.map((b) => (b.kind === 'action' ? b.action : b.kind))).toEqual(['forward', 'jump']);
+    expect(p.F2.map((b) => b.kind)).toEqual(['call', 'repeat']);
+  });
+});

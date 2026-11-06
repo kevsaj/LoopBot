@@ -45,13 +45,14 @@ export function countCommands(p: Program): number {
 /**
  * Parses a level's `reference` string. Words are commands; loops use braces:
  * "repeat 3 { forward turn_right } pick_up", and they can nest.
+ * Function bodies come after main: "F1 turn_right F1 def F1 { forward jump }".
  */
 export function parseReference(ref: string): Program {
   const words = ref.replace(/[{}]/g, ' $& ').trim().split(/\s+/).filter(Boolean);
   let i = 0;
   const list = (): Block[] => {
     const out: Block[] = [];
-    while (i < words.length && words[i] !== '}') {
+    while (i < words.length && words[i] !== '}' && words[i] !== 'def') {
       const w = words[i++];
       if (w === 'repeat') {
         const times = Number(words[i++]);
@@ -67,6 +68,14 @@ export function parseReference(ref: string): Program {
   };
   const p = emptyProgram();
   p.main = list();
+  // Function bodies follow main: "F1 F1 def F1 { forward jump }"
+  while (words[i] === 'def') {
+    const name = words[i + 1] as FunctionName;
+    if (!(FUNCTION_NAMES as readonly string[]).includes(name) || words[i + 2] !== '{') throw new Error(`bad def in reference: ${ref}`);
+    i += 3;
+    p[name] = list();
+    if (words[i++] !== '}') throw new Error(`missing } in reference: ${ref}`);
+  }
   if (i < words.length) throw new Error(`unexpected } in reference: ${ref}`);
   return p;
 }

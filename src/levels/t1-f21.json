@@ -1,0 +1,51 @@
+{
+  "id": "t1-f21",
+  "title": "Tool Rack",
+  "band": "workshop",
+  "size": {
+    "w": 7,
+    "h": 1
+  },
+  "tiles": [
+    "..s.s.s"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "all_switches_on"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "F1"
+  ],
+  "slots": {
+    "main": 3,
+    "F1": 3
+  },
+  "par": {
+    "commands": 6,
+    "steps": 9
+  },
+  "reference": "F1 F1 F1 def F1 { forward forward activate }",
+  "hints": [
+    "Three switches, the same walk to each. Main has only three slots.",
+    "Build the walk once in F1: forward, forward, activate. Then call it from main.",
+    "F1 F1 F1 def F1 { forward forward activate }"
+  ],
+  "story": {
+    "intro": "PATCH: \"The Workshop. Bots here learn routines: teach one once, call it by name. Try the F1 tab.\"",
+    "outro": "PATCH: \"See? Write it once, use it everywhere.\""
+  }
+}

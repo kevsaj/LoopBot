@@ -63,6 +63,19 @@ const BANDS: Record<string, Partial<typeof C>> = {
     edge: 0x18262d,
     void: 0x10202a,
   },
+  // Workshop: oiled-oak benches between brick walls, under warm work lamps.
+  workshop: {
+    floorTop: 0xd9a86f,
+    floorL: 0xa8784b,
+    floorR: 0x86593a,
+    floorEdge: 0xf2d3a4,
+    wallTop: 0x8e4a3c,
+    wallL: 0x6d382e,
+    wallR: 0x552b24,
+    wallCap: 0xb26654,
+    edge: 0x2a1712,
+    void: 0x1d120f,
+  },
 };
 
 /** Switches the board to a band's palette. Call before the board draws a floor. */
