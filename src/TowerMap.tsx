@@ -8,6 +8,7 @@ import type { LevelFile } from './sim/types';
 import type { Progress } from './progress';
 import { isUnlocked } from './progress';
 import { fx } from './audio/feedback';
+import { DEMO } from './demo';
 
 interface Props {
   levels: LevelFile[];
@@ -134,6 +135,7 @@ export function TowerMap({ levels, progress, current, onPick, onSettings }: Prop
         <div className="tower-roof" aria-hidden="true">
           <span className="beacon" />
         </div>
+        {DEMO && <div className="tower-band demo-more">Floors 11 to 50 · in the full game</div>}
         {bandsOf(levels)
           .reverse()
           .map((band) => (

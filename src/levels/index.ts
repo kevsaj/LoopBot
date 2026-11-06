@@ -1,4 +1,5 @@
 import type { LevelFile } from '../sim/types';
+import { DEMO, DEMO_FLOORS } from '../demo';
 import f01 from './t1-f01.json';
 import f02 from './t1-f02.json';
 import f03 from './t1-f03.json';
@@ -21,4 +22,7 @@ import f19 from './t1-f19.json';
 import f20 from './t1-f20.json';
 
 /** Floors in play order. Adding a floor is a JSON file plus one line here. */
-export const LEVELS = [f01, f02, f03, f04, f05, f06, f07, f08, f09, f10, f11, f12, f13, f14, f15, f16, f17, f18, f19, f20] as unknown as LevelFile[];
+const ALL = [f01, f02, f03, f04, f05, f06, f07, f08, f09, f10, f11, f12, f13, f14, f15, f16, f17, f18, f19, f20] as unknown as LevelFile[];
+
+/** Floors in play: the whole tower, or just the Lobby in the web demo. */
+export const LEVELS = DEMO ? ALL.slice(0, DEMO_FLOORS) : ALL;

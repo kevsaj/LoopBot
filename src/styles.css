@@ -1287,3 +1287,19 @@ select:focus-visible {
   margin-right: 4px;
   vertical-align: -2px;
 }
+
+/* Web demo */
+.tower-band.demo-more {
+  border: 1px dashed var(--line);
+  border-radius: 10px;
+  padding: 18px 8px;
+  margin: 4px 12px 14px;
+}
+.demo-end {
+  margin: 10px 0 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(63, 214, 193, 0.12);
+  font-size: 14px;
+  line-height: 1.4;
+}
