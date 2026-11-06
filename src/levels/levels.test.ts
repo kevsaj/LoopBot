@@ -24,4 +24,10 @@ describe.each(LEVELS.map((l) => [l.id, l] as const))('floor %s', (_id, level) =>
     expect(path).not.toBeNull();
     expect(path!.length).toBe(level.par.steps);
   });
+
+  it('the solution hint, if any, clears the floor', () => {
+    if (level.hints.length < 3) return;
+    const program = parseReference(level.hints[2].replace(/,/g, ' '));
+    expect(new Runner(program, level).runToEnd().status).toBe('cleared');
+  });
 });

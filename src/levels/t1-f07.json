@@ -1,0 +1,30 @@
+{
+  "id": "t1-f07",
+  "title": "Crate Stairs",
+  "band": "lobby",
+  "size": {"w": 8, "h": 3},
+  "tiles": [
+    "########",
+    "#.....e#",
+    "########"
+  ],
+  "heights": [
+    "00000000",
+    "00000220",
+    "00000000"
+  ],
+  "boxes": [{"x": 3, "y": 1, "count": 1}],
+  "targets": [],
+  "bot": {"x": 1, "y": 1, "facing": "east"},
+  "goals": ["bot_on_exit"],
+  "commands": ["forward", "turn_left", "turn_right", "jump", "pick_up", "drop"],
+  "slots": {"main": 10},
+  "par": {"commands": 7, "steps": 7},
+  "reference": "forward pick_up forward drop jump jump forward",
+  "hints": [
+    "The ledge is 2 high, too high to jump. A crate is 1 high.",
+    "7 commands: get the crate, drop it by the ledge, then climb it like a stair.",
+    "forward, pick_up, forward, drop, jump, jump, forward"
+  ],
+  "story": {"intro": "PATCH: \"That ledge leads to the lobby. Find a way up.\"", "outro": "Far above, gala music echoes down the stairwell."}
+}
