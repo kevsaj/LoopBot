@@ -110,7 +110,26 @@ select:focus-visible {
   margin: 0 12px;
   border-radius: 14px;
   overflow: hidden;
-  background: #151724;
+  /* Lobby dusk: violet sky fading to a warm glow, with a soft sun behind the board */
+  background:
+    radial-gradient(ellipse 60% 45% at 50% 62%, rgba(255, 196, 150, 0.35), transparent 70%),
+    linear-gradient(180deg, #2a2347 0%, #4b3766 45%, #8c5a74 78%, #c97f72 100%);
+}
+.board-wrap::after {
+  /* distant skyline, drawn as a single SVG silhouette */
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 38%;
+  pointer-events: none;
+  opacity: 0.35;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 100' preserveAspectRatio='none'><path fill='%231e1833' d='M0 100V62h18V40h14v22h10V30h16v32h12V52h20V18h10v-8h6v8h10v44h14V44h18v18h12V36h22v26h8V58h16V24h12v38h14V48h18v14h10V34h20v28h14V54h16v46z'/></svg>") bottom / 100% 100% no-repeat;
+  z-index: 0;
+}
+.board-canvas {
+  z-index: 1;
 }
 .board-canvas {
   position: absolute;
@@ -120,6 +139,7 @@ select:focus-visible {
   display: block;
 }
 .step-counter {
+  z-index: 2;
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -131,6 +151,7 @@ select:focus-visible {
   font-variant-numeric: tabular-nums;
 }
 .rotate-btn {
+  z-index: 2;
   position: absolute;
   top: 6px;
   right: 6px;
@@ -142,6 +163,7 @@ select:focus-visible {
   font-size: 12px;
 }
 .terminal {
+  z-index: 2;
   position: absolute;
   left: 8px;
   right: 8px;
@@ -800,4 +822,10 @@ select:focus-visible {
   50% {
     opacity: 0;
   }
+}
+.portrait {
+  width: 14px;
+  height: 14px;
+  margin-right: 4px;
+  vertical-align: -2px;
 }

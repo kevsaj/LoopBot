@@ -1,4 +1,5 @@
-// The isometric board, drawn as grey boxes (editor prototype phase: no art yet).
+// The isometric board. All art is drawn in code (decided Nov 6: art is made in-house),
+// as flat-shaded isometric shapes in the Monument Valley-inspired style.
 // It only reads World snapshots from the simulation; it never changes them.
 
 import Phaser from 'phaser';
@@ -9,27 +10,36 @@ const TH = 32; // tile height on screen
 const HU = 14; // pixels per height unit
 const WALL_H = 0.8; // walls stand a little above the floor, low enough not to hide the path
 
+// Lobby palette: warm sandstone floor, dusty violet walls, teal light for anything "on".
 const C = {
-  bg: 0x1b1d2a,
-  floorTop: 0x8a90a6,
-  floorL: 0x5d6276,
-  floorR: 0x4a4e60,
-  wallTop: 0x50556a,
-  wallL: 0x363a4a,
-  wallR: 0x2c2f3c,
-  edge: 0x22252f,
-  exit: 0x5ad1a4,
-  target: 0xf2c14e,
-  switchOff: 0x7d8297,
-  switchOn: 0x5ad1a4,
-  door: 0xc0624d,
-  boxTop: 0xd9a066,
-  boxL: 0xa8784a,
-  boxR: 0x8d6440,
-  bot: 0x7cc4ff,
-  botDark: 0x3f7fb5,
-  eye: 0x10121a,
-  crash: 0xff5b5b,
+  floorTop: 0xeedcbc,
+  floorL: 0xcfae8a,
+  floorR: 0xb08e70,
+  floorEdge: 0xf8ecd6,
+  wallTop: 0x8b7fb0,
+  wallL: 0x675c8c,
+  wallR: 0x524874,
+  wallCap: 0xa89bcc,
+  edge: 0x3b2f4a,
+  exit: 0x3fd6c1,
+  exitGlow: 0x9ff5e8,
+  target: 0xf2b84b,
+  switchOff: 0xe0706a,
+  switchOn: 0x3fd6c1,
+  door: 0xe0706a,
+  doorL: 0xb85550,
+  doorR: 0x9a4542,
+  boxTop: 0xe39a63,
+  boxL: 0xbf7848,
+  boxR: 0xa0633b,
+  cell: 0x7ff2e0,
+  bot: 0xf7f3ea,
+  botL: 0xd9d2c4,
+  botR: 0xbdb5a6,
+  visor: 0x2b2440,
+  eye: 0x7ff2e0,
+  crash: 0xff6b6b,
+  void: 0x2a2140,
 };
 
 export interface BoardUpdate {
@@ -50,6 +60,8 @@ export class BoardScene extends Phaser.Scene {
   private layer!: Phaser.GameObjects.Container;
   private bot!: Phaser.GameObjects.Container;
   private botBody!: Phaser.GameObjects.Graphics;
+  private botInner!: Phaser.GameObjects.Container;
+  private botShadow!: Phaser.GameObjects.Ellipse;
   private ready = false;
   private pending: BoardUpdate | null = null;
 
@@ -58,10 +70,14 @@ export class BoardScene extends Phaser.Scene {
   }
 
   create() {
-    this.cameras.main.setBackgroundColor(C.bg);
     this.layer = this.add.container(0, 0);
     this.botBody = this.add.graphics();
-    this.bot = this.add.container(0, 0, [this.botBody]);
+    this.botShadow = this.add.ellipse(0, 0, TW * 0.42, TH * 0.42, 0x2b2440, 0.28);
+    this.botInner = this.add.container(0, 0, [this.botBody]);
+    this.bot = this.add.container(0, 0, [this.botShadow, this.botInner]);
+    // idle bob: LoopBot hovers gently, like a toy
+    const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    if (!reduced) this.tweens.add({ targets: this.botInner, y: -2.5, yoyo: true, repeat: -1, duration: 900, ease: 'Sine.easeInOut' });
     this.layer.add(this.bot);
     this.scale.on('resize', () => this.fit());
     this.ready = true;
@@ -153,12 +169,44 @@ export class BoardScene extends Phaser.Scene {
     ];
     g.fillStyle(color, alpha);
     g.fillPoints(pts, true);
-    g.lineStyle(1, C.edge, 0.6);
+    g.lineStyle(1, C.edge, 0.18);
     g.strokePoints(pts, true);
   }
 
+  /** A thin light line along the two front top edges, which gives tiles a crisp bevel. */
+  private rim(g: Phaser.GameObjects.Graphics, sx: number, sy: number, color: number, scale = 1) {
+    const hw = (TW / 2) * scale;
+    const hh = (TH / 2) * scale;
+    g.lineStyle(1.5, color, 0.9);
+    g.beginPath();
+    g.moveTo(sx - hw, sy);
+    g.lineTo(sx, sy + hh);
+    g.lineTo(sx + hw, sy);
+    g.strokePath();
+  }
+
+  /** A crate carrying a power cell: warm box, glowing cyan band on the two visible faces. */
+  private crate(g: Phaser.GameObjects.Graphics, sx: number, sy: number, scale: number) {
+    const hPx = (HU - 2) * (scale / 0.72);
+    this.prism(g, sx, sy, hPx, C.boxTop, C.boxL, C.boxR, scale);
+    const hw = (TW / 2) * scale;
+    const hh = (TH / 2) * scale;
+    const mid = hPx * 0.5;
+    g.lineStyle(2, C.cell, 0.95);
+    g.beginPath();
+    g.moveTo(sx - hw, sy + mid);
+    g.lineTo(sx, sy + hh + mid);
+    g.lineTo(sx + hw, sy + mid);
+    g.strokePath();
+    this.rim(g, sx, sy, 0xf6c49a, scale);
+  }
+
   private drawStatic(w: World) {
-    for (const child of [...this.layer.list]) if (child !== this.bot) child.destroy();
+    for (const child of [...this.layer.list]) {
+      if (child === this.bot) continue;
+      this.tweens.killTweensOf(child);
+      child.destroy();
+    }
     const key = (x: number, y: number) => `${x},${y}`;
     for (let y = 0; y < w.h; y++) {
       for (let x = 0; x < w.w; x++) {
@@ -168,30 +216,74 @@ export class BoardScene extends Phaser.Scene {
         g.setDepth((grid.rx + grid.ry) * 10);
         const base = HU * 0.6; // every tile has a little thickness so the board reads as a diorama
         if (t.type === 'gap') {
+          // a dark shaft with a sliver of the drop visible
           const { sx, sy } = this.screen(grid, 0);
-          this.diamond(g, sx, sy + 4, 0x0e0f16, 0.9);
+          this.diamond(g, sx, sy + 6, C.void, 0.92, 0.9);
+          this.diamond(g, sx, sy + 12, 0x1a1430, 0.6, 0.9);
         } else if (t.type === 'wall') {
           const { sx, sy } = this.screen(grid, t.height + WALL_H);
           this.prism(g, sx, sy, (t.height + WALL_H) * HU + base, C.wallTop, C.wallL, C.wallR);
+          this.diamond(g, sx, sy, C.wallCap, 0.7, 0.55);
+          this.rim(g, sx, sy, C.wallCap);
         } else {
           const { sx, sy } = this.screen(grid, t.height);
           this.prism(g, sx, sy, t.height * HU + base, C.floorTop, C.floorL, C.floorR);
+          this.rim(g, sx, sy, C.floorEdge);
+          // faint inset so the floor reads as laid stone
+          g.lineStyle(1, C.floorL, 0.35);
+          g.strokePoints(
+            [
+              new Phaser.Math.Vector2(sx, sy - TH * 0.36),
+              new Phaser.Math.Vector2(sx + TW * 0.36, sy),
+              new Phaser.Math.Vector2(sx, sy + TH * 0.36),
+              new Phaser.Math.Vector2(sx - TW * 0.36, sy),
+            ],
+            true,
+          );
           if (t.type === 'exit') {
-            // exit: concentric rings plus a soft beacon, so it reads at a glance
-            this.diamond(g, sx, sy, C.exit, 0.85);
-            this.diamond(g, sx, sy, C.floorTop, 0.55);
-            this.diamond(g, sx, sy, C.exit, 0.3);
-            g.fillStyle(C.exit, 0.18);
-            g.fillRect(sx - TW * 0.12, sy - 46, TW * 0.24, 46);
+            // the service lift: a glowing pad with a soft beam that pulses
+            this.diamond(g, sx, sy, C.exit, 0.8);
+            this.diamond(g, sx, sy, C.exitGlow, 0.5);
+            this.diamond(g, sx, sy, C.exit, 0.25);
+            const beam = this.add.graphics();
+            beam.setDepth((grid.rx + grid.ry) * 10 + 1);
+            beam.fillStyle(C.exitGlow, 0.22);
+            beam.fillPoints(
+              [
+                new Phaser.Math.Vector2(sx - TW * 0.3, sy),
+                new Phaser.Math.Vector2(sx - TW * 0.18, sy - 52),
+                new Phaser.Math.Vector2(sx + TW * 0.18, sy - 52),
+                new Phaser.Math.Vector2(sx + TW * 0.3, sy),
+              ],
+              true,
+            );
+            this.layer.add(beam);
+            this.tweens.add({ targets: beam, alpha: 0.35, yoyo: true, repeat: -1, duration: 1100, ease: 'Sine.easeInOut' });
           } else if (t.type === 'switch') {
             const on = w.switches[key(x, y)];
+            g.fillStyle(C.edge, 0.25);
+            g.fillEllipse(sx, sy + 2, TW * 0.4, TH * 0.4);
             g.fillStyle(on ? C.switchOn : C.switchOff, 1);
-            g.fillEllipse(sx, sy, TW * 0.36, TH * 0.36);
-            g.lineStyle(2, C.edge, 1);
-            g.strokeEllipse(sx, sy, TW * 0.36, TH * 0.36);
+            g.fillEllipse(sx, sy - (on ? 0 : 2), TW * 0.34, TH * 0.34);
+            g.fillStyle(0xffffff, 0.35);
+            g.fillEllipse(sx - 3, sy - (on ? 2 : 4), TW * 0.12, TH * 0.1);
           } else if (t.type === 'door') {
-            if (!w.doors[key(x, y)]) this.prism(g, sx, sy - WALL_H * HU, WALL_H * HU, C.door, 0x9a4b3a, 0x7f3e30, 0.85);
-            else this.diamond(g, sx, sy, 0x3a3e50, 0.85);
+            if (!w.doors[key(x, y)]) {
+              const dh = WALL_H * HU + 4;
+              this.prism(g, sx, sy - dh, dh, C.door, C.doorL, C.doorR, 0.86);
+              // warning stripes on the visible faces
+              g.lineStyle(2, 0xf8e3c0, 0.6);
+              for (const f of [0.3, 0.65]) {
+                g.beginPath();
+                g.moveTo(sx - (TW / 2) * 0.86, sy - dh + dh * f);
+                g.lineTo(sx, sy - dh + (TH / 2) * 0.86 + dh * f);
+                g.lineTo(sx + (TW / 2) * 0.86, sy - dh + dh * f);
+                g.strokePath();
+              }
+            } else {
+              this.diamond(g, sx, sy, C.void, 0.8, 0.55);
+              this.rim(g, sx, sy, C.door, 0.86);
+            }
           }
           if (t.colour) {
             const col = { r: 0xe0605a, g: 0x6cc56c, b: 0x5b8ee6, y: 0xf2d24e }[t.colour];
@@ -203,6 +295,16 @@ export class BoardScene extends Phaser.Scene {
         if (target) {
           const { sx, sy } = this.screen(grid, t.height);
           const filled = w.boxes[y][x] >= target.count;
+          g.fillStyle(filled ? C.exit : C.target, 0.18);
+          g.fillPoints(
+            [
+              new Phaser.Math.Vector2(sx, sy - (TH / 2) * 0.62),
+              new Phaser.Math.Vector2(sx + (TW / 2) * 0.62, sy),
+              new Phaser.Math.Vector2(sx, sy + (TH / 2) * 0.62),
+              new Phaser.Math.Vector2(sx - (TW / 2) * 0.62, sy),
+            ],
+            true,
+          );
           g.lineStyle(3, filled ? C.exit : C.target, 1);
           const s = 0.62;
           g.strokePoints(
@@ -220,7 +322,7 @@ export class BoardScene extends Phaser.Scene {
           const bg = this.add.graphics();
           bg.setDepth((grid.rx + grid.ry) * 10 + 2 + i);
           const { sx, sy } = this.screen(grid, t.height + i + 1);
-          this.prism(bg, sx, sy + 2, HU - 2, C.boxTop, C.boxL, C.boxR, 0.72);
+          this.crate(bg, sx, sy + 2, 0.72);
           this.layer.add(bg);
         }
         this.layer.add(g);
@@ -246,13 +348,22 @@ export class BoardScene extends Phaser.Scene {
     const g = this.botBody;
     g.clear();
     const body = crashed ? C.crash : C.bot;
-    // body: a small cube standing on the tile
-    this.prism(g, 0, -22, 20, body, C.botDark, 0x2f6390, 0.5);
-    // eye shows facing
     const { fx, fy } = this.screenFacing(w.bot.facing);
-    g.fillStyle(C.eye, 1);
-    g.fillCircle(fx * 0.45, -22 + fy * 0.45, 3.5);
-    if (w.bot.carrying) this.prism(g, 0, -40, HU - 2, C.boxTop, C.boxL, C.boxR, 0.5);
+    // body: a rounded little block on short legs
+    this.prism(g, 0, -16, 12, body, C.botL, C.botR, 0.44);
+    // head
+    this.prism(g, 0, -30, 10, body, C.botL, C.botR, 0.36);
+    // visor on the side LoopBot faces, with a glowing eye: the facing reads at a glance
+    g.fillStyle(C.visor, 1);
+    g.fillEllipse(fx * 0.34, -27 + fy * 0.34, 12, 7);
+    g.fillStyle(crashed ? C.crash : C.eye, 1);
+    g.fillEllipse(fx * 0.4, -27 + fy * 0.4, 5, 3.4);
+    // antenna
+    g.lineStyle(1.5, C.botR, 1);
+    g.lineBetween(0, -36, 0, -44);
+    g.fillStyle(crashed ? C.crash : C.eye, 1);
+    g.fillCircle(0, -45, 2.4);
+    if (w.bot.carrying) this.crate(g, 0, -56, 0.5);
   }
 
   private moveBot(prev: World | null, u: BoardUpdate) {
@@ -329,7 +440,7 @@ export function createBoard(parent: HTMLElement, onReady: (scene: BoardScene) =>
   const game = new Phaser.Game({
     type: Phaser.AUTO,
     parent,
-    backgroundColor: C.bg,
+    transparent: true, // the sky gradient is CSS behind the canvas
     scale: { mode: Phaser.Scale.RESIZE, width: parent.clientWidth || 360, height: parent.clientHeight || 300 },
     scene,
     banner: false,
