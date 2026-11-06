@@ -72,7 +72,42 @@ function buzz(kind: Buzz) {
   }
 }
 
+function noise(dur: number, gain: number, freq: number) {
+  const a = audio();
+  if (!a) return;
+  const len = Math.floor(a.sampleRate * dur);
+  const buf = a.createBuffer(1, len, a.sampleRate);
+  const data = buf.getChannelData(0);
+  // Deterministic pseudo-noise, so the crackle sounds the same every time.
+  let seed = 12345;
+  for (let i = 0; i < len; i++) {
+    seed = (seed * 1103515245 + 12345) & 0x7fffffff;
+    data[i] = (seed / 0x7fffffff) * 2 - 1;
+  }
+  const src = a.createBufferSource();
+  src.buffer = buf;
+  const filter = a.createBiquadFilter();
+  filter.type = 'bandpass';
+  filter.frequency.value = freq;
+  filter.Q.value = 1.2;
+  const g = a.createGain();
+  const t0 = a.currentTime;
+  g.gain.setValueAtTime(gain, t0);
+  g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+  src.connect(filter).connect(g).connect(a.destination);
+  src.start(t0);
+}
+
 export const fx = {
+  /** A short radio crackle when PATCH or VANTA speaks. */
+  radio() {
+    noise(0.18, 0.08, 1800);
+    tone(1200, 0.05, { type: 'square', gain: 0.025, delay: 0.16 });
+  },
+  /** One soft blip per revealed character of a story line. */
+  type() {
+    tone(1400 + Math.random() * 200, 0.02, { type: 'square', gain: 0.012 });
+  },
   /** Tapping a palette command or a line. */
   tap() {
     tone(880, 0.05, { type: 'square', gain: 0.05 });
@@ -111,6 +146,9 @@ export const fx = {
   },
   win() {
     [523, 659, 784, 1047].forEach((f, i) => tone(f, 0.18, { gain: 0.1, delay: i * 0.09 }));
+    // a low "lift" chord under the arpeggio
+    tone(262, 0.6, { type: 'sine', gain: 0.06, delay: 0.3 });
+    tone(392, 0.6, { type: 'sine', gain: 0.04, delay: 0.3 });
     buzz('success');
   },
 };
