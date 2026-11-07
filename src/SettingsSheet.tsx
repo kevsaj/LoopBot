@@ -94,6 +94,10 @@ export function SettingsSheet({ progress, setProgress, onClose }: Props) {
 
           <h3 className="set-section">About</h3>
           <div className="set-item">
+            <LinkRow href="mailto:kisstudios98@gmail.com?subject=LoopBot%20feedback">Send feedback</LinkRow>
+            <p className="set-caption">Found a bug or stuck on a floor? We read every message.</p>
+          </div>
+          <div className="set-item">
             <div className="set-row">
               <span className="set-label">Version</span>
               <span className="set-value">{version}</span>
