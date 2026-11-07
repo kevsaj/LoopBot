@@ -72,11 +72,13 @@ function buzz(kind: Buzz) {
   }
 }
 
-function noise(dur: number, gain: number, freq: number) {
-  const a = audio();
-  if (!a) return;
-  const len = Math.floor(a.sampleRate * dur);
-  const buf = a.createBuffer(1, len, a.sampleRate);
+/** Noise buffers by length: the noise is deterministic, so each one is made once and reused. */
+const noiseBuffers = new Map<number, AudioBuffer>();
+
+function noiseBuffer(a: AudioContext, len: number): AudioBuffer {
+  let buf = noiseBuffers.get(len);
+  if (buf) return buf;
+  buf = a.createBuffer(1, len, a.sampleRate);
   const data = buf.getChannelData(0);
   // Deterministic pseudo-noise, so the crackle sounds the same every time.
   let seed = 12345;
@@ -84,6 +86,14 @@ function noise(dur: number, gain: number, freq: number) {
     seed = (seed * 1103515245 + 12345) & 0x7fffffff;
     data[i] = (seed / 0x7fffffff) * 2 - 1;
   }
+  noiseBuffers.set(len, buf);
+  return buf;
+}
+
+function noise(dur: number, gain: number, freq: number) {
+  const a = audio();
+  if (!a) return;
+  const buf = noiseBuffer(a, Math.floor(a.sampleRate * dur));
   const src = a.createBufferSource();
   src.buffer = buf;
   const filter = a.createBiquadFilter();

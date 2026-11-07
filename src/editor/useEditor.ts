@@ -117,20 +117,51 @@ export function loadEditor(floorId: string): EditorState {
   }
 }
 
+/** Undo steps kept on the device per floor. The session itself keeps HISTORY_CAP. */
+const SAVED_HISTORY = 40;
+
+/**
+ * Saves a floor's editor. Fifty floors of undo history can outgrow the browser's storage, so
+ * when a save doesn't fit, other floors' history is dropped (their programs stay), and as a
+ * last resort this floor is saved without its history. The program itself is never dropped.
+ */
+export function saveEditor(floorId: string, s: Pick<EditorState, 'program' | 'past' | 'future'>) {
+  const full = JSON.stringify({ program: s.program, past: s.past.slice(-SAVED_HISTORY), future: s.future.slice(0, SAVED_HISTORY) });
+  const bare = JSON.stringify({ program: s.program, past: [], future: [] });
+  const write = (v: string) => {
+    try {
+      localStorage.setItem(storageKey(floorId), v);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+  if (write(full)) return;
+  trimOtherHistories(floorId);
+  if (write(full)) return;
+  write(bare);
+}
+
+function trimOtherHistories(keep: string) {
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (!k?.startsWith('loopbot.editor.') || k === storageKey(keep)) continue;
+      const saved = JSON.parse(localStorage.getItem(k) ?? 'null') as Partial<EditorState> | null;
+      if (saved?.program) localStorage.setItem(k, JSON.stringify({ program: saved.program, past: [], future: [] }));
+    }
+  } catch {
+    /* storage blocked: nothing to trim */
+  }
+}
+
 /** Mount one editor per floor (the floor screen is keyed by floor id). */
 export function useEditor(floorId: string) {
   const [state, dispatch] = useReducer(reducer, floorId, loadEditor);
 
   // ED-7: autosave on every change.
   useEffect(() => {
-    try {
-      localStorage.setItem(
-        storageKey(floorId),
-        JSON.stringify({ program: state.program, past: state.past.slice(-100), future: state.future.slice(0, 100) }),
-      );
-    } catch {
-      /* storage full or blocked: the session keeps working */
-    }
+    saveEditor(floorId, state);
   }, [floorId, state.program, state.past, state.future]);
 
   return {

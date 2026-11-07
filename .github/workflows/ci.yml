@@ -16,3 +16,4 @@ jobs:
       - run: npm run typecheck
       - run: npm test # simulation tests + level checks LV-1 to LV-3
       - run: npx vite build
+      - run: npx vite build --mode demo --outDir dist-demo --emptyOutDir # the itch.io demo still builds

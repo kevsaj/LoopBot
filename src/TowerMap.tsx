@@ -84,8 +84,9 @@ export function TowerMap({ levels, progress, current, onPick, onSettings }: Prop
   const noteTimer = useRef<number | undefined>(undefined);
 
   const currentRef = useRef<HTMLLIElement>(null);
-  // Rows count from the top of the tower, for the slide-in stagger.
-  const rowOf = (i: number) => levels.length - 1 - i;
+  // The slide-in ripples out from the floor you're on, which is what the map scrolls to; counting
+  // from the roof made the floors in view wait up to two seconds to appear.
+  const rowOf = (i: number) => Math.min(12, Math.abs(i - current));
   useEffect(() => {
     currentRef.current?.scrollIntoView({ block: 'center' });
     try {

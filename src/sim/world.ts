@@ -196,7 +196,7 @@ export function sense(w: World, cond: Condition): boolean {
       v = w.tiles[w.bot.y][w.bot.x].type === 'switch';
       break;
     case 'tile_is':
-      v = w.tiles[w.bot.y][w.bot.x].colour === cond.colour;
+      v = cond.colour !== undefined && w.tiles[w.bot.y][w.bot.x].colour === cond.colour;
       break;
   }
   return cond.not ? !v : v;

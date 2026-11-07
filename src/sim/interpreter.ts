@@ -96,7 +96,6 @@ export class Runner {
   steps = 0;
   status: RunStatus = 'ready';
   outcome: Outcome | null = null;
-  last: StepEvent | null = null;
   private gen: Generator<Yielded, void, void>;
 
   constructor(program: Program, level: LevelFile) {
@@ -129,7 +128,6 @@ export class Runner {
     }
     const ev = r.value.event;
     this.steps++;
-    this.last = ev;
     if (!ev.ok) {
       this.finish({ status: 'crashed', steps: this.steps, error: `${ev.error} at step ${this.steps}`, blockId: ev.blockId });
     } else if (goalsMet(this.world)) {
