@@ -16,6 +16,7 @@ interface Props {
   current: number;
   onPick(index: number): void;
   onSettings(): void;
+  onHome(): void;
 }
 
 const SEEN_KEY = 'loopbot.seenUnlocked';
@@ -67,7 +68,7 @@ export function MiniBot() {
   );
 }
 
-export function TowerMap({ levels, progress, current, onPick, onSettings }: Props) {
+export function TowerMap({ levels, progress, current, onPick, onSettings, onHome }: Props) {
   const ids = levels.map((l) => l.id);
   const totalStars = ids.reduce((n, id) => n + (progress.stars[id] ?? 0), 0);
   const cleared = ids.filter((id) => (progress.stars[id] ?? 0) > 0).length;
@@ -114,7 +115,9 @@ export function TowerMap({ levels, progress, current, onPick, onSettings }: Prop
     <div className="tower">
       <header className="topbar">
         <div className="floor-title">
-          <span className="floor-pick">Tower 1</span>
+          <button type="button" className="back-btn" onClick={() => (fx.tap(), onHome())} aria-label="Back to the title screen">
+            ‹ Tower 1
+          </button>
           <span className="floor-name">Meridian Spire</span>
         </div>
         <div className="tower-stars" aria-label={`${totalStars} of ${ids.length * 3} stars`}>
