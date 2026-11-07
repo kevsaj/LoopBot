@@ -34,6 +34,8 @@ body,
   background: var(--bg);
   color: var(--ink);
   overscroll-behavior: none;
+  /* No iOS copy/lookup callout on a long-press: long-press is how lines are dragged. */
+  -webkit-touch-callout: none;
 }
 
 button {
@@ -88,11 +90,6 @@ select:focus-visible {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-.par-meter {
-  font-size: 12px;
-  color: var(--quiet);
-  white-space: nowrap;
 }
 .icon-btn {
   width: 44px;

@@ -16,8 +16,7 @@ import {
   useSensors,
 } from '@dnd-kit/core';
 import type { CollisionDetection, DragEndEvent, DragMoveEvent, DragStartEvent, Modifier, UniqueIdentifier } from '@dnd-kit/core';
-import { restrictToParentElement, restrictToVerticalAxis } from '@dnd-kit/modifiers';
-import { getEventCoordinates } from '@dnd-kit/utilities';
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import type { Block, PaletteCommand } from '../sim/types';
 import type { Spot } from '../sim/program';
 import { canPlace, findBlock, makeBlock } from '../sim/program';
@@ -74,7 +73,11 @@ const forRows =
   (args) =>
     paletteCmd(args.active?.id) ? args.transform : m(args);
 
+/** The finger's last position, as collision detection saw it: it decides above or below a row's middle. */
+let pointerY: number | null = null;
+
 const collide: CollisionDetection = (args) => {
+  pointerY = args.pointerCoordinates?.y ?? null;
   // Lines scrolled out of the program box can sit under the palette, so only count
   // a drop when the finger is inside the visible part of the program.
   const list = args.droppableContainers.find((c) => c.id === LIST_ID)?.node.current;
@@ -115,8 +118,7 @@ export function EditorDnd({ blocks, canAdd, onDrop, onMove, children }: Props) {
       const data = over.data.current as DropData | undefined;
       if (!data) return null;
       // Above the middle of a row goes before it, below goes after it.
-      const start = getEventCoordinates(e.activatorEvent);
-      const y = (start?.y ?? 0) + e.delta.y;
+      const y = pointerY ?? over.rect.top;
       spot = y > over.rect.top + over.rect.height / 2 ? data.after : data.before;
     }
     // Never into itself, and never deeper than loops may nest.
@@ -157,7 +159,7 @@ export function EditorDnd({ blocks, canAdd, onDrop, onMove, children }: Props) {
       <DndContext
         sensors={sensors}
         collisionDetection={collide}
-        modifiers={[forRows(restrictToVerticalAxis), forRows(restrictToParentElement)]}
+        modifiers={[forRows(restrictToVerticalAxis)]}
         onDragStart={start}
         onDragMove={move}
         onDragEnd={end}

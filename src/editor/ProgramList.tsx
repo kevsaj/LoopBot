@@ -3,14 +3,12 @@
 // Tap a line to move the cursor (ED-2), long-press and drag to move it (ED-2), swipe left to delete (ED-3).
 // The drag context itself lives in dnd.tsx, so palette commands can be dropped in here too.
 
-import { MIN_TIMES, MAX_TIMES } from '../sim/program';
-export { MIN_TIMES, MAX_TIMES };
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import type { KeyboardEvent, PointerEvent, ReactNode } from 'react';
 import { useDraggable, useDroppable } from '@dnd-kit/core';
 import type { Block, Condition } from '../sim/types';
 import type { Spot } from '../sim/program';
-import { childLists, countBlocks, elseKey, findBlock } from '../sim/program';
+import { MAX_TIMES, MIN_TIMES, childLists, countBlocks, elseKey, findBlock, listAt } from '../sim/program';
 import { COMMAND_META, blockCommand } from './commands';
 import type { DropData } from './dnd';
 import { EMPTY_PREFIX, LIST_ID, useDragState } from './dnd';
@@ -296,7 +294,8 @@ export function ProgramList({ blocks, limit, cursor, activeIds, crashId, onCurso
 
   const nudge = (row: Extract<EditorRow, { kind: 'line' | 'loop' }>, dir: -1 | 1) => {
     const to = { parent: row.before.parent, index: row.before.index + (dir < 0 ? -1 : 2) };
-    if (to.index >= 0) onMove(row.block.id, to);
+    // Already first or last in its list: nothing to do.
+    if (to.index >= 0 && to.index <= (listAt(blocks, to.parent)?.length ?? 0)) onMove(row.block.id, to);
   };
 
   return (
@@ -366,8 +365,4 @@ export function ProgramList({ blocks, limit, cursor, activeIds, crashId, onCurso
       ))}
     </ol>
   );
-}
-
-function Fragment({ children }: { children: ReactNode }) {
-  return <>{children}</>;
 }

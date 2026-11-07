@@ -123,6 +123,11 @@ export interface BoardUpdate {
 
 type Grid = { rx: number; ry: number };
 
+/** Everything drawStatic reads that can change during a run: crates, switches and doors. */
+function staticKey(w: World): string {
+  return `${w.boxes.map((r) => r.join('')).join('/')}|${Object.values(w.switches).join()}|${Object.values(w.doors).join()}`;
+}
+
 /** How LoopBot's eye looks right now. */
 type Mood = 'idle' | 'happy' | 'crash' | 'nervous';
 
@@ -155,6 +160,9 @@ export class BoardScene extends Phaser.Scene {
   private botArrow!: Phaser.GameObjects.Graphics;
   private ready = false;
   private pending: BoardUpdate | null = null;
+  /** What the static layer was last drawn from; most steps (moves, turns) leave it unchanged. */
+  private drawnKey = '';
+  private drawnTiles: World['tiles'] | null = null;
 
   constructor() {
     super('board');
@@ -194,7 +202,13 @@ export class BoardScene extends Phaser.Scene {
     }
     const prev = this.world;
     this.world = u.world;
-    this.drawStatic(u.world);
+    // Rebuilding every tile is the costly part of a step, so only do it when the floor itself changed.
+    const key = `${this.rot}|${staticKey(u.world)}`;
+    if (key !== this.drawnKey || u.world.tiles !== this.drawnTiles) {
+      this.drawStatic(u.world);
+      this.drawnKey = key;
+      this.drawnTiles = u.world.tiles;
+    }
     this.fit();
     this.moveBot(prev, u);
   }

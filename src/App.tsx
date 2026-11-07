@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { LEVELS } from './levels';
 import { FloorScreen } from './editor/FloorScreen';
 import { TowerMap } from './TowerMap';
@@ -7,6 +7,7 @@ import { isUnlocked, loadProgress, saveProgress } from './progress';
 import type { Progress } from './progress';
 import { fx } from './audio/feedback';
 import { reducedMotion } from './fx/confetti';
+import { preloadBoard } from './board/Board';
 
 function loadIndex() {
   try {
@@ -23,6 +24,10 @@ export default function App() {
   // A brand-new player goes straight to Floor 1; after that, the tower map is home.
   const [screen, setScreen] = useState<'map' | 'floor'>(() => (Object.keys(loadProgress().stars).length ? 'map' : 'floor'));
   const [settings, setSettings] = useState(false);
+  // The board engine loads after the first screen is up, so opening a floor never waits on it.
+  useEffect(() => {
+    void preloadBoard();
+  }, []);
 
   const setProgress = useCallback((update: (p: Progress) => Progress) => {
     setProgressState((p) => {

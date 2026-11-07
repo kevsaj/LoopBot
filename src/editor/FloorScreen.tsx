@@ -7,7 +7,7 @@ import { Runner } from '../sim/interpreter';
 import type { Outcome } from '../sim/interpreter';
 import { createWorld } from '../sim/world';
 import type { Spot } from '../sim/program';
-import { MAX_DEPTH, canPlace, countBlocks, countCommands, findBlock, makeBlock, spotOf } from '../sim/program';
+import { MAX_DEPTH, canPlace, countBlocks, countCommands, findBlock, listAt, makeBlock, spotOf } from '../sim/program';
 import type { Block } from '../sim/types';
 import { useEditor } from './useEditor';
 import { ProgramList } from './ProgramList';
@@ -30,6 +30,17 @@ const SPEEDS = [
   { label: '2x', ms: 260 },
   { label: '4x', ms: 130 },
 ];
+const SPEED_KEY = 'loopbot.speed';
+
+/** The run speed is remembered across floors, so a player who likes 4x keeps it. */
+function loadSpeed(): number {
+  try {
+    const n = Number(localStorage.getItem(SPEED_KEY) ?? 1);
+    return Number.isInteger(n) && n >= 0 && n < SPEEDS.length ? n : 1;
+  } catch {
+    return 1;
+  }
+}
 
 interface Props {
   level: LevelFile;
@@ -75,7 +86,14 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
   const runner = useRef<Runner | null>(null);
   const [board, setBoard] = useState<BoardUpdate>(() => ({ world: createWorld(level), stepMs: 0 }));
   const [playing, setPlaying] = useState(false);
-  const [speed, setSpeed] = useState(1);
+  const [speed, setSpeed] = useState(loadSpeed);
+  useEffect(() => {
+    try {
+      localStorage.setItem(SPEED_KEY, String(speed));
+    } catch {
+      /* ignore */
+    }
+  }, [speed]);
   const [steps, setSteps] = useState(0);
   const [activeIds, setActiveIds] = useState<Set<string>>(new Set());
   const [crashId, setCrashId] = useState<string | null>(null);
@@ -89,9 +107,13 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
   const [rotateSignal, setRotateSignal] = useState(0);
   const [sheet, setSheet] = useState<'hints' | 'settings' | null>(null);
   const [hasRun, setHasRun] = useState(false);
+  // The results card waits for the light-up wave; a reset or a new run cancels it.
+  const resultsTimer = useRef<number | undefined>(undefined);
+  useEffect(() => () => window.clearTimeout(resultsTimer.current), []);
 
   const reset = useCallback(
     (quiet = false) => {
+      window.clearTimeout(resultsTimer.current);
       runner.current = null;
       setPlaying(false);
       setSteps(0);
@@ -107,15 +129,22 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
 
   // ED-15: a run never edits the program; any edit ends the current run.
   const programRef = useRef(program);
+  const playingRef = useRef(playing);
+  playingRef.current = playing;
   useEffect(() => {
     if (programRef.current !== program) {
       programRef.current = program;
-      if (runner.current) reset(true);
+      if (runner.current) {
+        // Say why the run stopped, unless the edit already says what happened (Clear, typed code).
+        if (playingRef.current) setTerminal('> program changed: run stopped');
+        reset(true);
+      }
     }
   }, [program, reset]);
 
   const stepOnce = useCallback(() => {
     if (!runner.current || runner.current.done) {
+      window.clearTimeout(resultsTimer.current);
       runner.current = new Runner(program, level);
       fx.voice('ready');
       setOutcome(null);
@@ -156,7 +185,8 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
         fx.voice('yay', 0.55);
         setPrevBest(progressRef.current.stars[level.id] ?? 0);
         setProgress((p) => recordClear(p, level.id, s));
-        window.setTimeout(() => setShowResults(true), SPEEDS[speed].ms + 900); // let the light-up wave play first
+        window.clearTimeout(resultsTimer.current);
+        resultsTimer.current = window.setTimeout(() => setShowResults(true), SPEEDS[speed].ms + 900); // let the light-up wave play first
       } else {
         setActiveIds(new Set());
         setTerminal(`> program ended after ${o.steps} steps. Not there yet: add more commands.`);
@@ -241,6 +271,12 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
     return true;
   };
   const add = (cmd: PaletteCommand) => {
+    if (typing) {
+      // The text box would overwrite a block added behind it.
+      fx.denied();
+      setTerminal('> finish typing (Use this code or Cancel) to add blocks');
+      return;
+    }
     if (!canAdd(cmd)) return;
     editor.insert(routine, cmd);
     fx.snap();
@@ -264,7 +300,15 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
 
   const undoDelete = () => {
     if (!deleted) return;
-    editor.place(deleted.r, deleted.spot, deleted.block);
+    const target = program[deleted.r];
+    // The slots may have filled up since, or the loop it sat in may be gone.
+    if (countBlocks(target) + countBlocks([deleted.block]) > (level.slots[deleted.r] ?? 0)) {
+      fx.denied();
+      setTerminal(`> no room to put it back in ${deleted.r}`);
+      return;
+    }
+    const spot = listAt(target, deleted.spot.parent) ? deleted.spot : { parent: null, index: target.length };
+    editor.place(deleted.r, spot, deleted.block);
     setDeleted(null);
     fx.undo();
   };
@@ -299,6 +343,11 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
   undoRef.current = { undo, redo };
   useEffect(() => {
     const onKey = (e: globalThis.KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setSheet(null);
+        setShowResults(false);
+        return;
+      }
       const mod = e.ctrlKey || e.metaKey;
       // Typing code: the text box keeps its own undo.
       if (e.target instanceof HTMLTextAreaElement) return;
