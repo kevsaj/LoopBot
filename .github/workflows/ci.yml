@@ -17,3 +17,24 @@ jobs:
       - run: npm test # simulation tests + level checks LV-1 to LV-3
       - run: npx vite build
       - run: npx vite build --mode demo --outDir dist-demo --emptyOutDir # the itch.io demo still builds
+
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - run: npm ci
+      - run: npm run cap:sync
+      # Debug APK to sideload on a phone, and an unsigned release bundle to prove the Play build works.
+      - run: node scripts/gradle.mjs assembleDebug bundleRelease --no-daemon
+      - uses: actions/upload-artifact@v4
+        with:
+          name: loopbot-debug-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk

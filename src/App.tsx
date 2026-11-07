@@ -8,6 +8,7 @@ import type { Progress } from './progress';
 import { fx } from './audio/feedback';
 import { reducedMotion } from './fx/confetti';
 import { preloadBoard } from './board/Board';
+import { listenForBack } from './native';
 
 function loadIndex() {
   try {
@@ -65,6 +66,19 @@ export default function App() {
       <span className="door left" />
       <span className="door right" />
     </div>
+  );
+
+  // Android Back: from a floor it goes up to the tower map.
+  const screenRef = useRef(screen);
+  screenRef.current = screen;
+  useEffect(
+    () =>
+      listenForBack(() => {
+        if (screenRef.current !== 'floor') return false;
+        setScreen('map');
+        return true;
+      }),
+    [],
   );
 
   const ids = LEVELS.map((l) => l.id);

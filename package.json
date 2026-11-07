@@ -11,9 +11,15 @@
     "test": "vitest run",
     "typecheck": "tsc -b",
     "check-levels": "vitest run src/levels",
-    "cap:sync": "npm run build && cap sync"
+    "cap:sync": "npm run build && cap sync android",
+    "android:open": "cap open android",
+    "android:run": "npm run cap:sync && cap run android",
+    "android:bundle": "npm run cap:sync && node scripts/gradle.mjs bundleRelease",
+    "android:apk": "npm run cap:sync && node scripts/gradle.mjs assembleDebug"
   },
   "dependencies": {
+    "@capacitor/android": "^8.6.0",
+    "@capacitor/app": "^8.1.2",
     "@capacitor/core": "^8.6.0",
     "@capacitor/haptics": "^8.0.2",
     "@dnd-kit/core": "^6.3.1",
