@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b2546"/><stop offset=".65" stop-color="#4d3b6b"/><stop offset="1" stop-color="#a86a78"/></linearGradient></defs><rect width="1024" height="1024" fill="url(#g)"/><g transform="translate(512,540) scale(1.25)"><g id="bot">
+  <!-- antenna -->
+  <rect x="-7" y="-250" width="14" height="80" rx="7" fill="#cfc3a8"/>
+  <circle cx="0" cy="-262" r="30" fill="#7ff2e0"/>
+  <circle cx="-9" cy="-271" r="10" fill="#d9fff9"/>
+  <!-- body -->
+  <rect x="-150" y="30" width="300" height="220" rx="34" fill="#d9d0bd"/>
+  <rect x="-150" y="30" width="300" height="190" rx="34" fill="#ece5d4"/>
+  <circle cx="-70" cy="140" r="16" fill="#f2a93b"/>
+  <!-- head -->
+  <rect x="-185" y="-180" width="370" height="230" rx="44" fill="#d9d0bd"/>
+  <rect x="-185" y="-180" width="370" height="205" rx="44" fill="#f6f1e6"/>
+  <!-- visor -->
+  <rect x="-130" y="-130" width="260" height="110" rx="55" fill="#221f38"/>
+  <ellipse cx="18" cy="-75" rx="58" ry="34" fill="#7ff2e0"/>
+  <ellipse cx="18" cy="-75" rx="58" ry="34" fill="none" stroke="#b9fff4" stroke-width="6" opacity=".6"/>
+  <ellipse cx="2" cy="-86" rx="16" ry="9" fill="#e8fffb"/>
+</g>
+</g></svg>

@@ -2,12 +2,14 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { LEVELS } from './levels';
 import { FloorScreen } from './editor/FloorScreen';
 import { TowerMap } from './TowerMap';
+import { TitleScreen } from './TitleScreen';
 import { SettingsSheet } from './SettingsSheet';
 import { isUnlocked, loadProgress, saveProgress } from './progress';
 import type { Progress } from './progress';
 import { fx } from './audio/feedback';
 import { reducedMotion } from './fx/confetti';
 import { preloadBoard } from './board/Board';
+import { listenForBack } from './native';
 
 function loadIndex() {
   try {
@@ -21,8 +23,11 @@ function loadIndex() {
 export default function App() {
   const [progress, setProgressState] = useState<Progress>(loadProgress);
   const [index, setIndex] = useState(loadIndex);
-  // A brand-new player goes straight to Floor 1; after that, the tower map is home.
-  const [screen, setScreen] = useState<'map' | 'floor'>(() => (Object.keys(loadProgress().stars).length ? 'map' : 'floor'));
+  // Every launch opens on the title screen, whose intro plays once per session; its Play button
+  // goes to the next floor (Floor 1 for a new player), and the tower map is one tap further.
+  const [screen, setScreen] = useState<'title' | 'map' | 'floor'>('title');
+  const [booted, setBooted] = useState(false);
+  const onBooted = useCallback(() => setBooted(true), []);
   const [settings, setSettings] = useState(false);
   // The board engine loads after the first screen is up, so opening a floor never waits on it.
   useEffect(() => {
@@ -67,15 +72,45 @@ export default function App() {
     </div>
   );
 
+  // Android Back walks up: floor, tower map, title screen, then out of the app.
+  const screenRef = useRef(screen);
+  screenRef.current = screen;
+  useEffect(
+    () =>
+      listenForBack(() => {
+        if (screenRef.current === 'title') return false;
+        setScreen(screenRef.current === 'floor' ? 'map' : 'title');
+        return true;
+      }),
+    [],
+  );
+
   const ids = LEVELS.map((l) => l.id);
   // Never open a locked floor (e.g. a saved index from before progress existed).
   const safeIndex = isUnlocked(progress, ids, index) ? index : 0;
   const level = LEVELS[safeIndex];
 
+  if (screen === 'title') {
+    return (
+      <>
+        <TitleScreen
+          levels={LEVELS}
+          progress={progress}
+          booted={booted}
+          onBooted={onBooted}
+          onPlay={go}
+          onTower={() => setScreen('map')}
+          onSettings={() => setSettings(true)}
+        />
+        {settings && <SettingsSheet progress={progress} setProgress={setProgress} onClose={() => setSettings(false)} />}
+        {elevator}
+      </>
+    );
+  }
   if (screen === 'map') {
     return (
       <>
-        <TowerMap levels={LEVELS} progress={progress} current={safeIndex} onPick={go} onSettings={() => setSettings(true)} />
+        <TowerMap levels={LEVELS} progress={progress} current={safeIndex} onPick={go} onSettings={() => setSettings(true)} onHome={() => setScreen('title')} />
         {settings && <SettingsSheet progress={progress} setProgress={setProgress} onClose={() => setSettings(false)} />}
         {elevator}
       </>

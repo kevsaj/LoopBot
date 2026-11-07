@@ -26,6 +26,27 @@ export function setMuted(m: boolean) {
   }
 }
 
+let hapticsOff = (() => {
+  try {
+    return localStorage.getItem('loopbot.haptics') === '0';
+  } catch {
+    return false;
+  }
+})();
+
+export function hapticsOn() {
+  return !hapticsOff;
+}
+
+export function setHapticsOn(on: boolean) {
+  hapticsOff = !on;
+  try {
+    localStorage.setItem('loopbot.haptics', on ? '1' : '0');
+  } catch {
+    /* ignore */
+  }
+}
+
 function audio(): AudioContext | null {
   if (muted) return null;
   if (!ctx) {
@@ -58,6 +79,7 @@ function tone(freq: number, dur: number, opts: { type?: OscillatorType; gain?: n
 type Buzz = 'light' | 'medium' | 'heavy' | 'success' | 'error';
 
 function buzz(kind: Buzz) {
+  if (hapticsOff) return;
   if (Capacitor.isNativePlatform()) {
     if (kind === 'success') void Haptics.notification({ type: NotificationType.Success });
     else if (kind === 'error') void Haptics.notification({ type: NotificationType.Error });

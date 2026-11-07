@@ -18,14 +18,20 @@ To try it on a phone, run `npm run dev` and open the "Network" URL it prints, on
 
 ### Android (Capacitor)
 
-The Capacitor config is in place (`capacitor.config.ts`). The native project isn't committed yet, because it needs the Android SDK:
+The Android project is in `android/` (Capacitor 8, app ID `com.kisstudios.loopbot`, min Android 7, target SDK 36). You need Android Studio for the SDK and Java.
 
 ```bash
-npm install @capacitor/android
-npx cap add android
-npm run cap:sync
-npx cap open android   # build and run from Android Studio
+npm run android:run      # build the game, copy it into android/, install on a plugged-in phone
+npm run android:open     # open the project in Android Studio
+npm run android:bundle   # signed release bundle for Google Play (needs android/keystore.properties)
 ```
+
+- The version comes from `package.json` (`0.1.0` becomes versionName 0.1.0, versionCode 100). Bump it before every Play upload.
+- Release signing reads `android/keystore.properties` (copy `keystore.properties.example`). The key and that file are never committed.
+- App icon and splash are drawn in `assets/src/*.svg` and rendered to `assets/*.png`. To regenerate the Android sizes: `npx @capacitor/assets generate --android`, then restore the two `mipmap-anydpi-v26/*.xml` files (they use the foreground without the tool's extra inset).
+- Every build (`npm run build`, demo, Android) strips the floors' reference solutions. Only the dev server and the level checks keep them.
+- CI builds a debug APK on every PR (download it from the run's artifacts to sideload) and checks the release bundle builds.
+- Privacy policy and terms for the store listing: https://www.kisstudios.net/loopbot/privacy and /loopbot/terms (see [PRIVACY.md](PRIVACY.md)). Settings links to both.
 
 ## Where things are
 

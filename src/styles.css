@@ -122,7 +122,7 @@ select:focus-visible {
   height: 38%;
   pointer-events: none;
   opacity: 0.35;
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 100' preserveAspectRatio='none'><path fill='%231e1833' d='M0 100V62h18V40h14v22h10V30h16v32h12V52h20V18h10v-8h6v8h10v44h14V44h18v18h12V36h22v26h8V58h16V24h12v38h14V48h18v14h10V34h20v28h14V54h16v46z'/></svg>") bottom / 100% 100% no-repeat;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 310 100' preserveAspectRatio='none'><path fill='%231e1833' d='M0 100V62h18V40h14v22h10V30h16v32h12V52h20V18h10v-8h6v8h10v44h14V44h18v18h12V36h22v26h8V58h16V24h12v38h14V48h18v14h10V34h20v28h14V54h16v46z'/></svg>") bottom / 100% 100% no-repeat;
   z-index: 0;
 }
 .board-canvas {
@@ -1464,4 +1464,369 @@ select:focus-visible {
   background: rgba(63, 214, 193, 0.12);
   font-size: 14px;
   line-height: 1.4;
+}
+
+/* --- title screen: LoopBot boots up over the skyline (about 1.5 s), then Play --- */
+.title-screen {
+  position: relative;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  background: #1b1730;
+}
+.title-sky {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, #221c3d 0%, #3d2f5e 40%, #6e4a72 72%, #b8706f 100%);
+  animation: title-fade 0.6s ease both;
+}
+.title-sun {
+  position: absolute;
+  left: 50%;
+  bottom: 14%;
+  width: 70vmin;
+  height: 70vmin;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 196, 150, 0.35), transparent 65%);
+}
+.title-skyline {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 30%;
+  opacity: 0.6;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 310 100' preserveAspectRatio='none'><path fill='%231e1833' d='M0 100V62h18V40h14v22h10V30h16v32h12V52h20V18h10v-8h6v8h10v44h14V44h18v18h12V36h22v26h8V58h16V24h12v38h14V48h18v14h10V34h20v28h14V54h16v46z'/></svg>") bottom / 100% 100% no-repeat;
+  animation: title-rise 0.7s cubic-bezier(0.2, 1, 0.3, 1) 0.1s both;
+}
+.title-settings {
+  position: absolute;
+  top: calc(10px + env(safe-area-inset-top));
+  right: calc(12px + env(safe-area-inset-right));
+  z-index: 2;
+  animation: title-fade 0.3s ease 1.3s both;
+}
+.title-hero {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding-top: 24px;
+}
+.title-bot-btn {
+  background: none;
+  border: 0;
+  padding: 0;
+}
+.title-bot {
+  display: block;
+  width: min(42vw, 26vh, 200px);
+  height: auto;
+  animation:
+    title-drop 0.55s cubic-bezier(0.3, 1.4, 0.5, 1) 0.25s both,
+    title-float 3.2s ease-in-out 1.5s infinite;
+}
+.title-bot.poked {
+  animation: title-hop 0.45s ease;
+}
+/* Booting: the eye and the lights are dark until 0.8 s, then flicker on. */
+.tb-eye {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation:
+    title-eye-on 0.35s steps(1) 0.8s both,
+    title-blink 5s ease-in-out 2.5s infinite;
+}
+.tb-light {
+  fill: #7ff2e0;
+  animation:
+    title-light-on 0.35s steps(1) 0.85s both,
+    blink 1.6s steps(1) 1.6s infinite;
+}
+.tb-led {
+  fill: #f2a93b;
+  animation: title-light-on 0.2s steps(1) 0.95s both;
+}
+.title-name {
+  margin: 10px 0 0;
+  font-size: clamp(44px, 13vw, 64px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #f6f1e6;
+  text-shadow: 0 4px 18px rgba(20, 12, 40, 0.5);
+  animation: title-up 0.45s cubic-bezier(0.2, 1, 0.3, 1) 0.95s both;
+}
+.title-name span {
+  color: #7ff2e0;
+}
+.title-sub {
+  margin: 0;
+  color: #e3dcf2;
+  font-size: 15px;
+  opacity: 0.85;
+  animation: title-up 0.45s cubic-bezier(0.2, 1, 0.3, 1) 1.05s both;
+}
+.title-actions {
+  position: relative;
+  width: 100%;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0 16px calc(28px + env(safe-area-inset-bottom));
+}
+.title-play {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 8px 16px;
+  min-height: 64px;
+  font-size: 20px;
+  font-weight: 800;
+  box-shadow: 0 8px 26px rgba(124, 196, 255, 0.35);
+  animation: title-pop 0.4s cubic-bezier(0.3, 1.5, 0.5, 1) 1.2s both;
+}
+.title-play-floor {
+  font-size: 13px;
+  font-weight: 600;
+  opacity: 0.75;
+}
+.title-map {
+  min-height: 48px;
+  background: rgba(35, 38, 58, 0.85);
+  animation: title-pop 0.4s cubic-bezier(0.3, 1.5, 0.5, 1) 1.3s both;
+}
+.title-stats {
+  color: var(--warn);
+  font-size: 13px;
+  margin-left: 6px;
+}
+/* Tapped during the intro, or already played this session: everything in place at once. */
+.title-screen.settled .title-sky,
+.title-screen.settled .title-skyline,
+.title-screen.settled .title-settings,
+.title-screen.settled .title-name,
+.title-screen.settled .title-sub,
+.title-screen.settled .title-play,
+.title-screen.settled .title-map,
+.title-screen.settled .tb-led {
+  animation: none;
+}
+.title-screen.settled .title-bot:not(.poked) {
+  animation: title-float 3.2s ease-in-out infinite;
+}
+.title-screen.settled .tb-eye {
+  animation: title-blink 5s ease-in-out 1s infinite;
+}
+.title-screen.settled .tb-light {
+  animation: blink 1.6s steps(1) infinite;
+}
+@keyframes title-fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes title-rise {
+  from {
+    transform: translateY(40%);
+    opacity: 0;
+  }
+}
+@keyframes title-drop {
+  from {
+    transform: translateY(-60vh);
+  }
+}
+@keyframes title-float {
+  50% {
+    transform: translateY(-6px);
+  }
+}
+@keyframes title-hop {
+  40% {
+    transform: translateY(-22px) rotate(-4deg);
+  }
+}
+@keyframes title-eye-on {
+  0% {
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  55% {
+    opacity: 0.2;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes title-light-on {
+  from {
+    fill: #4a4560;
+  }
+}
+@keyframes title-blink {
+  0%,
+  92%,
+  100% {
+    transform: scaleY(1);
+  }
+  96% {
+    transform: scaleY(0.1);
+  }
+}
+@keyframes title-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+@keyframes title-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+}
+
+/* --- settings: a full screen of grouped, rounded rows --- */
+.results-backdrop.settings-screen {
+  background: var(--bg);
+  align-items: stretch;
+  justify-content: center;
+  padding: 0;
+  animation: settings-in 0.22s cubic-bezier(0.2, 1, 0.3, 1);
+}
+.settings {
+  width: 100%;
+  max-width: 560px;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+.settings-head {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 64px;
+  padding: 8px 16px;
+}
+.settings-head h2 {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+.settings-close {
+  position: absolute;
+  left: 8px;
+  width: 48px;
+  height: 48px;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  font-size: 22px;
+}
+.settings-close:active {
+  background: var(--panel);
+}
+.settings-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 16px 32px;
+}
+.set-section {
+  margin: 20px 4px 10px;
+  font-size: 20px;
+  font-weight: 800;
+}
+.set-item {
+  margin-bottom: 12px;
+}
+.set-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 56px;
+  padding: 0 16px;
+  border-radius: 14px;
+  background: var(--panel);
+  color: var(--ink);
+  text-decoration: none;
+  font-size: 17px;
+}
+.set-label {
+  flex: 1;
+}
+.set-value {
+  color: var(--quiet);
+  font-size: 15px;
+}
+.set-link:active {
+  background: var(--panel-2);
+}
+.set-chevron {
+  color: var(--quiet);
+  font-size: 26px;
+  line-height: 1;
+  margin-top: -3px;
+}
+.set-caption {
+  margin: 8px 16px 0;
+  color: var(--quiet);
+  font-size: 14px;
+  line-height: 1.35;
+}
+/* A switch drawn from the checkbox itself, so it stays a real, accessible input. */
+.set-switch {
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  flex: none;
+  width: 52px;
+  height: 30px;
+  margin: 0;
+  border-radius: 15px;
+  background: var(--line);
+  cursor: pointer;
+  transition: background 0.18s ease;
+}
+.set-switch::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--ink);
+  transition: transform 0.18s ease;
+}
+.set-switch:checked {
+  background: var(--accent);
+}
+.set-switch:checked::after {
+  transform: translateX(22px);
+  background: #fff;
+}
+.set-switch:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+@keyframes settings-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
 }
