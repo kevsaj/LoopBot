@@ -2,6 +2,9 @@ import { useState } from 'react';
 import type { Progress } from './progress';
 import { isMuted, setMuted } from './audio/feedback';
 
+/** LoopBot's pages on the KIS Studios site, also linked from the Google Play listing. */
+export const SITE = 'https://www.kisstudios.net/loopbot';
+
 interface Props {
   progress: Progress;
   setProgress(update: (p: Progress) => Progress): void;
@@ -29,6 +32,16 @@ export function SettingsSheet({ progress, setProgress, onClose }: Props) {
           <span>First-run tutorial tips</span>
           <input type="checkbox" checked={progress.tutorial} onChange={() => setProgress((p) => ({ ...p, tutorial: !p.tutorial }))} />
         </label>
+        {/* On Android these open in the phone's browser. */}
+        <p className="settings-links">
+          <a href={`${SITE}/privacy`} target="_blank" rel="noreferrer">
+            Privacy policy
+          </a>
+          <span aria-hidden="true"> · </span>
+          <a href={`${SITE}/terms`} target="_blank" rel="noreferrer">
+            Terms of use
+          </a>
+        </p>
         <div className="results-actions">
           <button type="button" className="pill primary" onClick={onClose}>
             Done

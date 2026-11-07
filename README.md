@@ -31,7 +31,7 @@ npm run android:bundle   # signed release bundle for Google Play (needs android/
 - App icon and splash are drawn in `assets/src/*.svg` and rendered to `assets/*.png`. To regenerate the Android sizes: `npx @capacitor/assets generate --android`, then restore the two `mipmap-anydpi-v26/*.xml` files (they use the foreground without the tool's extra inset).
 - Every build (`npm run build`, demo, Android) strips the floors' reference solutions. Only the dev server and the level checks keep them.
 - CI builds a debug APK on every PR (download it from the run's artifacts to sideload) and checks the release bundle builds.
-- Privacy policy for the store listing: [PRIVACY.md](PRIVACY.md).
+- Privacy policy and terms for the store listing: https://www.kisstudios.net/loopbot/privacy and /loopbot/terms (see [PRIVACY.md](PRIVACY.md)). Settings links to both.
 
 ## Where things are
 
