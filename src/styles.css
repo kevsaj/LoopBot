@@ -1697,12 +1697,136 @@ select:focus-visible {
     transform: scale(0.85);
   }
 }
-.settings-links {
-  margin: 14px 0 0;
-  text-align: center;
-  font-size: 13px;
-  color: var(--quiet);
+
+/* --- settings: a full screen of grouped, rounded rows --- */
+.results-backdrop.settings-screen {
+  background: var(--bg);
+  align-items: stretch;
+  justify-content: center;
+  padding: 0;
+  animation: settings-in 0.22s cubic-bezier(0.2, 1, 0.3, 1);
 }
-.settings-links a {
-  color: var(--accent);
+.settings {
+  width: 100%;
+  max-width: 560px;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+.settings-head {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 64px;
+  padding: 8px 16px;
+}
+.settings-head h2 {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+.settings-close {
+  position: absolute;
+  left: 8px;
+  width: 48px;
+  height: 48px;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  font-size: 22px;
+}
+.settings-close:active {
+  background: var(--panel);
+}
+.settings-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 16px 32px;
+}
+.set-section {
+  margin: 20px 4px 10px;
+  font-size: 20px;
+  font-weight: 800;
+}
+.set-item {
+  margin-bottom: 12px;
+}
+.set-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 56px;
+  padding: 0 16px;
+  border-radius: 14px;
+  background: var(--panel);
+  color: var(--ink);
+  text-decoration: none;
+  font-size: 17px;
+}
+.set-label {
+  flex: 1;
+}
+.set-value {
+  color: var(--quiet);
+  font-size: 15px;
+}
+.set-link:active {
+  background: var(--panel-2);
+}
+.set-chevron {
+  color: var(--quiet);
+  font-size: 26px;
+  line-height: 1;
+  margin-top: -3px;
+}
+.set-caption {
+  margin: 8px 16px 0;
+  color: var(--quiet);
+  font-size: 14px;
+  line-height: 1.35;
+}
+/* A switch drawn from the checkbox itself, so it stays a real, accessible input. */
+.set-switch {
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  flex: none;
+  width: 52px;
+  height: 30px;
+  margin: 0;
+  border-radius: 15px;
+  background: var(--line);
+  cursor: pointer;
+  transition: background 0.18s ease;
+}
+.set-switch::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--ink);
+  transition: transform 0.18s ease;
+}
+.set-switch:checked {
+  background: var(--accent);
+}
+.set-switch:checked::after {
+  transform: translateX(22px);
+  background: #fff;
+}
+.set-switch:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+@keyframes settings-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
 }
