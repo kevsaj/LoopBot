@@ -11,6 +11,7 @@
     "test": "vitest run",
     "typecheck": "tsc -b",
     "check-levels": "vitest run src/levels",
+    "daily:bank": "esbuild scripts/make-daily.ts --bundle --platform=node --format=esm --outfile=node_modules/.cache/make-daily.mjs --log-level=warning && node node_modules/.cache/make-daily.mjs",
     "cap:sync": "npm run build && cap sync android",
     "android:open": "cap open android",
     "android:run": "npm run cap:sync && cap run android",

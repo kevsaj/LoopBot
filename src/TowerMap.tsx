@@ -9,6 +9,8 @@ import type { Progress } from './progress';
 import { isUnlocked } from './progress';
 import { fx } from './audio/feedback';
 import { DEMO } from './demo';
+import { DailyButton } from './daily/DailyButton';
+import type { DailyState } from './daily';
 
 interface Props {
   levels: LevelFile[];
@@ -17,6 +19,8 @@ interface Props {
   onPick(index: number): void;
   onSettings(): void;
   onHome(): void;
+  daily: DailyState;
+  onDaily(): void;
 }
 
 const SEEN_KEY = 'loopbot.seenUnlocked';
@@ -68,7 +72,7 @@ export function MiniBot() {
   );
 }
 
-export function TowerMap({ levels, progress, current, onPick, onSettings, onHome }: Props) {
+export function TowerMap({ levels, progress, current, onPick, onSettings, onHome, daily, onDaily }: Props) {
   const ids = levels.map((l) => l.id);
   const totalStars = ids.reduce((n, id) => n + (progress.stars[id] ?? 0), 0);
   const cleared = ids.filter((id) => (progress.stars[id] ?? 0) > 0).length;
@@ -135,6 +139,7 @@ export function TowerMap({ levels, progress, current, onPick, onSettings, onHome
           {cleared} / {ids.length} floors
         </span>
       </div>
+      {!DEMO && <DailyButton className="tower-daily" progress={progress} daily={daily} onOpen={onDaily} />}
       <div className="tower-scroll">
         <div className="tower-roof" aria-hidden="true">
           <span className="beacon" />
