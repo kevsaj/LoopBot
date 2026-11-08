@@ -9,6 +9,8 @@ import { isUnlocked } from './progress';
 import { fx } from './audio/feedback';
 import { reducedMotion } from './fx/confetti';
 import { DEMO } from './demo';
+import { DailyButton } from './daily/DailyButton';
+import type { DailyState } from './daily';
 
 interface Props {
   levels: LevelFile[];
@@ -19,6 +21,8 @@ interface Props {
   onPlay(index: number): void;
   onTower(): void;
   onSettings(): void;
+  daily: DailyState;
+  onDaily(): void;
 }
 
 const INTRO_MS = 1500;
@@ -46,7 +50,7 @@ function BigBot({ poked }: { poked: boolean }) {
   );
 }
 
-export function TitleScreen({ levels, progress, booted, onBooted, onPlay, onTower, onSettings }: Props) {
+export function TitleScreen({ levels, progress, booted, onBooted, onPlay, onTower, onSettings, daily, onDaily }: Props) {
   const [settled, setSettled] = useState(() => booted || reducedMotion());
   const [poked, setPoked] = useState(false);
   useEffect(() => {
@@ -113,6 +117,7 @@ export function TitleScreen({ levels, progress, booted, onBooted, onPlay, onTowe
             Tower map <span className="title-stats">★ {stars} · {cleared} / {ids.length} floors</span>
           </button>
         )}
+        {!fresh && !DEMO && <DailyButton className="title-daily" progress={progress} daily={daily} onOpen={onDaily} />}
       </div>
     </div>
   );

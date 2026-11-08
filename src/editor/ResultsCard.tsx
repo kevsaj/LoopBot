@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { fx } from '../audio/feedback';
 import { burst, reducedMotion, stop } from '../fx/confetti';
 import { DEMO } from '../demo';
+import { shortDate } from '../daily';
 
 interface Props {
   floorNumber: number;
@@ -20,12 +21,14 @@ interface Props {
   onRetry(): void;
   onNext(): void;
   onTower(): void;
+  /** The daily challenge: shows the streak and a share button instead of "Next floor". */
+  daily?: { date: string; streak: number; share: string };
 }
 
 const STAR_MS = 420;
 const HEADLINE = ['', 'Floor cleared', 'Nice work!', 'Perfect run!'];
 
-export function ResultsCard({ floorNumber, floorCount, earned, prevBest, commands, steps, par, outro, onClose, onRetry, onNext, onTower }: Props) {
+export function ResultsCard({ floorNumber, floorCount, earned, prevBest, commands, steps, par, outro, onClose, onRetry, onNext, onTower, daily }: Props) {
   const calm = reducedMotion();
   const [shown, setShown] = useState(calm ? 3 : 0);
   const starsRef = useRef<HTMLDivElement>(null);
@@ -70,6 +73,23 @@ export function ResultsCard({ floorNumber, floorCount, earned, prevBest, command
   }
 
   const best = earned > prevBest && prevBest > 0;
+  const [shared, setShared] = useState<string | null>(null);
+  const share = async () => {
+    if (!daily) return;
+    fx.tap();
+    try {
+      if (navigator.share) {
+        await navigator.share({ text: daily.share });
+        return;
+      }
+      await navigator.clipboard.writeText(daily.share);
+      setShared('Copied! Paste it anywhere.');
+    } catch (err) {
+      // The player closing the share sheet isn't an error worth showing.
+      if ((err as Error)?.name !== 'AbortError') setShared("Couldn't share from here.");
+    }
+  };
+  const title = daily ? `Daily · ${shortDate(daily.date)}` : `Floor ${floorNumber}`;
   const tip =
     earned === 3
       ? null
@@ -79,9 +99,9 @@ export function ResultsCard({ floorNumber, floorCount, earned, prevBest, command
 
   return (
     <div className="results-backdrop" onClick={onClose}>
-      <div className={`results${shown >= 3 ? ` tier-${earned}` : ''}`} role="dialog" aria-label={`Floor ${floorNumber} cleared, ${earned} of 3 stars`} onClick={(e) => e.stopPropagation()}>
+      <div className={`results${shown >= 3 ? ` tier-${earned}` : ''}`} role="dialog" aria-label={`${title} cleared, ${earned} of 3 stars`} onClick={(e) => e.stopPropagation()}>
         {earned === 3 && shown >= 3 && <div className="results-rays" aria-hidden="true" />}
-        <p className="results-floor">Floor {floorNumber}</p>
+        <p className="results-floor">{title}</p>
         <h2 className={shown >= 3 ? 'in' : ''}>{shown >= 3 ? HEADLINE[earned] : 'Floor cleared'}</h2>
         <div className="stars" ref={starsRef} aria-hidden="true">
           {[1, 2, 3].map((i) => (
@@ -92,7 +112,12 @@ export function ResultsCard({ floorNumber, floorCount, earned, prevBest, command
         </div>
         <div className={`badges${shown >= 3 ? ' in' : ''}`}>
           {best && <span className="badge best">New best!</span>}
-          {prevBest === 0 && <span className="badge first">First clear</span>}
+          {prevBest === 0 && <span className="badge first">{daily ? 'Cleared today' : 'First clear'}</span>}
+          {daily && daily.streak > 0 && (
+            <span className="badge streak">
+              🔥 {daily.streak}-day streak
+            </span>
+          )}
         </div>
         <table className="score">
           <tbody>
@@ -116,13 +141,14 @@ export function ResultsCard({ floorNumber, floorCount, earned, prevBest, command
         </table>
         {tip && <p className="tip">{tip}</p>}
         {outro && <p className="story">{outro}</p>}
-        {DEMO && floorNumber === floorCount && (
+        {daily && <p className="tip">{shared ?? 'Same puzzle for everyone today. A new one arrives at midnight.'}</p>}
+        {!daily && DEMO && floorNumber === floorCount && (
           <p className="demo-end">
             <strong>You cleared the Lobby!</strong> That's the end of the free demo. LoopBot's climb continues in the full game: loops in the
             Maintenance floors, functions in the Workshop, and all the way to the Rooftop.
           </p>
         )}
-        {!DEMO && floorNumber === floorCount && (
+        {!daily && !DEMO && floorNumber === floorCount && (
           <p className="demo-end">
             <strong>Tower 1 cleared!</strong> Meridian Spire is back online and VANTA's drones are grounded. LoopBot rides the elevator
             down to meet PATCH at last. More towers are on the way.
@@ -132,7 +158,16 @@ export function ResultsCard({ floorNumber, floorCount, earned, prevBest, command
           <button type="button" className="pill" onClick={() => (fx.tap(), onRetry())}>
             Try again
           </button>
-          {floorNumber === floorCount ? (
+          {daily ? (
+            <>
+              <button type="button" className="pill" onClick={share}>
+                Share
+              </button>
+              <button type="button" className={`pill primary${shown >= 3 ? ' nudge' : ''}`} onClick={() => (fx.tap(), onTower())}>
+                Done
+              </button>
+            </>
+          ) : floorNumber === floorCount ? (
             <button type="button" className="pill primary" onClick={() => (fx.tap(), onTower())}>
               Tower
             </button>

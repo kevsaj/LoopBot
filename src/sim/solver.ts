@@ -68,6 +68,14 @@ const onlyTurns = (list: SBlock[]): boolean => list.every((b) => typeof b === 's
 
 type Memo = Map<string, SBlock[][]>;
 
+/** Thrown when a search runs past its time budget (only the daily generator sets one). */
+export class SearchBudgetExceeded extends Error {}
+let deadline = Infinity;
+let ticks = 0;
+function tick() {
+  if (deadline !== Infinity && (++ticks & 1023) === 0 && Date.now() > deadline) throw new SearchBudgetExceeded('search budget exceeded');
+}
+
 /**
  * All block lists of exactly `size` blocks, loops nested at most `depth` deep.
  * Skips lists that a shorter list always matches (a loop of only turns, left right pairs),
@@ -77,6 +85,7 @@ function lists(atoms: Atom[], size: number, depth: number, memo: Memo, cap = Inf
   const k = `${size}/${depth}/${cap}`;
   const hit = memo.get(k);
   if (hit) return hit;
+  tick();
   const out: SBlock[][] = [];
   if (size === 0) out.push([]);
   else {
@@ -154,8 +163,17 @@ export function smallestProgram(
   level: LevelFile,
   maxSize: number,
   maxDepth = 2,
-  limits: { loopBody?: number; fnBody?: number } = {},
+  limits: { loopBody?: number; fnBody?: number; budgetMs?: number } = {},
 ): string | null {
+  deadline = limits.budgetMs ? Date.now() + limits.budgetMs : Infinity;
+  try {
+    return smallest(level, maxSize, maxDepth, limits);
+  } finally {
+    deadline = Infinity;
+  }
+}
+
+function smallest(level: LevelFile, maxSize: number, maxDepth: number, limits: { loopBody?: number; fnBody?: number }): string | null {
   const actions = usefulActions(level);
   const loopCap = limits.loopBody ?? Infinity;
   // Each routine has to fit its slots on the floor (LS-1), so the search respects them too.
@@ -186,6 +204,7 @@ export function smallestProgram(
     const failed = failures.get(fk)!;
     const search = (w: World, left: number, steps: number, path: SBlock[]): SBlock[] | null => {
       if (left === 0) return null;
+      tick();
       const key = worldKey(w);
       if ((failed.get(key) ?? 0) >= left) return null;
       for (let size = 1; size <= left; size++) {
