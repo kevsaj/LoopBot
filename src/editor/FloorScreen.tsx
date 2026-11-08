@@ -24,6 +24,8 @@ import { recordClear, recordFail } from '../progress';
 import { HintSheet } from './HintSheet';
 import { ResultsCard } from './ResultsCard';
 import { tutorialStep, TUTORIAL_TEXT } from './tutorial';
+import { track } from '../telemetry';
+import { FeedbackSheet } from '../FeedbackSheet';
 
 const SPEEDS = [
   { label: '1x', ms: 520 },
@@ -105,7 +107,17 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
   const progressRef = useRef(progress);
   progressRef.current = progress;
   const [rotateSignal, setRotateSignal] = useState(0);
-  const [sheet, setSheet] = useState<'hints' | 'settings' | null>(null);
+  const [sheet, setSheet] = useState<'hints' | 'settings' | 'feedback' | null>(null);
+  // Anonymous play stats for this visit to the floor (see src/telemetry.ts).
+  const visit = useRef({ start: Date.now(), runs: 0, hints: 0, cleared: false });
+  useEffect(() => {
+    const v = visit.current;
+    track({ type: 'floor_start', floor: level.id });
+    return () => {
+      const seconds = Math.min(3600, Math.round((Date.now() - v.start) / 1000));
+      track({ type: 'floor_leave', floor: level.id, cleared: v.cleared, runs: v.runs, hints: v.hints, seconds });
+    };
+  }, [level.id]);
   const [hasRun, setHasRun] = useState(false);
   // The results card waits for the light-up wave; a reset or a new run cancels it.
   const resultsTimer = useRef<number | undefined>(undefined);
@@ -172,6 +184,9 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
     if (o) {
       setPlaying(false);
       setOutcome(o);
+      const v = visit.current;
+      v.runs += 1;
+      track({ type: 'run', floor: level.id, result: o.status, commands: countCommands(program), steps: o.steps, run: v.runs });
       if (o.status === 'crashed') {
         setCrashId(o.blockId);
         setTerminal(o.error);
@@ -185,6 +200,11 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
         fx.voice('yay', 0.55);
         setPrevBest(progressRef.current.stars[level.id] ?? 0);
         setProgress((p) => recordClear(p, level.id, s));
+        if (!v.cleared) {
+          v.cleared = true;
+          const seconds = Math.min(3600, Math.round((Date.now() - v.start) / 1000));
+          track({ type: 'floor_clear', floor: level.id, stars: s, runs: v.runs, hints: v.hints, seconds });
+        }
         window.clearTimeout(resultsTimer.current);
         resultsTimer.current = window.setTimeout(() => setShowResults(true), SPEEDS[speed].ms + 900); // let the light-up wave play first
       } else {
@@ -397,6 +417,14 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
             Hint <span className="hint-count">{progress.hints}</span>
           </button>
         )}
+        <button type="button" className="icon-btn fb-btn" aria-label="Send feedback about this floor" onClick={() => (fx.tap(), setSheet('feedback'))}>
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+            <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H10l-4.5 4v-4A2.5 2.5 0 0 1 4 13.5z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+            <circle cx="8.5" cy="9.5" r="1.2" fill="currentColor" />
+            <circle cx="12" cy="9.5" r="1.2" fill="currentColor" />
+            <circle cx="15.5" cy="9.5" r="1.2" fill="currentColor" />
+          </svg>
+        </button>
         <button type="button" className="icon-btn" aria-label="Settings" onClick={() => (fx.tap(), setSheet('settings'))}>
           ⚙
         </button>
@@ -549,9 +577,25 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
         </EditorDnd>
       </section>
 
-      {sheet === 'hints' && <HintSheet level={level} progress={progress} setProgress={setProgress} onClose={() => setSheet(null)} />}
+      {sheet === 'hints' && (
+        <HintSheet
+          level={level}
+          progress={progress}
+          setProgress={setProgress}
+          onClose={() => setSheet(null)}
+          onReveal={(tier, free) => {
+            visit.current.hints += 1;
+            track({ type: 'hint', floor: level.id, tier, free });
+          }}
+          onFeedback={() => setSheet('feedback')}
+        />
+      )}
 
-      {sheet === 'settings' && <SettingsSheet progress={progress} setProgress={setProgress} onClose={() => setSheet(null)} />}
+      {sheet === 'settings' && (
+        <SettingsSheet progress={progress} setProgress={setProgress} onClose={() => setSheet(null)} floor={level.id} floorTitle={level.title} />
+      )}
+
+      {sheet === 'feedback' && <FeedbackSheet floor={level.id} floorTitle={level.title} onClose={() => setSheet(null)} />}
 
       {showResults && outcome?.status === 'cleared' && (
         <ResultsCard

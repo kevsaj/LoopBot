@@ -10,6 +10,7 @@ import { fx } from './audio/feedback';
 import { reducedMotion } from './fx/confetti';
 import { preloadBoard } from './board/Board';
 import { listenForBack } from './native';
+import { startTelemetry } from './telemetry';
 
 function loadIndex() {
   try {
@@ -32,6 +33,7 @@ export default function App() {
   // The board engine loads after the first screen is up, so opening a floor never waits on it.
   useEffect(() => {
     void preloadBoard();
+    startTelemetry();
   }, []);
 
   const setProgress = useCallback((update: (p: Progress) => Progress) => {
