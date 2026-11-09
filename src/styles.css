@@ -1831,6 +1831,81 @@ select:focus-visible {
   }
 }
 
+/* --- feedback --- */
+.fb-btn {
+  display: grid;
+  place-items: center;
+  color: var(--ink);
+}
+.fb-where {
+  text-align: center;
+  margin-top: -4px;
+}
+.fb-moods {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin: 10px 0;
+}
+.fb-mood {
+  min-height: 40px;
+  padding: 0 12px;
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  background: var(--panel-2);
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 600;
+}
+.fb-mood.on {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}
+.fb-text {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--panel-2);
+  color: var(--ink);
+  font: inherit;
+  font-size: 16px; /* 16px stops mobile browsers zooming in on focus */
+  resize: vertical;
+}
+.fb-note {
+  margin: 8px 2px 0;
+  font-size: 12px;
+}
+.fb-note a,
+.fb-error a {
+  color: var(--accent);
+}
+.fb-error {
+  color: var(--warn);
+}
+.feedback a.pill {
+  display: grid;
+  place-items: center;
+  text-decoration: none;
+}
+.link-btn {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent);
+  font: inherit;
+  text-decoration: underline;
+}
+button.set-row {
+  width: 100%;
+  border: 0;
+  font: inherit;
+  font-size: 17px;
+  text-align: left;
+}
+
 /* --- Daily challenge --- */
 .daily-btn {
   display: flex;

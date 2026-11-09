@@ -5,3 +5,6 @@ dist
 *.tsbuildinfo
 dist-demo
 *.zip
+
+# Local env (e.g. VITE_TELEMETRY_URL for playtest builds)
+*.local

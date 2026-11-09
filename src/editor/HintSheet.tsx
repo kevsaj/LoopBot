@@ -12,9 +12,13 @@ interface Props {
   progress: Progress;
   setProgress(update: (p: Progress) => Progress): void;
   onClose(): void;
+  /** Called after a tier is revealed (1 = Nudge), for anonymous stats. */
+  onReveal?(tier: number, free: boolean): void;
+  /** Opens the feedback sheet, for "still stuck? tell us". */
+  onFeedback?(): void;
 }
 
-export function HintSheet({ level, progress, setProgress, onClose }: Props) {
+export function HintSheet({ level, progress, setProgress, onClose, onReveal, onFeedback }: Props) {
   const shown = progress.revealed[level.id] ?? 0;
   const free = nextHintIsFree(progress, level.id);
   const canPay = free || progress.hints > 0;
@@ -25,6 +29,7 @@ export function HintSheet({ level, progress, setProgress, onClose }: Props) {
     if (!next) return fx.denied();
     fx.snap();
     setProgress(() => next);
+    onReveal?.(shown + 1, free);
   };
 
   return (
@@ -48,6 +53,14 @@ export function HintSheet({ level, progress, setProgress, onClose }: Props) {
           </button>
         )}
         {more && !canPay && <p className="tip">Out of hints. The Nudge is free after {FREE_NUDGE_AFTER} tries on a floor.</p>}
+        {onFeedback && shown > 0 && (
+          <p className="tip">
+            Still stuck?{' '}
+            <button type="button" className="link-btn" onClick={() => (fx.tap(), onFeedback())}>
+              Tell us what's confusing
+            </button>
+          </p>
+        )}
         <div className="results-actions">
           <button type="button" className="pill" onClick={onClose}>
             Close

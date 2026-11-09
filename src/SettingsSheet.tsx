@@ -6,11 +6,14 @@ import type { ReactNode } from 'react';
 import type { Progress } from './progress';
 import { fx, hapticsOn, isMuted, setHapticsOn, setMuted } from './audio/feedback';
 import { version } from '../package.json';
+import { FeedbackSheet } from './FeedbackSheet';
+import type { FeedbackContext } from './telemetry';
+import { TELEMETRY_AVAILABLE, setStatsOn, statsOn } from './telemetry';
 
 /** LoopBot's pages on the KIS Studios site, also linked from the Google Play listing. */
 export const SITE = 'https://www.kisstudios.net/loopbot';
 
-interface Props {
+interface Props extends FeedbackContext {
   progress: Progress;
   setProgress(update: (p: Progress) => Progress): void;
   onClose(): void;
@@ -40,9 +43,12 @@ function LinkRow({ href, children, value }: { href: string; children: ReactNode;
   );
 }
 
-export function SettingsSheet({ progress, setProgress, onClose }: Props) {
+export function SettingsSheet({ progress, setProgress, onClose, floor, floorTitle }: Props) {
   const [sound, setSound] = useState(!isMuted());
   const [haptics, setHaptics] = useState(hapticsOn());
+  const [stats, setStats] = useState(statsOn());
+  const [feedback, setFeedback] = useState(false);
+  if (feedback) return <FeedbackSheet floor={floor} floorTitle={floorTitle} onClose={() => setFeedback(false)} />;
   return (
     // The backdrop class lets Android's Back close this screen like any other sheet.
     <div className="results-backdrop settings-screen" onClick={onClose}>
@@ -84,6 +90,18 @@ export function SettingsSheet({ progress, setProgress, onClose }: Props) {
           />
 
           <h3 className="set-section">Privacy</h3>
+          {TELEMETRY_AVAILABLE && (
+            <Toggle
+              label="Share anonymous stats"
+              caption="Which floors are tricky (runs, hints, time per floor), so we can make them better. No name, email or account."
+              on={stats}
+              onChange={(on) => {
+                setStatsOn(on);
+                setStats(on);
+                fx.tap();
+              }}
+            />
+          )}
           <div className="set-item">
             <LinkRow href={`${SITE}/privacy`}>Privacy policy</LinkRow>
             <p className="set-caption">LoopBot collects no personal data. Your progress stays on this device.</p>
@@ -94,7 +112,12 @@ export function SettingsSheet({ progress, setProgress, onClose }: Props) {
 
           <h3 className="set-section">About</h3>
           <div className="set-item">
-            <LinkRow href="mailto:kisstudios98@gmail.com?subject=LoopBot%20feedback">Send feedback</LinkRow>
+            <button type="button" className="set-row set-link" onClick={() => (fx.tap(), setFeedback(true))}>
+              <span className="set-label">Send feedback</span>
+              <span className="set-chevron" aria-hidden="true">
+                ›
+              </span>
+            </button>
             <p className="set-caption">Found a bug or stuck on a floor? We read every message.</p>
           </div>
           <div className="set-item">
