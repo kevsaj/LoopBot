@@ -26,6 +26,7 @@ import { ResultsCard } from './ResultsCard';
 import { tutorialStep, TUTORIAL_TEXT } from './tutorial';
 import { track } from '../telemetry';
 import { FeedbackSheet } from '../FeedbackSheet';
+import { DIFFICULTY_LABEL, difficultyOn, shareText, shortDate } from '../daily';
 
 const SPEEDS = [
   { label: '1x', ms: 520 },
@@ -52,6 +53,17 @@ interface Props {
   setProgress(update: (p: Progress) => Progress): void;
   onGo(index: number): void;
   onTower(): void;
+  /** Set when this is the daily challenge rather than a tower floor. */
+  daily?: DailyProps;
+}
+
+export interface DailyProps {
+  date: string;
+  /** Best stars on today's puzzle so far. */
+  best: number;
+  /** The streak as it stands now (it updates after a clear). */
+  streak: number;
+  onClear(stars: number): void;
 }
 
 export function stars(level: LevelFile, commands: number, steps: number) {
@@ -60,7 +72,7 @@ export function stars(level: LevelFile, commands: number, steps: number) {
   return 1;
 }
 
-export function FloorScreen({ level, floorNumber, floorCount, progress, setProgress, onGo, onTower }: Props) {
+export function FloorScreen({ level, floorNumber, floorCount, progress, setProgress, onGo, onTower, daily }: Props) {
   const editor = useEditor(level.id);
   const { program } = editor.state;
   // The questions if and while can ask here: wall ahead always, plus the floor's own sensors.
@@ -106,6 +118,8 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
   const [prevBest, setPrevBest] = useState(0);
   const progressRef = useRef(progress);
   progressRef.current = progress;
+  const dailyRef = useRef(daily);
+  dailyRef.current = daily;
   const [rotateSignal, setRotateSignal] = useState(0);
   const [sheet, setSheet] = useState<'hints' | 'settings' | 'feedback' | null>(null);
   // Anonymous play stats for this visit to the floor (see src/telemetry.ts).
@@ -198,8 +212,14 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
         setTerminal(`> floor cleared in ${o.steps} steps`);
         fx.win();
         fx.voice('yay', 0.55);
-        setPrevBest(progressRef.current.stars[level.id] ?? 0);
-        setProgress((p) => recordClear(p, level.id, s));
+        if (dailyRef.current) {
+          // Daily stars live with the daily streak, not the tower's star count.
+          setPrevBest(dailyRef.current.best);
+          dailyRef.current.onClear(s);
+        } else {
+          setPrevBest(progressRef.current.stars[level.id] ?? 0);
+          setProgress((p) => recordClear(p, level.id, s));
+        }
         if (!v.cleared) {
           v.cleared = true;
           const seconds = Math.min(3600, Math.round((Date.now() - v.start) / 1000));
@@ -407,10 +427,19 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
     <div className="floor">
       <header className="topbar">
         <div className="floor-title">
-          <button type="button" className="back-btn" onClick={() => (fx.tap(), onTower())} aria-label="Back to the tower map">
-            ‹ Tower · Floor {floorNumber}
-          </button>
-          <span className="floor-name">{level.title}</span>
+          {daily ? (
+            <button type="button" className="back-btn" onClick={() => (fx.tap(), onTower())} aria-label="Back">
+              ‹ Daily · {shortDate(daily.date)}
+            </button>
+          ) : (
+            <button type="button" className="back-btn" onClick={() => (fx.tap(), onTower())} aria-label="Back to the tower map">
+              ‹ Tower · Floor {floorNumber}
+            </button>
+          )}
+          <span className="floor-name">
+            {level.title}
+            {daily && <span className={`daily-diff diff-${difficultyOn(daily.date)}`}>{DIFFICULTY_LABEL[difficultyOn(daily.date)]}</span>}
+          </span>
         </div>
         {level.hints.length > 0 && (
           <button type="button" className="hint-btn" onClick={() => (fx.tap(), setSheet('hints'))} aria-label={`Hint, ${progress.hints} left`}>
@@ -611,6 +640,13 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
           onRetry={reset}
           onNext={() => onGo(floorNumber)}
           onTower={onTower}
+          daily={
+            daily && {
+              date: daily.date,
+              streak: daily.streak,
+              share: shareText(daily.date, level, earned, total, daily.streak),
+            }
+          }
         />
       )}
     </div>
