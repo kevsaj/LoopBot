@@ -1,7 +1,8 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  // Permanent once the app is on Google Play: never change it after the first upload.
+  // Android app ID and iOS bundle ID. Permanent once the app is on Google Play or App Store Connect:
+  // never change it after the first upload.
   appId: 'com.kisstudios.loopbot',
   appName: 'LoopBot',
   webDir: 'dist',
