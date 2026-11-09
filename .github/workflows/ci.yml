@@ -38,3 +38,24 @@ jobs:
         with:
           name: loopbot-debug-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
+
+  ios:
+    # Proves the Xcode project compiles. Unsigned simulator build, so it needs no Apple secrets.
+    # macOS runners are free on public repos.
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+      - run: npm ci
+      - run: npm run ios:sync
+      - run: >
+          xcodebuild build
+          -project ios/App/App.xcodeproj -scheme App -configuration Debug
+          -sdk iphonesimulator -destination 'generic/platform=iOS Simulator'
+          CODE_SIGNING_ALLOWED=NO

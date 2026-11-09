@@ -33,6 +33,24 @@ npm run android:bundle   # signed release bundle for Google Play (needs android/
 - CI builds a debug APK on every PR (download it from the run's artifacts to sideload) and checks the release bundle builds.
 - Privacy policy and terms for the store listing: https://www.kisstudios.net/loopbot/privacy and /loopbot/terms (see [PRIVACY.md](PRIVACY.md)). Settings links to both.
 
+### iOS (Capacitor)
+
+The iOS project is in `ios/` (Capacitor 8 with Swift Package Manager, no CocoaPods; bundle ID `com.kisstudios.loopbot`, iPhone only, portrait, iOS 15+). Building needs Xcode, which only runs on macOS, so there are two ways to ship:
+
+- **No Mac (default):** the `iOS TestFlight` workflow in GitHub Actions archives, signs and uploads a build to App Store Connect. Run it from the Actions tab. It needs the repository secrets listed at the top of `.github/workflows/ios-testflight.yml`. The build number is the workflow run number, the version is `package.json`'s.
+- **On a Mac:** `npm run ios:sync` then `npm run ios:open`, pick your team under Signing & Capabilities, and Product > Archive.
+
+```bash
+npm run ios:sync   # build the game and copy it into ios/
+npm run ios:open   # open the project in Xcode (macOS only)
+npm run ios:run    # run on a simulator or plugged-in iPhone (macOS only)
+```
+
+- CI builds the app for the simulator on every PR (unsigned), so a broken Xcode project shows up before you need a Mac.
+- `ios/App/App/PrivacyInfo.xcprivacy` declares what the optional playtest stats and feedback collect. Keep it in step with the App Privacy answers in App Store Connect and the privacy policy.
+- `ITSAppUsesNonExemptEncryption` is false in `Info.plist` (the game only uses HTTPS), so each upload skips the export compliance question.
+- To regenerate the iOS icon and splash from `assets/`: `npx @capacitor/assets generate --ios --iconBackgroundColor '#2b2546' --splashBackgroundColor '#2b2546' --splashBackgroundColorDark '#2b2546'`. The icon must stay without transparency.
+
 ## Where things are
 
 | Area | Where | Notes |
