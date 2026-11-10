@@ -9,6 +9,7 @@ import { musicOn, setMusicOn } from './audio/music';
 import { version } from '../package.json';
 import { FeedbackSheet } from './FeedbackSheet';
 import { BackupRows } from './BackupRows';
+import { ReminderRows } from './ReminderRows';
 import type { FeedbackContext } from './telemetry';
 import { TELEMETRY_AVAILABLE, setStatsOn, statsOn } from './telemetry';
 
@@ -101,6 +102,8 @@ export function SettingsSheet({ progress, setProgress, onClose, floor, floorTitl
             on={progress.tutorial}
             onChange={(on) => setProgress((p) => ({ ...p, tutorial: on }))}
           />
+
+          <ReminderRows />
 
           <h3 className="set-section">Your progress</h3>
           <BackupRows />

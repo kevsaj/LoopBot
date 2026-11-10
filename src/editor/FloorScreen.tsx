@@ -64,6 +64,8 @@ export interface DailyProps {
   best: number;
   /** The streak as it stands now (it updates after a clear). */
   streak: number;
+  /** A streak freeze covered yesterday (shown on the results card). */
+  froze?: boolean;
   onClear(stars: number): void;
 }
 
@@ -646,6 +648,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
             daily && {
               date: daily.date,
               streak: daily.streak,
+              froze: daily.froze,
               share: shareText(daily.date, level, earned, total, daily.streak),
             }
           }
