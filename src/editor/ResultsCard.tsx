@@ -3,6 +3,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { shareText } from '../share';
+import { DEFAULT_HOUR, declineReminder, hourLabel, loadReminder, remindersAvailable, setReminder } from '../reminder';
 import { fx } from '../audio/feedback';
 import { burst, reducedMotion, stop } from '../fx/confetti';
 import { DEMO } from '../demo';
@@ -23,7 +24,7 @@ interface Props {
   onNext(): void;
   onTower(): void;
   /** The daily challenge: shows the streak and a share button instead of "Next floor". */
-  daily?: { date: string; streak: number; share: string };
+  daily?: { date: string; streak: number; froze?: boolean; share: string };
 }
 
 const STAR_MS = 420;
@@ -82,6 +83,16 @@ export function ResultsCard({ floorNumber, floorCount, earned, prevBest, command
     if (r === 'copied') setShared('Copied! Paste it anywhere.');
     else if (r === 'failed') setShared("Couldn't share from here.");
   };
+  // After the first daily clear, offer the reminder once (phones only).
+  const [askReminder, setAskReminder] = useState(() => !!daily && remindersAvailable() && !loadReminder().asked);
+  const [reminderNote, setReminderNote] = useState<string | null>(null);
+  const answerReminder = async (yes: boolean) => {
+    fx.tap();
+    setAskReminder(false);
+    if (!yes) return declineReminder();
+    const on = await setReminder(true);
+    setReminderNote(on ? `Reminder set for ${hourLabel(DEFAULT_HOUR)}. Change it in Settings.` : 'Notifications are off for LoopBot. You can allow them in your phone settings.');
+  };
   const title = daily ? `Daily · ${shortDate(daily.date)}` : `Floor ${floorNumber}`;
   const tip =
     earned === 3
@@ -111,6 +122,7 @@ export function ResultsCard({ floorNumber, floorCount, earned, prevBest, command
               🔥 {daily.streak}-day streak
             </span>
           )}
+          {daily?.froze && <span className="badge freeze">🧊 A streak freeze saved your streak</span>}
         </div>
         <table className="score">
           <tbody>
@@ -134,7 +146,20 @@ export function ResultsCard({ floorNumber, floorCount, earned, prevBest, command
         </table>
         {tip && <p className="tip">{tip}</p>}
         {outro && <p className="story">{outro}</p>}
-        {daily && <p className="tip">{shared ?? 'Same puzzle for everyone today. A new one arrives at midnight.'}</p>}
+        {daily && <p className="tip">{shared ?? reminderNote ?? 'Same puzzle for everyone today. A new one arrives at midnight.'}</p>}
+        {askReminder && shown >= 3 && (
+          <div className="reminder-ask">
+            <p>Want a reminder when tomorrow's puzzle is ready?</p>
+            <div className="reminder-ask-actions">
+              <button type="button" className="pill" onClick={() => void answerReminder(false)}>
+                No thanks
+              </button>
+              <button type="button" className="pill primary" onClick={() => void answerReminder(true)}>
+                Remind me at {hourLabel(DEFAULT_HOUR)}
+              </button>
+            </div>
+          </div>
+        )}
         {!daily && DEMO && floorNumber === floorCount && (
           <p className="demo-end">
             <strong>You cleared the Lobby!</strong> That's the end of the free demo. LoopBot's climb continues in the full game: loops in the

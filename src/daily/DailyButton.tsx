@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import type { Progress } from '../progress';
 import type { DailyState } from './index';
-import { DAILY_UNLOCK_FLOOR, DIFFICULTY_LABEL, currentStreak, dailyUnlocked, dateKey, difficultyOn } from './index';
+import { DAILY_UNLOCK_FLOOR, DIFFICULTY_LABEL, currentStreak, dailyUnlocked, dateKey, difficultyOn, streakNeedsFreeze } from './index';
 import { fx } from '../audio/feedback';
 
 interface Props {
@@ -23,6 +23,7 @@ export function DailyButton({ className, progress, daily, onOpen }: Props) {
   const diff = difficultyOn(today);
   // A streak that's alive but not yet extended today is at risk: nudge the player.
   const atRisk = streak > 0 && !best;
+  const needsFreeze = atRisk && streakNeedsFreeze(daily, today);
 
   if (!open) {
     return (
@@ -46,7 +47,7 @@ export function DailyButton({ className, progress, daily, onOpen }: Props) {
       type="button"
       className={`pill daily-btn ${className}${best ? ' done' : ''}${atRisk ? ' at-risk' : ''}`}
       onClick={() => (fx.tap(), onOpen())}
-      aria-label={`Daily challenge, ${DIFFICULTY_LABEL[diff]}${best ? `, cleared today with ${best} stars` : ''}${streak ? `, ${streak} day streak` : ''}`}
+      aria-label={`Daily challenge, ${DIFFICULTY_LABEL[diff]}${best ? `, cleared today with ${best} stars` : ''}${streak ? `, ${streak} day streak` : ''}${daily.freezes ? `, ${daily.freezes} streak freeze${daily.freezes > 1 ? 's' : ''}` : ''}`}
     >
       <span className="daily-main">
         <span className="daily-cal" aria-hidden="true">
@@ -65,9 +66,14 @@ export function DailyButton({ className, progress, daily, onOpen }: Props) {
             ))}
           </span>
         ) : (
-          <span>{atRisk ? 'Keep your streak alive' : 'New puzzle today'}</span>
+          <span>{needsFreeze ? 'A freeze is holding your streak' : atRisk ? 'Keep your streak alive' : 'New puzzle today'}</span>
         )}
         {streak > 0 && <span className="daily-streak">🔥 {streak}</span>}
+        {(daily.freezes ?? 0) > 0 && (
+          <span className="daily-freeze" title="Streak freezes: each one covers a missed day">
+            🧊 {daily.freezes}
+          </span>
+        )}
       </span>
     </button>
   );

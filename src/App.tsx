@@ -8,12 +8,13 @@ import { isUnlocked, loadProgress, saveProgress } from './progress';
 import type { Progress } from './progress';
 import { fx } from './audio/feedback';
 import { initMusic, setMusicTheme, themeForFloor } from './audio/music';
+import { refreshReminders } from './reminder';
 import { reducedMotion } from './fx/confetti';
 import { preloadBoard } from './board/Board';
 import { listenForBack } from './native';
 import { startTelemetry } from './telemetry';
 import type { LevelFile } from './sim/types';
-import { currentStreak, dailyLevel, dateKey, loadDaily, pruneOldDailies, recordDailyClear, saveDaily } from './daily';
+import { currentStreak, yesterday, dailyLevel, dateKey, loadDaily, pruneOldDailies, recordDailyClear, saveDaily } from './daily';
 import type { DailyState } from './daily';
 
 function loadIndex() {
@@ -33,6 +34,8 @@ export default function App() {
   const [screen, setScreen] = useState<'title' | 'map' | 'floor' | 'daily'>('title');
   // The daily challenge: today's floor once it's loaded, and the screen to go back to.
   const [daily, setDailyState] = useState<DailyState>(loadDaily);
+  // Re-plan the week of daily reminders on launch and whenever the daily changes (a clear skips today's).
+  useEffect(() => void refreshReminders(daily), [daily]);
   const [dailyFloor, setDailyFloor] = useState<{ date: string; level: LevelFile } | null>(null);
   const dailyFrom = useRef<'title' | 'map'>('title');
   const [booted, setBooted] = useState(false);
@@ -185,6 +188,7 @@ export default function App() {
             date,
             best: daily.best[date] ?? 0,
             streak: currentStreak(daily, date),
+            froze: daily.last === date && (daily.frozen ?? []).includes(yesterday(date)),
             onClear: (stars) => clearDaily(date, stars),
           }}
         />

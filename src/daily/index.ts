@@ -28,14 +28,24 @@ export interface DailyState {
   longest: number;
   /** The last date cleared. */
   last: string | null;
+  /**
+   * Streak freezes banked (0 to MAX_FREEZES). A freeze covers one missed day, so real life
+   * doesn't wipe out a long streak. Players start with one and earn one every 7 days in a row.
+   */
+  freezes?: number;
+  /** Days a freeze covered, recent ones only (for the calendar and the results card). */
+  frozen?: string[];
 }
+
+export const MAX_FREEZES = 2;
+export const FREEZE_EVERY = 7;
 
 const KEY = 'loopbot.daily';
 /** How many days of results to keep. */
 const KEEP_DAYS = 60;
 
 function fresh(): DailyState {
-  return { best: {}, streak: 0, longest: 0, last: null };
+  return { best: {}, streak: 0, longest: 0, last: null, freezes: 1, frozen: [] };
 }
 
 export function loadDaily(): DailyState {
@@ -56,21 +66,50 @@ export function saveDaily(s: DailyState) {
   }
 }
 
-/** Records a clear of `date`'s puzzle. Only today's puzzle is ever playable, so the streak just counts days. */
+/**
+ * Records a clear of `date`'s puzzle. Only today's puzzle is ever playable, so the streak just
+ * counts days. Missed days are covered by banked freezes when there are enough of them.
+ */
 export function recordDailyClear(s: DailyState, date: string, stars: number): DailyState {
   const best = { ...s.best, [date]: Math.max(s.best[date] ?? 0, stars) };
   const cutoff = dayNumber(date) - KEEP_DAYS;
   for (const k of Object.keys(best)) if (dayNumber(k) < cutoff) delete best[k];
-  let streak = s.streak;
-  if (s.last !== date) streak = s.last && dayNumber(date) - dayNumber(s.last) === 1 ? s.streak + 1 : 1;
-  return { best, streak, longest: Math.max(s.longest, streak), last: s.last && dayNumber(s.last) > dayNumber(date) ? s.last : date };
+  let { streak } = s;
+  let freezes = s.freezes ?? 0;
+  let frozen = (s.frozen ?? []).filter((d) => dayNumber(d) >= cutoff);
+  if (s.last !== date) {
+    const gap = s.last ? dayNumber(date) - dayNumber(s.last) : Infinity;
+    if (gap === 1) streak = s.streak + 1;
+    else if (gap > 1 && gap - 1 <= freezes) {
+      // freezes cover the missed days, and the streak carries on
+      for (let d = dayNumber(s.last!) + 1; d < dayNumber(date); d++) frozen = [...frozen, keyFromDay(d)];
+      freezes -= gap - 1;
+      streak = s.streak + 1;
+    } else streak = 1;
+    if (streak > s.streak && streak % FREEZE_EVERY === 0) freezes = Math.min(MAX_FREEZES, freezes + 1);
+  }
+  return {
+    best,
+    streak,
+    longest: Math.max(s.longest, streak),
+    last: s.last && dayNumber(s.last) > dayNumber(date) ? s.last : date,
+    freezes,
+    frozen,
+  };
 }
 
-/** The streak as it stands today: it's still alive if the last clear was today or yesterday. */
+/** The streak as it stands today: alive if the last clear was today or yesterday, or the freezes cover the gap. */
 export function currentStreak(s: DailyState, today: string = dateKey()): number {
   if (!s.last) return 0;
   const gap = dayNumber(today) - dayNumber(s.last);
-  return gap === 0 || gap === 1 ? s.streak : 0;
+  return gap === 0 || gap === 1 || (gap > 1 && gap - 1 <= (s.freezes ?? 0)) ? s.streak : 0;
+}
+
+/** True when today's clear will spend freezes to keep the streak (the player missed days). */
+export function streakNeedsFreeze(s: DailyState, today: string = dateKey()): boolean {
+  if (!s.last) return false;
+  const gap = dayNumber(today) - dayNumber(s.last);
+  return gap > 1 && gap - 1 <= (s.freezes ?? 0);
 }
 
 export const DIFFICULTY_LABEL: Record<Difficulty, string> = { easy: 'Easy', medium: 'Medium', hard: 'Hard' };
