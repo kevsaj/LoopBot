@@ -197,6 +197,17 @@ export class BoardScene extends Phaser.Scene {
     if (this.pending) this.show(this.pending);
   }
 
+  /** A picture of the board as it is now, for the share image. Transparent where the sky is. */
+  snapshot(): Promise<HTMLImageElement | null> {
+    return new Promise((resolve) => {
+      try {
+        this.game.renderer.snapshot((img) => resolve(img instanceof HTMLImageElement ? img : null));
+      } catch {
+        resolve(null);
+      }
+    });
+  }
+
   /** Rotate the view 90 degrees (the board turns in 90-degree steps only). */
   rotate() {
     this.rot = (this.rot + 1) % 4;

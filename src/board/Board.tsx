@@ -20,6 +20,12 @@ interface Props {
   band: string;
 }
 
+/** The board on screen now (there is only ever one), for the share image. */
+let active: BoardScene | null = null;
+export function snapshotBoard(): Promise<HTMLImageElement | null> {
+  return active ? active.snapshot() : Promise.resolve(null);
+}
+
 /** Mounts the Phaser board inside React and pushes simulation snapshots into it. */
 export function Board({ update, rotateSignal, band }: Props) {
   const host = useRef<HTMLDivElement>(null);
@@ -40,6 +46,7 @@ export function Board({ update, rotateSignal, band }: Props) {
       setBand(band);
       game = createBoard(el, (s) => {
         scene.current = s;
+        active = s;
         s.show(latest.current);
       });
       ro.observe(el);
@@ -47,6 +54,7 @@ export function Board({ update, rotateSignal, band }: Props) {
     return () => {
       gone = true;
       ro.disconnect();
+      if (active === scene.current) active = null;
       game?.destroy(true);
       game = null;
       scene.current = null;

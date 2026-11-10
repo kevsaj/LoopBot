@@ -7,7 +7,7 @@ import { Runner } from '../sim/interpreter';
 import type { Outcome } from '../sim/interpreter';
 import { createWorld } from '../sim/world';
 import type { Spot } from '../sim/program';
-import { MAX_DEPTH, canPlace, countBlocks, countCommands, findBlock, listAt, makeBlock, spotOf } from '../sim/program';
+import { MAX_DEPTH, canPlace, countBlocks, countCommands, findBlock, listAt, makeBlock, spotOf, toCode } from '../sim/program';
 import type { Block } from '../sim/types';
 import { useEditor } from './useEditor';
 import { ProgramList } from './ProgramList';
@@ -15,7 +15,9 @@ import { EditorDnd, PaletteChip } from './dnd';
 import { CodeEditor, CodeView } from './CodeView';
 import { Terminal } from './Terminal';
 import { COMMAND_META, CONTROL_ORDER, PALETTE_ORDER, blockCommand } from './commands';
-import { Board } from '../board/Board';
+import { Board, snapshotBoard } from '../board/Board';
+import { shareImage } from '../share';
+import { canvasToBlob, drawShareCard } from '../shareImage';
 import type { BoardUpdate } from '../board/BoardScene';
 import { fx } from '../audio/feedback';
 import { SettingsSheet } from '../SettingsSheet';
@@ -646,6 +648,26 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
           onRetry={reset}
           onNext={() => onGo(floorNumber)}
           onTower={onTower}
+          onShareImage={
+            daily
+              ? undefined
+              : async () => {
+                  const card = drawShareCard({
+                    title: `Floor ${floorNumber} · ${level.title}`,
+                    subtitle: 'Tower 1 · Meridian Spire',
+                    stars: earned,
+                    band: level.band,
+                    board: await snapshotBoard(),
+                    code: toCode(program, routines),
+                    commands: total,
+                    steps: outcome.steps,
+                    par: level.par,
+                  });
+                  const png = await canvasToBlob(card);
+                  if (!png) return 'failed';
+                  return shareImage(png, `I cleared Floor ${floorNumber} of LoopBot in ${total} commands. Can you do it in fewer?`, `loopbot-floor-${floorNumber}.png`);
+                }
+          }
           daily={
             daily && {
               date: daily.date,
