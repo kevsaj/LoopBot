@@ -6,6 +6,7 @@ import type { ReactNode } from 'react';
 import type { Progress } from './progress';
 import { fx, hapticsOn, isMuted, setHapticsOn, setMuted } from './audio/feedback';
 import { musicOn, setMusicOn } from './audio/music';
+import { bigTextOn, setBigText } from './textSize';
 import { version } from '../package.json';
 import { FeedbackSheet } from './FeedbackSheet';
 import { BackupRows } from './BackupRows';
@@ -50,6 +51,7 @@ export function SettingsSheet({ progress, setProgress, onClose, floor, floorTitl
   const [sound, setSound] = useState(!isMuted());
   const [music, setMusic] = useState(musicOn());
   const [haptics, setHaptics] = useState(hapticsOn());
+  const [bigText, setBigTextState] = useState(bigTextOn);
   const [stats, setStats] = useState(statsOn());
   const [feedback, setFeedback] = useState(false);
   if (feedback) return <FeedbackSheet floor={floor} floorTitle={floorTitle} onClose={() => setFeedback(false)} />;
@@ -94,6 +96,16 @@ export function SettingsSheet({ progress, setProgress, onClose, floor, floorTitl
               setHapticsOn(on);
               setHaptics(on);
               if (on) fx.tap();
+            }}
+          />
+          <Toggle
+            label="Larger text"
+            caption="Bigger text for the program, the palette, the story and the menus"
+            on={bigText}
+            onChange={(on) => {
+              setBigText(on);
+              setBigTextState(on);
+              fx.tap();
             }}
           />
           <Toggle

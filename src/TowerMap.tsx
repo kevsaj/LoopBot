@@ -119,13 +119,13 @@ export function TowerMap({ levels, progress, current, onPick, onSettings, onHome
   };
 
   return (
-    <div className="tower">
+    <div className="tower" role="main">
       <header className="topbar">
         <div className="floor-title">
-          <button type="button" className="back-btn" onClick={() => (fx.tap(), onHome())} aria-label="Back to the title screen">
+          <button type="button" className="back-btn" onClick={() => (fx.tap(), onHome())} aria-label="Tower 1: back to the title screen">
             ‹ Tower 1
           </button>
-          <span className="floor-name">Meridian Spire</span>
+          <h1 className="floor-name">Meridian Spire</h1>
         </div>
         <div className="tower-stars" aria-label={`${totalStars} of ${ids.length * 3} stars`}>
           ★ {totalStars} / {ids.length * 3}
