@@ -5,13 +5,16 @@
  * The game POSTs JSON as text/plain:
  *   { kind: 'events', id, version, platform, events: [{ type, floor, t, ... }] }
  *   { kind: 'feedback', version, platform, mood, floor, floorTitle, message }
- * Events go to the "Events" tab, feedback to "Feedback" (and an email to FEEDBACK_EMAIL).
+ *   { kind: 'error', id, version, platform, message, where }
+ * Events go to the "Events" tab, feedback to "Feedback" (and an email to FEEDBACK_EMAIL),
+ * uncaught script errors from players' phones to "Errors".
  * "Floors" is a summary tab built by setup(): who tried each floor, who cleared it, who got stuck.
  */
 
 var FEEDBACK_EMAIL = 'kisstudios98@gmail.com';
 var EVENT_COLS = ['received', 'install', 'version', 'platform', 'clientTime', 'type', 'floor', 'result', 'stars', 'runs', 'hints', 'seconds', 'commands', 'steps', 'run', 'tier', 'free', 'cleared'];
 var FEEDBACK_COLS = ['received', 'version', 'platform', 'mood', 'floor', 'floorTitle', 'message'];
+var ERROR_COLS = ['received', 'install', 'version', 'platform', 'message', 'where'];
 var TYPES = { session: 1, floor_start: 1, run: 1, hint: 1, floor_clear: 1, floor_leave: 1 };
 var FLOORS = 50;
 
@@ -22,6 +25,7 @@ function doPost(e) {
     var body = JSON.parse(e.postData.contents);
     if (body.kind === 'events') saveEvents_(body);
     else if (body.kind === 'feedback') saveFeedback_(body);
+    else if (body.kind === 'error') saveError_(body);
     return ContentService.createTextOutput('ok');
   } catch (err) {
     return ContentService.createTextOutput('bad request');
@@ -100,6 +104,12 @@ function saveFeedback_(body) {
   } catch (err) {
     // Out of daily email quota: it is still in the sheet.
   }
+}
+
+function saveError_(body) {
+  var message = clean_(body.message, 300);
+  if (!message) return;
+  sheet_('Errors', ERROR_COLS).appendRow([new Date(), clean_(body.id), clean_(body.version, 16), clean_(body.platform, 16), message, clean_(body.where, 200)]);
 }
 
 /** Run once from the editor: makes the Events, Feedback and Floors tabs. */

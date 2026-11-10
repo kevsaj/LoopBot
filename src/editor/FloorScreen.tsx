@@ -21,6 +21,7 @@ import { fx } from '../audio/feedback';
 import { SettingsSheet } from '../SettingsSheet';
 import type { Progress } from '../progress';
 import { recordClear, recordFail } from '../progress';
+import { maybeAskForReview } from '../review';
 import { HintSheet } from './HintSheet';
 import { ResultsCard } from './ResultsCard';
 import { tutorialStep, TUTORIAL_TEXT } from './tutorial';
@@ -219,6 +220,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
         } else {
           setPrevBest(progressRef.current.stars[level.id] ?? 0);
           setProgress((p) => recordClear(p, level.id, s));
+          maybeAskForReview(level.id, s, SPEEDS[speed].ms + 4500);
         }
         if (!v.cleared) {
           v.cleared = true;

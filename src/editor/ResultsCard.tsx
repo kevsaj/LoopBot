@@ -2,6 +2,7 @@
 // 3 stars fire confetti and a fanfare, 2 stars get a small sparkle, 1 star stays calm.
 
 import { useEffect, useRef, useState } from 'react';
+import { shareText } from '../share';
 import { fx } from '../audio/feedback';
 import { burst, reducedMotion, stop } from '../fx/confetti';
 import { DEMO } from '../demo';
@@ -77,17 +78,9 @@ export function ResultsCard({ floorNumber, floorCount, earned, prevBest, command
   const share = async () => {
     if (!daily) return;
     fx.tap();
-    try {
-      if (navigator.share) {
-        await navigator.share({ text: daily.share });
-        return;
-      }
-      await navigator.clipboard.writeText(daily.share);
-      setShared('Copied! Paste it anywhere.');
-    } catch (err) {
-      // The player closing the share sheet isn't an error worth showing.
-      if ((err as Error)?.name !== 'AbortError') setShared("Couldn't share from here.");
-    }
+    const r = await shareText(daily.share);
+    if (r === 'copied') setShared('Copied! Paste it anywhere.');
+    else if (r === 'failed') setShared("Couldn't share from here.");
   };
   const title = daily ? `Daily · ${shortDate(daily.date)}` : `Floor ${floorNumber}`;
   const tip =
