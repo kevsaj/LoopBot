@@ -7,6 +7,7 @@ import { expandDaily } from './entry';
 import type { DailyEntry, Difficulty } from './entry';
 import { DEMO } from '../demo';
 import { bankIndex, dateKey, dayNumber, difficultyFor, keyFromDay } from './calendar';
+import { markSavesDirty } from '../storage/persist';
 
 export { dateKey } from './calendar';
 export type { Difficulty } from './entry';
@@ -49,6 +50,7 @@ export function loadDaily(): DailyState {
 export function saveDaily(s: DailyState) {
   try {
     localStorage.setItem(KEY, JSON.stringify(s));
+    markSavesDirty();
   } catch {
     /* storage blocked: the session keeps working */
   }

@@ -65,7 +65,18 @@
 			</array>
 		</dict>
 	</array>
+	<!-- Safe saves (src/storage/persist.ts) keep a copy of the game's own saves in UserDefaults
+	     through @capacitor/preferences. CA92.1: read and written only by this app. -->
 	<key>NSPrivacyAccessedAPITypes</key>
-	<array/>
+	<array>
+		<dict>
+			<key>NSPrivacyAccessedAPIType</key>
+			<string>NSPrivacyAccessedAPICategoryUserDefaults</string>
+			<key>NSPrivacyAccessedAPITypeReasons</key>
+			<array>
+				<string>CA92.1</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>
