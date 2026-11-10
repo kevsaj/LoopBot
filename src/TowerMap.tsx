@@ -4,6 +4,7 @@
 // and a locked floor shakes and says what opens it.
 
 import { useEffect, useRef, useState } from 'react';
+import { AntennaTip } from './rewards/AntennaTip';
 import type { LevelFile } from './sim/types';
 import type { Progress } from './progress';
 import { isUnlocked } from './progress';
@@ -21,6 +22,8 @@ interface Props {
   onHome(): void;
   daily: DailyState;
   onDaily(): void;
+  onLocker(): void;
+  lockerNew: boolean;
 }
 
 const SEEN_KEY = 'loopbot.seenUnlocked';
@@ -60,19 +63,19 @@ function readSeen(): number {
 export function MiniBot() {
   return (
     <svg className="mini-bot" viewBox="0 0 24 28" aria-hidden="true">
-      <line x1="12" y1="1.5" x2="12" y2="6" stroke="#cfc6b4" strokeWidth="1.4" />
-      <circle cx="12" cy="2" r="1.8" fill="#7ff2e0" />
-      <rect x="5" y="6" width="14" height="9" rx="2.5" fill="#f3ecdf" />
+      <line x1="12" y1="2.5" x2="12" y2="6" stroke="var(--bot-right, #cfc6b4)" strokeWidth="1.4" />
+      <AntennaTip cx={12} cy={2.2} r={1.9} />
+      <rect x="5" y="6" width="14" height="9" rx="2.5" style={{ fill: 'var(--bot-top, #f3ecdf)' }} />
       <rect x="8" y="8.5" width="9" height="4.2" rx="2" fill="#2b2440" />
-      <circle cx="14" cy="10.6" r="1.3" fill="#7ff2e0" />
-      <rect x="4" y="16" width="16" height="9" rx="2.5" fill="#e6dccb" />
+      <circle cx="14" cy="10.6" r="1.3" style={{ fill: 'var(--bot-eye, #7ff2e0)' }} />
+      <rect x="4" y="16" width="16" height="9" rx="2.5" style={{ fill: 'var(--bot-left, #e6dccb)' }} />
       <rect x="7" y="25" width="3" height="2.5" rx="1" fill="#b9ad98" />
       <rect x="14" y="25" width="3" height="2.5" rx="1" fill="#b9ad98" />
     </svg>
   );
 }
 
-export function TowerMap({ levels, progress, current, onPick, onSettings, onHome, daily, onDaily }: Props) {
+export function TowerMap({ levels, progress, current, onPick, onSettings, onHome, daily, onDaily, onLocker, lockerNew }: Props) {
   const ids = levels.map((l) => l.id);
   const totalStars = ids.reduce((n, id) => n + (progress.stars[id] ?? 0), 0);
   const cleared = ids.filter((id) => (progress.stars[id] ?? 0) > 0).length;
@@ -127,6 +130,9 @@ export function TowerMap({ levels, progress, current, onPick, onSettings, onHome
         <div className="tower-stars" aria-label={`${totalStars} of ${ids.length * 3} stars`}>
           ★ {totalStars} / {ids.length * 3}
         </div>
+        <button type="button" className="icon-btn map-locker" aria-label={`Locker: looks and achievements${lockerNew ? ', something new' : ''}`} onClick={() => (fx.tap(), onLocker())}>
+          🏆{lockerNew && <span className="new-dot" aria-hidden="true" />}
+        </button>
         <button type="button" className="icon-btn" aria-label="Settings" onClick={() => (fx.tap(), onSettings())}>
           ⚙
         </button>

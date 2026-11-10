@@ -1545,7 +1545,6 @@ select:focus-visible {
     title-blink 5s ease-in-out 2.5s infinite;
 }
 .tb-light {
-  fill: #7ff2e0;
   animation:
     title-light-on 0.35s steps(1) 0.85s both,
     blink 1.6s steps(1) 1.6s infinite;
@@ -2035,6 +2034,216 @@ button.set-row {
 }
 .backup-restore .pill {
   justify-self: end;
+}
+
+/* --- rewards: locker, achievements, toasts --- */
+:root {
+  --bot-top: #f7f3ea;
+  --bot-left: #d9d2c4;
+  --bot-right: #bdb5a6;
+  --bot-eye: #7ff2e0;
+}
+.icon-btn {
+  position: relative;
+}
+.title-locker {
+  position: absolute;
+  top: calc(10px + env(safe-area-inset-top));
+  left: calc(12px + env(safe-area-inset-left));
+  z-index: 2;
+  font-size: 20px;
+  animation: title-fade 0.3s ease 1.3s both;
+}
+.title-screen.settled .title-locker {
+  animation: none;
+}
+.map-locker {
+  font-size: 18px;
+  margin-right: 8px;
+}
+.new-dot {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ff6b6b;
+  box-shadow: 0 0 0 2px var(--panel);
+}
+.locker-preview {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: 8px 0 4px;
+}
+.locker-preview svg {
+  animation: title-float 3.2s ease-in-out infinite;
+}
+.locker-stars {
+  margin: 0;
+  color: var(--warn);
+  font-weight: 700;
+}
+.locker-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  margin: 12px 0 0;
+  padding: 4px;
+  border-radius: 14px;
+  background: var(--panel);
+}
+.locker-tabs button {
+  min-height: 40px;
+  border: 0;
+  border-radius: 10px;
+  background: none;
+  color: var(--quiet);
+  font: inherit;
+  font-weight: 700;
+}
+.locker-tabs button.on {
+  background: var(--panel-2);
+  color: var(--ink);
+}
+.swatches {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+  gap: 8px;
+}
+.swatch {
+  display: grid;
+  justify-items: center;
+  align-content: start;
+  gap: 4px;
+  min-height: 96px;
+  padding: 10px 6px 8px;
+  border: 2px solid transparent;
+  border-radius: 14px;
+  background: var(--panel);
+  color: var(--ink);
+  font: inherit;
+}
+.swatch.on {
+  border-color: var(--accent);
+  background: var(--panel-2);
+}
+.swatch.locked .swatch-art {
+  opacity: 0.35;
+  filter: grayscale(0.6);
+}
+.swatch-art {
+  display: grid;
+  place-items: center;
+  height: 52px;
+}
+.swatch-name {
+  font-size: 14px;
+  font-weight: 700;
+}
+.swatch-lock {
+  color: var(--quiet);
+  font-size: 11.5px;
+  line-height: 1.2;
+  text-align: center;
+}
+.eye-dot {
+  width: 34px;
+  height: 22px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 6px #221f38;
+}
+.achievements {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.ach {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--panel);
+}
+.ach-icon {
+  font-size: 26px;
+  filter: grayscale(1);
+  opacity: 0.45;
+}
+.ach.done .ach-icon {
+  filter: none;
+  opacity: 1;
+}
+.ach-text {
+  flex: 1;
+  display: grid;
+  gap: 2px;
+}
+.ach-title {
+  font-weight: 800;
+}
+.ach-how {
+  color: var(--quiet);
+  font-size: 13.5px;
+}
+.ach-bar {
+  height: 6px;
+  margin-top: 4px;
+  border-radius: 3px;
+  background: var(--line);
+  overflow: hidden;
+}
+.ach-bar span {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+}
+.ach-state {
+  color: var(--quiet);
+  font-size: 13px;
+  font-weight: 700;
+}
+.ach.done .ach-state {
+  color: var(--accent);
+  font-size: 20px;
+}
+.reward-toast {
+  position: fixed;
+  top: calc(12px + env(safe-area-inset-top));
+  left: 50%;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: calc(100vw - 32px);
+  padding: 10px 18px 10px 12px;
+  border-radius: 24px;
+  background: rgba(30, 27, 48, 0.96);
+  border: 1px solid var(--accent);
+  color: var(--ink);
+  font-weight: 700;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  transform: translateX(-50%);
+  animation: toast-in 0.35s cubic-bezier(0.3, 1.5, 0.5, 1) both;
+}
+.reward-toast-icon {
+  font-size: 22px;
+}
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -20px) scale(0.9);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .reward-toast,
+  .locker-preview svg {
+    animation: none;
+  }
 }
 .daily-freeze {
   color: #8fd3ff;

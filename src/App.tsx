@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { LEVELS } from './levels';
 import { FloorScreen } from './editor/FloorScreen';
 import { TowerMap } from './TowerMap';
@@ -8,6 +8,11 @@ import { isUnlocked, loadProgress, saveProgress } from './progress';
 import type { Progress } from './progress';
 import { fx } from './audio/feedback';
 import { initMusic, setMusicTheme, themeForFloor } from './audio/music';
+import { useRewards } from './rewards/useRewards';
+import { Locker } from './rewards/Locker';
+import { Toasts } from './rewards/Toasts';
+import { applyLookCss, loadLook } from './rewards/looks';
+import type { Look } from './rewards/looks';
 import { refreshReminders } from './reminder';
 import { reducedMotion } from './fx/confetti';
 import { preloadBoard } from './board/Board';
@@ -125,10 +130,25 @@ export default function App() {
     [],
   );
 
-  const ids = LEVELS.map((l) => l.id);
+  const ids = useMemo(() => LEVELS.map((l) => l.id), []);
   // Never open a locked floor (e.g. a saved index from before progress existed).
   const safeIndex = isUnlocked(progress, ids, index) ? index : 0;
   const level = LEVELS[safeIndex];
+  // Achievements, unlocked looks and the toasts for anything new.
+  const rewards = useRewards(ids, progress, daily);
+  const [look, setLook] = useState<Look>(loadLook);
+  const [locker, setLocker] = useState(false);
+  useEffect(() => applyLookCss(look), [look]);
+  const openLocker = () => {
+    setLocker(true);
+    rewards.markAllSeen();
+  };
+  const overlays = (
+    <>
+      {locker && <Locker stats={rewards.stats} earned={rewards.earned} look={look} onLook={setLook} onClose={() => setLocker(false)} />}
+      <Toasts toasts={rewards.toasts} onDone={rewards.dismissToast} />
+    </>
+  );
   // Each band of the tower has its own theme; the title and tower map share one.
   useEffect(() => {
     setMusicTheme(screen === 'floor' ? themeForFloor(safeIndex + 1) : screen === 'daily' ? 'daily' : 'title');
@@ -147,8 +167,11 @@ export default function App() {
           onSettings={() => setSettings(true)}
           daily={daily}
           onDaily={() => openDaily('title')}
+          onLocker={openLocker}
+          lockerNew={rewards.hasNew}
         />
         {settings && <SettingsSheet progress={progress} setProgress={setProgress} onClose={() => setSettings(false)} />}
+        {overlays}
         {elevator}
       </>
     );
@@ -165,8 +188,11 @@ export default function App() {
           onHome={() => setScreen('title')}
           daily={daily}
           onDaily={() => openDaily('map')}
+          onLocker={openLocker}
+          lockerNew={rewards.hasNew}
         />
         {settings && <SettingsSheet progress={progress} setProgress={setProgress} onClose={() => setSettings(false)} />}
+        {overlays}
         {elevator}
       </>
     );
@@ -192,6 +218,7 @@ export default function App() {
             onClear: (stars) => clearDaily(date, stars),
           }}
         />
+        {overlays}
         {elevator}
       </>
     );
@@ -209,6 +236,7 @@ export default function App() {
         onGo={go}
         onTower={() => setScreen('map')}
       />
+      {overlays}
       {elevator}
     </>
   );

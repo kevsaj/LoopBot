@@ -3,6 +3,7 @@
 // A tap anywhere skips straight to the end, and reduced motion shows it settled.
 
 import { useEffect, useState } from 'react';
+import { AntennaTip } from './rewards/AntennaTip';
 import type { LevelFile } from './sim/types';
 import type { Progress } from './progress';
 import { isUnlocked } from './progress';
@@ -23,34 +24,40 @@ interface Props {
   onSettings(): void;
   daily: DailyState;
   onDaily(): void;
+  onLocker(): void;
+  /** Something new to see in the locker (a look or achievement not yet looked at). */
+  lockerNew: boolean;
 }
 
 const INTRO_MS = 1500;
 
 /** LoopBot, large, drawn like the app icon. The eye and antenna light are separate so they can boot. */
 function BigBot({ poked }: { poked: boolean }) {
+  // Paint and eye colours come from the player's look (CSS variables set by applyLookCss).
+  const top = { fill: 'var(--bot-top, #f6f1e6)' };
+  const side = { fill: 'var(--bot-left, #d9d0bd)' };
   return (
     <svg className={`title-bot${poked ? ' poked' : ''}`} viewBox="-200 -300 400 560" aria-hidden="true">
       <ellipse cx="0" cy="262" rx="150" ry="16" fill="#140f24" opacity=".45" />
       <g className="tb-antenna">
-        <rect x="-7" y="-250" width="14" height="80" rx="7" fill="#cfc3a8" />
-        <circle className="tb-light" cx="0" cy="-262" r="30" />
+        <rect x="-7" y="-250" width="14" height="80" rx="7" style={{ fill: 'var(--bot-right, #cfc3a8)' }} />
+        <AntennaTip className="tb-light" cx={0} cy={-262} r={30} />
       </g>
-      <rect x="-150" y="30" width="300" height="220" rx="34" fill="#d9d0bd" />
-      <rect x="-150" y="30" width="300" height="190" rx="34" fill="#ece5d4" />
+      <rect x="-150" y="30" width="300" height="220" rx="34" style={side} />
+      <rect x="-150" y="30" width="300" height="190" rx="34" style={top} opacity=".94" />
       <circle className="tb-led" cx="-70" cy="140" r="16" />
-      <rect x="-185" y="-180" width="370" height="230" rx="44" fill="#d9d0bd" />
-      <rect x="-185" y="-180" width="370" height="205" rx="44" fill="#f6f1e6" />
+      <rect x="-185" y="-180" width="370" height="230" rx="44" style={side} />
+      <rect x="-185" y="-180" width="370" height="205" rx="44" style={top} />
       <rect x="-130" y="-130" width="260" height="110" rx="55" fill="#221f38" />
       <g className="tb-eye">
-        <ellipse cx="18" cy="-75" rx="58" ry="34" fill="#7ff2e0" />
-        <ellipse cx="2" cy="-86" rx="16" ry="9" fill="#e8fffb" />
+        <ellipse cx="18" cy="-75" rx="58" ry="34" style={{ fill: 'var(--bot-eye, #7ff2e0)' }} />
+        <ellipse cx="2" cy="-86" rx="16" ry="9" fill="#ffffff" opacity=".7" />
       </g>
     </svg>
   );
 }
 
-export function TitleScreen({ levels, progress, booted, onBooted, onPlay, onTower, onSettings, daily, onDaily }: Props) {
+export function TitleScreen({ levels, progress, booted, onBooted, onPlay, onTower, onSettings, daily, onDaily, onLocker, lockerNew }: Props) {
   const [settled, setSettled] = useState(() => booted || reducedMotion());
   const [poked, setPoked] = useState(false);
   useEffect(() => {
@@ -84,6 +91,9 @@ export function TitleScreen({ levels, progress, booted, onBooted, onPlay, onTowe
         <span className="title-sun" />
         <span className="title-skyline" />
       </div>
+      <button type="button" className="icon-btn title-locker" aria-label={`Locker: looks and achievements${lockerNew ? ', something new' : ''}`} onClick={() => (fx.tap(), onLocker())}>
+        🏆{lockerNew && <span className="new-dot" aria-hidden="true" />}
+      </button>
       <button type="button" className="icon-btn title-settings" aria-label="Settings" onClick={() => (fx.tap(), onSettings())}>
         ⚙
       </button>
