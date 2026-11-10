@@ -1356,11 +1356,33 @@ select:focus-visible {
 }
 .tf-title {
   flex: 1;
+  min-width: 0;
   font-weight: 600;
+  /* one line on every row, so the row with LoopBot on it is as tall as the rest */
+  font-size: clamp(13px, 4vw, 16px);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .tf-stars {
+  flex: none;
   color: #3a3f5c;
   letter-spacing: 2px;
+}
+@media (max-width: 359px) {
+  .tower-scroll {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+  .tower-floors {
+    padding: 0 8px;
+  }
+  .tower-floor {
+    gap: 8px;
+  }
+  .tf-stars {
+    letter-spacing: 0;
+  }
 }
 .tf-stars .on {
   color: var(--warn);
