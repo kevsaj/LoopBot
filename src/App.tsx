@@ -21,6 +21,8 @@ import { startTelemetry } from './telemetry';
 import type { LevelFile } from './sim/types';
 import { currentStreak, yesterday, dailyLevel, dateKey, loadDaily, pruneOldDailies, recordDailyClear, saveDaily } from './daily';
 import type { DailyState } from './daily';
+import { MAX_FREEZES, PLUS_MAX_FREEZES } from './daily';
+import { hasPlus, initPurchases } from './store/purchases';
 
 function loadIndex() {
   try {
@@ -50,6 +52,7 @@ export default function App() {
   useEffect(() => {
     void preloadBoard();
     startTelemetry();
+    void initPurchases();
     initMusic();
   }, []);
 
@@ -105,7 +108,7 @@ export default function App() {
   );
   const clearDaily = useCallback((date: string, stars: number) => {
     setDailyState((s) => {
-      const next = recordDailyClear(s, date, stars);
+      const next = recordDailyClear(s, date, stars, hasPlus() ? PLUS_MAX_FREEZES : MAX_FREEZES);
       saveDaily(next);
       return next;
     });

@@ -38,6 +38,8 @@ export interface DailyState {
 }
 
 export const MAX_FREEZES = 2;
+/** LoopBot Plus players can bank more. */
+export const PLUS_MAX_FREEZES = 4;
 export const FREEZE_EVERY = 7;
 
 const KEY = 'loopbot.daily';
@@ -70,7 +72,7 @@ export function saveDaily(s: DailyState) {
  * Records a clear of `date`'s puzzle. Only today's puzzle is ever playable, so the streak just
  * counts days. Missed days are covered by banked freezes when there are enough of them.
  */
-export function recordDailyClear(s: DailyState, date: string, stars: number): DailyState {
+export function recordDailyClear(s: DailyState, date: string, stars: number, maxFreezes = MAX_FREEZES): DailyState {
   const best = { ...s.best, [date]: Math.max(s.best[date] ?? 0, stars) };
   const cutoff = dayNumber(date) - KEEP_DAYS;
   for (const k of Object.keys(best)) if (dayNumber(k) < cutoff) delete best[k];
@@ -86,7 +88,7 @@ export function recordDailyClear(s: DailyState, date: string, stars: number): Da
       freezes -= gap - 1;
       streak = s.streak + 1;
     } else streak = 1;
-    if (streak > s.streak && streak % FREEZE_EVERY === 0) freezes = Math.min(MAX_FREEZES, freezes + 1);
+    if (streak > s.streak && streak % FREEZE_EVERY === 0) freezes = Math.min(maxFreezes, freezes + 1);
   }
   return {
     best,
