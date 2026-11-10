@@ -944,6 +944,13 @@ select:focus-visible {
   gap: 8px;
   margin-top: 12px;
 }
+.results-actions .pill {
+  white-space: nowrap;
+  padding: 0 10px;
+}
+.results-actions .pill.primary {
+  flex: 1.5;
+}
 
 /* Landscape and tablet: board left, program right */
 @media (min-aspect-ratio: 1/1) and (min-width: 700px) {
@@ -2584,5 +2591,88 @@ button.set-row {
   }
   .ending-scene .car {
     transform: translateY(104px);
+/* Tablets held upright (iPad, Android tablets): a bigger board and roomier controls, so the
+   floor screen fills the height instead of leaving a gap between the program and the palette. */
+@media (min-width: 700px) and (max-aspect-ratio: 1/1) {
+  :root {
+    --row-h: 52px;
+  }
+  .topbar {
+    padding: 10px 12px;
+  }
+  .floor-name {
+    font-size: 21px;
+  }
+  .board-wrap {
+    flex: 0 0 40%;
+  }
+  .terminal {
+    font-size: 15px;
+  }
+  .pill {
+    min-height: 54px;
+    font-size: 17px;
+  }
+  .tab {
+    min-height: 48px;
+    font-size: 16px;
+  }
+  .line-tile {
+    font-size: 17px;
+  }
+  .chip {
+    min-height: 62px;
+    font-size: 14px;
+  }
+  .palette {
+    gap: 8px;
+    padding: 10px;
+  }
+  /* title screen: a bigger LoopBot and buttons */
+  .title-bot {
+    width: min(34vw, 30vh, 300px);
+  }
+  .title-name {
+    font-size: 88px;
+  }
+  .title-sub {
+    font-size: 18px;
+  }
+  .title-actions {
+    max-width: 480px;
+    gap: 12px;
+  }
+  .title-play {
+    min-height: 76px;
+    font-size: 24px;
+  }
+  .title-play-floor {
+    font-size: 15px;
+  }
+  .title-map {
+    min-height: 56px;
+    font-size: 18px;
+  }
+  /* tower map: a wider tower with taller floors */
+  .tower {
+    max-width: 680px;
+  }
+  .tower-floor {
+    min-height: 64px;
+    font-size: 18px;
+  }
+  .tf-title {
+    font-size: 18px;
+  }
+  .tower-footer .continue {
+    max-width: 460px;
+    min-height: 56px;
+    font-size: 18px;
+  }
+  /* results card */
+  .results {
+    width: min(460px, 100%);
+    padding: 28px;
+    font-size: 17px;
   }
 }
