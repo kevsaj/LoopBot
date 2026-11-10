@@ -145,10 +145,44 @@ export function startTelemetry() {
   if (!TELEMETRY_AVAILABLE || started) return;
   started = true;
   track({ type: 'session' });
+  startErrorReports();
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'hidden') void flush();
   });
   void flush(); // anything left from last time
+}
+
+// --- error reports ---
+// Uncaught script errors, so crashes on real phones show up in the sheet's "Errors" tab.
+// Only while anonymous stats are on; the message and where it happened (file and line), nothing
+// else. At most 5 different errors per session.
+
+const MAX_ERRORS = 5;
+const sentErrors = new Set<string>();
+
+export function reportError(message: string, where: string) {
+  if (!statsOn() || sentErrors.size >= MAX_ERRORS) return;
+  const key = `${message}|${where}`;
+  if (sentErrors.has(key)) return;
+  sentErrors.add(key);
+  post({ kind: 'error', id: installId(), version, platform: platform(), message: message.slice(0, 300), where: where.slice(0, 200) }).catch(() => {});
+}
+
+/** The first frame of a stack, with the long app URL trimmed to the file name. */
+function firstFrame(stack: string | undefined) {
+  const line = stack?.split('\n').find((l) => /\d+:\d+/.test(l)) ?? '';
+  return line.trim().replace(/(https?|capacitor|file):\/\/[^\s)]*\//g, '');
+}
+
+function startErrorReports() {
+  window.addEventListener('error', (e) => {
+    if (!e.message) return; // a failed image or script load, not a code error
+    reportError(e.message, e.error?.stack ? firstFrame(e.error.stack) : `${(e.filename ?? '').split('/').pop()}:${e.lineno}:${e.colno}`);
+  });
+  window.addEventListener('unhandledrejection', (e) => {
+    const r = e.reason as { message?: string; stack?: string } | undefined;
+    reportError(`Unhandled promise: ${r?.message ?? String(e.reason)}`, firstFrame(r?.stack));
+  });
 }
 
 export interface FeedbackContext {
