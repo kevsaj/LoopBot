@@ -3,6 +3,8 @@
 // It only reads World snapshots from the simulation; it never changes them.
 
 import Phaser from 'phaser';
+import { boardColors, tipPoints } from '../rewards/looks';
+import type { TipShape } from '../rewards/looks';
 import type { Facing, World } from '../sim/types';
 import { ahead, isWalkable, surfaceHeight } from '../sim/world';
 
@@ -105,8 +107,14 @@ const BANDS: Record<string, Partial<typeof C>> = {
 };
 
 /** Switches the board to a band's palette. Call before the board draws a floor. */
+/** The antenna tip LoopBot wears (src/rewards/looks.ts). */
+let tipShape: TipShape = 'ball';
+
 export function setBand(band: string) {
-  Object.assign(C, LOBBY, BANDS[band] ?? {});
+  // the player's chosen paint and eye colour ride on top of the band's palette
+  const look = boardColors();
+  Object.assign(C, LOBBY, BANDS[band] ?? {}, { bot: look.bot, botL: look.botL, botR: look.botR, eye: look.eye });
+  tipShape = look.tip;
 }
 
 export interface BoardUpdate {
@@ -548,8 +556,16 @@ export class BoardScene extends Phaser.Scene {
     g.lineStyle(1.5, C.botR, 1);
     g.lineBetween(0, 0, 0, -8);
     const lit = this.mood === 'crash' || this.crashedNow ? C.crash : this.mood === 'happy' ? 0xf2b84b : C.eye;
-    g.fillStyle(lit, 1);
-    g.fillCircle(0, -9, 2.4);
+    if (tipShape === 'ball') {
+      g.fillStyle(lit, 1);
+      g.fillCircle(0, -9, 2.4);
+    } else if (tipShape === 'ring') {
+      g.lineStyle(1.4, lit, 1);
+      g.strokeCircle(0, -9.5, 2.4);
+    } else {
+      g.fillStyle(lit, 1);
+      g.fillPoints(tipPoints(tipShape, 0, -9.5, 2.8).map(([x, y]) => new Phaser.Geom.Point(x, y)), true);
+    }
   }
 
   /** Small things LoopBot does while you build: blinks, glances, antenna twitches. */
