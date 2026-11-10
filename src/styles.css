@@ -944,6 +944,13 @@ select:focus-visible {
   gap: 8px;
   margin-top: 12px;
 }
+.results-actions .pill {
+  white-space: nowrap;
+  padding: 0 10px;
+}
+.results-actions .pill.primary {
+  flex: 1.5;
+}
 
 /* Landscape and tablet: board left, program right */
 @media (min-aspect-ratio: 1/1) and (min-width: 700px) {
