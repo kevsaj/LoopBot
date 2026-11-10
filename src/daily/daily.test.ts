@@ -97,3 +97,34 @@ describe('daily bank', () => {
     }
   }, 120_000);
 });
+
+describe('streak freezes', () => {
+  const start: DailyState = { best: {}, streak: 0, longest: 0, last: null, freezes: 1, frozen: [] };
+
+  it('covers one missed day and keeps the streak going', () => {
+    let s = recordDailyClear(start, '2026-11-08', 3);
+    s = recordDailyClear(s, '2026-11-09', 3);
+    expect(currentStreak(s, '2026-11-11')).toBe(2); // missed the 10th, a freeze holds it
+    s = recordDailyClear(s, '2026-11-11', 2);
+    expect(s.streak).toBe(3);
+    expect(s.freezes).toBe(0);
+    expect(s.frozen).toEqual(['2026-11-10']);
+    expect(currentStreak(s, '2026-11-13')).toBe(0); // no freeze left for the next miss
+  });
+
+  it('does not stretch one freeze over two missed days', () => {
+    let s = recordDailyClear(start, '2026-11-08', 3);
+    expect(currentStreak(s, '2026-11-11')).toBe(0);
+    s = recordDailyClear(s, '2026-11-11', 3);
+    expect(s.streak).toBe(1);
+    expect(s.freezes).toBe(1);
+  });
+
+  it('earns a freeze every 7 days in a row, up to 2', () => {
+    let s: DailyState = { ...start, freezes: 0 };
+    for (let d = 1; d <= 21; d++) s = recordDailyClear(s, `2026-11-${String(d).padStart(2, '0')}`, 2);
+    expect(s.streak).toBe(21);
+    expect(s.freezes).toBe(2);
+  });
+});
+

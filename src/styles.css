@@ -2036,3 +2036,48 @@ button.set-row {
 .backup-restore .pill {
   justify-self: end;
 }
+.daily-freeze {
+  color: #8fd3ff;
+  font-weight: 800;
+}
+.daily-streak,
+.daily-freeze {
+  white-space: nowrap;
+}
+.badge.freeze {
+  background: rgba(143, 211, 255, 0.18);
+  color: #8fd3ff;
+}
+
+/* --- daily reminder --- */
+.set-row.set-sub {
+  margin-top: 8px;
+}
+.set-select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding: 6px 28px 6px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--panel-2) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23999'/%3E%3C/svg%3E") no-repeat right 10px center;
+  color: var(--ink);
+  font: inherit;
+  font-size: 16px;
+}
+.reminder-ask {
+  margin: 10px 0 4px;
+  padding: 12px;
+  border-radius: 14px;
+  background: var(--panel-2);
+  text-align: center;
+}
+.reminder-ask p {
+  margin: 0 0 10px;
+  font-weight: 700;
+}
+.reminder-ask-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
