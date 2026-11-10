@@ -7,6 +7,7 @@ import { SettingsSheet } from './SettingsSheet';
 import { isUnlocked, loadProgress, saveProgress } from './progress';
 import type { Progress } from './progress';
 import { fx } from './audio/feedback';
+import { initMusic, setMusicTheme, themeForFloor } from './audio/music';
 import { reducedMotion } from './fx/confetti';
 import { preloadBoard } from './board/Board';
 import { listenForBack } from './native';
@@ -41,6 +42,7 @@ export default function App() {
   useEffect(() => {
     void preloadBoard();
     startTelemetry();
+    initMusic();
   }, []);
 
   const setProgress = useCallback((update: (p: Progress) => Progress) => {
@@ -124,6 +126,10 @@ export default function App() {
   // Never open a locked floor (e.g. a saved index from before progress existed).
   const safeIndex = isUnlocked(progress, ids, index) ? index : 0;
   const level = LEVELS[safeIndex];
+  // Each band of the tower has its own theme; the title and tower map share one.
+  useEffect(() => {
+    setMusicTheme(screen === 'floor' ? themeForFloor(safeIndex + 1) : screen === 'daily' ? 'daily' : 'title');
+  }, [screen, safeIndex]);
 
   if (screen === 'title') {
     return (

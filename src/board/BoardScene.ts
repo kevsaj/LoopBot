@@ -768,6 +768,9 @@ export function createBoard(parent: HTMLElement, onReady: (scene: BoardScene) =>
     banner: false,
     render: { antialias: true },
     input: { mouse: false, touch: false },
+    // Sounds and music play through src/audio, so Phaser needs no AudioContext of its own (each
+    // floor makes a new game, and phones limit how many contexts an app may open).
+    audio: { noAudio: true },
   });
   game.events.once(Phaser.Core.Events.READY, () => onReady(scene));
   return game;

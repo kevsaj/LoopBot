@@ -5,6 +5,7 @@ import { useState } from 'react';
 import type { ReactNode } from 'react';
 import type { Progress } from './progress';
 import { fx, hapticsOn, isMuted, setHapticsOn, setMuted } from './audio/feedback';
+import { musicOn, setMusicOn } from './audio/music';
 import { version } from '../package.json';
 import { FeedbackSheet } from './FeedbackSheet';
 import type { FeedbackContext } from './telemetry';
@@ -45,6 +46,7 @@ function LinkRow({ href, children, value }: { href: string; children: ReactNode;
 
 export function SettingsSheet({ progress, setProgress, onClose, floor, floorTitle }: Props) {
   const [sound, setSound] = useState(!isMuted());
+  const [music, setMusic] = useState(musicOn());
   const [haptics, setHaptics] = useState(hapticsOn());
   const [stats, setStats] = useState(statsOn());
   const [feedback, setFeedback] = useState(false);
@@ -63,7 +65,17 @@ export function SettingsSheet({ progress, setProgress, onClose, floor, floorTitl
         <div className="settings-body">
           <h3 className="set-section">General</h3>
           <Toggle
-            label="Sound"
+            label="Music"
+            caption="A theme for each part of the tower"
+            on={music}
+            onChange={(on) => {
+              setMusicOn(on);
+              setMusic(on);
+              fx.tap();
+            }}
+          />
+          <Toggle
+            label="Sound effects"
             caption="Clicks, LoopBot's chirps and the fanfare when you clear a floor"
             on={sound}
             onChange={(on) => {

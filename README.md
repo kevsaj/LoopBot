@@ -65,7 +65,7 @@ npm run ios:run    # run on a simulator or plugged-in iPhone (macOS only)
 | Editor | `src/editor/` | Visible slots, tap or drag to add, long-press drag to reorder, swipe left to delete (with Undo), unlimited undo/redo, Clear with confirm, autosave per floor, Code tab. |
 | Board | `src/board/` | Phaser isometric board inside React, loaded as its own chunk so the first screen opens fast. |
 | Tower map, progress | `src/TowerMap.tsx`, `src/progress.ts` | Floor unlocking, stars, hints wallet, all saved on the device. |
-| Feedback | `src/audio/feedback.ts`, `src/fx/confetti.ts` | Synthesised sounds (no audio files), haptics (Capacitor Haptics on device, vibrate on web), confetti. |
+| Feedback, music | `src/audio/feedback.ts`, `src/audio/music.ts`, `src/fx/confetti.ts` | Synthesised sounds and original per-band music themes composed in code (no audio files), haptics (Capacitor Haptics on device, vibrate on web), confetti. |
 
 ### Controls
 
