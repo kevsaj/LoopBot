@@ -47,8 +47,8 @@ export function setHapticsOn(on: boolean) {
   }
 }
 
-function audio(): AudioContext | null {
-  if (muted) return null;
+/** The one AudioContext the game uses, shared by sound effects and music (src/audio/music.ts). */
+export function sharedAudio(): AudioContext | null {
   if (!ctx) {
     const AC = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
     if (!AC) return null;
@@ -56,6 +56,11 @@ function audio(): AudioContext | null {
   }
   if (ctx.state === 'suspended') void ctx.resume();
   return ctx;
+}
+
+function audio(): AudioContext | null {
+  if (muted) return null;
+  return sharedAudio();
 }
 
 function tone(freq: number, dur: number, opts: { type?: OscillatorType; gain?: number; slideTo?: number; delay?: number } = {}) {
