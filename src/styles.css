@@ -2403,3 +2403,279 @@ button.set-row {
     font-size: 17px;
   }
 }
+
+/* --- story interludes: PATCH's radio calls and the Tower 1 ending --- */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+.interlude {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: calc(56px + env(safe-area-inset-top)) 16px calc(24px + env(safe-area-inset-bottom));
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 40%, rgba(79, 140, 200, 0.18), transparent 70%),
+    #10121c;
+  animation: settings-in 0.25s ease both;
+  cursor: pointer;
+  user-select: none;
+}
+.interlude-radio {
+  /* lines stack downward from a fixed top, so earlier lines don't jump as new ones arrive */
+  justify-content: flex-start;
+  padding-top: calc(16vh + env(safe-area-inset-top));
+}
+.interlude-ending {
+  background: linear-gradient(180deg, #04060f 0%, #0b1130 55%, #1c1f45 85%, #3a2b4a 100%);
+}
+.interlude-skip {
+  position: absolute;
+  top: calc(10px + env(safe-area-inset-top));
+  right: 12px;
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  background: rgba(35, 38, 58, 0.8);
+  color: var(--quiet);
+  font-weight: 600;
+}
+.radio {
+  width: min(520px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.radio-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #9fd2ff;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.radio-heading {
+  margin-left: auto;
+  color: var(--quiet);
+  letter-spacing: 0.04em;
+}
+.radio-wave {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  height: 18px;
+}
+.radio-wave i {
+  width: 3px;
+  height: 100%;
+  border-radius: 2px;
+  background: #9fd2ff;
+  animation: radio-wave 0.6s ease-in-out infinite alternate;
+}
+.radio-wave i.still {
+  animation: none;
+  height: 30%;
+}
+@keyframes radio-wave {
+  from {
+    height: 20%;
+  }
+  to {
+    height: 100%;
+  }
+}
+.radio-log {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.radio-line {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  font-size: 16px;
+  line-height: 1.45;
+  color: #e6e9ff;
+  animation: title-up 0.3s cubic-bezier(0.2, 1, 0.3, 1) both;
+}
+.radio-line.who-vanta {
+  background: #24131b;
+  border-color: #5a2232;
+  color: #ffd6dc;
+}
+.radio-portrait .portrait {
+  width: 40px;
+  height: 40px;
+}
+.radio-body .speaker {
+  display: block;
+  width: max-content;
+  margin-bottom: 4px;
+}
+.interlude-hint {
+  margin: 0;
+  min-height: 1.2em;
+  color: var(--quiet);
+  font-size: 13px;
+}
+.interlude-dots {
+  display: flex;
+  gap: 6px;
+}
+.interlude-dots i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #3a3f5c;
+}
+.interlude-dots i.on {
+  background: var(--accent);
+}
+
+/* the ending */
+.ending {
+  width: min(520px, 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+.ending-scene {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 200 / 140;
+  border-radius: 16px;
+  overflow: hidden;
+}
+.ending-scene svg {
+  width: 100%;
+  height: 100%;
+}
+.ending-scene .skyline {
+  fill: #0a0d1f;
+}
+.ending-scene .spire rect {
+  fill: #151a36;
+}
+.ending-scene .win {
+  fill: #2a2f52;
+}
+.scene-lights .win {
+  animation: win-on 0.25s steps(1) both;
+}
+.scene-escape .win,
+.scene-elevator .win,
+.scene-meet .win,
+.scene-next .win {
+  fill: #ffd27a;
+}
+@keyframes win-on {
+  to {
+    fill: #ffd27a;
+  }
+}
+.ending-scene .drone {
+  animation: drone-escape 2.6s cubic-bezier(0.5, 0, 0.7, 1) 0.3s both;
+}
+@keyframes drone-escape {
+  from {
+    transform: translate(40px, 14px);
+  }
+  30% {
+    transform: translate(70px, 24px) rotate(6deg);
+  }
+  to {
+    transform: translate(230px, -20px) rotate(-12deg);
+  }
+}
+.ending-scene .shaft {
+  fill: #0f1229;
+  stroke: #2a2f52;
+}
+.ending-scene .car {
+  animation: car-down 3s ease-in-out 0.2s both;
+}
+@keyframes car-down {
+  from {
+    transform: translateY(6px);
+  }
+  to {
+    transform: translateY(104px);
+  }
+}
+.ending-scene .north {
+  animation: title-up 0.5s ease 0.3s both;
+}
+.meet {
+  position: absolute;
+  left: 50%;
+  bottom: 6%;
+  display: flex;
+  align-items: flex-end;
+  gap: 18px;
+  transform: translateX(-50%);
+}
+.meet .mini-bot {
+  width: 64px;
+  height: 75px;
+  animation: bob 0.9s ease-in-out infinite alternate;
+}
+.patch-bot {
+  width: 78px;
+  height: 86px;
+}
+.patch-eye {
+  animation: blink 2.4s steps(1) 0.6s infinite;
+}
+.ending-caption {
+  margin: 0;
+  min-height: 3.2em;
+  text-align: center;
+  font-size: 18px;
+  line-height: 1.45;
+  color: #eef0ff;
+}
+.ending-caption .speaker {
+  margin-right: 8px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .interlude,
+  .radio-line,
+  .ending-scene .drone,
+  .ending-scene .car,
+  .ending-scene .north,
+  .meet .mini-bot,
+  .patch-eye,
+  .radio-wave i {
+    animation: none;
+  }
+  .scene-lights .win {
+    animation: none;
+    fill: #ffd27a;
+  }
+  .ending-scene .drone {
+    transform: translate(150px, 6px);
+  }
+  .ending-scene .car {
+    transform: translateY(104px);
+  }
+}

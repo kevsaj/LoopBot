@@ -7,7 +7,7 @@ import { fx } from '../audio/feedback';
 const SPEAKER = /^(PATCH|VANTA)\b:?\s*/;
 
 /** Tiny in-house portraits: PATCH is an old radio terminal, VANTA a single red eye on a PA screen. */
-function Portrait({ who }: { who: string }) {
+export function Portrait({ who }: { who: string }) {
   if (who === 'VANTA') {
     return (
       <svg className="portrait" viewBox="0 0 16 16" aria-hidden="true">
