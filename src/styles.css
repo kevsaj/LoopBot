@@ -1356,11 +1356,33 @@ select:focus-visible {
 }
 .tf-title {
   flex: 1;
+  min-width: 0;
   font-weight: 600;
+  /* one line on every row, so the row with LoopBot on it is as tall as the rest */
+  font-size: clamp(13px, 4vw, 16px);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .tf-stars {
+  flex: none;
   color: #3a3f5c;
   letter-spacing: 2px;
+}
+@media (max-width: 359px) {
+  .tower-scroll {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+  .tower-floors {
+    padding: 0 8px;
+  }
+  .tower-floor {
+    gap: 8px;
+  }
+  .tf-stars {
+    letter-spacing: 0;
+  }
 }
 .tf-stars .on {
   color: var(--warn);
@@ -2043,9 +2065,6 @@ button.set-row {
   --bot-right: #bdb5a6;
   --bot-eye: #7ff2e0;
 }
-.icon-btn {
-  position: relative;
-}
 .title-locker {
   position: absolute;
   top: calc(10px + env(safe-area-inset-top));
@@ -2058,6 +2077,7 @@ button.set-row {
   animation: none;
 }
 .map-locker {
+  position: relative; /* for the new-dot; the title screen's buttons are absolutely placed */
   font-size: 18px;
   margin-right: 8px;
 }
