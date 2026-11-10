@@ -85,6 +85,7 @@ select:focus-visible {
   width: max-content;
 }
 .floor-name {
+  margin: 0;
   font-weight: 700;
   font-size: 17px;
   white-space: nowrap;
@@ -267,6 +268,9 @@ select:focus-visible {
   align-items: center;
   gap: 4px;
   border-bottom: 1px solid var(--line);
+}
+.tab-list {
+  display: contents;
 }
 .tab {
   min-height: 40px;
@@ -2678,4 +2682,38 @@ button.set-row {
   .ending-scene .car {
     transform: translateY(104px);
   }
+}
+
+/* Settings > Larger text: the reading text grows about 15 to 20 percent. */
+.big-text .terminal {
+  font-size: 15px;
+}
+.big-text .line-tile,
+.big-text .tf-title,
+.big-text .radio-line,
+.big-text .ending-caption {
+  font-size: 19px;
+}
+.big-text .chip {
+  font-size: 14.5px;
+}
+.big-text .tab,
+.big-text .pill {
+  font-size: 17px;
+}
+.big-text .floor-name {
+  font-size: 20px;
+}
+.big-text .set-label,
+.big-text .results,
+.big-text .hint-text,
+.big-text .tip,
+.big-text .story {
+  font-size: 17px;
+}
+.big-text .set-caption,
+.big-text .ach-how,
+.big-text .back-btn,
+.big-text .tower-band {
+  font-size: 14px;
 }

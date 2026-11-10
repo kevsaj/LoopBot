@@ -192,6 +192,8 @@ function Times({ times, onChange }: { times: number; onChange(n: number): void }
 }
 
 const COLOUR_NAMES: Record<string, string> = { r: 'red', g: 'green', b: 'blue', y: 'yellow' };
+/** The shape drawn on each coloured tile, shown with the colour name (colour is never the only signal). */
+export const COLOUR_GLYPH: Record<string, string> = { r: '●', g: '▲', b: '■', y: '✚' };
 const SENSOR_LABEL: Record<string, string> = {
   wall_ahead: 'wall ahead',
   box_ahead: 'crate ahead',
@@ -201,7 +203,7 @@ const SENSOR_LABEL: Record<string, string> = {
 };
 /** A condition in words: "wall ahead", "not on red". */
 export function condLabel(c: Condition): string {
-  const s = c.sensor === 'tile_is' ? `on ${COLOUR_NAMES[c.colour ?? ''] ?? c.colour}` : SENSOR_LABEL[c.sensor];
+  const s = c.sensor === 'tile_is' ? `on ${COLOUR_GLYPH[c.colour ?? ''] ?? ''} ${COLOUR_NAMES[c.colour ?? ''] ?? c.colour}` : SENSOR_LABEL[c.sensor];
   return c.not ? `not ${s}` : s;
 }
 const sameCond = (a: Condition, b: Condition) => a.sensor === b.sensor && (a.colour ?? '') === (b.colour ?? '');
