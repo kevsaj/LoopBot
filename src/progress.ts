@@ -1,6 +1,8 @@
 // Player progress, saved on the device (NF-3: everything works offline).
 // One JSON blob in local storage; every read tolerates missing or broken data.
 
+import { markSavesDirty } from './storage/persist';
+
 export interface Progress {
   /** Best stars per floor id (1 to 3). */
   stars: Record<string, number>;
@@ -45,6 +47,7 @@ export function loadProgress(): Progress {
 export function saveProgress(p: Progress) {
   try {
     localStorage.setItem(KEY, JSON.stringify(p));
+    markSavesDirty();
   } catch {
     /* storage blocked: the session keeps working */
   }

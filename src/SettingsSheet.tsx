@@ -1,4 +1,4 @@
-// Settings: a full screen of grouped rows (General, Privacy, About), each row a rounded card
+// Settings: a full screen of grouped rows (General, Your progress, Privacy, About), each row a rounded card
 // with a short caption under it. Links open on the KIS Studios site, in the phone's browser on Android.
 
 import { useState } from 'react';
@@ -7,6 +7,7 @@ import type { Progress } from './progress';
 import { fx, hapticsOn, isMuted, setHapticsOn, setMuted } from './audio/feedback';
 import { version } from '../package.json';
 import { FeedbackSheet } from './FeedbackSheet';
+import { BackupRows } from './BackupRows';
 import type { FeedbackContext } from './telemetry';
 import { TELEMETRY_AVAILABLE, setStatsOn, statsOn } from './telemetry';
 
@@ -88,6 +89,9 @@ export function SettingsSheet({ progress, setProgress, onClose, floor, floorTitl
             on={progress.tutorial}
             onChange={(on) => setProgress((p) => ({ ...p, tutorial: on }))}
           />
+
+          <h3 className="set-section">Your progress</h3>
+          <BackupRows />
 
           <h3 className="set-section">Privacy</h3>
           {TELEMETRY_AVAILABLE && (
