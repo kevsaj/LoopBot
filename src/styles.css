@@ -2043,9 +2043,6 @@ button.set-row {
   --bot-right: #bdb5a6;
   --bot-eye: #7ff2e0;
 }
-.icon-btn {
-  position: relative;
-}
 .title-locker {
   position: absolute;
   top: calc(10px + env(safe-area-inset-top));
@@ -2058,6 +2055,7 @@ button.set-row {
   animation: none;
 }
 .map-locker {
+  position: relative; /* for the new-dot; the title screen's buttons are absolutely placed */
   font-size: 18px;
   margin-right: 8px;
 }
