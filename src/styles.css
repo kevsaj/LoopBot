@@ -2779,3 +2779,12 @@ button.set-row {
 .plus-buy:disabled {
   opacity: 0.55;
 }
+/* Typing code: the command chips can't be used while typing, so they make way for the text box,
+   and the board shrinks so the code stays visible above the phone keyboard. */
+.floor.typing-code .palette {
+  display: none;
+}
+.floor.typing-code .board-wrap {
+  flex-basis: 24%;
+  min-height: 120px;
+}
