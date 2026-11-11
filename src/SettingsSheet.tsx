@@ -6,6 +6,8 @@ import type { ReactNode } from 'react';
 import type { Progress } from './progress';
 import { fx, hapticsOn, isMuted, setHapticsOn, setMuted } from './audio/feedback';
 import { musicOn, setMusicOn } from './audio/music';
+import { PLUS_VISIBLE, STORE_AVAILABLE, hasPlus, restorePurchases } from './store/purchases';
+import { PlusSheet } from './store/PlusSheet';
 import { bigTextOn, setBigText } from './textSize';
 import { version } from '../package.json';
 import { FeedbackSheet } from './FeedbackSheet';
@@ -117,6 +119,8 @@ export function SettingsSheet({ progress, setProgress, onClose, floor, floorTitl
 
           <ReminderRows />
 
+          {PLUS_VISIBLE && STORE_AVAILABLE && <PurchaseRows />}
+
           <h3 className="set-section">Your progress</h3>
           <BackupRows />
 
@@ -165,5 +169,51 @@ export function SettingsSheet({ progress, setProgress, onClose, floor, floorTitl
         </div>
       </div>
     </div>
+  );
+}
+
+/** Settings > Subscriptions & Purchases: LoopBot Plus and Restore (Kevin, Nov 7: Almanac style). */
+function PurchaseRows() {
+  const [sheet, setSheet] = useState(false);
+  const [owned, setOwned] = useState(hasPlus);
+  const [note, setNote] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const restore = async () => {
+    if (busy) return;
+    fx.tap();
+    setBusy(true);
+    const r = await restorePurchases();
+    setBusy(false);
+    if (r === 'restored') setOwned(true);
+    setNote(r === 'restored' ? 'LoopBot Plus restored.' : r === 'nothing' ? 'No purchases found for this store account.' : "Couldn't reach the store. Try again later.");
+  };
+  return (
+    <>
+      <h3 className="set-section">Subscriptions &amp; Purchases</h3>
+      <div className="set-item">
+        <button type="button" className="set-row set-link" onClick={() => (fx.tap(), setSheet(true))}>
+          <span className="set-label">LoopBot Plus</span>
+          <span className="set-value">{owned ? 'Owned ✓' : 'Get'}</span>
+          <span className="set-chevron" aria-hidden="true">
+            ›
+          </span>
+        </button>
+        <p className="set-caption">Frostline, Plus looks, the daily archive and more streak freezes. One purchase, no subscription.</p>
+      </div>
+      <div className="set-item">
+        <button type="button" className="set-row set-link" onClick={restore} disabled={busy}>
+          <span className="set-label">Restore purchases</span>
+        </button>
+        <p className="set-caption">{note ?? 'Bought Plus on another device or reinstalled? Restore it here.'}</p>
+      </div>
+      {sheet && (
+        <PlusSheet
+          onClose={() => {
+            setSheet(false);
+            setOwned(hasPlus());
+          }}
+        />
+      )}
+    </>
   );
 }

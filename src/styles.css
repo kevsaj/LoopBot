@@ -2717,3 +2717,65 @@ button.set-row {
 .big-text .tower-band {
   font-size: 14px;
 }
+
+/* --- LoopBot Plus --- */
+.plus-word {
+  color: var(--warn);
+}
+.plus-lede {
+  margin: 4px 0 14px;
+  color: var(--ink);
+  font-size: 16px;
+}
+.plus-perks {
+  list-style: none;
+  margin: 0 0 8px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.plus-perks li {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--panel-2);
+}
+.plus-icon {
+  font-size: 24px;
+  line-height: 1;
+}
+.plus-text {
+  display: block;
+  margin-top: 2px;
+  color: var(--quiet);
+  font-size: 14px;
+}
+.plus-buy {
+  width: 100%;
+  margin-top: 12px;
+  min-height: 54px;
+  font-size: 18px;
+}
+.plus-owned {
+  margin: 14px 0 0;
+  text-align: center;
+  color: var(--good, #7ff2a0);
+  font-weight: 700;
+  font-size: 17px;
+}
+.plus-restore {
+  display: block;
+  margin: 14px auto 0;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 0;
+  background: transparent;
+  color: var(--quiet);
+  text-decoration: underline;
+}
+.plus-buy:disabled {
+  opacity: 0.55;
+}
