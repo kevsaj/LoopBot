@@ -4,7 +4,8 @@
 export type Facing = 'north' | 'east' | 'south' | 'west';
 
 /** Tile types from CR-1. Colour tiles are plain floor tiles with a colour. */
-export type TileType = 'floor' | 'wall' | 'gap' | 'switch' | 'door' | 'exit';
+/** 'ice' (Frostline): step onto it and LoopBot slides on until something stops it. */
+export type TileType = 'floor' | 'wall' | 'gap' | 'switch' | 'door' | 'exit' | 'ice';
 
 export type Colour = 'r' | 'g' | 'b' | 'y';
 

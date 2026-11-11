@@ -11,6 +11,7 @@ const TILE_CHARS: Record<string, { type: TileType; colour?: Colour }> = {
   g: { type: 'floor', colour: 'g' },
   b: { type: 'floor', colour: 'b' },
   y: { type: 'floor', colour: 'y' },
+  i: { type: 'ice' },
 };
 
 export const MAX_STACK = 3;
@@ -110,6 +111,23 @@ export function surfaceHeight(w: World, p: Pos): number {
   return w.tiles[p.y][p.x].height + w.boxes[p.y][p.x];
 }
 
+/**
+ * Ice (CR-ICE): a bot that arrives on ice keeps going the way it faces, one tile at a time, while
+ * the tile ahead is walkable at the same height. It stops on the first tile that isn't ice, or on
+ * the ice against whatever blocks it (a wall, a closed door, a crate, a step, or the edge of a
+ * gap: LoopBot never slides off the board). The whole slide is part of the same step.
+ */
+function slide(w: World) {
+  const bot = w.bot;
+  for (let guard = 0; guard < w.w * w.h && w.tiles[bot.y][bot.x].type === 'ice'; guard++) {
+    const here = { x: bot.x, y: bot.y };
+    const next = ahead(w);
+    if (!isWalkable(w, next) || surfaceHeight(w, next) !== surfaceHeight(w, here)) return;
+    bot.x = next.x;
+    bot.y = next.y;
+  }
+}
+
 export type ActionResult = { ok: true } | { ok: false; error: string };
 
 /** Applies one action in place (CR table). Every action costs 1 step, success or not. */
@@ -130,6 +148,7 @@ export function applyAction(w: World, action: Action): ActionResult {
       }
       bot.x = next.x;
       bot.y = next.y;
+      slide(w);
       return { ok: true };
     }
     case 'jump': {
@@ -140,6 +159,7 @@ export function applyAction(w: World, action: Action): ActionResult {
       if (diff === 0) return { ok: false, error: 'ERR: nothing to jump, use forward' };
       bot.x = next.x;
       bot.y = next.y;
+      slide(w);
       return { ok: true };
     }
     case 'pick_up': {

@@ -176,3 +176,33 @@ describe('code view', () => {
     ]);
   });
 });
+
+describe('ice (Frostline)', () => {
+  const ice = (tiles: string[], over: Partial<LevelFile> = {}) => level({ size: { w: tiles[0].length, h: tiles.length }, tiles, ...over });
+
+  it('slides across ice and stops on the first plain tile, in one step', () => {
+    const o = run(ice(['########', '#.iii.e#', '########']), 'forward forward');
+    expect(o).toMatchObject({ status: 'cleared', steps: 2 });
+  });
+
+  it('stops on the ice against a wall', () => {
+    const o = new Runner(parseReference('forward'), ice(['######', '#.ii##', '#...e#', '######'])).runToEnd();
+    expect(o.status).toBe('ended');
+    const r = new Runner(parseReference('forward turn_right forward forward'), ice(['######', '#.ii##', '####e#', '######'])).runToEnd();
+    expect(r.status).toBe('crashed');
+  });
+
+  it('never slides off the board into a gap', () => {
+    const o = run(ice(['#######', '#.ii_e#', '#######']), 'forward');
+    expect(o.status).toBe('ended');
+  });
+
+  it('can slide straight onto the exit', () => {
+    expect(run(ice(['#######', '#.iiie#', '#######']), 'forward')).toMatchObject({ status: 'cleared', steps: 1 });
+  });
+
+  it('a crate on the ice stops the slide', () => {
+    const o = run(ice(['########', '#.iii.e#', '########'], { boxes: [{ x: 4, y: 1, count: 1 }] }), 'forward pick_up forward forward forward');
+    expect(o.status).toBe('cleared');
+  });
+});

@@ -387,7 +387,15 @@ export class BoardScene extends Phaser.Scene {
             ],
             true,
           );
-          if (t.type === 'exit') {
+          if (t.type === 'ice') {
+            // Frostline ice: a glassy pale-blue sheet with two bright streaks of glare
+            this.diamond(g, sx, sy, 0xd6f2ff, 0.9, 0.95);
+            this.diamond(g, sx, sy, 0xb7e3fb, 0.55, 0.6);
+            g.lineStyle(2, 0xffffff, 0.75);
+            g.lineBetween(sx - TW * 0.2, sy - TH * 0.02, sx - TW * 0.04, sy - TH * 0.2);
+            g.lineStyle(1.5, 0xffffff, 0.55);
+            g.lineBetween(sx + TW * 0.02, sy + TH * 0.16, sx + TW * 0.16, sy + TH * 0.01);
+          } else if (t.type === 'exit') {
             // the service lift: a glowing pad with a soft beam that pulses
             this.diamond(g, sx, sy, C.exit, 0.8);
             this.diamond(g, sx, sy, C.exitGlow, 0.5);
@@ -725,14 +733,17 @@ export class BoardScene extends Phaser.Scene {
     } else {
       const from = this.botPos(prev);
       this.bot.setPosition(from.sx, from.sy);
-      const lift = u.action === 'jump' ? 22 : 4;
+      // More than one tile in one step means LoopBot slid on ice: a flat, steady glide.
+      const slid = Math.abs(prev.bot.x - w.bot.x) + Math.abs(prev.bot.y - w.bot.y) > 1;
+      const lift = slid ? 0 : u.action === 'jump' ? 22 : 4;
       // The antenna lags behind the move, then springs back.
       this.wiggleAntenna(to.sx > from.sx ? -16 : to.sx < from.sx ? 16 : u.action === 'jump' ? 20 : 8);
-      this.tweens.add({ targets: this.bot, x: to.sx, duration: dur, ease: 'Sine.easeInOut' });
+      this.tweens.add({ targets: this.bot, x: to.sx, duration: dur, ease: slid ? 'Quad.easeOut' : 'Sine.easeInOut' });
       this.tweens.addCounter({
         from: 0,
         to: 1,
         duration: dur,
+        ease: slid ? 'Quad.easeOut' : 'Linear',
         onUpdate: (tw) => {
           const t = tw.getValue() ?? 0;
           this.bot.y = from.sy + (to.sy - from.sy) * t - Math.sin(Math.PI * t) * lift;
