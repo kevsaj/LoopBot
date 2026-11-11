@@ -909,6 +909,8 @@ export function createBoard(parent: HTMLElement, onReady: (scene: BoardScene) =>
     scene,
     banner: false,
     render: { antialias: true },
+    // 30 frames a second is plenty for a turn-based board and about halves the CPU (and battery) it uses.
+    fps: { target: 30, limit: 30 },
     input: { mouse: false, touch: false },
     // Sounds and music play through src/audio, so Phaser needs no AudioContext of its own (each
     // floor makes a new game, and phones limit how many contexts an app may open).

@@ -430,7 +430,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
     (tut === 'tap' && cmd === 'forward') || (tut === 'turn' && (cmd === 'turn_left' || cmd === 'turn_right'));
 
   return (
-    <main className="floor">
+    <main className={`floor${tab === 'code' && typing ? ' typing-code' : ''}`}>
       <header className="topbar">
         <div className="floor-title">
           {daily ? (
