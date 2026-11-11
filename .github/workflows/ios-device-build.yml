@@ -4,10 +4,19 @@ name: iOS device build
 # Run it by hand: Actions tab > "iOS device build" > Run workflow. Download the LoopBot-ipa artifact when it finishes.
 #
 # Before the first run, register each device's UDID at developer.apple.com > Devices.
-# Uses the same repository secrets as the iOS TestFlight workflow. Xcode makes the ad hoc profile
+# Uses the same repository secrets as the iOS TestFlight workflow (VITE_REVENUECAT_IOS_KEY too, for sandbox purchases). Xcode makes the ad hoc profile
 # itself and puts every registered device in it, so register a new device, then run this again.
 on:
   workflow_dispatch:
+    inputs:
+      plus_preview:
+        description: Unlock Frostline and other Plus content without buying (VITE_PLUS_PREVIEW). Test builds only, never for the App Store release.
+        type: boolean
+        default: true
+      plus_store:
+        description: Show the Plus screen and Settings purchase rows (VITE_PLUS). Leave off until Plus is on sale.
+        type: boolean
+        default: true
 
 jobs:
   adhoc:
@@ -40,7 +49,11 @@ jobs:
       - name: Build the game
         env:
           VITE_TELEMETRY_URL: ${{ secrets.VITE_TELEMETRY_URL }}
+          VITE_REVENUECAT_IOS_KEY: ${{ secrets.VITE_REVENUECAT_IOS_KEY }}
+          VITE_PLUS_PREVIEW: ${{ inputs.plus_preview && '1' || '' }}
+          VITE_PLUS: ${{ inputs.plus_store && '1' || '' }}
         run: |
+          echo "Plus preview: ${VITE_PLUS_PREVIEW:-off}, Plus store: ${VITE_PLUS:-off}, RevenueCat key: $([ -n "$VITE_REVENUECAT_IOS_KEY" ] && echo set || echo missing)"
           npm ci
           npm run ios:sync
 
