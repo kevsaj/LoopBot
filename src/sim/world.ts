@@ -12,6 +12,7 @@ const TILE_CHARS: Record<string, { type: TileType; colour?: Colour }> = {
   b: { type: 'floor', colour: 'b' },
   y: { type: 'floor', colour: 'y' },
   i: { type: 'ice' },
+  t: { type: 'thin' },
 };
 
 export const MAX_STACK = 3;
@@ -23,6 +24,7 @@ export function createWorld(level: LevelFile): World {
   const tiles: Tile[][] = [];
   const switches: Record<string, boolean> = {};
   const doors: Record<string, boolean> = {};
+  const cracked: Record<string, boolean> = {};
   for (let y = 0; y < h; y++) {
     const row: Tile[] = [];
     for (let x = 0; x < w; x++) {
@@ -34,6 +36,7 @@ export function createWorld(level: LevelFile): World {
       row.push({ type: def.type, height, ...(def.colour ? { colour: def.colour } : {}) });
       if (def.type === 'switch') switches[key(x, y)] = false;
       if (def.type === 'door') doors[key(x, y)] = false;
+      if (def.type === 'thin') cracked[key(x, y)] = false;
     }
     tiles.push(row);
   }
@@ -60,6 +63,7 @@ export function createWorld(level: LevelFile): World {
     switches,
     doors,
     links,
+    cracked,
     bot: { x: level.bot.x, y: level.bot.y, facing: level.bot.facing, carrying: false },
     goals: [...level.goals],
   };
@@ -74,6 +78,7 @@ export function cloneWorld(w: World): World {
     switches: { ...w.switches },
     doors: { ...w.doors },
     links: w.links,
+    cracked: { ...w.cracked },
     bot: { ...w.bot },
     goals: w.goals,
   };
@@ -103,6 +108,7 @@ export function isWalkable(w: World, p: Pos): boolean {
   const t = w.tiles[p.y][p.x];
   if (t.type === 'wall' || t.type === 'gap') return false;
   if (t.type === 'door' && !w.doors[key(p.x, p.y)]) return false;
+  if (t.type === 'thin' && w.cracked[key(p.x, p.y)]) return false;
   return true;
 }
 
@@ -128,6 +134,11 @@ function slide(w: World) {
   }
 }
 
+/** Thin ice (CR-THIN) cracks into a gap once LoopBot steps off it. */
+function leave(w: World, p: Pos) {
+  if (w.tiles[p.y][p.x].type === 'thin') w.cracked[key(p.x, p.y)] = true;
+}
+
 export type ActionResult = { ok: true } | { ok: false; error: string };
 
 /** Applies one action in place (CR table). Every action costs 1 step, success or not. */
@@ -146,6 +157,7 @@ export function applyAction(w: World, action: Action): ActionResult {
       if (!isWalkable(w, next) || surfaceHeight(w, next) !== surfaceHeight(w, here)) {
         return { ok: false, error: 'ERR: blocked ahead' };
       }
+      leave(w, here);
       bot.x = next.x;
       bot.y = next.y;
       slide(w);
@@ -157,6 +169,7 @@ export function applyAction(w: World, action: Action): ActionResult {
       if (diff > 1) return { ok: false, error: 'ERR: too high to jump' };
       // CR table: a jump needs a step exactly 1 up, or any drop down. Level ground is for forward.
       if (diff === 0) return { ok: false, error: 'ERR: nothing to jump, use forward' };
+      leave(w, here);
       bot.x = next.x;
       bot.y = next.y;
       slide(w);
@@ -242,6 +255,8 @@ export function worldKey(w: World): string {
   return `${b.x},${b.y},${b.facing},${b.carrying ? 1 : 0}|${w.boxes.map((r) => r.join('')).join('/')}|${Object.values(w.switches)
     .map((s) => (s ? 1 : 0))
     .join('')}|${Object.values(w.doors)
+    .map((s) => (s ? 1 : 0))
+    .join('')}|${Object.values(w.cracked)
     .map((s) => (s ? 1 : 0))
     .join('')}`;
 }

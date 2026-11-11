@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { LEVELS } from './levels';
+import { TOWERS, towerOf } from './levels/towers';
 import { FloorScreen } from './editor/FloorScreen';
 import { TowerMap } from './TowerMap';
 import { TitleScreen } from './TitleScreen';
@@ -25,20 +26,45 @@ import type { LevelFile } from './sim/types';
 import { currentStreak, yesterday, dailyLevel, dateKey, loadDaily, pruneOldDailies, recordDailyClear, saveDaily } from './daily';
 import type { DailyState } from './daily';
 import { MAX_FREEZES, PLUS_MAX_FREEZES } from './daily';
-import { hasPlus, initPurchases } from './store/purchases';
+import { hasPlus, initPurchases, plusUnlocked } from './store/purchases';
 
-function loadIndex() {
+/** Each tower remembers its own floor: Tower 1 keeps the original key so old saves carry over. */
+const floorKey = (tower: number) => (tower === 1 ? 'loopbot.floor' : `loopbot.floor.t${tower}`);
+
+function loadIndex(tower: number) {
   try {
-    const n = Number(localStorage.getItem('loopbot.floor') ?? 0);
-    return Number.isInteger(n) && n >= 0 && n < LEVELS.length ? n : 0;
+    const n = Number(localStorage.getItem(floorKey(tower)) ?? 0);
+    return Number.isInteger(n) && n >= 0 && n < towerOf(tower).levels.length ? n : 0;
   } catch {
     return 0;
   }
 }
 
+/** The tower being climbed. A Plus tower falls back to Tower 1 if Plus isn't unlocked here. */
+function loadTower() {
+  try {
+    const t = towerOf(Number(localStorage.getItem('loopbot.tower') ?? 1));
+    return t.plus && !plusUnlocked() ? 1 : t.n;
+  } catch {
+    return 1;
+  }
+}
+
 export default function App() {
   const [progress, setProgressState] = useState<Progress>(loadProgress);
-  const [index, setIndex] = useState(loadIndex);
+  const [tower, setTowerState] = useState(loadTower);
+  const [index, setIndex] = useState(() => loadIndex(tower));
+  const levels = towerOf(tower).levels;
+  /** Switch towers: each one opens on the floor you were on there. */
+  const setTower = useCallback((n: number) => {
+    setTowerState(n);
+    setIndex(loadIndex(n));
+    try {
+      localStorage.setItem('loopbot.tower', String(n));
+    } catch {
+      /* ignore */
+    }
+  }, []);
   // Every launch opens on the title screen, whose intro plays once per session; its Play button
   // goes to the next floor (Floor 1 for a new player), and the tower map is one tap further.
   const [screen, setScreen] = useState<'title' | 'map' | 'floor' | 'daily'>('title');
@@ -82,18 +108,18 @@ export default function App() {
   }, []);
   const go = useCallback(
     (i: number) => {
-      const n = Math.max(0, Math.min(LEVELS.length - 1, i));
+      const n = Math.max(0, Math.min(levels.length - 1, i));
       ride(() => {
         setIndex(n);
         setScreen('floor');
         try {
-          localStorage.setItem('loopbot.floor', String(n));
+          localStorage.setItem(floorKey(tower), String(n));
         } catch {
           /* ignore */
         }
       });
     },
-    [ride],
+    [ride, levels, tower],
   );
   const openDaily = useCallback(
     (from: 'title' | 'map') => {
@@ -136,18 +162,20 @@ export default function App() {
     [],
   );
 
-  const ids = useMemo(() => LEVELS.map((l) => l.id), []);
+  const ids = useMemo(() => levels.map((l) => l.id), [levels]);
+  // Achievements count Tower 1's floors.
+  const t1ids = useMemo(() => LEVELS.map((l) => l.id), []);
   // Never open a locked floor (e.g. a saved index from before progress existed).
   const safeIndex = isUnlocked(progress, ids, index) ? index : 0;
-  const level = LEVELS[safeIndex];
+  const level = levels[safeIndex];
   /** Leaving a tower floor: play the band's story beat first if it's due. */
   const leaveFloor = (next: () => void) => {
-    const due = interludeAfter(safeIndex + 1, (progress.stars[level.id] ?? 0) > 0);
+    const due = interludeAfter(safeIndex + 1, (progress.stars[level.id] ?? 0) > 0, undefined, tower);
     if (due) setBeat({ beat: due, then: next });
     else next();
   };
   // Achievements, unlocked looks and the toasts for anything new.
-  const rewards = useRewards(ids, progress, daily);
+  const rewards = useRewards(t1ids, progress, daily);
   const [look, setLook] = useState<Look>(loadLook);
   const [locker, setLocker] = useState(false);
   // A story beat waiting to play before the next screen (PATCH's radio call, or the ending).
@@ -175,14 +203,15 @@ export default function App() {
   );
   // Each band of the tower has its own theme; the title and tower map share one.
   useEffect(() => {
-    setMusicTheme(screen === 'floor' ? themeForFloor(safeIndex + 1) : screen === 'daily' ? 'daily' : 'title');
-  }, [screen, safeIndex]);
+    setMusicTheme(screen === 'floor' ? themeForFloor(safeIndex + 1, tower) : screen === 'daily' ? 'daily' : 'title');
+  }, [screen, safeIndex, tower]);
 
   if (screen === 'title') {
     return (
       <>
         <TitleScreen
-          levels={LEVELS}
+          levels={levels}
+          towerLabel={`Tower ${tower} · ${towerOf(tower).name}`}
           progress={progress}
           booted={booted}
           onBooted={onBooted}
@@ -204,7 +233,11 @@ export default function App() {
     return (
       <>
         <TowerMap
-          levels={LEVELS}
+          key={tower}
+          levels={levels}
+          tower={tower}
+          towers={TOWERS}
+          onTowerPick={setTower}
           progress={progress}
           current={safeIndex}
           onPick={go}
@@ -229,7 +262,7 @@ export default function App() {
           key={today.id}
           level={today}
           floorNumber={0}
-          floorCount={LEVELS.length}
+          floorCount={levels.length}
           progress={progress}
           setProgress={setProgress}
           onGo={go}
@@ -254,7 +287,7 @@ export default function App() {
         key={level.id}
         level={level}
         floorNumber={safeIndex + 1}
-        floorCount={LEVELS.length}
+        floorCount={levels.length}
         progress={progress}
         setProgress={setProgress}
         onGo={(i) => leaveFloor(() => go(i))}

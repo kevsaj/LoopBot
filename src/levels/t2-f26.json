@@ -1,0 +1,62 @@
+{
+  "id": "t2-f26",
+  "title": "Bug Hunt: Out of Order",
+  "band": "signal",
+  "size": {
+    "w": 7,
+    "h": 5
+  },
+  "tiles": [
+    "#######",
+    "#.iis##",
+    "####i##",
+    "####sis",
+    "#######"
+  ],
+  "heights": [
+    "0000000",
+    "0333200",
+    "0000200",
+    "0000110",
+    "0000000"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "all_switches_on"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "F1"
+  ],
+  "slots": {
+    "main": 6,
+    "F1": 4
+  },
+  "par": {
+    "commands": 8,
+    "steps": 11
+  },
+  "reference": "F1 turn_right F1 turn_left F1 def F1 { forward jump activate }",
+  "hints": [
+    "LoopBot stops with an error on the first relay. Read the error, then read F1.",
+    "The blocks in F1 are all right, but one is in the wrong place. You can only flip a switch you are standing on.",
+    "F1 turn_right F1 turn_left F1 def F1 { forward jump activate }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "starter": "F1 turn_right F1 turn_left F1 def F1 { forward activate jump }"
+}

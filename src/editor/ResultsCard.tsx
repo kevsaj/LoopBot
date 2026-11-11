@@ -11,6 +11,8 @@ import { shortDate } from '../daily';
 
 interface Props {
   floorNumber: number;
+  /** Which tower the floor is in, for the end-of-tower message. */
+  tower?: number;
   floorCount: number;
   earned: number;
   /** Best stars on this floor before this run (0 if never cleared). */
@@ -32,7 +34,7 @@ interface Props {
 const STAR_MS = 420;
 const HEADLINE = ['', 'Floor cleared', 'Nice work!', 'Perfect run!'];
 
-export function ResultsCard({ floorNumber, floorCount, earned, prevBest, commands, steps, par, outro, onClose, onRetry, onNext, onTower, daily, onShareImage }: Props) {
+export function ResultsCard({ floorNumber, tower = 1, floorCount, earned, prevBest, commands, steps, par, outro, onClose, onRetry, onNext, onTower, daily, onShareImage }: Props) {
   const calm = reducedMotion();
   const [shown, setShown] = useState(calm ? 3 : 0);
   const starsRef = useRef<HTMLDivElement>(null);
@@ -173,7 +175,13 @@ export function ResultsCard({ floorNumber, floorCount, earned, prevBest, command
             Maintenance floors, functions in the Workshop, and all the way to the Rooftop.
           </p>
         )}
-        {!daily && !DEMO && floorNumber === floorCount && (
+        {!daily && !DEMO && floorNumber === floorCount && tower === 2 && (
+          <p className="demo-end">
+            <strong>Tower 2 cleared!</strong> The Northstar beacon is dark and Frostline is thawing out. VANTA's signal is fading south, and
+            PATCH is already listening for it.
+          </p>
+        )}
+        {!daily && !DEMO && floorNumber === floorCount && tower === 1 && (
           <p className="demo-end">
             <strong>Tower 1 cleared!</strong> Meridian Spire is back online and VANTA's drones are grounded. LoopBot rides the elevator
             down to meet PATCH at last. More towers are on the way.

@@ -1,0 +1,55 @@
+{
+  "id": "t2-f05",
+  "title": "Crate Brake",
+  "band": "frostgate",
+  "size": {
+    "w": 8,
+    "h": 4
+  },
+  "tiles": [
+    "####e###",
+    "#.iiiii#",
+    "#.i.iii#",
+    "########"
+  ],
+  "boxes": [
+    {
+      "x": 1,
+      "y": 1,
+      "count": 1
+    }
+  ],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 2,
+    "facing": "north"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "pick_up",
+    "drop"
+  ],
+  "slots": {
+    "main": 16
+  },
+  "par": {
+    "commands": 13,
+    "steps": 13
+  },
+  "reference": "pick_up turn_right forward turn_left drop turn_right forward turn_left forward turn_left forward turn_right forward",
+  "hints": [
+    "A crate on the ice stops a slide just before it. You can put one where you need it.",
+    "Drop the crate on the top lane from the dry patch below it. Then come back along the top from the right.",
+    "pick_up turn_right forward turn_left drop turn_right forward turn_left forward turn_left forward turn_right forward"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

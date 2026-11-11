@@ -1,0 +1,60 @@
+{
+  "id": "t2-f32",
+  "title": "Signal Pads",
+  "band": "aurora",
+  "size": {
+    "w": 8,
+    "h": 8
+  },
+  "tiles": [
+    "########",
+    "########",
+    "########",
+    "##biiib#",
+    "##i###i#",
+    ".ir#rib#",
+    "####i###",
+    "####rie#"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 5,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "if"
+  ],
+  "slots": {
+    "main": 6
+  },
+  "par": {
+    "commands": 5,
+    "steps": 13
+  },
+  "reference": "repeat 7 { forward if tile_is r { turn_left } else { turn_right } }",
+  "hints": [
+    "Every slide ends on a signal pad. Red means turn left, blue means turn right.",
+    "Slide, then ask: am I on red? If so turn left, otherwise turn right. Repeat it.",
+    "repeat 7 { forward if tile_is r { turn_left } else { turn_right } }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "sensors": [
+    "tile_is"
+  ]
+}

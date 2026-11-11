@@ -1,0 +1,44 @@
+{
+  "id": "t2-f01",
+  "title": "First Frost",
+  "band": "frostgate",
+  "size": {
+    "w": 7,
+    "h": 3
+  },
+  "tiles": [
+    "#######",
+    "#.iiie#",
+    "#######"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward"
+  ],
+  "slots": {
+    "main": 3
+  },
+  "par": {
+    "commands": 1,
+    "steps": 1
+  },
+  "reference": "forward",
+  "hints": [
+    "Ice is slippery. One forward and LoopBot keeps sliding until something stops it.",
+    "One block is enough here.",
+    "forward"
+  ],
+  "story": {
+    "intro": "PATCH: \"Frostline. VANTA's drone came down on the Northstar Needle, and the heating's off. Everything is iced over. Careful where you step.\"",
+    "outro": "PATCH: \"Ha! One step, five tiles. Ice does the walking for you.\""
+  }
+}

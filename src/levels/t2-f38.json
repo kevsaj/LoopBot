@@ -1,0 +1,60 @@
+{
+  "id": "t2-f38",
+  "title": "Bug Hunt: Never Ends",
+  "band": "aurora",
+  "size": {
+    "w": 7,
+    "h": 7
+  },
+  "tiles": [
+    "#######",
+    "##.iii.",
+    "##i###i",
+    "##i#si.",
+    "##i####",
+    "##i####",
+    "##.i.##"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 4,
+    "y": 6,
+    "facing": "south"
+  },
+  "goals": [
+    "all_switches_on"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "while"
+  ],
+  "slots": {
+    "main": 5
+  },
+  "par": {
+    "commands": 4,
+    "steps": 11
+  },
+  "reference": "while not on_switch { turn_right forward } activate",
+  "hints": [
+    "LoopBot spins and spins until the step limit stops it. Something is missing from the loop.",
+    "A loop that never moves never reaches the switch. Add the missing block.",
+    "while not on_switch { turn_right forward } activate"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "sensors": [
+    "on_switch"
+  ],
+  "starter": "while not on_switch { turn_right } activate"
+}

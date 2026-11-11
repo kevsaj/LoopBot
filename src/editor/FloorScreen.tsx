@@ -78,7 +78,7 @@ export function stars(level: LevelFile, commands: number, steps: number) {
 }
 
 export function FloorScreen({ level, floorNumber, floorCount, progress, setProgress, onGo, onTower, daily }: Props) {
-  const editor = useEditor(level.id);
+  const editor = useEditor(level.id, level.starter);
   const { program } = editor.state;
   // The questions if and while can ask here: wall ahead always, plus the floor's own sensors.
   const conditions = useMemo<Condition[]>(() => {
@@ -637,6 +637,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
       {showResults && outcome?.status === 'cleared' && (
         <ResultsCard
           floorNumber={floorNumber}
+          tower={level.id.startsWith('t2-') ? 2 : 1}
           floorCount={floorCount}
           earned={earned}
           prevBest={prevBest}

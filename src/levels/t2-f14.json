@@ -1,0 +1,56 @@
+{
+  "id": "t2-f14",
+  "title": "Switchback",
+  "band": "glacier",
+  "size": {
+    "w": 7,
+    "h": 7
+  },
+  "tiles": [
+    "#######",
+    "#####e#",
+    "####ts#",
+    "###ts##",
+    "##ts###",
+    "#.s####",
+    "#######"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 5,
+    "facing": "east"
+  },
+  "goals": [
+    "all_switches_on",
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat"
+  ],
+  "slots": {
+    "main": 7
+  },
+  "par": {
+    "commands": 6,
+    "steps": 19
+  },
+  "reference": "repeat 4 { forward activate turn_left forward turn_right }",
+  "hints": [
+    "A staircase of switches. The same few moves reach each one.",
+    "Forward, flip, turn left, forward, turn right. Repeat it.",
+    "repeat 4 { forward activate turn_left forward turn_right }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

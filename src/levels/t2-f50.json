@@ -1,0 +1,76 @@
+{
+  "id": "t2-f50",
+  "title": "Northstar Peak",
+  "band": "summit",
+  "size": {
+    "w": 8,
+    "h": 8
+  },
+  "tiles": [
+    "########",
+    "#stty.s#",
+    "#y#e##i#",
+    "#i#y##i#",
+    "#t#i##y#",
+    "#y#i##.#",
+    "#i#stys#",
+    "#.######"
+  ],
+  "heights": [
+    "00000000",
+    "02222330",
+    "01020030",
+    "01030030",
+    "01030030",
+    "00030020",
+    "00033220",
+    "00000000"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 7,
+    "facing": "north"
+  },
+  "goals": [
+    "all_switches_on",
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "while",
+    "if",
+    "F1"
+  ],
+  "slots": {
+    "main": 3,
+    "F1": 6
+  },
+  "par": {
+    "commands": 9,
+    "steps": 25
+  },
+  "reference": "repeat 5 { F1 turn_right } def F1 { forward while not on_switch { if tile_is y { jump } else { forward } } activate }",
+  "hints": [
+    "The final climb. Every side is different, but each one ends at a relay.",
+    "F1: step off the relay first, then until you are on the next one, jump on yellow and go forward otherwise. Flip it. Main repeats F1 and turns right.",
+    "repeat 5 { F1 turn_right } def F1 { forward while not on_switch { if tile_is y { jump } else { forward } } activate }"
+  ],
+  "story": {
+    "intro": "VANTA: \"The Northstar beacon sees the whole city. Four relays stand between you and me, LoopBot, and you'll never reach them all.\"",
+    "outro": "PATCH: \"Relays down, beacon dark, and VANTA has nowhere left to run. Frostline is free. You did it, LoopBot.\""
+  },
+  "sensors": [
+    "on_switch",
+    "tile_is"
+  ],
+  "typing": true
+}

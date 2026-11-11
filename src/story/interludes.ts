@@ -1,4 +1,4 @@
-// Story beats between the bands of Tower 1: a short radio call from PATCH (with VANTA cutting in)
+// Story beats between the bands of each tower: a short radio call from PATCH (with VANTA cutting in)
 // after Floors 10, 20, 30 and 40, and the ending after Floor 50. Each plays once, the first time
 // the player leaves that floor after clearing it, and can be skipped.
 
@@ -94,6 +94,65 @@ export const INTERLUDES: Record<number, Interlude> = {
   },
 };
 
+/** Tower 2, the Northstar Needle in Frostline: the same beats, in the cold. */
+export const FROSTLINE_INTERLUDES: Record<number, Interlude> = {
+  10: {
+    kind: 'radio',
+    id: 't2-after-10',
+    heading: 'Next: the Glacier Yard',
+    lines: [
+      P("Still with me, LoopBot? Good. My antenna's frozen solid, so you're my eyes up there."),
+      P('Past the gate is the Glacier Yard. Thin ice holds you once, then it cracks for good.'),
+      P('Plan the whole route before you move. There is no going back the way you came.'),
+      V("Every step you take, the ice remembers. So do I."),
+    ],
+  },
+  20: {
+    kind: 'radio',
+    id: 't2-after-20',
+    heading: 'Next: the Signal Hut',
+    lines: [
+      P("VANTA scrambled the Signal Hut. Every radio in Frostline is playing static."),
+      P('The routines in there are broken, not missing. Read them line by line and find the bug.'),
+      V('I left you a few surprises. Debugging is so much fun, isn\'t it?'),
+      P('Actually, yes. It is.'),
+    ],
+  },
+  30: {
+    kind: 'radio',
+    id: 't2-after-30',
+    heading: 'Next: the Aurora Lab',
+    lines: [
+      P("The mast is singing again. I can see the whole Needle from here, and the sky's gone green."),
+      P("That's the Aurora Lab. The floors change colour and the corridors never match. Counting won't work."),
+      P('Ask questions instead. While there is no wall ahead, keep going.'),
+      V('Questions? I have one. How long can a little bot last in the dark?'),
+    ],
+  },
+  40: {
+    kind: 'radio',
+    id: 't2-after-40',
+    heading: 'Next: the Summit',
+    lines: [
+      P('Ten floors to the summit. VANTA is wiring itself into the Northstar beacon.'),
+      P("If it gets that beacon running, it can reach every tower in the north. Let's not let it."),
+      P('Type your programs up there if you like. Name your routines and the summit gets a lot smaller.'),
+      V('Come up and see the view, LoopBot. It is very, very cold.'),
+    ],
+  },
+  50: {
+    kind: 'ending',
+    id: 't2-ending',
+    panels: [
+      { scene: 'lights', text: 'The beacon goes dark, the heating roars back, and Frostline starts to thaw.' },
+      { scene: 'escape', who: 'VANTA', text: "Fine. Keep your icicle. I've got bigger towers to climb." },
+      { scene: 'elevator', text: 'LoopBot rides down through the melting floors, dripping all the way.' },
+      { scene: 'meet', who: 'PATCH', text: "You're soaked! Come stand by the radio, it runs warm. Thank you, LoopBot." },
+      { scene: 'next', text: "Tower 2 cleared. VANTA's signal is fading south. Wherever it lands next, we'll be ready." },
+    ],
+  },
+};
+
 const KEY = 'loopbot.interludes';
 
 export function seenInterludes(): Set<string> {
@@ -115,9 +174,9 @@ export function markInterludeSeen(id: string) {
   }
 }
 
-/** The beat to play when leaving tower floor `floorNumber` (1-based), if it's due. */
-export function interludeAfter(floorNumber: number, cleared: boolean, seen = seenInterludes()): Interlude | null {
-  const it = INTERLUDES[floorNumber];
+/** The beat to play when leaving floor `floorNumber` (1-based) of a tower, if it's due. */
+export function interludeAfter(floorNumber: number, cleared: boolean, seen = seenInterludes(), tower = 1): Interlude | null {
+  const it = (tower === 2 ? FROSTLINE_INTERLUDES : INTERLUDES)[floorNumber];
   if (!it || !cleared || seen.has(it.id)) return null;
   return it;
 }

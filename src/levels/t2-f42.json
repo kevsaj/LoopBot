@@ -1,0 +1,68 @@
+{
+  "id": "t2-f42",
+  "title": "Bug Hunt: Spiral Stairs",
+  "band": "summit",
+  "size": {
+    "w": 8,
+    "h": 8
+  },
+  "tiles": [
+    "########",
+    "#.iiii.#",
+    "#i####i#",
+    "#i#.e#i#",
+    "#i#i##i#",
+    "#i#i##i#",
+    "#i#.ii.#",
+    "#.######"
+  ],
+  "heights": [
+    "00000000",
+    "01111120",
+    "00000020",
+    "00033020",
+    "00020020",
+    "00020020",
+    "00023330",
+    "00000000"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 7,
+    "facing": "north"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat"
+  ],
+  "slots": {
+    "main": 5
+  },
+  "par": {
+    "commands": 4,
+    "steps": 16
+  },
+  "reference": "repeat 6 { forward jump turn_right }",
+  "hints": [
+    "LoopBot turns into the wall on the first step. Watch where it is facing when it jumps.",
+    "Slide, then jump up the step, and only then turn the corner. One block is in the wrong place.",
+    "repeat 6 { forward jump turn_right }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "typing": true,
+  "starter": "repeat 6 { forward turn_right jump }"
+}

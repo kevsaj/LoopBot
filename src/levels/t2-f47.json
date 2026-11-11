@@ -1,0 +1,68 @@
+{
+  "id": "t2-f47",
+  "title": "Whiteout",
+  "band": "summit",
+  "size": {
+    "w": 8,
+    "h": 8
+  },
+  "tiles": [
+    "########",
+    ".tttttb#",
+    "######s#",
+    "######t#",
+    "rttr##t#",
+    "s##t##t#",
+    "t##s##t#",
+    "e##bttb#"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "all_switches_on",
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "while",
+    "if",
+    "F1",
+    "F2"
+  ],
+  "slots": {
+    "main": 3,
+    "F1": 4,
+    "F2": 3
+  },
+  "par": {
+    "commands": 10,
+    "steps": 32
+  },
+  "reference": "repeat 6 { F1 F2 } def F1 { while not wall_ahead { forward if on_switch { activate } } } def F2 { if tile_is r { turn_left } else { turn_right } }",
+  "hints": [
+    "Same ideas as the Aurora Core, but this time give each idea its own name.",
+    "F1 walks a corridor and flips every switch on the way. F2 reads the corner pad and turns. Main just repeats F1 F2.",
+    "repeat 6 { F1 F2 } def F1 { while not wall_ahead { forward if on_switch { activate } } } def F2 { if tile_is r { turn_left } else { turn_right } }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "sensors": [
+    "on_switch",
+    "tile_is"
+  ],
+  "typing": true
+}

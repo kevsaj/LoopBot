@@ -8,7 +8,7 @@
 import { applySaves, collectSaves, markSavesDirty } from './persist';
 
 const PREFIX = 'LB1-';
-const KEEP = new Set(['loopbot.progress', 'loopbot.daily', 'loopbot.seenUnlocked', 'loopbot.floor', 'loopbot.muted', 'loopbot.haptics', 'loopbot.speed', 'loopbot.look', 'loopbot.rewardsSeen', 'loopbot.interludes', 'loopbot.bigText']);
+const KEEP = new Set(['loopbot.progress', 'loopbot.daily', 'loopbot.seenUnlocked', 'loopbot.floor', 'loopbot.muted', 'loopbot.haptics', 'loopbot.speed', 'loopbot.look', 'loopbot.rewardsSeen', 'loopbot.interludes', 'loopbot.bigText', 'loopbot.tower', 'loopbot.floor.t2', 'loopbot.seenUnlocked.t2']);
 
 function toB64url(text: string) {
   const bytes = new TextEncoder().encode(text);

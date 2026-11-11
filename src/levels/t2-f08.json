@@ -1,0 +1,65 @@
+{
+  "id": "t2-f08",
+  "title": "Cold Delivery",
+  "band": "frostgate",
+  "size": {
+    "w": 7,
+    "h": 6
+  },
+  "tiles": [
+    "#######",
+    "#.iii.#",
+    "#i###i#",
+    "#i###i#",
+    "#.iii.#",
+    "#######"
+  ],
+  "boxes": [
+    {
+      "x": 1,
+      "y": 2,
+      "count": 1
+    }
+  ],
+  "targets": [
+    {
+      "x": 4,
+      "y": 4,
+      "count": 1
+    }
+  ],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "south"
+  },
+  "goals": [
+    "all_targets_filled"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "repeat"
+  ],
+  "slots": {
+    "main": 10
+  },
+  "par": {
+    "commands": 6,
+    "steps": 7
+  },
+  "reference": "pick_up turn_left repeat 2 { forward turn_right } drop",
+  "hints": [
+    "You can carry a crate while you slide.",
+    "Pick up the crate, then find the stop right next to the pad. Two of the moves are the same.",
+    "pick_up turn_left repeat 2 { forward turn_right } drop"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

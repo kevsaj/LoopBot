@@ -2779,3 +2779,142 @@ button.set-row {
 .plus-buy:disabled {
   opacity: 0.55;
 }
+
+/* --- Tower 2, Frostline (the Northstar Needle) --- */
+/* The towers row on the map: the tower you're in is lit, a Plus tower shows a lock until owned. */
+.tower-switch {
+  display: flex;
+  gap: 8px;
+  padding: 0 16px 8px;
+}
+.tower-tab {
+  flex: 1;
+  min-width: 0;
+  min-height: 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 1px;
+  padding: 6px 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--panel);
+  color: var(--quiet);
+  text-align: left;
+}
+.tower-tab .tt-num {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.tower-tab .tt-name {
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 600;
+}
+.tower-tab.on {
+  border-color: var(--accent);
+  background: var(--panel-2);
+}
+.tower-tab-2.on {
+  border-color: #9fd8ff;
+  box-shadow: 0 0 0 1px rgba(159, 216, 255, 0.35), 0 0 14px rgba(159, 216, 255, 0.2);
+}
+.tower-tab.locked .tt-name {
+  color: var(--quiet);
+}
+.tower-2 .tower-roof .beacon {
+  background: #9fd8ff;
+  box-shadow: 0 0 18px #9fd8ff;
+}
+
+/* Frost Gate: a pale winter morning, snow drifting past a stone gate. */
+.board-wrap.band-frostgate {
+  background:
+    radial-gradient(ellipse 60% 40% at 50% 70%, rgba(255, 255, 255, 0.22), transparent 70%),
+    linear-gradient(180deg, #5b7290 0%, #8aa3bf 50%, #bcd0e2 82%, #e3edf5 100%);
+}
+.board-wrap.band-frostgate::after,
+.board-wrap.band-glacier::after,
+.board-wrap.band-summit::after {
+  height: 100%;
+  opacity: 0.6;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300' preserveAspectRatio='none'><g fill='%23ffffff' fill-opacity='0.8'><circle cx='24' cy='30' r='2'/><circle cx='80' cy='70' r='1.5'/><circle cx='140' cy='22' r='2.2'/><circle cx='196' cy='60' r='1.4'/><circle cx='250' cy='26' r='1.8'/><circle cx='310' cy='74' r='2'/><circle cx='366' cy='34' r='1.5'/><circle cx='48' cy='130' r='1.4'/><circle cx='352' cy='140' r='1.8'/><circle cx='110' cy='180' r='1.2'/><circle cx='290' cy='196' r='1.4'/></g><path fill='%23ffffff' fill-opacity='0.35' d='M0 300V262q50-22 100-6t100-8q50-18 100 0t100 4v48z'/></svg>") center / 100% 100% no-repeat;
+}
+/* Glacier Yard: deep blue crevasse walls and cold light from above. */
+.board-wrap.band-glacier {
+  background:
+    radial-gradient(ellipse 50% 30% at 50% 6%, rgba(210, 240, 255, 0.35), transparent 70%),
+    linear-gradient(180deg, #0f2a44 0%, #1d4a6e 50%, #3d7aa0 82%, #8ab9d6 100%);
+}
+/* Signal Hut: night outside, a warm lit window, and a radio mast blinking. */
+.board-wrap.band-signal {
+  background:
+    radial-gradient(ellipse 34% 28% at 22% 30%, rgba(255, 196, 120, 0.3), transparent 70%),
+    linear-gradient(180deg, #121827 0%, #1f2840 50%, #3a3d58 80%, #6c6a80 100%);
+}
+.board-wrap.band-signal::after {
+  height: 100%;
+  opacity: 0.55;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300' preserveAspectRatio='none'><g fill='none' stroke='%230b0f1a' stroke-width='3'><path d='M340 300L360 60L380 300'/><path d='M346 230H374M350 170H370M354 110H366'/></g><circle cx='360' cy='56' r='4' fill='%23ff5b5b'/><path fill='%230b0f1a' d='M0 300V236l40-26 40 26v64z'/><rect x='30' y='244' width='18' height='14' fill='%23f2c46a' fill-opacity='0.85'/></svg>") center / 100% 100% no-repeat;
+}
+/* Aurora Lab: green and violet curtains of light over a dark sky. */
+.board-wrap.band-aurora {
+  background:
+    radial-gradient(ellipse 70% 30% at 30% 12%, rgba(110, 255, 180, 0.32), transparent 70%),
+    radial-gradient(ellipse 50% 26% at 76% 22%, rgba(180, 120, 255, 0.3), transparent 70%),
+    linear-gradient(180deg, #05101c 0%, #0b1a2e 50%, #16223f 80%, #2b2a52 100%);
+}
+.board-wrap.band-aurora::after {
+  height: 100%;
+  opacity: 0.45;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300' preserveAspectRatio='none'><g fill='%23ffffff' fill-opacity='0.7'><circle cx='40' cy='120' r='1'/><circle cx='120' cy='150' r='1.2'/><circle cx='220' cy='110' r='1'/><circle cx='330' cy='160' r='1.2'/></g><path fill='%23050a14' d='M0 300V270l60-40 50 30 70-56 80 60 60-34 80 40v30z'/></svg>") center / 100% 100% no-repeat;
+}
+/* The Summit: high thin air, the beacon's gold glow on the snow. */
+.board-wrap.band-summit {
+  background:
+    radial-gradient(circle at 80% 16%, rgba(255, 220, 140, 0.85) 0 8px, rgba(255, 210, 130, 0.2) 9px, transparent 46px),
+    linear-gradient(180deg, #0b1630 0%, #22355e 50%, #5c7aa6 82%, #c8d8ea 100%);
+}
+
+/* The tower map's bands in Frostline. */
+.band-frostgate .tower-floors {
+  background: linear-gradient(#2b3646, #232d3b);
+  border-color: #6c819e;
+}
+.band-frostgate .tower-band {
+  color: #cfe0f2;
+}
+.band-glacier .tower-floors {
+  background: linear-gradient(#12283d, #0e2033);
+  border-color: #3d6f99;
+}
+.band-glacier .tower-band {
+  color: #9fd8ff;
+}
+.band-signal .tower-floors {
+  background: linear-gradient(#2c1a1a, #231515);
+  border-color: #7a3430;
+}
+.band-signal .tower-band {
+  color: #f2b49a;
+}
+.band-aurora .tower-floors {
+  background: linear-gradient(#111a2c, #161433);
+  border-color: #4a3f7a;
+}
+.band-aurora .tower-band {
+  color: #7ef0b8;
+}
+.band-summit .tower-floors {
+  background: linear-gradient(#141b2b, #1b2236);
+  border-color: #8a96ad;
+}
+.band-summit .tower-band {
+  color: #f2c25b;
+}

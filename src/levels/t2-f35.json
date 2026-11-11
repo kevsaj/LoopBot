@@ -1,0 +1,85 @@
+{
+  "id": "t2-f35",
+  "title": "Snow Plow",
+  "band": "aurora",
+  "size": {
+    "w": 8,
+    "h": 2
+  },
+  "tiles": [
+    "##..##.#",
+    ".tttttte"
+  ],
+  "boxes": [
+    {
+      "x": 2,
+      "y": 1,
+      "count": 1
+    },
+    {
+      "x": 3,
+      "y": 1,
+      "count": 1
+    },
+    {
+      "x": 6,
+      "y": 1,
+      "count": 1
+    }
+  ],
+  "targets": [
+    {
+      "x": 2,
+      "y": 0,
+      "count": 1
+    },
+    {
+      "x": 3,
+      "y": 0,
+      "count": 1
+    },
+    {
+      "x": 6,
+      "y": 0,
+      "count": 1
+    }
+  ],
+  "bot": {
+    "x": 0,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "all_targets_filled",
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "pick_up",
+    "drop",
+    "repeat",
+    "if"
+  ],
+  "slots": {
+    "main": 8
+  },
+  "par": {
+    "commands": 8,
+    "steps": 19
+  },
+  "reference": "repeat 7 { if box_ahead { pick_up forward turn_left drop turn_right } else { forward } }",
+  "hints": [
+    "Crates block the lane, and every crate has a snow nook right beside it.",
+    "Each move: if a crate is ahead, pick it up, step into its spot, put it in the nook on your left and turn back. Otherwise just go forward.",
+    "repeat 7 { if box_ahead { pick_up forward turn_left drop turn_right } else { forward } }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "sensors": [
+    "box_ahead"
+  ]
+}

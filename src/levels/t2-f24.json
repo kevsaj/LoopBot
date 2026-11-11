@@ -1,0 +1,57 @@
+{
+  "id": "t2-f24",
+  "title": "Bug Hunt: Off by One",
+  "band": "signal",
+  "size": {
+    "w": 6,
+    "h": 6
+  },
+  "tiles": [
+    "######",
+    "#siis#",
+    "#i##i#",
+    "#.##i#",
+    "#siis#",
+    "######"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 3,
+    "facing": "north"
+  },
+  "goals": [
+    "all_switches_on"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "F1"
+  ],
+  "slots": {
+    "main": 5,
+    "F1": 4
+  },
+  "par": {
+    "commands": 4,
+    "steps": 11
+  },
+  "reference": "repeat 4 { forward activate turn_right }",
+  "hints": [
+    "The program runs fine and then just stops. Count the switches.",
+    "Four corners, four switches. How many times does the loop run?",
+    "repeat 4 { forward activate turn_right }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "starter": "repeat 3 { forward activate turn_right }"
+}

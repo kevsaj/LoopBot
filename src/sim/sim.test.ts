@@ -206,3 +206,25 @@ describe('ice (Frostline)', () => {
     expect(o.status).toBe('cleared');
   });
 });
+
+describe('thin ice (Frostline)', () => {
+  const thin = (tiles: string[], over: Partial<LevelFile> = {}) => level({ size: { w: tiles[0].length, h: tiles.length }, tiles, ...over });
+
+  it('holds LoopBot once and cracks into a gap behind it', () => {
+    expect(run(thin(['######', '#.t.e#', '######']), 'forward forward forward').status).toBe('cleared');
+    // back across the same tile: it has cracked
+    const o = run(thin(['######', '#.t.e#', '######']), 'forward forward turn_left turn_left forward');
+    expect(o.status === 'crashed' && o.error).toBe('ERR: blocked ahead at step 5');
+  });
+
+  it('does not crack while LoopBot only turns on it', () => {
+    expect(run(thin(['######', '#.t#.#', '##.e##', '######']), 'forward turn_right forward turn_left forward').status).toBe('cleared');
+  });
+
+  it('cracks when LoopBot jumps off it, and a slide stops on it', () => {
+    const o = run(thin(['#######', '#.iite#', '#######']), 'forward forward');
+    expect(o).toMatchObject({ status: 'cleared', steps: 2 });
+    const w = run(thin(['######', '#tt.e#', '######'], { bot: { x: 1, y: 1, facing: 'east' } }), 'forward turn_left turn_left forward');
+    expect(w.status).toBe('crashed');
+  });
+});

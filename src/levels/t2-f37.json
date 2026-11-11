@@ -1,0 +1,61 @@
+{
+  "id": "t2-f37",
+  "title": "Northern Lights",
+  "band": "aurora",
+  "size": {
+    "w": 8,
+    "h": 8
+  },
+  "tiles": [
+    "########",
+    "########",
+    "rtr##rt.",
+    "t#t##t##",
+    "t#t##t##",
+    "t#t##t##",
+    "e#t##t##",
+    "##bttb##"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 7,
+    "y": 2,
+    "facing": "west"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "while",
+    "if"
+  ],
+  "slots": {
+    "main": 8
+  },
+  "par": {
+    "commands": 6,
+    "steps": 26
+  },
+  "reference": "repeat 6 { while not wall_ahead { forward } if tile_is r { turn_left } else { turn_right } }",
+  "hints": [
+    "Corridors of different lengths, and a signal pad at every corner.",
+    "Two questions: is there a wall ahead (keep walking until there is), and which colour am I on (turn that way).",
+    "repeat 6 { while not wall_ahead { forward } if tile_is r { turn_left } else { turn_right } }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "sensors": [
+    "tile_is"
+  ]
+}

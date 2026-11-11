@@ -1,0 +1,56 @@
+{
+  "id": "t2-f20",
+  "title": "Glacier Heart",
+  "band": "glacier",
+  "size": {
+    "w": 8,
+    "h": 8
+  },
+  "tiles": [
+    "########",
+    "#.iii#s#",
+    "#tit#.i#",
+    "#.et#.##",
+    "#i.ii.i#",
+    "#..tiis#",
+    "#.i.iti#",
+    "########"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 3,
+    "facing": "north"
+  },
+  "goals": [
+    "all_switches_on",
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate"
+  ],
+  "slots": {
+    "main": 34
+  },
+  "par": {
+    "commands": 32,
+    "steps": 32
+  },
+  "reference": "turn_left turn_left forward turn_left forward forward forward turn_left activate forward turn_left forward turn_right forward forward turn_right forward turn_left forward turn_left turn_left activate forward turn_right forward turn_left forward forward turn_right forward turn_right forward",
+  "hints": [
+    "Two switches, far apart, and the exit right next to where you start. The ice will not let you take the short way.",
+    "Down and right to the lower switch first, then up the right side to the top one, then slide home.",
+    "turn_left turn_left forward turn_left forward forward forward turn_left activate forward turn_left forward turn_right forward forward turn_right forward turn_left forward turn_left turn_left activate forward turn_right forward turn_left forward forward turn_right forward turn_right forward"
+  ],
+  "story": {
+    "intro": "VANTA: \"You crack my ice, I crack your circuits. Keep coming, little bot.\"",
+    "outro": "PATCH: \"The heart of the glacier, and you walked right out of it. VANTA's running out of ice.\""
+  }
+}

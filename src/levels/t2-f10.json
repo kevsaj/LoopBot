@@ -1,0 +1,61 @@
+{
+  "id": "t2-f10",
+  "title": "The Frozen Gate",
+  "band": "frostgate",
+  "size": {
+    "w": 8,
+    "h": 8
+  },
+  "tiles": [
+    "########",
+    "#iiiiii#",
+    "#i#d##i#",
+    "#i#e##i#",
+    "#i####s#",
+    "#i####i#",
+    "#.iiiii#",
+    "########"
+  ],
+  "boxes": [
+    {
+      "x": 6,
+      "y": 6,
+      "count": 1
+    }
+  ],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 6,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate"
+  ],
+  "slots": {
+    "main": 22
+  },
+  "par": {
+    "commands": 20,
+    "steps": 20
+  },
+  "reference": "forward pick_up forward turn_left forward activate forward turn_left forward turn_left turn_left drop jump jump turn_left turn_left forward turn_left forward forward",
+  "hints": [
+    "The door opens from the switch on the right. The slide along the top will not stop at the door by itself.",
+    "A crate on the ice makes a stop. Bring the corner crate to the right spot, flip the switch, and come around again. You can jump over a crate, too.",
+    "forward pick_up forward turn_left forward activate forward turn_left forward turn_left turn_left drop jump jump turn_left turn_left forward turn_left forward forward"
+  ],
+  "story": {
+    "intro": "VANTA: \"Another bot? Cute. The gate is frozen shut, little toaster. Enjoy the cold.\"",
+    "outro": "PATCH: \"Through the gate! VANTA's heading up. So are we.\""
+  }
+}

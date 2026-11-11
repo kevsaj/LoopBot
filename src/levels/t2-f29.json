@@ -1,0 +1,85 @@
+{
+  "id": "t2-f29",
+  "title": "Cold Storage",
+  "band": "signal",
+  "size": {
+    "w": 8,
+    "h": 3
+  },
+  "tiles": [
+    "##.##.#.",
+    ".i.ii.i.",
+    "##.##.#."
+  ],
+  "boxes": [
+    {
+      "x": 2,
+      "y": 0,
+      "count": 1
+    },
+    {
+      "x": 5,
+      "y": 0,
+      "count": 1
+    },
+    {
+      "x": 7,
+      "y": 0,
+      "count": 1
+    }
+  ],
+  "targets": [
+    {
+      "x": 2,
+      "y": 2,
+      "count": 1
+    },
+    {
+      "x": 5,
+      "y": 2,
+      "count": 1
+    },
+    {
+      "x": 7,
+      "y": 2,
+      "count": 1
+    }
+  ],
+  "bot": {
+    "x": 0,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "all_targets_filled"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "F1"
+  ],
+  "slots": {
+    "main": 3,
+    "F1": 8
+  },
+  "par": {
+    "commands": 9,
+    "steps": 20
+  },
+  "reference": "repeat 3 { F1 } def F1 { forward turn_left pick_up turn_left turn_left drop turn_left }",
+  "hints": [
+    "Three crates, three pads, and ice between the bays. Each bay is the same job.",
+    "F1: slide to the next bay, turn, pick up the crate, turn around, drop it on the pad, turn back. Repeat F1.",
+    "repeat 3 { F1 } def F1 { forward turn_left pick_up turn_left turn_left drop turn_left }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

@@ -12,9 +12,16 @@ import { fx } from './audio/feedback';
 import { DEMO } from './demo';
 import { DailyButton } from './daily/DailyButton';
 import type { DailyState } from './daily';
+import type { Tower } from './levels/towers';
+import { PLUS_VISIBLE, STORE_AVAILABLE, plusUnlocked } from './store/purchases';
+import { PlusSheet } from './store/PlusSheet';
 
 interface Props {
   levels: LevelFile[];
+  /** The tower shown, its number, and every tower for the switcher. */
+  tower: number;
+  towers: Tower[];
+  onTowerPick(n: number): void;
   progress: Progress;
   current: number;
   onPick(index: number): void;
@@ -28,14 +35,53 @@ interface Props {
 
 const SEEN_KEY = 'loopbot.seenUnlocked';
 
-/** Display names for the five bands of Tower 1 (doc: Bands table). */
+/** Display names for the bands of each tower (doc: Bands table). */
 const BAND_NAMES: Record<string, string> = {
   lobby: 'The Lobby',
   maintenance: 'Maintenance',
   workshop: 'Workshop',
   control: 'Control Room',
   rooftop: 'Rooftop',
+  frostgate: 'The Frost Gate',
+  glacier: 'Glacier Yard',
+  signal: 'Signal Hut',
+  aurora: 'Aurora Lab',
+  summit: 'The Summit',
 };
+
+/** The towers row: the one you're in, and the others to switch to. Plus towers show a lock until owned. */
+function TowerSwitch({ tower, towers, onPick, onLocked }: { tower: number; towers: Tower[]; onPick(n: number): void; onLocked(t: Tower): void }) {
+  // A Plus tower only shows once Plus is on sale, or while previewing it.
+  const shown = towers.filter((t) => !t.plus || PLUS_VISIBLE || plusUnlocked());
+  if (shown.length < 2) return null;
+  return (
+    <nav className="tower-switch" aria-label="Towers">
+      {shown.map((t) => {
+        const locked = t.plus && !plusUnlocked();
+        return (
+          <button
+            key={t.n}
+            type="button"
+            className={`tower-tab${t.n === tower ? ' on' : ''}${locked ? ' locked' : ''} tower-tab-${t.n}`}
+            aria-current={t.n === tower ? 'page' : undefined}
+            onClick={() => {
+              if (t.n === tower) return;
+              if (locked) return onLocked(t);
+              fx.tap();
+              onPick(t.n);
+            }}
+          >
+            <span className="tt-num">Tower {t.n}</span>
+            <span className="tt-name">
+              {t.name}
+              {locked && ' 🔒'}
+            </span>
+          </button>
+        );
+      })}
+    </nav>
+  );
+}
 
 /** Splits the floors into their bands, in play order. */
 function bandsOf(levels: LevelFile[]) {
@@ -50,9 +96,11 @@ function bandsOf(levels: LevelFile[]) {
   return bands;
 }
 
-function readSeen(): number {
+const seenKey = (tower: number) => (tower === 1 ? SEEN_KEY : `${SEEN_KEY}.t${tower}`);
+
+function readSeen(tower: number): number {
   try {
-    const n = Number(localStorage.getItem(SEEN_KEY));
+    const n = Number(localStorage.getItem(seenKey(tower)));
     return Number.isFinite(n) ? n : 0;
   } catch {
     return 0;
@@ -75,7 +123,7 @@ export function MiniBot() {
   );
 }
 
-export function TowerMap({ levels, progress, current, onPick, onSettings, onHome, daily, onDaily, onLocker, lockerNew }: Props) {
+export function TowerMap({ levels, tower, towers, onTowerPick, progress, current, onPick, onSettings, onHome, daily, onDaily, onLocker, lockerNew }: Props) {
   const ids = levels.map((l) => l.id);
   const totalStars = ids.reduce((n, id) => n + (progress.stars[id] ?? 0), 0);
   const cleared = ids.filter((id) => (progress.stars[id] ?? 0) > 0).length;
@@ -85,7 +133,7 @@ export function TowerMap({ levels, progress, current, onPick, onSettings, onHome
   const target = firstOpen === -1 ? current : firstOpen;
 
   // Floors opened since the last visit get an unlock animation, once.
-  const [seen] = useState(readSeen);
+  const [seen] = useState(() => readSeen(tower));
   const fresh = (i: number) => i >= Math.max(1, seen) && i < unlockedCount && seen > 0;
   const [shaking, setShaking] = useState<number | null>(null);
   const [note, setNote] = useState<string | null>(null);
@@ -98,7 +146,7 @@ export function TowerMap({ levels, progress, current, onPick, onSettings, onHome
   useEffect(() => {
     currentRef.current?.scrollIntoView({ block: 'center' });
     try {
-      localStorage.setItem(SEEN_KEY, String(unlockedCount));
+      localStorage.setItem(seenKey(tower), String(unlockedCount));
     } catch {
       /* ignore */
     }
@@ -108,6 +156,16 @@ export function TowerMap({ levels, progress, current, onPick, onSettings, onHome
     }
     // Runs once when the map opens.
   }, []);
+
+  const [plusSheet, setPlusSheet] = useState(false);
+  const lockedTower = (t: Tower) => {
+    fx.denied();
+    if (PLUS_VISIBLE && STORE_AVAILABLE) return setPlusSheet(true);
+    setNote(`${t.city} comes with LoopBot Plus.`);
+    window.clearTimeout(noteTimer.current);
+    noteTimer.current = window.setTimeout(() => setNote(null), 2200);
+  };
+  const name = towers.find((t) => t.n === tower)?.name ?? 'Meridian Spire';
 
   const lockedTap = (i: number) => {
     fx.denied();
@@ -119,13 +177,13 @@ export function TowerMap({ levels, progress, current, onPick, onSettings, onHome
   };
 
   return (
-    <div className="tower" role="main">
+    <div className={`tower tower-${tower}`} role="main">
       <header className="topbar">
         <div className="floor-title">
-          <button type="button" className="back-btn" onClick={() => (fx.tap(), onHome())} aria-label="Tower 1: back to the title screen">
-            ‹ Tower 1
+          <button type="button" className="back-btn" onClick={() => (fx.tap(), onHome())} aria-label={`Tower ${tower}: back to the title screen`}>
+            ‹ Tower {tower}
           </button>
-          <h1 className="floor-name">Meridian Spire</h1>
+          <h1 className="floor-name">{name}</h1>
         </div>
         <div className="tower-stars" aria-label={`${totalStars} of ${ids.length * 3} stars`}>
           ★ {totalStars} / {ids.length * 3}
@@ -145,6 +203,7 @@ export function TowerMap({ levels, progress, current, onPick, onSettings, onHome
           {cleared} / {ids.length} floors
         </span>
       </div>
+      <TowerSwitch tower={tower} towers={towers} onPick={onTowerPick} onLocked={lockedTower} />
       {!DEMO && <DailyButton className="tower-daily" progress={progress} daily={daily} onOpen={onDaily} />}
       <div className="tower-scroll">
         <div className="tower-roof" aria-hidden="true">
@@ -217,7 +276,7 @@ export function TowerMap({ levels, progress, current, onPick, onSettings, onHome
               </ol>
             </section>
           ))}
-        <div className="tower-ground">Sub-basement</div>
+        <div className="tower-ground">{tower === 2 ? 'Ice cellar' : 'Sub-basement'}</div>
       </div>
       <div className="tower-footer">
         {note ? (
@@ -230,6 +289,7 @@ export function TowerMap({ levels, progress, current, onPick, onSettings, onHome
           </button>
         )}
       </div>
+      {plusSheet && <PlusSheet onClose={() => setPlusSheet(false)} />}
     </div>
   );
 }

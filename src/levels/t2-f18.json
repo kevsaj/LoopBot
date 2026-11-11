@@ -1,0 +1,55 @@
+{
+  "id": "t2-f18",
+  "title": "Brittle Yard",
+  "band": "glacier",
+  "size": {
+    "w": 8,
+    "h": 7
+  },
+  "tiles": [
+    "########",
+    "#.ii.tt#",
+    "#it.iei#",
+    "#ti.#ii#",
+    "#.##st.#",
+    "#i.iiit#",
+    "########"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 4,
+    "facing": "west"
+  },
+  "goals": [
+    "all_switches_on",
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate"
+  ],
+  "slots": {
+    "main": 26
+  },
+  "par": {
+    "commands": 22,
+    "steps": 22
+  },
+  "reference": "turn_right forward forward turn_right forward forward forward turn_right forward turn_right forward forward turn_left activate forward turn_left forward turn_left forward forward turn_left forward",
+  "hints": [
+    "The exit is in the middle, the switch is in the corner, and the yard is cracking.",
+    "Go up and around the top, then down the right side to the switch, and slide back in.",
+    "turn_right forward forward turn_right forward forward forward turn_right forward turn_right forward forward turn_left activate forward turn_left forward turn_left forward forward turn_left forward"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

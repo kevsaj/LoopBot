@@ -104,6 +104,71 @@ const BANDS: Record<string, Partial<typeof C>> = {
     edge: 0x0c0e14,
     void: 0x070912,
   },
+  // Tower 2, Frostline (the Northstar Needle). Frost Gate: packed snow between pale stone walls.
+  frostgate: {
+    floorTop: 0xe9eef4,
+    floorL: 0xbcc8d6,
+    floorR: 0x9daabb,
+    floorEdge: 0xffffff,
+    wallTop: 0x7d8fa8,
+    wallL: 0x5f6f87,
+    wallR: 0x4b5a70,
+    wallCap: 0xa9bbd3,
+    edge: 0x26303f,
+    void: 0x1a2232,
+  },
+  // Glacier Yard: blue-white glacier ice and deep crevasse-blue walls.
+  glacier: {
+    floorTop: 0xd3e6f2,
+    floorL: 0x9fbdd2,
+    floorR: 0x7f9fb7,
+    floorEdge: 0xf2fbff,
+    wallTop: 0x3f6f99,
+    wallL: 0x2d5578,
+    wallR: 0x22435f,
+    wallCap: 0x6d9cc6,
+    edge: 0x0f2233,
+    void: 0x0a1726,
+  },
+  // Signal Hut: warm pine boards and red-painted timber, a lit hut in the snow.
+  signal: {
+    floorTop: 0xd8b98e,
+    floorL: 0xa98a63,
+    floorR: 0x8a6e4c,
+    floorEdge: 0xf1dcb8,
+    wallTop: 0x6e3b33,
+    wallL: 0x552d27,
+    wallR: 0x43231f,
+    wallCap: 0xd9dee6,
+    edge: 0x2b1512,
+    void: 0x1e1a24,
+  },
+  // Aurora Lab: frosted glass floor under green and violet sky light.
+  aurora: {
+    floorTop: 0xbfe3d6,
+    floorL: 0x8bb8aa,
+    floorR: 0x6f998c,
+    floorEdge: 0xe4fff4,
+    wallTop: 0x4a3f7a,
+    wallL: 0x37305e,
+    wallR: 0x2a2549,
+    wallCap: 0x7ef0b8,
+    edge: 0x120f24,
+    void: 0x0b0a1c,
+  },
+  // Summit: wind-scoured snow and dark rock, the beacon glowing gold.
+  summit: {
+    floorTop: 0xf3f6fa,
+    floorL: 0xc3cddb,
+    floorR: 0xa1aec0,
+    floorEdge: 0xffffff,
+    wallTop: 0x39404f,
+    wallL: 0x2a303c,
+    wallR: 0x1f242e,
+    wallCap: 0x5a6377,
+    edge: 0x0b0e14,
+    void: 0x060810,
+  },
 };
 
 /** Switches the board to a band's palette. Call before the board draws a floor. */
@@ -133,7 +198,7 @@ type Grid = { rx: number; ry: number };
 
 /** Everything drawStatic reads that can change during a run: crates, switches and doors. */
 function staticKey(w: World): string {
-  return `${w.boxes.map((r) => r.join('')).join('/')}|${Object.values(w.switches).join()}|${Object.values(w.doors).join()}`;
+  return `${w.boxes.map((r) => r.join('')).join('/')}|${Object.values(w.switches).join()}|${Object.values(w.doors).join()}|${Object.values(w.cracked ?? {}).join()}`;
 }
 
 /** How LoopBot's eye looks right now. */
@@ -387,7 +452,28 @@ export class BoardScene extends Phaser.Scene {
             ],
             true,
           );
-          if (t.type === 'ice') {
+          if (t.type === 'thin' && w.cracked?.[key(x, y)]) {
+            // thin ice that LoopBot already crossed: broken through to dark water, with floating shards
+            this.diamond(g, sx, sy, 0x1d3d5c, 0.9, 0.95);
+            this.diamond(g, sx, sy, 0x0e2640, 0.6, 0.65);
+            g.fillStyle(0xd6f2ff, 0.85);
+            g.fillTriangle(sx - TW * 0.26, sy - TH * 0.02, sx - TW * 0.12, sy - TH * 0.16, sx - TW * 0.08, sy + TH * 0.06);
+            g.fillTriangle(sx + TW * 0.1, sy + TH * 0.06, sx + TW * 0.26, sy - TH * 0.04, sx + TW * 0.2, sy + TH * 0.16);
+            g.fillTriangle(sx - TW * 0.02, sy - TH * 0.26, sx + TW * 0.1, sy - TH * 0.2, sx + TW * 0.02, sy - TH * 0.1);
+          } else if (t.type === 'thin') {
+            // thin ice: a paler, see-through sheet with hairline cracks, so it reads as fragile
+            this.diamond(g, sx, sy, 0xe8f7ff, 0.9, 0.7);
+            this.diamond(g, sx, sy, 0x9fd0ee, 0.5, 0.35);
+            g.lineStyle(1.2, 0x5f9cc4, 0.8);
+            g.beginPath();
+            g.moveTo(sx - TW * 0.28, sy + TH * 0.02);
+            g.lineTo(sx - TW * 0.08, sy - TH * 0.04);
+            g.lineTo(sx + TW * 0.04, sy + TH * 0.12);
+            g.lineTo(sx + TW * 0.22, sy + TH * 0.06);
+            g.moveTo(sx - TW * 0.08, sy - TH * 0.04);
+            g.lineTo(sx + TW * 0.02, sy - TH * 0.24);
+            g.strokePath();
+          } else if (t.type === 'ice') {
             // Frostline ice: a glassy pale-blue sheet with two bright streaks of glare
             this.diamond(g, sx, sy, 0xd6f2ff, 0.9, 0.95);
             this.diamond(g, sx, sy, 0xb7e3fb, 0.55, 0.6);

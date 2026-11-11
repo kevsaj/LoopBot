@@ -8,7 +8,7 @@ import { InAppReview } from '@capacitor-community/in-app-review';
 
 const KEY = 'loopbot.reviewAsked';
 const GAP_DAYS = 120;
-const BAND_ENDS = new Set(['t1-f10', 't1-f20', 't1-f30', 't1-f40', 't1-f50']);
+const BAND_ENDS = new Set(['t1-f10', 't1-f20', 't1-f30', 't1-f40', 't1-f50', 't2-f10', 't2-f20', 't2-f30', 't2-f40', 't2-f50']);
 
 export function shouldAskForReview(floorId: string, stars: number, lastAsked: number | null, now: number): boolean {
   if (!BAND_ENDS.has(floorId) || stars < 2) return false;

@@ -1,0 +1,64 @@
+{
+  "id": "t2-f49",
+  "title": "Avalanche Run",
+  "band": "summit",
+  "size": {
+    "w": 8,
+    "h": 8
+  },
+  "tiles": [
+    "########",
+    "bttstb##",
+    "t####t##",
+    "t####t##",
+    ".#rstb##",
+    "##t#####",
+    "##t#####",
+    "##rttste"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 4,
+    "facing": "north"
+  },
+  "goals": [
+    "all_switches_on",
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "while",
+    "if"
+  ],
+  "slots": {
+    "main": 10
+  },
+  "par": {
+    "commands": 8,
+    "steps": 30
+  },
+  "reference": "repeat 6 { while not wall_ahead { forward if on_switch { activate } } if tile_is r { turn_left } else { turn_right } }",
+  "hints": [
+    "The last run before the peak. Corridors, switches and signal pads, all on thin ice.",
+    "Walk each corridor until a wall, flipping switches as you pass. At the corner, red turns left and blue turns right. Repeat.",
+    "repeat 6 { while not wall_ahead { forward if on_switch { activate } } if tile_is r { turn_left } else { turn_right } }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "sensors": [
+    "on_switch",
+    "tile_is"
+  ],
+  "typing": true
+}

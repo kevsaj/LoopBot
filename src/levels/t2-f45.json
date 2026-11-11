@@ -1,0 +1,63 @@
+{
+  "id": "t2-f45",
+  "title": "Bug Hunt: Three Bugs",
+  "band": "summit",
+  "size": {
+    "w": 8,
+    "h": 8
+  },
+  "tiles": [
+    "########",
+    "#ettttr#",
+    "######t#",
+    "btttb#t#",
+    "t###t#t#",
+    "t###rtr#",
+    "t#######",
+    "btt.####"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 3,
+    "y": 7,
+    "facing": "west"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "while",
+    "if"
+  ],
+  "slots": {
+    "main": 8
+  },
+  "par": {
+    "commands": 6,
+    "steps": 30
+  },
+  "reference": "repeat 7 { while not wall_ahead { forward } if tile_is r { turn_left } else { turn_right } }",
+  "hints": [
+    "Three different bugs this time. Find one, run it, then look for the next.",
+    "Check how many times it repeats, what the while block asks, and which colour turns which way.",
+    "repeat 7 { while not wall_ahead { forward } if tile_is r { turn_left } else { turn_right } }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "sensors": [
+    "tile_is"
+  ],
+  "typing": true,
+  "starter": "repeat 5 { while wall_ahead { forward } if tile_is b { turn_left } else { turn_right } }"
+}

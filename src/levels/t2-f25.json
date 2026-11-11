@@ -1,0 +1,59 @@
+{
+  "id": "t2-f25",
+  "title": "Two Routines",
+  "band": "signal",
+  "size": {
+    "w": 8,
+    "h": 8
+  },
+  "tiles": [
+    "########",
+    "#siisis#",
+    "#i####i#",
+    "#s####i#",
+    "#i####s#",
+    "#i####i#",
+    "#sisiis#",
+    "########"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 6,
+    "facing": "north"
+  },
+  "goals": [
+    "all_switches_on"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "F1",
+    "F2"
+  ],
+  "slots": {
+    "main": 4,
+    "F1": 3,
+    "F2": 3
+  },
+  "par": {
+    "commands": 9,
+    "steps": 18
+  },
+  "reference": "F2 F2 F2 F2 def F1 { activate forward } def F2 { F1 F1 turn_right }",
+  "hints": [
+    "Two switches on every side. A routine can call another routine.",
+    "F1 flips a switch and slides to the next. F2 does F1 twice and turns the corner. Main calls F2.",
+    "F2 F2 F2 F2 def F1 { activate forward } def F2 { F1 F1 turn_right }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

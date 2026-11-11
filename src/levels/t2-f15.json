@@ -1,0 +1,63 @@
+{
+  "id": "t2-f15",
+  "title": "Crate Crossing",
+  "band": "glacier",
+  "size": {
+    "w": 7,
+    "h": 6
+  },
+  "tiles": [
+    "#######",
+    "#.t_tt#",
+    "#tttt_#",
+    "#_tt_t#",
+    "#tt.tt#",
+    "#######"
+  ],
+  "boxes": [
+    {
+      "x": 3,
+      "y": 4,
+      "count": 1
+    }
+  ],
+  "targets": [
+    {
+      "x": 5,
+      "y": 1,
+      "count": 1
+    }
+  ],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "south"
+  },
+  "goals": [
+    "all_targets_filled"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "pick_up",
+    "drop"
+  ],
+  "slots": {
+    "main": 24
+  },
+  "par": {
+    "commands": 18,
+    "steps": 18
+  },
+  "reference": "forward turn_left forward turn_right forward forward turn_left pick_up forward turn_left forward forward turn_right forward turn_left forward turn_right drop",
+  "hints": [
+    "One crate, one pad, holes in the ice, and every thin tile only holds you once.",
+    "Find a route to the crate and then to the pad that never steps on the same tile twice.",
+    "forward turn_left forward turn_right forward forward turn_left pick_up forward turn_left forward forward turn_right forward turn_left forward turn_right drop"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}
