@@ -197,6 +197,17 @@ export class BoardScene extends Phaser.Scene {
     if (this.pending) this.show(this.pending);
   }
 
+  /** A picture of the board as it is now, for the share image. Transparent where the sky is. */
+  snapshot(): Promise<HTMLImageElement | null> {
+    return new Promise((resolve) => {
+      try {
+        this.game.renderer.snapshot((img) => resolve(img instanceof HTMLImageElement ? img : null));
+      } catch {
+        resolve(null);
+      }
+    });
+  }
+
   /** Rotate the view 90 degrees (the board turns in 90-degree steps only). */
   rotate() {
     this.rot = (this.rot + 1) % 4;
@@ -293,6 +304,23 @@ export class BoardScene extends Phaser.Scene {
   }
 
   /** A thin light line along the two front top edges, which gives tiles a crisp bevel. */
+  /**
+   * A shape on each coloured tile, so the colours can be told apart without seeing colour:
+   * red a circle, green a triangle, blue a square, yellow a plus (matches COLOUR_GLYPH).
+   */
+  private colourMark(g: Phaser.GameObjects.Graphics, sx: number, sy: number, colour: string) {
+    const s = TW * 0.095;
+    const k = TH / TW; // flatten onto the floor like the tile itself
+    g.fillStyle(0x1b1c2b, 0.72);
+    if (colour === 'r') g.fillEllipse(sx, sy, s * 2.1, s * 2.1 * k);
+    else if (colour === 'g') g.fillTriangle(sx, sy - s * 1.15 * k, sx + s * 1.15, sy + s * 0.75 * k, sx - s * 1.15, sy + s * 0.75 * k);
+    else if (colour === 'b') g.fillRect(sx - s * 0.9, sy - s * 0.9 * k, s * 1.8, s * 1.8 * k);
+    else if (colour === 'y') {
+      g.fillRect(sx - s * 1.1, sy - s * 0.32 * k, s * 2.2, s * 0.64 * k);
+      g.fillRect(sx - s * 0.32, sy - s * 1.1 * k, s * 0.64, s * 2.2 * k);
+    }
+  }
+
   private rim(g: Phaser.GameObjects.Graphics, sx: number, sy: number, color: number, scale = 1) {
     const hw = (TW / 2) * scale;
     const hh = (TH / 2) * scale;
@@ -407,6 +435,7 @@ export class BoardScene extends Phaser.Scene {
           if (t.colour) {
             const col = { r: 0xe0605a, g: 0x6cc56c, b: 0x5b8ee6, y: 0xf2d24e }[t.colour];
             this.diamond(g, sx, sy, col, 0.55, 0.85);
+            this.colourMark(g, sx, sy, t.colour);
           }
         }
         // targets: a yellow square-in-diamond outline (shape as well as colour, ED-16)

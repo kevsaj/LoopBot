@@ -2,7 +2,7 @@
 // 3 stars fire confetti and a fanfare, 2 stars get a small sparkle, 1 star stays calm.
 
 import { useEffect, useRef, useState } from 'react';
-import { shareText } from '../share';
+import { shareText, type ShareResult } from '../share';
 import { DEFAULT_HOUR, declineReminder, hourLabel, loadReminder, remindersAvailable, setReminder } from '../reminder';
 import { fx } from '../audio/feedback';
 import { burst, reducedMotion, stop } from '../fx/confetti';
@@ -25,12 +25,14 @@ interface Props {
   onTower(): void;
   /** The daily challenge: shows the streak and a share button instead of "Next floor". */
   daily?: { date: string; streak: number; froze?: boolean; share: string };
+  /** Tower floors: share a picture of the solved board and program. */
+  onShareImage?(): Promise<ShareResult>;
 }
 
 const STAR_MS = 420;
 const HEADLINE = ['', 'Floor cleared', 'Nice work!', 'Perfect run!'];
 
-export function ResultsCard({ floorNumber, floorCount, earned, prevBest, commands, steps, par, outro, onClose, onRetry, onNext, onTower, daily }: Props) {
+export function ResultsCard({ floorNumber, floorCount, earned, prevBest, commands, steps, par, outro, onClose, onRetry, onNext, onTower, daily, onShareImage }: Props) {
   const calm = reducedMotion();
   const [shown, setShown] = useState(calm ? 3 : 0);
   const starsRef = useRef<HTMLDivElement>(null);
@@ -76,11 +78,15 @@ export function ResultsCard({ floorNumber, floorCount, earned, prevBest, command
 
   const best = earned > prevBest && prevBest > 0;
   const [shared, setShared] = useState<string | null>(null);
+  const [sharing, setSharing] = useState(false);
   const share = async () => {
-    if (!daily) return;
+    if (sharing) return;
     fx.tap();
-    const r = await shareText(daily.share);
+    setSharing(true);
+    const r = daily ? await shareText(daily.share) : onShareImage ? await onShareImage() : 'failed';
+    setSharing(false);
     if (r === 'copied') setShared('Copied! Paste it anywhere.');
+    else if (r === 'saved') setShared('Picture saved. Post it anywhere.');
     else if (r === 'failed') setShared("Couldn't share from here.");
   };
   // After the first daily clear, offer the reminder once (phones only).
@@ -146,6 +152,7 @@ export function ResultsCard({ floorNumber, floorCount, earned, prevBest, command
         </table>
         {tip && <p className="tip">{tip}</p>}
         {outro && <p className="story">{outro}</p>}
+        {!daily && shared && <p className="tip">{shared}</p>}
         {daily && <p className="tip">{shared ?? reminderNote ?? 'Same puzzle for everyone today. A new one arrives at midnight.'}</p>}
         {askReminder && shown >= 3 && (
           <div className="reminder-ask">
@@ -178,24 +185,35 @@ export function ResultsCard({ floorNumber, floorCount, earned, prevBest, command
           </button>
           {daily ? (
             <>
-              <button type="button" className="pill" onClick={share}>
-                Share
-              </button>
+              <ShareButton busy={sharing} onClick={share} />
               <button type="button" className={`pill primary${shown >= 3 ? ' nudge' : ''}`} onClick={() => (fx.tap(), onTower())}>
                 Done
               </button>
             </>
-          ) : floorNumber === floorCount ? (
-            <button type="button" className="pill primary" onClick={() => (fx.tap(), onTower())}>
-              Tower
-            </button>
           ) : (
-            <button type="button" className={`pill primary${shown >= 3 ? ' nudge' : ''}`} onClick={() => (fx.tap(), onNext())}>
-              Next floor →
-            </button>
+            <>
+              {onShareImage && <ShareButton busy={sharing} onClick={share} />}
+              {floorNumber === floorCount ? (
+                <button type="button" className="pill primary" onClick={() => (fx.tap(), onTower())}>
+                  Tower
+                </button>
+              ) : (
+                <button type="button" className={`pill primary${shown >= 3 ? ' nudge' : ''}`} onClick={() => (fx.tap(), onNext())}>
+                  Next floor →
+                </button>
+              )}
+            </>
           )}
         </div>
       </div>
     </div>
+  );
+}
+
+function ShareButton({ busy, onClick }: { busy: boolean; onClick(): void }) {
+  return (
+    <button type="button" className="pill" onClick={onClick} disabled={busy} aria-busy={busy}>
+      Share
+    </button>
   );
 }

@@ -82,6 +82,7 @@ export function TitleScreen({ levels, progress, booted, onBooted, onPlay, onTowe
 
   return (
     <div
+      role="main"
       className={`title-screen${settled ? ' settled' : ''}`}
       onPointerDown={() => {
         if (!settled) setSettled(true);
