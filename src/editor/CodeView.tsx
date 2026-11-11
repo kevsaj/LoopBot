@@ -81,6 +81,11 @@ export function CodeEditor({ program, routines, level, onApply, onError, onClose
           rows={Math.max(6, lines)}
           aria-label="Type your program as code"
           aria-invalid={!!error}
+          // The phone keyboard covers the bottom half: keep the box in view above it.
+          onFocus={(e) => {
+            const t = e.currentTarget;
+            window.setTimeout(() => t.scrollIntoView({ block: 'nearest' }), 300);
+          }}
           onChange={(e) => (setText(e.target.value), setError(null))}
           onKeyDown={(e) => {
             if (e.key === 'Tab') {
