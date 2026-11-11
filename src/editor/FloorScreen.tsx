@@ -7,7 +7,7 @@ import { Runner } from '../sim/interpreter';
 import type { Outcome } from '../sim/interpreter';
 import { createWorld } from '../sim/world';
 import type { Spot } from '../sim/program';
-import { MAX_DEPTH, canPlace, countBlocks, countCommands, findBlock, listAt, makeBlock, spotOf } from '../sim/program';
+import { MAX_DEPTH, canPlace, countBlocks, countCommands, findBlock, listAt, makeBlock, spotOf, toCode } from '../sim/program';
 import type { Block } from '../sim/types';
 import { useEditor } from './useEditor';
 import { ProgramList } from './ProgramList';
@@ -15,7 +15,9 @@ import { EditorDnd, PaletteChip } from './dnd';
 import { CodeEditor, CodeView } from './CodeView';
 import { Terminal } from './Terminal';
 import { COMMAND_META, CONTROL_ORDER, PALETTE_ORDER, blockCommand } from './commands';
-import { Board } from '../board/Board';
+import { Board, snapshotBoard } from '../board/Board';
+import { shareImage } from '../share';
+import { canvasToBlob, drawShareCard } from '../shareImage';
 import type { BoardUpdate } from '../board/BoardScene';
 import { fx } from '../audio/feedback';
 import { SettingsSheet } from '../SettingsSheet';
@@ -428,22 +430,22 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
     (tut === 'tap' && cmd === 'forward') || (tut === 'turn' && (cmd === 'turn_left' || cmd === 'turn_right'));
 
   return (
-    <div className="floor">
+    <main className="floor">
       <header className="topbar">
         <div className="floor-title">
           {daily ? (
-            <button type="button" className="back-btn" onClick={() => (fx.tap(), onTower())} aria-label="Back">
+            <button type="button" className="back-btn" onClick={() => (fx.tap(), onTower())} aria-label={`Daily · ${shortDate(daily.date)}: back`}>
               ‹ Daily · {shortDate(daily.date)}
             </button>
           ) : (
-            <button type="button" className="back-btn" onClick={() => (fx.tap(), onTower())} aria-label="Back to the tower map">
+            <button type="button" className="back-btn" onClick={() => (fx.tap(), onTower())} aria-label={`Tower · Floor ${floorNumber}: back to the tower map`}>
               ‹ Tower · Floor {floorNumber}
             </button>
           )}
-          <span className="floor-name">
+          <h1 className="floor-name">
             {level.title}
             {daily && <span className={`daily-diff diff-${difficultyOn(daily.date)}`}>{DIFFICULTY_LABEL[difficultyOn(daily.date)]}</span>}
-          </span>
+          </h1>
         </div>
         {level.hints.length > 0 && (
           <button type="button" className="hint-btn" onClick={() => (fx.tap(), setSheet('hints'))} aria-label={`Hint, ${progress.hints} left`}>
@@ -471,7 +473,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
           </span>
           <span>step {steps}</span>
         </div>
-        <button type="button" className="rotate-btn" onClick={() => (fx.tap(), setRotateSignal((n) => n + 1))} aria-label="Turn the board 90 degrees">
+        <button type="button" className="rotate-btn" onClick={() => (fx.tap(), setRotateSignal((n) => n + 1))} aria-label="Turn 90: turn the board a quarter turn">
           ⟲ Turn 90
         </button>
         <Terminal text={terminal} status={status} />
@@ -494,12 +496,14 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
           </button>
         </div>
 
-        <div className="tabs" role="tablist">
+        <div className="tabs">
+          <div className="tab-list" role="tablist" aria-label="Program">
           {routines.map((r) => (
             <button key={r} type="button" role="tab" aria-selected={tab === r} className={`tab${tab === r ? ' on' : ''}`} onClick={() => (fx.tap(), setShowCode(false), setTyping(0), setRoutine(r))}>
               {r === 'main' ? 'Main' : r}
             </button>
           ))}
+          </div>
           <span className="tab-gap" />
           <button type="button" className="tab-tool" onClick={undo} disabled={!editor.state.past.length} aria-label="Undo">
             ↶
@@ -510,8 +514,8 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
           <button type="button" className={`tab-tool clear${confirmClear ? ' confirm' : ''}`} onClick={clear} disabled={total === 0 && !confirmClear}>
             {confirmClear ? 'Clear all?' : 'Clear'}
           </button>
-          <button type="button" role="tab" aria-selected={tab === 'code'} className={`tab${tab === 'code' ? ' on' : ''}`} onClick={() => (fx.tap(), setTyping(0), setShowCode((v) => !v))}
-            aria-label={showCode ? 'Code (tap again to go back to the program)' : 'Code'}>
+          <button type="button" aria-pressed={tab === 'code'} className={`tab${tab === 'code' ? ' on' : ''}`} onClick={() => (fx.tap(), setTyping(0), setShowCode((v) => !v))}
+            aria-label={showCode ? 'Code, showing. Tap again to go back to the program' : 'Code'}>
             Code
           </button>
         </div>
@@ -644,6 +648,26 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
           onRetry={reset}
           onNext={() => onGo(floorNumber)}
           onTower={onTower}
+          onShareImage={
+            daily
+              ? undefined
+              : async () => {
+                  const card = drawShareCard({
+                    title: `Floor ${floorNumber} · ${level.title}`,
+                    subtitle: 'Tower 1 · Meridian Spire',
+                    stars: earned,
+                    band: level.band,
+                    board: await snapshotBoard(),
+                    code: toCode(program, routines),
+                    commands: total,
+                    steps: outcome.steps,
+                    par: level.par,
+                  });
+                  const png = await canvasToBlob(card);
+                  if (!png) return 'failed';
+                  return shareImage(png, `I cleared Floor ${floorNumber} of LoopBot in ${total} commands. Can you do it in fewer?`, `loopbot-floor-${floorNumber}.png`);
+                }
+          }
           daily={
             daily && {
               date: daily.date,
@@ -654,6 +678,6 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
           }
         />
       )}
-    </div>
+    </main>
   );
 }

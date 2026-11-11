@@ -10,6 +10,9 @@ import { App } from '@capacitor/app';
 export function listenForBack(goUp: () => boolean) {
   if (Capacitor.getPlatform() !== 'android') return () => {};
   const handle = App.addListener('backButton', () => {
+    // A story beat on screen: Back skips it.
+    const skip = document.querySelector<HTMLElement>('.interlude-skip');
+    if (skip) return skip.click();
     const backdrops = document.querySelectorAll<HTMLElement>('.results-backdrop');
     if (backdrops.length) return backdrops[backdrops.length - 1].click();
     if (goUp()) return;

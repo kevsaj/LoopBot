@@ -18,6 +18,9 @@ import { reducedMotion } from './fx/confetti';
 import { preloadBoard } from './board/Board';
 import { listenForBack } from './native';
 import { startTelemetry } from './telemetry';
+import { Interlude } from './story/Interlude';
+import { interludeAfter, markInterludeSeen } from './story/interludes';
+import type { Interlude as Beat } from './story/interludes';
 import type { LevelFile } from './sim/types';
 import { currentStreak, yesterday, dailyLevel, dateKey, loadDaily, pruneOldDailies, recordDailyClear, saveDaily } from './daily';
 import type { DailyState } from './daily';
@@ -134,10 +137,18 @@ export default function App() {
   // Never open a locked floor (e.g. a saved index from before progress existed).
   const safeIndex = isUnlocked(progress, ids, index) ? index : 0;
   const level = LEVELS[safeIndex];
+  /** Leaving a tower floor: play the band's story beat first if it's due. */
+  const leaveFloor = (next: () => void) => {
+    const due = interludeAfter(safeIndex + 1, (progress.stars[level.id] ?? 0) > 0);
+    if (due) setBeat({ beat: due, then: next });
+    else next();
+  };
   // Achievements, unlocked looks and the toasts for anything new.
   const rewards = useRewards(ids, progress, daily);
   const [look, setLook] = useState<Look>(loadLook);
   const [locker, setLocker] = useState(false);
+  // A story beat waiting to play before the next screen (PATCH's radio call, or the ending).
+  const [beat, setBeat] = useState<{ beat: Beat; then: () => void } | null>(null);
   useEffect(() => applyLookCss(look), [look]);
   const openLocker = () => {
     setLocker(true);
@@ -145,6 +156,16 @@ export default function App() {
   };
   const overlays = (
     <>
+      {beat && (
+        <Interlude
+          beat={beat.beat}
+          onDone={() => {
+            markInterludeSeen(beat.beat.id);
+            setBeat(null);
+            beat.then();
+          }}
+        />
+      )}
       {locker && <Locker stats={rewards.stats} earned={rewards.earned} look={look} onLook={setLook} onClose={() => setLocker(false)} />}
       <Toasts toasts={rewards.toasts} onDone={rewards.dismissToast} />
     </>
@@ -233,8 +254,8 @@ export default function App() {
         floorCount={LEVELS.length}
         progress={progress}
         setProgress={setProgress}
-        onGo={go}
-        onTower={() => setScreen('map')}
+        onGo={(i) => leaveFloor(() => go(i))}
+        onTower={() => leaveFloor(() => setScreen('map'))}
       />
       {overlays}
       {elevator}
