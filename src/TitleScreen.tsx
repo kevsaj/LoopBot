@@ -15,6 +15,8 @@ import type { DailyState } from './daily';
 
 interface Props {
   levels: LevelFile[];
+  /** The tower being climbed, shown under the logo. */
+  towerLabel?: string;
   progress: Progress;
   /** Played the intro already this session: open settled. */
   booted: boolean;
@@ -57,7 +59,7 @@ function BigBot({ poked }: { poked: boolean }) {
   );
 }
 
-export function TitleScreen({ levels, progress, booted, onBooted, onPlay, onTower, onSettings, daily, onDaily, onLocker, lockerNew }: Props) {
+export function TitleScreen({ levels, towerLabel, progress, booted, onBooted, onPlay, onTower, onSettings, daily, onDaily, onLocker, lockerNew }: Props) {
   const [settled, setSettled] = useState(() => booted || reducedMotion());
   const [poked, setPoked] = useState(false);
   useEffect(() => {
@@ -106,7 +108,10 @@ export function TitleScreen({ levels, progress, booted, onBooted, onPlay, onTowe
         <h1 className="title-name">
           Loop<span>Bot</span>
         </h1>
-        <p className="title-sub">Tower 1 · Meridian Spire{DEMO ? ' · Demo' : ''}</p>
+        <p className="title-sub">
+          {towerLabel ?? 'Tower 1 · Meridian Spire'}
+          {DEMO ? ' · Demo' : ''}
+        </p>
       </div>
 
       <div className="title-actions">

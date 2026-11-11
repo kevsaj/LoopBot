@@ -1,0 +1,52 @@
+{
+  "id": "t2-f13",
+  "title": "Stepping Stone",
+  "band": "glacier",
+  "size": {
+    "w": 7,
+    "h": 5
+  },
+  "tiles": [
+    "#######",
+    "#ii.ii#",
+    "#ie#i##",
+    "#tiiii#",
+    "#######"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 3,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate"
+  ],
+  "slots": {
+    "main": 14
+  },
+  "par": {
+    "commands": 12,
+    "steps": 12
+  },
+  "reference": "turn_left turn_left forward turn_left forward turn_left forward turn_left turn_left forward turn_right forward",
+  "hints": [
+    "Thin ice stops a slide, like any tile that isn't ice. But only once.",
+    "Use the thin tile as a stop on the way, then come back to the exit from the other side.",
+    "turn_left turn_left forward turn_left forward turn_left forward turn_left turn_left forward turn_right forward"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

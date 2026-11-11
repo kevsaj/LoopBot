@@ -1,0 +1,61 @@
+{
+  "id": "t2-f36",
+  "title": "Bug Hunt: Crossed Wires",
+  "band": "aurora",
+  "size": {
+    "w": 8,
+    "h": 8
+  },
+  "tiles": [
+    "#e##riir",
+    "#i##i##i",
+    "#i##i##i",
+    "#biib##i",
+    "#####bir",
+    "#####i##",
+    "#####i##",
+    "#####.##"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 5,
+    "y": 7,
+    "facing": "north"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "if"
+  ],
+  "slots": {
+    "main": 6
+  },
+  "par": {
+    "commands": 5,
+    "steps": 13
+  },
+  "reference": "repeat 7 { forward if tile_is r { turn_left } else { turn_right } }",
+  "hints": [
+    "The first turn already goes the wrong way. Compare the program with the signal pads.",
+    "Red is left, blue is right. Look at which branch has which turn.",
+    "repeat 7 { forward if tile_is r { turn_left } else { turn_right } }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "sensors": [
+    "tile_is"
+  ],
+  "starter": "repeat 7 { forward if tile_is r { turn_right } else { turn_left } }"
+}

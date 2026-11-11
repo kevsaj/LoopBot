@@ -1,0 +1,55 @@
+{
+  "id": "t2-f07",
+  "title": "Frozen Steps",
+  "band": "frostgate",
+  "size": {
+    "w": 8,
+    "h": 3
+  },
+  "tiles": [
+    "########",
+    "#.iiiiie",
+    "########"
+  ],
+  "heights": [
+    "00000000",
+    "00011001",
+    "00000000"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "repeat"
+  ],
+  "slots": {
+    "main": 4
+  },
+  "par": {
+    "commands": 3,
+    "steps": 4
+  },
+  "reference": "forward repeat 3 { jump }",
+  "hints": [
+    "A slide stops at a step up or a drop down. Jump also lands you on ice, and you keep sliding.",
+    "Slide once, then jump at every step.",
+    "forward repeat 3 { jump }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

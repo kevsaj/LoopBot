@@ -1,0 +1,54 @@
+{
+  "id": "t2-f09",
+  "title": "Thaw Switch",
+  "band": "frostgate",
+  "size": {
+    "w": 7,
+    "h": 6
+  },
+  "tiles": [
+    "#######",
+    "#.iiis#",
+    "#####i#",
+    "#####i#",
+    "#edii.#",
+    "#######"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat"
+  ],
+  "slots": {
+    "main": 10
+  },
+  "par": {
+    "commands": 6,
+    "steps": 7
+  },
+  "reference": "forward activate repeat 2 { turn_right forward } forward",
+  "hints": [
+    "A switch is not slippery, so a slide stops on it.",
+    "Stop on the switch and flip it, then slide around to the open door. Turning and sliding happens twice.",
+    "forward activate repeat 2 { turn_right forward } forward"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "id": "t2-f11",
+  "title": "Hairline Cracks",
+  "band": "glacier",
+  "size": {
+    "w": 7,
+    "h": 5
+  },
+  "tiles": [
+    "#######",
+    "#edtts#",
+    "#####.#",
+    "#.....#",
+    "#######"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 3,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate"
+  ],
+  "slots": {
+    "main": 16
+  },
+  "par": {
+    "commands": 13,
+    "steps": 13
+  },
+  "reference": "forward forward forward forward turn_left forward forward activate turn_left forward forward forward forward",
+  "hints": [
+    "The white-streaked tiles are thin ice. They hold you once, then crack into a hole when you step off.",
+    "Go around: along the bottom, up to the switch, flip it, then across the thin ice to the door.",
+    "forward forward forward forward turn_left forward forward activate turn_left forward forward forward forward"
+  ],
+  "story": {
+    "intro": "PATCH: \"The Glacier Yard. Thin ice up here, LoopBot. It holds you once and then it's gone. No going back the way you came.\"",
+    "outro": null
+  }
+}

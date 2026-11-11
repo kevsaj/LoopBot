@@ -1,0 +1,55 @@
+{
+  "id": "t2-f16",
+  "title": "Cracked Rink",
+  "band": "glacier",
+  "size": {
+    "w": 8,
+    "h": 7
+  },
+  "tiles": [
+    "########",
+    "##i#.i.#",
+    "#sii#t.#",
+    "#.ii.ti#",
+    "#iititi#",
+    "#iittte#",
+    "########"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 6,
+    "y": 1,
+    "facing": "north"
+  },
+  "goals": [
+    "all_switches_on",
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate"
+  ],
+  "slots": {
+    "main": 26
+  },
+  "par": {
+    "commands": 22,
+    "steps": 22
+  },
+  "reference": "turn_left turn_left forward turn_right forward turn_left forward turn_right forward forward turn_right forward turn_left turn_left activate forward forward turn_left forward forward forward forward",
+  "hints": [
+    "Ice to slide on, thin ice to stop on, and one switch to flip before the exit counts.",
+    "Work out where each slide stops. The thin tiles are your brakes, once each.",
+    "turn_left turn_left forward turn_right forward turn_left forward turn_right forward forward turn_right forward turn_left turn_left activate forward forward turn_left forward forward forward forward"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "id": "t2-f43",
+  "title": "Colour Slide",
+  "band": "summit",
+  "size": {
+    "w": 8,
+    "h": 8
+  },
+  "tiles": [
+    "#####e##",
+    "#bib#i##",
+    "#i#i#i##",
+    "#i#rir##",
+    "#i######",
+    "#biir###",
+    "####i###",
+    "#.iir###"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 7,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "if"
+  ],
+  "slots": {
+    "main": 6
+  },
+  "par": {
+    "commands": 5,
+    "steps": 15
+  },
+  "reference": "repeat 8 { forward if tile_is r { turn_left } else { turn_right } }",
+  "hints": [
+    "Long slides, short slides, and a coloured pad at every stop.",
+    "After each slide: red turns left, blue turns right.",
+    "repeat 8 { forward if tile_is r { turn_left } else { turn_right } }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "sensors": [
+    "tile_is"
+  ],
+  "typing": true
+}

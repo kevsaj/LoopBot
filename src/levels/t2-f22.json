@@ -1,0 +1,57 @@
+{
+  "id": "t2-f22",
+  "title": "Bug Hunt: Wrong Way",
+  "band": "signal",
+  "size": {
+    "w": 8,
+    "h": 8
+  },
+  "tiles": [
+    "########",
+    "#e######",
+    "#ii#####",
+    "##i#####",
+    "##iii###",
+    "####i###",
+    "####ii.#",
+    "########"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 6,
+    "y": 6,
+    "facing": "west"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat"
+  ],
+  "slots": {
+    "main": 5
+  },
+  "par": {
+    "commands": 5,
+    "steps": 11
+  },
+  "reference": "repeat 3 { forward turn_right forward turn_left }",
+  "hints": [
+    "This program came from the stairs back in the Frost Gate. These stairs go the other way. Run it and watch where it goes wrong.",
+    "Only the turns need fixing. Going up to the left, you turn right first, then left.",
+    "repeat 3 { forward turn_right forward turn_left }"
+  ],
+  "story": {
+    "intro": "PATCH: \"VANTA left a scrambled program in this bot. It almost works. Run it, see where it breaks, and fix it. That's called debugging.\"",
+    "outro": null
+  },
+  "starter": "repeat 3 { forward turn_left forward turn_right }"
+}

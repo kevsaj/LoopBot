@@ -1,0 +1,63 @@
+{
+  "id": "t2-f40",
+  "title": "Aurora Core",
+  "band": "aurora",
+  "size": {
+    "w": 8,
+    "h": 8
+  },
+  "tiles": [
+    "########",
+    ".##bttsb",
+    "t##t###t",
+    "t##t###t",
+    "t##t###t",
+    "rstr###t",
+    "#######t",
+    "#etstttb"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 1,
+    "facing": "south"
+  },
+  "goals": [
+    "all_switches_on",
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "while",
+    "if"
+  ],
+  "slots": {
+    "main": 10
+  },
+  "par": {
+    "commands": 8,
+    "steps": 35
+  },
+  "reference": "repeat 6 { while not wall_ahead { forward if on_switch { activate } } if tile_is r { turn_left } else { turn_right } }",
+  "hints": [
+    "Long corridors, switches along the way, and a signal pad at every corner. One loop can handle all of it.",
+    "Inside a while (no wall ahead): forward, and flip any switch you land on. At the corner, red turns left, blue turns right. Repeat.",
+    "repeat 6 { while not wall_ahead { forward if on_switch { activate } } if tile_is r { turn_left } else { turn_right } }"
+  ],
+  "story": {
+    "intro": "VANTA: \"The aurora core keeps this whole lab cold. Shut it down and you'll never catch me in the dark.\"",
+    "outro": "PATCH: \"Core's down, the lights are on, and VANTA just ran for the summit. One more climb, LoopBot.\""
+  },
+  "sensors": [
+    "on_switch",
+    "tile_is"
+  ]
+}

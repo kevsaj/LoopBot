@@ -1,0 +1,60 @@
+{
+  "id": "t2-f34",
+  "title": "Bug Hunt: Upside Down",
+  "band": "aurora",
+  "size": {
+    "w": 7,
+    "h": 7
+  },
+  "tiles": [
+    ".iii.##",
+    "i######",
+    "isii.##",
+    "i###i##",
+    "i###i##",
+    ".iii.##",
+    "#######"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 4,
+    "y": 0,
+    "facing": "north"
+  },
+  "goals": [
+    "all_switches_on"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "while"
+  ],
+  "slots": {
+    "main": 5
+  },
+  "par": {
+    "commands": 4,
+    "steps": 11
+  },
+  "reference": "while not on_switch { turn_left forward } activate",
+  "hints": [
+    "LoopBot crashes before it moves. Read the while block out loud.",
+    "It should keep going while it is NOT on the switch.",
+    "while not on_switch { turn_left forward } activate"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "sensors": [
+    "on_switch"
+  ],
+  "starter": "while on_switch { turn_left forward } activate"
+}

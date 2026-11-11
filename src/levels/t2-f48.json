@@ -1,0 +1,63 @@
+{
+  "id": "t2-f48",
+  "title": "Bug Hunt: Last Check",
+  "band": "summit",
+  "size": {
+    "w": 8,
+    "h": 8
+  },
+  "tiles": [
+    "########",
+    "########",
+    "##sis#e#",
+    "##i#i#i#",
+    "sir#i#i#",
+    "i###i#i#",
+    "i###rir#",
+    ".#######"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 7,
+    "facing": "north"
+  },
+  "goals": [
+    "all_switches_on",
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "if"
+  ],
+  "slots": {
+    "main": 7
+  },
+  "par": {
+    "commands": 6,
+    "steps": 16
+  },
+  "reference": "repeat 7 { forward if on_switch { activate turn_right } else { turn_left } }",
+  "hints": [
+    "LoopBot reaches the exit, but nothing happens. Look at what it skips.",
+    "Every switch needs flipping, and the loop needs enough turns to reach the end.",
+    "repeat 7 { forward if on_switch { activate turn_right } else { turn_left } }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "sensors": [
+    "on_switch"
+  ],
+  "typing": true,
+  "starter": "repeat 6 { forward if on_switch { turn_right } else { turn_left } }"
+}

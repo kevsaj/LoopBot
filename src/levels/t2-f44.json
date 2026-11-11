@@ -1,0 +1,57 @@
+{
+  "id": "t2-f44",
+  "title": "Whiteout Yard",
+  "band": "summit",
+  "size": {
+    "w": 8,
+    "h": 8
+  },
+  "tiles": [
+    "########",
+    "#ieii#s#",
+    "#ittiis#",
+    "#tiiitt#",
+    "##.itit#",
+    "#s#.t.i#",
+    "#i.i#ii#",
+    "########"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 2,
+    "y": 4,
+    "facing": "south"
+  },
+  "goals": [
+    "all_switches_on",
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate"
+  ],
+  "slots": {
+    "main": 40
+  },
+  "par": {
+    "commands": 38,
+    "steps": 38
+  },
+  "reference": "turn_left forward turn_right forward turn_right forward turn_left forward turn_right forward forward turn_right forward turn_left turn_left activate forward turn_left forward forward turn_left forward forward turn_right forward turn_left activate forward turn_left turn_left activate forward turn_right forward turn_right forward turn_left forward",
+  "hints": [
+    "No pattern here, just a frozen yard with three switches. Plan the whole route before you start.",
+    "Thin ice only takes you once, so pick the order: the switch at the bottom left first, then the two on the right, then the exit.",
+    "turn_left forward turn_right forward turn_right forward turn_left forward turn_right forward forward turn_right forward turn_left turn_left activate forward turn_left forward forward turn_left forward forward turn_right forward turn_left activate forward turn_left turn_left activate forward turn_right forward turn_right forward turn_left forward"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "typing": true
+}

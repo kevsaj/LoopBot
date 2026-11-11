@@ -1,0 +1,54 @@
+{
+  "id": "t2-f17",
+  "title": "Three Lamps",
+  "band": "glacier",
+  "size": {
+    "w": 7,
+    "h": 6
+  },
+  "tiles": [
+    "#######",
+    "#.t#ts#",
+    "##tttt#",
+    "#.st.t#",
+    "#st..e#",
+    "#######"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "north"
+  },
+  "goals": [
+    "all_switches_on",
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate"
+  ],
+  "slots": {
+    "main": 30
+  },
+  "par": {
+    "commands": 26,
+    "steps": 26
+  },
+  "reference": "turn_right forward turn_right forward forward turn_right activate forward turn_left forward turn_left activate forward forward forward turn_left forward forward forward turn_right forward turn_right activate forward forward forward",
+  "hints": [
+    "Three switches. The thin ice decides the order for you, if you look closely.",
+    "Middle switch first, then the top right, then all the way around to the bottom left.",
+    "turn_right forward turn_right forward forward turn_right activate forward turn_left forward turn_left activate forward forward forward turn_left forward forward forward turn_right forward turn_right activate forward forward forward"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

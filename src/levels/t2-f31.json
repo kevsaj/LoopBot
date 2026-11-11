@@ -1,0 +1,59 @@
+{
+  "id": "t2-f31",
+  "title": "Aurora Spiral",
+  "band": "aurora",
+  "size": {
+    "w": 7,
+    "h": 7
+  },
+  "tiles": [
+    "#######",
+    "#.iiii#",
+    "#####i#",
+    "#iis#i#",
+    "#i###i#",
+    "#iiiii#",
+    "#######"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "north"
+  },
+  "goals": [
+    "all_switches_on"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "while"
+  ],
+  "slots": {
+    "main": 5
+  },
+  "par": {
+    "commands": 4,
+    "steps": 11
+  },
+  "reference": "while not on_switch { turn_right forward } activate",
+  "hints": [
+    "The Aurora Lab. Bots here check instead of counting. Keep turning and sliding until you are standing on the switch.",
+    "A while block repeats as long as its question says so. Ask: not on a switch?",
+    "while not on_switch { turn_right forward } activate"
+  ],
+  "story": {
+    "intro": "PATCH: \"The Aurora Lab. VANTA's hiding up here somewhere. Bots in this lab don't count steps, they ask questions. Try a while block.\"",
+    "outro": null
+  },
+  "sensors": [
+    "on_switch"
+  ]
+}

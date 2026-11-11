@@ -1,0 +1,70 @@
+{
+  "id": "t2-f46",
+  "title": "Relay Climb",
+  "band": "summit",
+  "size": {
+    "w": 8,
+    "h": 8
+  },
+  "tiles": [
+    "########",
+    "#siiiis#",
+    "#i####i#",
+    "#i#es#i#",
+    "#i##i#i#",
+    "#i##i#i#",
+    "#siis#i#",
+    "######.#"
+  ],
+  "heights": [
+    "00000000",
+    "02111110",
+    "02000000",
+    "02033000",
+    "02002000",
+    "02002000",
+    "03332000",
+    "00000000"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 6,
+    "y": 7,
+    "facing": "north"
+  },
+  "goals": [
+    "all_switches_on",
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "F1"
+  ],
+  "slots": {
+    "main": 2,
+    "F1": 4
+  },
+  "par": {
+    "commands": 6,
+    "steps": 21
+  },
+  "reference": "repeat 6 { F1 } def F1 { forward jump activate turn_left }",
+  "hints": [
+    "A relay on every landing, all the way up the spiral.",
+    "Every landing is the same: slide, jump up, flip the relay, turn left. Teach that to F1.",
+    "repeat 6 { F1 } def F1 { forward jump activate turn_left }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "typing": true
+}

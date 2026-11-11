@@ -1,0 +1,57 @@
+{
+  "id": "t2-f41",
+  "title": "Icy Ledges",
+  "band": "summit",
+  "size": {
+    "w": 8,
+    "h": 1
+  },
+  "tiles": [
+    ".tiy.iye"
+  ],
+  "heights": [
+    "00001112"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "if"
+  ],
+  "slots": {
+    "main": 4
+  },
+  "par": {
+    "commands": 4,
+    "steps": 5
+  },
+  "reference": "repeat 5 { if tile_is y { jump } else { forward } }",
+  "hints": [
+    "Ice, thin ice and ledges. Every ledge has a yellow pad right in front of it.",
+    "Each move: on yellow? Jump. Otherwise go forward. Try typing it: open Code, then Type code.",
+    "repeat 5 { if tile_is y { jump } else { forward } }"
+  ],
+  "story": {
+    "intro": "PATCH: \"The summit of the Northstar Needle. VANTA's up top. From here on you can type your programs. Blocks still work too.\"",
+    "outro": null
+  },
+  "sensors": [
+    "tile_is"
+  ],
+  "typing": true
+}

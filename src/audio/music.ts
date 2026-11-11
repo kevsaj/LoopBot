@@ -13,7 +13,9 @@
 
 import { sharedAudio } from './feedback';
 
-export type Theme = 'title' | 'lobby' | 'maintenance' | 'workshop' | 'control' | 'rooftop' | 'daily';
+export type Theme =
+  | 'title' | 'lobby' | 'maintenance' | 'workshop' | 'control' | 'rooftop' | 'daily'
+  | 'frostgate' | 'glacier' | 'signal' | 'aurora' | 'summit';
 
 interface Recipe {
   bpm: number;
@@ -106,6 +108,56 @@ const RECIPES: Record<Theme, Recipe> = {
     kick: 'x.....x...x.....', snare: '....x.......x...', hat: 'x.xxx.xxx.xxx.xx',
     seed: 67,
   },
+  // Tower 2, Frostline. Floors 1-10: the Frost Gate, glassy bells over a slow, sliding pulse.
+  frostgate: {
+    bpm: 88, root: 40, mode: LYDIAN, chords: [0, 1, 4, 0], sevenths: true,
+    pad: { wave: 'sine', cutoff: 2200, gain: 0.045 },
+    bass: 'x.......x...o...', bassWave: 'sine',
+    arp: '3.4.2.3.1.2.0.2.', arpWave: 'sine',
+    lead: { wave: 'sine', density: 0.35, gain: 0.05 },
+    kick: 'x...........x...', snare: '................', hat: '....x.......x...',
+    seed: 83,
+  },
+  // Floors 11-20: the Glacier, cracking ice, careful and a little uneasy.
+  glacier: {
+    bpm: 94, root: 37, mode: DORIAN, chords: [0, 6, 3, 4], sevenths: true,
+    pad: { wave: 'triangle', cutoff: 1300, gain: 0.04 },
+    bass: 'x..o..x...x..o..', bassWave: 'triangle',
+    arp: '0..2..4..3..2...', arpWave: 'sine',
+    lead: { wave: 'triangle', density: 0.3, gain: 0.045 },
+    kick: 'x.......x..x....', snare: '........x.......', hat: '..x...x...x...x.',
+    seed: 89,
+  },
+  // Floors 21-30: the Signal Hut, radio blips and a busy, bouncing groove.
+  signal: {
+    bpm: 106, root: 42, mode: MIXOLYDIAN, chords: [0, 4, 6, 3], sevenths: false,
+    pad: { wave: 'triangle', cutoff: 1500, gain: 0.03 },
+    bass: 'x.x...o.x.x...o.', bassWave: 'square',
+    arp: '0202320202324232', arpWave: 'square',
+    lead: { wave: 'sine', density: 0.4, gain: 0.04 },
+    kick: 'x.....x...x.....', snare: '....x.......x...', hat: 'x.x.x.x.x.x.x.x.',
+    seed: 97,
+  },
+  // Floors 31-40: the Aurora Lab, wide shimmering chords in a minor key.
+  aurora: {
+    bpm: 90, root: 44, mode: AEOLIAN, chords: [0, 5, 3, 6], sevenths: true,
+    pad: { wave: 'sawtooth', cutoff: 1100, gain: 0.03 },
+    bass: 'x.......x.o.....', bassWave: 'sawtooth',
+    arp: '0.1.2.3.4.3.2.1.', arpWave: 'triangle',
+    lead: { wave: 'triangle', density: 0.35, gain: 0.045 },
+    kick: 'x.......x.......', snare: '........x.......', hat: '..x.x...x...x.x.',
+    seed: 101,
+  },
+  // Floors 41-50: the Summit, wind and the beacon, the biggest theme of the tower.
+  summit: {
+    bpm: 120, root: 38, mode: IONIAN, chords: [0, 4, 5, 3], sevenths: true,
+    pad: { wave: 'sawtooth', cutoff: 1700, gain: 0.03 },
+    bass: 'x..x..x.x..x..o.', bassWave: 'triangle',
+    arp: '0123432101234321', arpWave: 'sine',
+    lead: { wave: 'square', density: 0.45, gain: 0.025 },
+    kick: 'x.....x...x.....', snare: '....x.......x...', hat: 'x.xxx.xxx.xxx.xx',
+    seed: 109,
+  },
   // The daily challenge: cheerful and a little different every bar.
   daily: {
     bpm: 104, root: 46, mode: IONIAN, chords: [0, 3, 5, 4], sevenths: false,
@@ -119,7 +171,8 @@ const RECIPES: Record<Theme, Recipe> = {
 };
 
 /** Which theme plays on a tower floor, by its 1-based number. */
-export function themeForFloor(n: number): Theme {
+export function themeForFloor(n: number, tower = 1): Theme {
+  if (tower === 2) return (['frostgate', 'glacier', 'signal', 'aurora', 'summit'] as const)[Math.min(4, Math.floor((n - 1) / 10))];
   if (n <= 10) return 'lobby';
   if (n <= 20) return 'maintenance';
   if (n <= 30) return 'workshop';

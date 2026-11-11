@@ -4,7 +4,7 @@
 import { useCallback, useEffect, useReducer } from 'react';
 import type { Block, Condition, PaletteCommand, Program, Routine } from '../sim/types';
 import type { Spot } from '../sim/program';
-import { emptyProgram, insertBlock, isContainer, listAt, makeBlock, moveBlock, removeBlock, spotOf, updateBlock } from '../sim/program';
+import { emptyProgram, insertBlock, parseReference, isContainer, listAt, makeBlock, moveBlock, removeBlock, spotOf, updateBlock } from '../sim/program';
 
 export interface EditorState {
   program: Program;
@@ -101,19 +101,20 @@ export function reducer(s: EditorState, a: Act): EditorState {
 
 const storageKey = (floorId: string) => `loopbot.editor.${floorId}`;
 
-function fresh(): EditorState {
-  return { program: emptyProgram(), past: [], future: [], cursor: {} };
+/** A new floor starts empty, or, on a bug hunt floor, with the broken program to fix. */
+function fresh(starter?: string): EditorState {
+  return { program: starter ? parseReference(starter) : emptyProgram(), past: [], future: [], cursor: {} };
 }
 
-export function loadEditor(floorId: string): EditorState {
+export function loadEditor(floorId: string, starter?: string): EditorState {
   try {
     const raw = localStorage.getItem(storageKey(floorId));
-    if (!raw) return fresh();
+    if (!raw) return fresh(starter);
     const saved = JSON.parse(raw) as Partial<EditorState>;
-    if (!saved.program?.main) return fresh();
+    if (!saved.program?.main) return fresh(starter);
     return { program: { ...emptyProgram(), ...saved.program }, past: saved.past ?? [], future: saved.future ?? [], cursor: {} };
   } catch {
-    return fresh();
+    return fresh(starter);
   }
 }
 
@@ -156,8 +157,8 @@ function trimOtherHistories(keep: string) {
 }
 
 /** Mount one editor per floor (the floor screen is keyed by floor id). */
-export function useEditor(floorId: string) {
-  const [state, dispatch] = useReducer(reducer, floorId, loadEditor);
+export function useEditor(floorId: string, starter?: string) {
+  const [state, dispatch] = useReducer(reducer, floorId, (id) => loadEditor(id, starter));
 
   // ED-7: autosave on every change.
   useEffect(() => {

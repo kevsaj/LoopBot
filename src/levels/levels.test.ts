@@ -1,11 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { LEVELS } from './index';
+import { FROSTLINE } from './frostline';
 import { validateLevel } from './validate';
 import { Runner } from '../sim/interpreter';
 import { countBlocks, countCommands, parseReference } from '../sim/program';
 import { shortestActionPath, smallestProgram } from '../sim/solver';
 
-describe.each(LEVELS.map((l) => [l.id, l] as const))('floor %s', (_id, level) => {
+describe.each([...LEVELS, ...FROSTLINE].map((l) => [l.id, l] as const))('floor %s', (_id, level) => {
   it('LV-1: matches the floor format', () => {
     expect(validateLevel(level)).toEqual([]);
   });
@@ -40,6 +41,11 @@ describe.each(LEVELS.map((l) => [l.id, l] as const))('floor %s', (_id, level) =>
     },
     60_000,
   );
+
+  it('a bug hunt starter program does not clear the floor yet', () => {
+    if (level.starter === undefined) return;
+    expect(new Runner(parseReference(level.starter), level).runToEnd().status).not.toBe('cleared');
+  });
 
   it('the solution hint, if any, clears the floor', () => {
     if (level.hints.length < 3) return;

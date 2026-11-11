@@ -1,0 +1,50 @@
+{
+  "id": "t2-f04",
+  "title": "The Rink",
+  "band": "frostgate",
+  "size": {
+    "w": 7,
+    "h": 7
+  },
+  "tiles": [
+    "#######",
+    "#iiii##",
+    "#eii#i#",
+    "##i#ii#",
+    "#ii#ii#",
+    "#.iiii#",
+    "#######"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 5,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right"
+  ],
+  "slots": {
+    "main": 12
+  },
+  "par": {
+    "commands": 10,
+    "steps": 10
+  },
+  "reference": "turn_left forward turn_right forward turn_left forward turn_left forward turn_left forward",
+  "hints": [
+    "You can only stop where something stops you. Look for walls to slide into.",
+    "The exit is close, but the straight way slides past it. Go up and around: five slides, each one ending at a wall.",
+    "turn_left forward turn_right forward turn_left forward turn_left forward turn_left forward"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

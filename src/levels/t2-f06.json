@@ -1,0 +1,55 @@
+{
+  "id": "t2-f06",
+  "title": "Slide Loop",
+  "band": "frostgate",
+  "size": {
+    "w": 8,
+    "h": 8
+  },
+  "tiles": [
+    "########",
+    "######e#",
+    "#####ii#",
+    "#####i##",
+    "###iii##",
+    "###i####",
+    "#.ii####",
+    "########"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 6,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "repeat"
+  ],
+  "slots": {
+    "main": 5
+  },
+  "par": {
+    "commands": 5,
+    "steps": 11
+  },
+  "reference": "repeat 3 { forward turn_left forward turn_right }",
+  "hints": [
+    "Every slide here is a different length, but the walls always stop you at a corner.",
+    "The same four blocks climb every stair: slide, turn left, slide, turn right. Repeat them.",
+    "repeat 3 { forward turn_left forward turn_right }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

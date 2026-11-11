@@ -58,7 +58,7 @@ export function Interlude({ beat, onDone }: { beat: Beat; onDone(): void }) {
   });
 
   return (
-    <div className={`interlude interlude-${beat.kind}`} role="dialog" aria-label={beat.kind === 'radio' ? 'Radio call from PATCH' : 'Tower 1 ending'} onClick={advance}>
+    <div className={`interlude interlude-${beat.kind}`} role="dialog" aria-label={beat.kind === 'radio' ? 'Radio call from PATCH' : 'Tower ending'} onClick={advance}>
       <button
         type="button"
         className="interlude-skip"

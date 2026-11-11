@@ -1,0 +1,61 @@
+{
+  "id": "t2-f39",
+  "title": "Sensor Sweep",
+  "band": "aurora",
+  "size": {
+    "w": 8,
+    "h": 8
+  },
+  "tiles": [
+    "##.iis##",
+    "#####i##",
+    "#rir#i##",
+    "#i#i#i##",
+    "#i#sis##",
+    "#e######",
+    "########",
+    "########"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 2,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "all_switches_on",
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "if"
+  ],
+  "slots": {
+    "main": 7
+  },
+  "par": {
+    "commands": 6,
+    "steps": 14
+  },
+  "reference": "repeat 6 { forward if on_switch { activate turn_right } else { turn_left } }",
+  "hints": [
+    "Every slide stops on a switch or a red pad. Switches turn you right, red pads turn you left.",
+    "After each slide: on a switch? Flip it and turn right. Otherwise turn left.",
+    "repeat 6 { forward if on_switch { activate turn_right } else { turn_left } }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "sensors": [
+    "on_switch"
+  ]
+}

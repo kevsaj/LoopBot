@@ -1,0 +1,64 @@
+{
+  "id": "t2-f19",
+  "title": "Melt Steps",
+  "band": "glacier",
+  "size": {
+    "w": 7,
+    "h": 7
+  },
+  "tiles": [
+    "#######",
+    "#####e#",
+    "####tt#",
+    "###tt##",
+    "##tt###",
+    "#.t####",
+    "#######"
+  ],
+  "heights": [
+    "0000000",
+    "0000000",
+    "0000210",
+    "0002300",
+    "0021000",
+    "0010000",
+    "0000000"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 5,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat"
+  ],
+  "slots": {
+    "main": 6
+  },
+  "par": {
+    "commands": 5,
+    "steps": 15
+  },
+  "reference": "repeat 4 { jump turn_left jump turn_right }",
+  "hints": [
+    "Every step is up or down, so every move is a jump.",
+    "Jump, turn left, jump, turn right, and again.",
+    "repeat 4 { jump turn_left jump turn_right }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

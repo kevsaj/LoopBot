@@ -2,10 +2,10 @@
 
 import type { LevelFile } from '../sim/types';
 import { SENSORS } from '../sim/types';
-import { MAX_DEPTH, MAX_TIMES, MIN_TIMES, loopHeight, parseReference } from '../sim/program';
+import { MAX_DEPTH, MAX_TIMES, MIN_TIMES, countBlocks, loopHeight, parseReference } from '../sim/program';
 import { FUNCTION_NAMES } from '../sim/types';
 
-const TILE_CHARS = new Set(['.', '#', '_', 's', 'd', 'e', 'r', 'g', 'b', 'y']);
+const TILE_CHARS = new Set(['.', '#', '_', 's', 'd', 'e', 'r', 'g', 'b', 'y', 'i', 't']);
 const FACINGS = ['north', 'east', 'south', 'west'];
 const GOALS = ['all_targets_filled', 'bot_on_exit', 'all_switches_on'];
 
@@ -40,32 +40,15 @@ export function validateLevel(l: LevelFile): string[] {
   if (l.goals.includes('all_targets_filled') && !l.targets.length) e('all_targets_filled needs targets');
   if (l.goals.includes('bot_on_exit') && !l.tiles.some((r) => r.includes('e'))) e('bot_on_exit needs an exit tile');
   if (!l.slots.main || l.slots.main < 1) e('slots.main is required');
-  const words = l.reference.replace(/[{}]/g, ' ').trim().split(/\s+/);
-  const sensors = new Set<string>(['wall_ahead', ...(l.sensors ?? [])]);
-  for (const s of l.sensors ?? []) if (!(SENSORS as readonly string[]).includes(s)) e(`unknown sensor ${s}`);
-  for (let i = 0; i < words.length; i++) {
-    const word = words[i];
-    if (word === 'repeat') {
-      const n = Number(words[i + 1]);
-      // The editor's repeat block only goes this far, so a par that needs more can't be reached.
-      if (n < MIN_TIMES || n > MAX_TIMES) e(`reference repeats ${n} times; the block goes from ${MIN_TIMES} to ${MAX_TIMES}`);
+  checkProgram(l, 'reference', l.reference, e);
+  if (l.starter !== undefined) {
+    checkProgram(l, 'starter', l.starter, e);
+    try {
+      const p = parseReference(l.starter);
+      for (const r of ['main', ...FUNCTION_NAMES] as const) if (countBlocks(p[r]) > (l.slots[r] ?? 0)) e(`starter's ${r} does not fit its slots`);
+    } catch {
+      /* reported above */
     }
-    if (/^\d+$/.test(word) || word === 'def' || word === 'not' || word === 'else') continue; // a count, a function body, or part of a condition
-    if (word === 'if' || word === 'while') {
-      if (!l.commands.includes(word)) e(`reference uses '${word}', which this floor does not allow`);
-      const sensor = words[i + 1] === 'not' ? words[(i += 2)] : words[(i += 1)];
-      if (!sensors.has(sensor)) e(`reference asks '${sensor}', which this floor's sensors do not include`);
-      if (sensor === 'tile_is') i++; // the colour
-      continue;
-    }
-    if (!l.commands.includes(word as never)) e(`reference uses '${word}', which this floor does not allow`);
-  }
-  // The editor nests blocks at most MAX_DEPTH deep, so the reference must too.
-  try {
-    const p = parseReference(l.reference);
-    for (const r of ['main', ...FUNCTION_NAMES] as const) if (p[r].some((b) => loopHeight(b) > MAX_DEPTH)) e(`reference nests deeper than ${MAX_DEPTH} in ${r}`);
-  } catch (err) {
-    e(String(err));
   }
   for (const link of l.links ?? []) {
     if (l.tiles[link.switch.y]?.[link.switch.x] !== 's') e(`link switch ${link.switch.x},${link.switch.y} is not a switch tile`);
@@ -74,4 +57,35 @@ export function validateLevel(l: LevelFile): string[] {
   if (l.hints.length && l.hints.length !== 3) e('hints should be Nudge, Structure, Solution (3 entries)');
   if (l.par.commands < 1 || l.par.steps < 1) e('par values must be positive');
   return errs;
+}
+
+/** A program in reference format only uses the floor's commands and sensors, and nests no deeper than the editor. */
+function checkProgram(l: LevelFile, name: string, text: string, e: (m: string) => void) {
+  const words = text.replace(/[{}]/g, ' ').trim().split(/\s+/);
+  const sensors = new Set<string>(['wall_ahead', ...(l.sensors ?? [])]);
+  for (const s of l.sensors ?? []) if (!(SENSORS as readonly string[]).includes(s)) e(`unknown sensor ${s}`);
+  for (let i = 0; i < words.length; i++) {
+    const word = words[i];
+    if (word === 'repeat') {
+      const n = Number(words[i + 1]);
+      // The editor's repeat block only goes this far, so a par that needs more can't be reached.
+      if (n < MIN_TIMES || n > MAX_TIMES) e(`${name} repeats ${n} times; the block goes from ${MIN_TIMES} to ${MAX_TIMES}`);
+    }
+    if (/^\d+$/.test(word) || word === 'def' || word === 'not' || word === 'else') continue; // a count, a function body, or part of a condition
+    if (word === 'if' || word === 'while') {
+      if (!l.commands.includes(word)) e(`${name} uses '${word}', which this floor does not allow`);
+      const sensor = words[i + 1] === 'not' ? words[(i += 2)] : words[(i += 1)];
+      if (!sensors.has(sensor)) e(`${name} asks '${sensor}', which this floor's sensors do not include`);
+      if (sensor === 'tile_is') i++; // the colour
+      continue;
+    }
+    if (!l.commands.includes(word as never)) e(`${name} uses '${word}', which this floor does not allow`);
+  }
+  // The editor nests blocks at most MAX_DEPTH deep, so the reference must too.
+  try {
+    const p = parseReference(text);
+    for (const r of ['main', ...FUNCTION_NAMES] as const) if (p[r].some((b) => loopHeight(b) > MAX_DEPTH)) e(`${name} nests deeper than ${MAX_DEPTH} in ${r}`);
+  } catch (err) {
+    e(String(err));
+  }
 }

@@ -1,0 +1,46 @@
+{
+  "id": "t2-f03",
+  "title": "Dry Patch",
+  "band": "frostgate",
+  "size": {
+    "w": 7,
+    "h": 3
+  },
+  "tiles": [
+    "###e###",
+    "#.i.ii#",
+    "#######"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right"
+  ],
+  "slots": {
+    "main": 5
+  },
+  "par": {
+    "commands": 3,
+    "steps": 3
+  },
+  "reference": "forward turn_left forward",
+  "hints": [
+    "Plain floor is not slippery. A slide onto it stops right there.",
+    "Slide onto the dry patch, then turn toward the exit.",
+    "forward turn_left forward"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

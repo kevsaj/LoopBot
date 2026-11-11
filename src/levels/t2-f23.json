@@ -1,0 +1,57 @@
+{
+  "id": "t2-f23",
+  "title": "Relay Steps",
+  "band": "signal",
+  "size": {
+    "w": 8,
+    "h": 3
+  },
+  "tiles": [
+    "########",
+    ".iisisis",
+    "########"
+  ],
+  "heights": [
+    "00000000",
+    "00011223",
+    "00000000"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "all_switches_on"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "F1"
+  ],
+  "slots": {
+    "main": 4,
+    "F1": 4
+  },
+  "par": {
+    "commands": 6,
+    "steps": 9
+  },
+  "reference": "F1 F1 F1 def F1 { forward jump activate }",
+  "hints": [
+    "Each relay sits one step up. Slide to the step, jump onto it, flip it.",
+    "The same three moves for every relay, however long the ice is. Put them in F1.",
+    "F1 F1 F1 def F1 { forward jump activate }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

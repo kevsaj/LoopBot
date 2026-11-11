@@ -1,0 +1,57 @@
+{
+  "id": "t2-f33",
+  "title": "Blind Corridor",
+  "band": "aurora",
+  "size": {
+    "w": 8,
+    "h": 8
+  },
+  "tiles": [
+    "########",
+    "tttttt##",
+    "t####t##",
+    "t#ettt##",
+    "t#######",
+    "t##.####",
+    "t##t####",
+    "tttt####"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 3,
+    "y": 5,
+    "facing": "south"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "while"
+  ],
+  "slots": {
+    "main": 5
+  },
+  "par": {
+    "commands": 4,
+    "steps": 26
+  },
+  "reference": "repeat 6 { while not wall_ahead { forward } turn_right }",
+  "hints": [
+    "Thin ice corridors, every one a different length. Counting won't fit, so check instead.",
+    "While there is no wall ahead, go forward. Then turn right. Repeat that.",
+    "repeat 6 { while not wall_ahead { forward } turn_right }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

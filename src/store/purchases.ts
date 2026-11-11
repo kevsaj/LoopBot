@@ -29,6 +29,17 @@ export const STORE_AVAILABLE = Capacitor.isNativePlatform() && API_KEY !== '';
  */
 export const PLUS_VISIBLE = env.VITE_PLUS === '1';
 
+/**
+ * Plays Plus content without buying it: dev builds, and builds made with VITE_PLUS_PREVIEW=1 (the
+ * CI debug APK), so Frostline can be tested on a phone before the store is set up.
+ */
+export const PLUS_PREVIEW = import.meta.env.DEV || env.VITE_PLUS_PREVIEW === '1';
+
+/** Whether Plus content can be played on this device right now. */
+export function plusUnlocked(): boolean {
+  return PLUS_PREVIEW || hasPlus();
+}
+
 type Listener = (owned: boolean) => void;
 const listeners = new Set<Listener>();
 

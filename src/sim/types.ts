@@ -5,7 +5,8 @@ export type Facing = 'north' | 'east' | 'south' | 'west';
 
 /** Tile types from CR-1. Colour tiles are plain floor tiles with a colour. */
 /** 'ice' (Frostline): step onto it and LoopBot slides on until something stops it. */
-export type TileType = 'floor' | 'wall' | 'gap' | 'switch' | 'door' | 'exit' | 'ice';
+/** 'thin' (Frostline): thin ice holds LoopBot once, and cracks into a gap when LoopBot steps off. */
+export type TileType = 'floor' | 'wall' | 'gap' | 'switch' | 'door' | 'exit' | 'ice' | 'thin';
 
 export type Colour = 'r' | 'g' | 'b' | 'y';
 
@@ -89,6 +90,11 @@ export interface LevelFile {
   sensors?: Sensor[];
   /** Rooftop pro mode (ED-11): the code view can be edited as text on this floor. */
   typing?: boolean;
+  /**
+   * Bug hunt floors: the program the player starts with (reference format). It almost works;
+   * finding and fixing what's wrong is the puzzle.
+   */
+  starter?: string;
 }
 
 export interface World {
@@ -103,6 +109,8 @@ export interface World {
   /** Door open/closed, keyed "x,y". */
   doors: Record<string, boolean>;
   links: Array<{ switch: Pos; doors: Pos[] }>;
+  /** Thin ice that has cracked into a gap, keyed "x,y". */
+  cracked: Record<string, boolean>;
   bot: { x: number; y: number; facing: Facing; carrying: boolean };
   goals: Goal[];
 }

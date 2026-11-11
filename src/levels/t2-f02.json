@@ -1,0 +1,48 @@
+{
+  "id": "t2-f02",
+  "title": "Corner Skid",
+  "band": "frostgate",
+  "size": {
+    "w": 6,
+    "h": 5
+  },
+  "tiles": [
+    "######",
+    "#.iii#",
+    "####i#",
+    "####i#",
+    "####e#"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right"
+  ],
+  "slots": {
+    "main": 5
+  },
+  "par": {
+    "commands": 3,
+    "steps": 3
+  },
+  "reference": "forward turn_right forward",
+  "hints": [
+    "A slide stops when the ice runs into a wall. That is a good place to turn.",
+    "Slide east, turn right, slide south.",
+    "forward turn_right forward"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}
