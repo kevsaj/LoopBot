@@ -91,8 +91,8 @@ jobs:
             echo "Upload the .aab in Play Console. The .apk is the same build, to install on a phone first."
             echo ""
             echo "Permissions in this build (Play Console's answers must match, e.g. no AD_ID means 'no advertising ID'):"
-            M=$(find android/app/build/intermediates -name AndroidManifest.xml -path '*merged_manifest*' -path '*release*' | head -1)
-            grep -o 'uses-permission[^>]*android:name="[^"]*"' "$M" | sed 's/.*name="/- /; s/"$//' | sort -u
+            M=$(find android/app/build/intermediates -name AndroidManifest.xml -path '*merged_manifest*' -path '*release*' | head -1 || true)
+            grep -o 'uses-permission[^>]*android:name="[^"]*"' "$M" | sed 's/.*name="/- /; s/"$//' | sort -u || echo "- (could not read the merged manifest)"
           } >> "$GITHUB_STEP_SUMMARY"
 
       - uses: actions/upload-artifact@v4
