@@ -52,6 +52,16 @@ npm run ios:run    # run on a simulator or plugged-in iPhone (macOS only)
 - `ITSAppUsesNonExemptEncryption` is false in `Info.plist` (the game only uses HTTPS), so each upload skips the export compliance question.
 - To regenerate the iOS icon and splash from `assets/`: `npx @capacitor/assets generate --ios --iconBackgroundColor '#2b2546' --splashBackgroundColor '#2b2546' --splashBackgroundColorDark '#2b2546'`. The icon must stay without transparency.
 
+### LoopBot Plus (in-app purchase)
+
+Plus is one non-consumable purchase sold through [RevenueCat](https://www.revenuecat.com/) (`src/store/`). It stays hidden until Frostline ships. To test it in a sandbox:
+
+1. Create product `loopbot_plus` in App Store Connect (non-consumable) and in Play Console (one-time product).
+2. In RevenueCat, add both apps, create the entitlement `plus` with both products, and an offering whose first package holds them.
+3. Put the public SDK keys in `.env.local`: `VITE_REVENUECAT_IOS_KEY=appl_...` and `VITE_REVENUECAT_ANDROID_KEY=goog_...`, plus `VITE_PLUS=1` to show the Plus screen and Settings rows.
+
+Ownership comes only from the store (cached as `loopbot.plus` for offline play) and is never part of a backup code.
+
 ## Where things are
 
 | Area | Where | Notes |

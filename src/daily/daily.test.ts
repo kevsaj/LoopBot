@@ -128,3 +128,18 @@ describe('streak freezes', () => {
   });
 });
 
+
+describe('Plus streak freezes', () => {
+  it('lets Plus bank up to PLUS_MAX_FREEZES', async () => {
+    const { recordDailyClear, MAX_FREEZES, PLUS_MAX_FREEZES } = await import('./index');
+    let free = { best: {}, streak: 0, longest: 0, last: null as string | null, freezes: 0 } as Parameters<typeof recordDailyClear>[0];
+    let plus = free;
+    const day = (n: number) => `2026-01-${String(n).padStart(2, '0')}`;
+    for (let n = 1; n <= 28; n++) {
+      free = recordDailyClear(free, day(n), 3);
+      plus = recordDailyClear(plus, day(n), 3, PLUS_MAX_FREEZES);
+    }
+    expect(free.freezes).toBe(MAX_FREEZES);
+    expect(plus.freezes).toBe(PLUS_MAX_FREEZES);
+  });
+});
