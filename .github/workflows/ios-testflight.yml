@@ -9,10 +9,19 @@ name: iOS TestFlight
 #   ASC_ISSUER_ID                 Issuer ID shown on that same page
 #   ASC_API_KEY_P8                Full text of the AuthKey_XXXX.p8 file, including the BEGIN/END lines
 #   VITE_TELEMETRY_URL (optional) Playtest stats endpoint, same value as in .env.local
+#   VITE_REVENUECAT_IOS_KEY (optional) RevenueCat public Apple SDK key (appl_...), needed for Plus purchases
 # The API key needs the Admin role so Xcode can create the distribution certificate and profile itself.
 on:
   workflow_dispatch:
     inputs:
+      plus_preview:
+        description: Unlock Frostline and other Plus content without buying (VITE_PLUS_PREVIEW). Test builds only, never for the App Store release.
+        type: boolean
+        default: false
+      plus_store:
+        description: Show the Plus screen and Settings purchase rows (VITE_PLUS). Leave off until Plus is on sale.
+        type: boolean
+        default: false
       notes:
         description: What testers should try in this build (shown in the run summary only)
         required: false
@@ -48,7 +57,11 @@ jobs:
       - name: Build the game
         env:
           VITE_TELEMETRY_URL: ${{ secrets.VITE_TELEMETRY_URL }}
+          VITE_REVENUECAT_IOS_KEY: ${{ secrets.VITE_REVENUECAT_IOS_KEY }}
+          VITE_PLUS_PREVIEW: ${{ inputs.plus_preview && '1' || '' }}
+          VITE_PLUS: ${{ inputs.plus_store && '1' || '' }}
         run: |
+          echo "Plus preview: ${VITE_PLUS_PREVIEW:-off}, Plus store: ${VITE_PLUS:-off}, RevenueCat key: $([ -n "$VITE_REVENUECAT_IOS_KEY" ] && echo set || echo missing)"
           npm ci
           npm run ios:sync
 

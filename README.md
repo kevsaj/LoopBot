@@ -38,6 +38,7 @@ npm run android:bundle   # signed release bundle for Google Play (needs android/
 The iOS project is in `ios/` (Capacitor 8 with Swift Package Manager, no CocoaPods; bundle ID `com.kisstudios.loopbot`, iPhone only, portrait, iOS 15.4+, so an iPad mini 4 on iPadOS 15.8 still runs it). Building needs Xcode, which only runs on macOS, so there are two ways to ship:
 
 - **No Mac (default):** the `iOS TestFlight` workflow in GitHub Actions archives, signs and uploads a build to App Store Connect. Run it from the Actions tab. It needs the repository secrets listed at the top of `.github/workflows/ios-testflight.yml`. The build number is the workflow run number, the version is `package.json`'s.
+- **Plus and Frostline in iOS builds:** both iOS workflows have two checkboxes. *Plus preview* (`VITE_PLUS_PREVIEW`) unlocks Frostline without buying, for test builds only. *Plus store* (`VITE_PLUS`) shows the Plus screen and purchase rows; sandbox purchases also need the `VITE_REVENUECAT_IOS_KEY` secret. The device build has both on by default, TestFlight both off, so a release build never ships them by accident.
 - **Older test devices:** the `iOS device build` workflow makes an ad hoc `.ipa` (an Actions artifact) that installs from a link on devices registered at developer.apple.com > Devices. Use it for devices that can't run TestFlight (iOS 15.x).
 - **On a Mac:** `npm run ios:sync` then `npm run ios:open`, pick your team under Signing & Capabilities, and Product > Archive.
 
