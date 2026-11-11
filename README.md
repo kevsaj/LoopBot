@@ -26,7 +26,8 @@ npm run android:open     # open the project in Android Studio
 npm run android:bundle   # signed release bundle for Google Play (needs android/keystore.properties)
 ```
 
-- The version comes from `package.json` (`0.1.0` becomes versionName 0.1.0, versionCode 100). Bump it before every Play upload.
+- **No Android Studio needed to ship:** the `Android release` workflow in GitHub Actions builds the signed Play bundle (.aab) plus the same build as an APK, with playtest stats on and Plus off by default. Run it from the Actions tab and download the `loopbot-play-release` artifact. It needs the secrets listed at the top of `.github/workflows/android-release.yml`.
+- The version name comes from `package.json`. The workflow's version code is the version times 1000 plus the run number (1.0.0, run 7 → 10000007), so every upload is higher. A local `npm run android:bundle` uses 10000 for 1.0.0, so don't mix local and workflow uploads.
 - Release signing reads `android/keystore.properties` (copy `keystore.properties.example`). The key and that file are never committed.
 - App icon and splash are drawn in `assets/src/*.svg` and rendered to `assets/*.png`. To regenerate the Android sizes: `npx @capacitor/assets generate --android`, then restore the two `mipmap-anydpi-v26/*.xml` files (they use the foreground without the tool's extra inset).
 - Every build (`npm run build`, demo, Android) strips the floors' reference solutions. Only the dev server and the level checks keep them.

@@ -1,0 +1,98 @@
+name: Android release
+# Builds the signed Google Play bundle (.aab) on a GitHub runner, so Kevin doesn't need Android
+# Studio to ship. Download it from the run's artifacts and upload it in Play Console.
+# Run it by hand: Actions tab > "Android release" > Run workflow.
+#
+# Repository secrets (Settings > Secrets and variables > Actions):
+#   ANDROID_KEYSTORE_BASE64       The upload keystore (.jks) as base64: base64 -w 0 loopbot-upload.jks
+#   ANDROID_KEYSTORE_PASSWORD     Its store password
+#   ANDROID_KEY_ALIAS             Key alias, usually "upload"
+#   ANDROID_KEY_PASSWORD          Key password (same as the store password if you used one)
+#   VITE_TELEMETRY_URL (optional) Playtest stats endpoint, same as for iOS
+#   VITE_REVENUECAT_ANDROID_KEY (optional) RevenueCat public Google SDK key (goog_...), needed for Plus purchases
+on:
+  workflow_dispatch:
+    inputs:
+      plus_preview:
+        description: Unlock Frostline and other Plus content without buying (VITE_PLUS_PREVIEW). Test builds only, never for a Play release.
+        type: boolean
+        default: false
+      plus_store:
+        description: Show the Plus screen and Settings purchase rows (VITE_PLUS). Leave off until Plus is on sale.
+        type: boolean
+        default: false
+
+jobs:
+  bundle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Check secrets
+        env:
+          KS: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KS_PASS: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASS: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          missing=""
+          [ -z "$KS" ] && missing="$missing ANDROID_KEYSTORE_BASE64"
+          [ -z "$KS_PASS" ] && missing="$missing ANDROID_KEYSTORE_PASSWORD"
+          [ -z "$ALIAS" ] && missing="$missing ANDROID_KEY_ALIAS"
+          [ -z "$KEY_PASS" ] && missing="$missing ANDROID_KEY_PASSWORD"
+          if [ -n "$missing" ]; then echo "::error::Missing repository secrets:$missing"; exit 1; fi
+
+      - name: Build the game
+        env:
+          VITE_TELEMETRY_URL: ${{ secrets.VITE_TELEMETRY_URL }}
+          VITE_REVENUECAT_ANDROID_KEY: ${{ secrets.VITE_REVENUECAT_ANDROID_KEY }}
+          VITE_PLUS_PREVIEW: ${{ inputs.plus_preview && '1' || '' }}
+          VITE_PLUS: ${{ inputs.plus_store && '1' || '' }}
+        run: |
+          echo "Plus preview: ${VITE_PLUS_PREVIEW:-off}, Plus store: ${VITE_PLUS:-off}, stats: $([ -n "$VITE_TELEMETRY_URL" ] && echo on || echo off), RevenueCat key: $([ -n "$VITE_REVENUECAT_ANDROID_KEY" ] && echo set || echo missing)"
+          npm ci
+          npm run cap:sync
+
+      - name: Sign and build the bundle
+        env:
+          KS: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KS_PASS: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASS: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          ANDROID_BUILD_NUMBER: ${{ github.run_number }}
+        run: |
+          echo "$KS" | base64 -d > "$RUNNER_TEMP/upload.jks"
+          {
+            echo "storeFile=$RUNNER_TEMP/upload.jks"
+            echo "storePassword=$KS_PASS"
+            echo "keyAlias=$ALIAS"
+            echo "keyPassword=$KEY_PASS"
+          } > android/keystore.properties
+          # The bundle goes to Play; the release APK is the same build, to sideload and check first.
+          node scripts/gradle.mjs bundleRelease assembleRelease --no-daemon
+          rm -f android/keystore.properties "$RUNNER_TEMP/upload.jks"
+          VERSION=$(node -p "require('./package.json').version")
+          CODE=$((10#$(echo "$VERSION" | awk -F. '{printf "%d%02d%02d", $1, $2, $3}') * 1000 + ANDROID_BUILD_NUMBER % 1000))
+          mkdir -p out
+          cp android/app/build/outputs/bundle/release/app-release.aab "out/loopbot-$VERSION-$CODE.aab"
+          cp android/app/build/outputs/apk/release/app-release.apk "out/loopbot-$VERSION-$CODE.apk"
+          {
+            echo "### LoopBot $VERSION (version code $CODE)"
+            echo "Plus preview: ${{ inputs.plus_preview }}, Plus store: ${{ inputs.plus_store }}"
+            echo "Upload the .aab in Play Console. The .apk is the same build, to install on a phone first."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: loopbot-play-release
+          path: out/
+          retention-days: 30
