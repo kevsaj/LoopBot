@@ -22,6 +22,8 @@ function doPost(e) {
   var lock = LockService.getScriptLock();
   lock.waitLock(20000);
   try {
+    // Real payloads are a few KB; anything huge is someone poking at the public URL.
+    if (!e.postData || e.postData.contents.length > 100000) return ContentService.createTextOutput('bad request');
     var body = JSON.parse(e.postData.contents);
     if (body.kind === 'events') saveEvents_(body);
     else if (body.kind === 'feedback') saveFeedback_(body);
@@ -39,12 +41,13 @@ function doGet() {
   return ContentService.createTextOutput('LoopBot stats endpoint is running.');
 }
 
-// Text from players never starts with = + - @, so the sheet never runs it as a formula.
+// Text from players never starts with = + - @ (or a tab or line break before one), so the sheet,
+// or Excel after a CSV download, never runs it as a formula.
 function clean_(v, max) {
   if (v === undefined || v === null) return '';
   if (typeof v === 'number' || typeof v === 'boolean') return v;
   var s = String(v).slice(0, max || 64);
-  return /^[=+\-@]/.test(s) ? "'" + s : s;
+  return /^[\s]*[=+\-@]|^[\t\r]/.test(s) ? "'" + s : s;
 }
 
 function sheet_(name, cols) {

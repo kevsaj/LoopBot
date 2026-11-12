@@ -38,10 +38,35 @@ export function loadProgress(): Progress {
       }
       return p;
     }
-    return { ...fresh(), ...(JSON.parse(raw) as Partial<Progress>) };
+    return sanitizeProgress(JSON.parse(raw));
   } catch {
     return fresh();
   }
+}
+
+/** A map of floor id to a number, dropping anything else (a hand-edited backup code can hold anything). */
+function numberMap(v: unknown): Record<string, number> {
+  const out: Record<string, number> = {};
+  if (v && typeof v === 'object' && !Array.isArray(v)) {
+    for (const [k, n] of Object.entries(v)) if (typeof n === 'number' && Number.isFinite(n)) out[k] = n;
+  }
+  return out;
+}
+
+/** Keeps only fields of the right type, so broken or hand-made saves can't crash the game. */
+export function sanitizeProgress(v: unknown): Progress {
+  const p = fresh();
+  if (!v || typeof v !== 'object' || Array.isArray(v)) return p;
+  const o = v as Record<string, unknown>;
+  const int = (x: unknown, fallback: number) => (typeof x === 'number' && Number.isFinite(x) ? Math.max(0, Math.floor(x)) : fallback);
+  return {
+    stars: numberMap(o.stars),
+    hints: int(o.hints, p.hints),
+    hintsAwarded: int(o.hintsAwarded, p.hintsAwarded),
+    revealed: numberMap(o.revealed),
+    fails: numberMap(o.fails),
+    tutorial: typeof o.tutorial === 'boolean' ? o.tutorial : p.tutorial,
+  };
 }
 
 export function saveProgress(p: Progress) {
