@@ -7,6 +7,10 @@ import groovy.json.JsonSlurper
 def appVersion = new JsonSlurper().parse(rootProject.file('../package.json')).version
 def (vMajor, vMinor, vPatch) = appVersion.tokenize('.-')[0..2].collect { it as int }
 def appVersionCode = vMajor * 10000 + vMinor * 100 + vPatch
+// The "Android release" workflow passes its run number, so every Play upload gets a higher code
+// even when the version stays the same: 1.0.0 run 7 -> 10000007. Local builds keep 10000.
+def buildNumber = System.getenv('ANDROID_BUILD_NUMBER')
+if (buildNumber) appVersionCode = appVersionCode * 1000 + (buildNumber as int) % 1000
 
 // Release signing reads android/keystore.properties (never committed). See docs/android-release.md.
 def keystorePropsFile = rootProject.file('keystore.properties')
