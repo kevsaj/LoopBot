@@ -7,6 +7,7 @@ import { boardColors, tipPoints } from '../rewards/looks';
 import type { TipShape } from '../rewards/looks';
 import type { Facing, World } from '../sim/types';
 import { ahead, isWalkable, surfaceHeight } from '../sim/world';
+import { webglRenderTargetsWork } from './webglProbe';
 
 const TW = 64; // tile width on screen
 const TH = 32; // tile height on screen
@@ -900,22 +901,37 @@ export class BoardScene extends Phaser.Scene {
 }
 
 export function createBoard(parent: HTMLElement, onReady: (scene: BoardScene) => void): Phaser.Game {
-  const scene = new BoardScene();
-  const game = new Phaser.Game({
-    type: Phaser.AUTO,
-    parent,
-    transparent: true, // the sky gradient is CSS behind the canvas
-    scale: { mode: Phaser.Scale.RESIZE, width: parent.clientWidth || 360, height: parent.clientHeight || 300 },
-    scene,
-    banner: false,
-    render: { antialias: true },
-    // 30 frames a second is plenty for a turn-based board and about halves the CPU (and battery) it uses.
-    fps: { target: 30, limit: 30 },
-    input: { mouse: false, touch: false },
-    // Sounds and music play through src/audio, so Phaser needs no AudioContext of its own (each
-    // floor makes a new game, and phones limit how many contexts an app may open).
-    audio: { noAudio: true },
-  });
-  game.events.once(Phaser.Core.Events.READY, () => onReady(scene));
-  return game;
+  const make = (type: number) => {
+    const scene = new BoardScene();
+    const game = new Phaser.Game({
+      type,
+      parent,
+      transparent: true, // the sky gradient is CSS behind the canvas
+      scale: {
+        mode: Phaser.Scale.RESIZE,
+        width: parent.clientWidth || 360,
+        height: parent.clientHeight || 300,
+        // Never let the board shrink to nothing. When the board area collapses for a moment (an
+        // Android keyboard opening, a layout change), Phaser 3.90 rebuilds its WebGL render targets
+        // at 0 pixels, which throws "Framebuffer status: Incomplete Attachment" inside the game loop
+        // and freezes the board for good. The cap keeps sizes inside every phone GPU's texture limit.
+        min: { width: 16, height: 16 },
+        max: { width: 4096, height: 4096 },
+      },
+      scene,
+      banner: false,
+      render: { antialias: true },
+      // 30 frames a second is plenty for a turn-based board and about halves the CPU (and battery) it uses.
+      fps: { target: 30, limit: 30 },
+      input: { mouse: false, touch: false },
+      // Sounds and music play through src/audio, so Phaser needs no AudioContext of its own (each
+      // floor makes a new game, and phones limit how many contexts an app may open).
+      audio: { noAudio: true },
+    });
+    game.events.once(Phaser.Core.Events.READY, () => onReady(scene));
+    return game;
+  };
+  const webgl = webglRenderTargetsWork(parent.clientWidth || 360, parent.clientHeight || 300);
+  if (!webgl) console.warn('LoopBot: WebGL render targets unsupported here, drawing the board with Canvas');
+  return make(webgl ? Phaser.AUTO : Phaser.CANVAS);
 }

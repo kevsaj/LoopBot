@@ -38,8 +38,13 @@ export function Board({ update, rotateSignal, band }: Props) {
     let game: Phaser.Game | null = null;
     let gone = false;
     // Follow the board area's size (rotation, landscape layout, tablet split view).
+    // Phaser's RESIZE mode sizes the canvas from its own reading of the parent, so refresh that
+    // reading rather than calling scale.resize(), which used the old reading and left the board
+    // one size behind (stuck small after the board area shrank and grew back).
     const ro = new ResizeObserver(() => {
-      if (game && el.clientWidth && el.clientHeight) game.scale.resize(el.clientWidth, el.clientHeight);
+      if (!game || !el.clientWidth || !el.clientHeight) return;
+      game.scale.getParentBounds();
+      game.scale.refresh();
     });
     void preloadBoard().then(({ createBoard, setBand }) => {
       if (gone) return;
