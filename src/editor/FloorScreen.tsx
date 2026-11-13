@@ -18,6 +18,7 @@ import { COMMAND_META, CONTROL_ORDER, EXTRA_ORDER, PALETTE_ORDER, blockCommand }
 import { Board, snapshotBoard } from '../board/Board';
 import { shareImage } from '../share';
 import { canvasToBlob, drawShareCard } from '../shareImage';
+import { towerOf } from '../levels/towers';
 import type { BoardUpdate } from '../board/BoardScene';
 import { fx } from '../audio/feedback';
 import { SettingsSheet } from '../SettingsSheet';
@@ -686,22 +687,28 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
           onTower={onTower}
           custom={custom && { note: customNote, noPar: custom.noPar }}
           onShareImage={
-            daily || custom
+            custom
               ? undefined
               : async () => {
+                  const t = towerOf(Number(/^t(\d+)-/.exec(level.id)?.[1] ?? 1));
                   const card = drawShareCard({
-                    title: `Floor ${floorNumber} · ${level.title}`,
-                    subtitle: 'Tower 1 · Meridian Spire',
+                    title: daily ? `Daily · ${shortDate(daily.date)}` : `Floor ${floorNumber} · ${level.title}`,
+                    subtitle: daily ? `${DIFFICULTY_LABEL[difficultyOn(daily.date)]} puzzle` : `Tower ${t.n} · ${t.name}`,
                     stars: earned,
                     band: level.band,
                     board: await snapshotBoard(),
-                    code: toCode(program, routines),
+                    code: daily ? undefined : toCode(program, routines),
+                    daily: daily && { streak: daily.streak },
                     commands: total,
                     steps: outcome.steps,
                     par: level.par,
                   });
                   const png = await canvasToBlob(card);
                   if (!png) return 'failed';
+                  if (daily) {
+                    const text = shareText(daily.date, level, earned, total, daily.streak);
+                    return shareImage(png, text, `loopbot-daily-${daily.date}.png`);
+                  }
                   return shareImage(png, `I cleared Floor ${floorNumber} of LoopBot in ${total} commands. Can you do it in fewer?`, `loopbot-floor-${floorNumber}.png`);
                 }
           }

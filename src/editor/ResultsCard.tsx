@@ -29,7 +29,7 @@ interface Props {
   daily?: { date: string; streak: number; froze?: boolean; share: string };
   /** A player-made floor: no tower or streak, just a note and Done. */
   custom?: { note: string | null; noPar?: boolean };
-  /** Tower floors: share a picture of the solved board and program. */
+  /** Share a picture: the solved board and program on tower floors, a spoiler-free card on the daily. */
   onShareImage?(): Promise<ShareResult>;
 }
 
@@ -87,7 +87,9 @@ export function ResultsCard({ floorNumber, tower = 1, floorCount, earned, prevBe
     if (sharing) return;
     fx.tap();
     setSharing(true);
-    const r = daily ? await shareText(daily.share) : onShareImage ? await onShareImage() : 'failed';
+    let r: ShareResult = onShareImage ? await onShareImage() : 'failed';
+    // The daily always has its text line to fall back on if the picture can't be made.
+    if (daily && (r === 'failed' || !onShareImage)) r = await shareText(daily.share);
     setSharing(false);
     if (r === 'copied') setShared('Copied! Paste it anywhere.');
     else if (r === 'saved') setShared('Picture saved. Post it anywhere.');

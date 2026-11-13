@@ -11,7 +11,10 @@ export interface ShareCard {
   stars: number;
   band: string;
   board: HTMLImageElement | null;
-  code: CodeLine[];
+  /** The program as code. Left out for the daily challenge, so the picture gives nothing away. */
+  code?: CodeLine[];
+  /** The daily challenge: the streak, shown where the code would be. */
+  daily?: { streak: number };
   commands: number;
   steps: number;
   par: { commands: number; steps: number };
@@ -31,6 +34,18 @@ const SKIES: Record<string, string[]> = {
   workshop: ['#24160f', '#3a2318', '#573522', '#6e4a2c'],
   control: ['#080d1c', '#111a33', '#1a2547', '#22305a'],
   rooftop: ['#04060f', '#0b1130', '#1c1f45', '#3a2b4a'],
+  // Tower 2, Frostline
+  frostgate: ['#5b7290', '#8aa3bf', '#bcd0e2', '#e3edf5'],
+  glacier: ['#0f2a44', '#1d4a6e', '#3d7aa0', '#8ab9d6'],
+  signal: ['#121827', '#1f2840', '#3a3d58', '#6c6a80'],
+  aurora: ['#05101c', '#0b1a2e', '#16223f', '#2b2a52'],
+  summit: ['#0b1630', '#22355e', '#5c7aa6', '#c8d8ea'],
+  // Tower 3, Heatwave
+  dunegate: ['#6e3320', '#b45e34', '#eaa35e', '#f9e2b8'],
+  furnace: ['#1a0d0a', '#2e1510', '#4a1d14', '#7a2e1a'],
+  bazaar: ['#2a1b3d', '#5a2f52', '#b0584e', '#e89a5c'],
+  mirage: ['#4a3570', '#8a6aae', '#d9b0c8', '#f6dccc'],
+  crown: ['#7a4210', '#c47a22', '#f2c45e', '#fff0cc'],
 };
 
 /** How many code lines fit; longer programs end with "…". */
@@ -82,11 +97,12 @@ export function drawShareCard(c: ShareCard, canvas: HTMLCanvasElement = document
   g.fillText('Bot', 60 + g.measureText('Loop').width, 112);
   g.font = `700 44px ${SANS}`;
   g.fillStyle = '#f7f3ea';
-  g.fillText(c.title, 60, 186, W - 120 - 220);
+  g.fillText(c.title, 60, 186, W - 120 - (c.daily ? 0 : 220));
   g.font = `500 30px ${SANS}`;
   g.fillStyle = '#a7a9c4';
-  g.fillText(c.subtitle, 60, 232, W - 120 - 220);
-  for (let i = 0; i < 3; i++) star(g, W - 230 + i * 80, 150, 32, i < c.stars);
+  g.fillText(c.subtitle, 60, 232, W - 120 - (c.daily ? 0 : 220));
+  // (the daily shows its stars big, below the board)
+  if (!c.daily) for (let i = 0; i < 3; i++) star(g, W - 230 + i * 80, 150, 32, i < c.stars);
 
   // board on its band's sky
   const bx = 40,
@@ -113,29 +129,51 @@ export function drawShareCard(c: ShareCard, canvas: HTMLCanvasElement = document
   }
   g.restore();
 
-  // the program as code
   const cy = by + bh + 30,
     ch = H - cy - 150;
   roundRect(g, bx, cy, bw, ch, 24);
   g.fillStyle = '#12131f';
   g.fill();
-  const lines = codeForCard(c.code);
-  const size = lines.length > 9 ? 26 : 30;
-  g.font = `500 ${size}px ${MONO}`;
-  const lh = Math.min(size * 1.35, (ch - 50) / Math.max(lines.length, 1));
-  lines.forEach((t, i) => {
-    g.fillStyle = t.startsWith('def ') ? TEAL : '#e6e4f2';
-    g.fillText(t, bx + 36, cy + 30 + size + i * lh, bw - 72);
-  });
+  if (c.code) {
+    // the program as code
+    const lines = codeForCard(c.code);
+    const size = lines.length > 9 ? 26 : 30;
+    g.font = `500 ${size}px ${MONO}`;
+    const lh = Math.min(size * 1.35, (ch - 50) / Math.max(lines.length, 1));
+    lines.forEach((t, i) => {
+      g.fillStyle = t.startsWith('def ') ? TEAL : '#e6e4f2';
+      g.fillText(t, bx + 36, cy + 30 + size + i * lh, bw - 72);
+    });
+  } else {
+    // the daily challenge: no code, so nobody gets the answer; big stars and the streak instead
+    const mid = bx + bw / 2;
+    for (let i = 0; i < 3; i++) star(g, mid - 130 + i * 130, cy + 110, 52, i < c.stars);
+    g.textAlign = 'center';
+    g.font = `800 64px ${SANS}`;
+    g.fillStyle = '#f7f3ea';
+    g.fillText(`${c.commands} commands`, mid, cy + 250, bw - 72);
+    g.font = `500 34px ${SANS}`;
+    g.fillStyle = '#a7a9c4';
+    g.fillText(`par ${c.par.commands}`, mid, cy + 300, bw - 72);
+    if (c.daily && c.daily.streak > 1) {
+      g.font = `700 40px ${SANS}`;
+      g.fillStyle = GOLD;
+      g.fillText(`🔥 ${c.daily.streak}-day streak`, mid, cy + ch - 40, bw - 72);
+    }
+    g.textAlign = 'left';
+  }
 
   // score and invite
   g.font = `700 36px ${SANS}`;
   g.fillStyle = '#f7f3ea';
-  const score = `${c.commands} commands (par ${c.par.commands}) · ${c.steps} steps (par ${c.par.steps})`;
+  const score = c.daily
+    ? 'Same puzzle for everyone today. How did you do?'
+    : `${c.commands} commands (par ${c.par.commands}) · ${c.steps} steps (par ${c.par.steps})`;
   g.fillText(score, 60, H - 82, W - 120);
   g.font = `500 28px ${SANS}`;
   g.fillStyle = '#a7a9c4';
-  g.fillText('Can you do it in fewer? Play LoopBot: kisstudios.net/loopbot', 60, H - 36, W - 120);
+  const invite = c.daily ? 'Play the LoopBot Daily: kisstudios.net/loopbot' : 'Can you do it in fewer? Play LoopBot: kisstudios.net/loopbot';
+  g.fillText(invite, 60, H - 36, W - 120);
 
   return canvas;
 }
