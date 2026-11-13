@@ -9,10 +9,11 @@ const TILE_CHARS = new Set(['.', '#', '_', 's', 'd', 'e', 'r', 'g', 'b', 'y', 'i
 const FACINGS = ['north', 'east', 'south', 'west'];
 const GOALS = ['all_targets_filled', 'bot_on_exit', 'all_switches_on'];
 
-export function validateLevel(l: LevelFile): string[] {
+/** custom: a player-made floor (from the floor maker or a share code). It has no tower id, no reference and no hints. */
+export function validateLevel(l: LevelFile, opts: { custom?: boolean } = {}): string[] {
   const errs: string[] = [];
   const e = (m: string) => errs.push(`${l.id ?? '?'}: ${m}`);
-  if (!/^t\d+-f\d{2}$/.test(l.id)) e('id should look like t1-f03');
+  if (!opts.custom && !/^t\d+-f\d{2}$/.test(l.id)) e('id should look like t1-f03');
   const { w, h } = l.size ?? { w: 0, h: 0 };
   if (w < 1 || h < 1 || w > 8 || h > 8) e('size must be 1 to 8 in each direction (GD-1)');
   if (l.tiles.length !== h) e(`tiles has ${l.tiles.length} rows, size.h is ${h}`);
@@ -40,7 +41,7 @@ export function validateLevel(l: LevelFile): string[] {
   if (l.goals.includes('all_targets_filled') && !l.targets.length) e('all_targets_filled needs targets');
   if (l.goals.includes('bot_on_exit') && !l.tiles.some((r) => r.includes('e'))) e('bot_on_exit needs an exit tile');
   if (!l.slots.main || l.slots.main < 1) e('slots.main is required');
-  checkProgram(l, 'reference', l.reference, e);
+  if (!opts.custom || l.reference) checkProgram(l, 'reference', l.reference, e);
   if (l.starter !== undefined) {
     checkProgram(l, 'starter', l.starter, e);
     try {

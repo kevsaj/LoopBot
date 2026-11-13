@@ -58,6 +58,17 @@ interface Props {
   onTower(): void;
   /** Set when this is the daily challenge rather than a tower floor. */
   daily?: DailyProps;
+  /** Set for a player-made floor (floor maker test play, or a share code). */
+  custom?: CustomProps;
+}
+
+export interface CustomProps {
+  /** The back button's label, like "Floor maker". */
+  back: string;
+  /** Test play before the maker has cleared it: there's no par yet, so none is shown. */
+  noPar?: boolean;
+  /** Called on every clear. It can return a line for the results card. Tower stars aren't touched. */
+  onClear(commands: number, steps: number, stars: number): string | void;
 }
 
 export interface DailyProps {
@@ -77,7 +88,7 @@ export function stars(level: LevelFile, commands: number, steps: number) {
   return 1;
 }
 
-export function FloorScreen({ level, floorNumber, floorCount, progress, setProgress, onGo, onTower, daily }: Props) {
+export function FloorScreen({ level, floorNumber, floorCount, progress, setProgress, onGo, onTower, daily, custom }: Props) {
   const editor = useEditor(level.id, level.starter);
   const { program } = editor.state;
   // The questions if and while can ask here: wall ahead always, plus the floor's own sensors.
@@ -125,6 +136,13 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
   progressRef.current = progress;
   const dailyRef = useRef(daily);
   dailyRef.current = daily;
+  const customRef = useRef(custom);
+  customRef.current = custom;
+  const [customNote, setCustomNote] = useState<string | null>(null);
+  // Player-made floors don't count as tower fails (the stuck-floor stats are for tower floors).
+  const fail = useCallback(() => {
+    if (!customRef.current) setProgress((p) => recordFail(p, level.id));
+  }, [setProgress, level.id]);
   const [rotateSignal, setRotateSignal] = useState(0);
   const [sheet, setSheet] = useState<'hints' | 'settings' | 'feedback' | null>(null);
   // Anonymous play stats for this visit to the floor (see src/telemetry.ts).
@@ -214,13 +232,16 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
         setTerminal(o.error);
         fx.crash();
         fx.voice('uhoh', 0.35);
-        setProgress((p) => recordFail(p, level.id));
+        fail();
       } else if (o.status === 'cleared') {
         const s = stars(level, countCommands(program), o.steps);
         setTerminal(`> floor cleared in ${o.steps} steps`);
         fx.win();
         fx.voice('yay', 0.55);
-        if (dailyRef.current) {
+        if (customRef.current) {
+          setPrevBest(0);
+          setCustomNote(customRef.current.onClear(countCommands(program), o.steps, s) || null);
+        } else if (dailyRef.current) {
           // Daily stars live with the daily streak, not the tower's star count.
           setPrevBest(dailyRef.current.best);
           dailyRef.current.onClear(s);
@@ -244,12 +265,12 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
             : `> program ended after ${o.steps} steps. Not there yet: add more commands.`,
         );
         fx.denied();
-        setProgress((p) => recordFail(p, level.id));
+        fail();
       }
     } else if (!ev) {
       setPlaying(false);
     }
-  }, [program, level, speed, setProgress]);
+  }, [program, level, speed, setProgress, fail]);
 
   // Run loop
   const stepRef = useRef(stepOnce);
@@ -441,7 +462,11 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
     <main className={`floor${tab === 'code' && typing ? ' typing-code' : ''}`}>
       <header className="topbar">
         <div className="floor-title">
-          {daily ? (
+          {custom ? (
+            <button type="button" className="back-btn" onClick={() => (fx.tap(), onTower())} aria-label={`${custom.back}: back`}>
+              ‹ {custom.back}
+            </button>
+          ) : daily ? (
             <button type="button" className="back-btn" onClick={() => (fx.tap(), onTower())} aria-label={`Daily · ${shortDate(daily.date)}: back`}>
               ‹ Daily · {shortDate(daily.date)}
             </button>
@@ -477,7 +502,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
         <Board update={board} rotateSignal={rotateSignal} band={level.band} />
         <div className="step-counter" aria-live="polite">
           <span>
-            {total} / {Object.values(level.slots).reduce((a, b) => a + (b ?? 0), 0)} commands · par {level.par.commands}
+            {total} / {Object.values(level.slots).reduce((a, b) => a + (b ?? 0), 0)} commands{custom?.noPar ? '' : ` · par ${level.par.commands}`}
           </span>
           <span>step {steps}</span>
         </div>
@@ -658,8 +683,9 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
           onRetry={reset}
           onNext={() => onGo(floorNumber)}
           onTower={onTower}
+          custom={custom && { note: customNote, noPar: custom.noPar }}
           onShareImage={
-            daily
+            daily || custom
               ? undefined
               : async () => {
                   const card = drawShareCard({
