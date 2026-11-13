@@ -23,7 +23,8 @@ import { Interlude } from './story/Interlude';
 import { interludeAfter, markInterludeSeen } from './story/interludes';
 import type { Interlude as Beat } from './story/interludes';
 import type { LevelFile } from './sim/types';
-import { currentStreak, yesterday, dailyLevel, dateKey, loadDaily, pruneOldDailies, recordDailyClear, saveDaily } from './daily';
+import { currentStreak, yesterday, dailyLevel, dateKey, loadDaily, pruneOldDailies, recordArchiveClear, recordDailyClear, saveDaily } from './daily';
+import { DailyArchive } from './daily/DailyArchive';
 import type { DailyState } from './daily';
 import { MAX_FREEZES, PLUS_MAX_FREEZES } from './daily';
 import { hasPlus, initPurchases, plusUnlocked } from './store/purchases';
@@ -72,6 +73,8 @@ export default function App() {
   const [daily, setDailyState] = useState<DailyState>(loadDaily);
   // Re-plan the week of daily reminders on launch and whenever the daily changes (a clear skips today's).
   useEffect(() => void refreshReminders(daily), [daily]);
+  // The daily archive sheet (LoopBot Plus), opened from the tower map.
+  const [archive, setArchive] = useState(false);
   const [dailyFloor, setDailyFloor] = useState<{ date: string; level: LevelFile } | null>(null);
   const dailyFrom = useRef<'title' | 'map'>('title');
   const [booted, setBooted] = useState(false);
@@ -122,10 +125,10 @@ export default function App() {
     [ride, levels, tower],
   );
   const openDaily = useCallback(
-    (from: 'title' | 'map') => {
-      const date = dateKey();
+    (from: 'title' | 'map', date: string = dateKey()) => {
       dailyFrom.current = from;
-      setProgress((p) => pruneOldDailies(date, p));
+      setArchive(false);
+      setProgress((p) => pruneOldDailies(dateKey(), p, date));
       void dailyLevel(date).then((level) =>
         ride(() => {
           setDailyFloor({ date, level });
@@ -137,7 +140,8 @@ export default function App() {
   );
   const clearDaily = useCallback((date: string, stars: number) => {
     setDailyState((s) => {
-      const next = recordDailyClear(s, date, stars, hasPlus() ? PLUS_MAX_FREEZES : MAX_FREEZES);
+      // a past day from the archive keeps its stars, but only today's clear moves the streak
+      const next = date === dateKey() ? recordDailyClear(s, date, stars, hasPlus() ? PLUS_MAX_FREEZES : MAX_FREEZES) : recordArchiveClear(s, date, stars);
       saveDaily(next);
       return next;
     });
@@ -187,6 +191,7 @@ export default function App() {
   };
   const overlays = (
     <>
+      {archive && <DailyArchive daily={daily} onPlay={(date) => openDaily('map', date)} onClose={() => setArchive(false)} />}
       {beat && (
         <Interlude
           beat={beat.beat}
@@ -245,6 +250,7 @@ export default function App() {
           onHome={() => setScreen('title')}
           daily={daily}
           onDaily={() => openDaily('map')}
+          onArchive={() => setArchive(true)}
           onLocker={openLocker}
           lockerNew={rewards.hasNew}
         />

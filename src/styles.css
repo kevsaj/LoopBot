@@ -2944,3 +2944,53 @@ button.set-row {
 .band-summit .tower-band {
   color: #f2c25b;
 }
+
+/* --- Daily archive (LoopBot Plus) --- */
+.archive-locked {
+  margin-bottom: 8px;
+}
+.archive-days {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.archive-day {
+  width: 100%;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--panel);
+  color: var(--ink);
+  text-align: left;
+}
+.archive-day .ad-date {
+  flex: 1;
+  font-weight: 600;
+}
+.archive-day .ad-stars {
+  min-width: 64px;
+  text-align: right;
+  color: var(--quiet);
+}
+.archive-day .ad-stars .on {
+  color: var(--warn);
+}
+.archive-day.done {
+  border-color: rgba(90, 209, 164, 0.4);
+}
+.archive-day.locked {
+  opacity: 0.55;
+}
+.daily-archive-link {
+  display: block;
+  margin: -2px auto 8px;
+  color: var(--accent);
+  font-size: 14px;
+}

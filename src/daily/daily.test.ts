@@ -3,7 +3,7 @@ import bank from './bank.json';
 import type { DailyEntry } from './entry';
 import { expandDaily } from './entry';
 import { BANK_DAYS, bankIndex, dateKey, dayNumber, difficultyFor, keyFromDay, weekday } from './calendar';
-import { currentStreak, recordDailyClear } from './index';
+import { archiveDates, currentStreak, recordArchiveClear, recordDailyClear } from './index';
 import type { DailyState } from './index';
 import { validateLevel } from '../levels/validate';
 import { Runner } from '../sim/interpreter';
@@ -141,5 +141,21 @@ describe('Plus streak freezes', () => {
     }
     expect(free.freezes).toBe(MAX_FREEZES);
     expect(plus.freezes).toBe(PLUS_MAX_FREEZES);
+  });
+});
+
+describe('daily archive', () => {
+  it('offers the 30 days before today, newest first', () => {
+    const d = archiveDates('2026-11-13');
+    expect(d.length).toBe(30);
+    expect(d[0]).toBe('2026-11-12');
+    expect(d[29]).toBe('2026-10-14');
+  });
+  it('keeps the best stars for a past day without touching the streak', () => {
+    const s: DailyState = { best: { '2026-11-13': 2 }, streak: 5, longest: 9, last: '2026-11-13', freezes: 1, frozen: [] };
+    const a = recordArchiveClear(s, '2026-11-01', 2);
+    expect(a.best['2026-11-01']).toBe(2);
+    expect([a.streak, a.longest, a.last, a.freezes]).toEqual([5, 9, '2026-11-13', 1]);
+    expect(recordArchiveClear(a, '2026-11-01', 1)).toBe(a);
   });
 });
