@@ -2,12 +2,31 @@
 // code. Anyone with LoopBot can type or paste that code to play the floor.
 
 import { useEffect, useMemo, useState } from 'react';
+import { Board } from '../board/Board';
+import { createWorld } from '../sim/world';
 import type { Goal, PaletteCommand, Sensor } from '../sim/types';
 import { fx } from '../audio/feedback';
 import { COMMAND_META } from '../editor/commands';
 import { shareText } from '../share';
-import type { Draft, Tool } from './draft';
-import { ALL_COMMANDS, LOOKS, MAKER_SENSORS, MAX_SIZE, loadDraft, newDraft, paint, possibleGoals, problems, resize, saveDraft, toLevel } from './draft';
+import type { Draft, SavedFloor, Tool } from './draft';
+import {
+  ALL_COMMANDS,
+  LOOKS,
+  MAKER_SENSORS,
+  MAX_SIZE,
+  fromLevel,
+  loadDraft,
+  loadMyFloors,
+  newDraft,
+  paint,
+  possibleGoals,
+  problems,
+  removeMyFloor,
+  resize,
+  saveDraft,
+  saveMyFloor,
+  toLevel,
+} from './draft';
 import { TITLE_MAX, decodeFloor, encodeFloor } from './shareCode';
 import type { LevelFile } from '../sim/types';
 
@@ -76,9 +95,18 @@ export function useMakerDraft() {
   return [draft, setDraftState] as const;
 }
 
+/** The preview can draw the floor once LoopBot stands on something (not a wall or a gap). */
+const standable = (d: Draft) => {
+  const t = d.tiles[d.bot.y]?.[d.bot.x];
+  return t !== undefined && t !== '#' && t !== '_';
+};
+
 export function MakerScreen({ onBack, onPlay, draft, setDraft }: Props) {
   const [tool, setTool] = useState<Tool>('.');
-  const [sheet, setSheet] = useState<'share' | 'code' | 'new' | null>(null);
+  const [sheet, setSheet] = useState<'share' | 'code' | 'new' | 'mine' | null>(null);
+  // Paint on the flat grid, or look at the floor as it will really appear.
+  const [preview, setPreview] = useState(false);
+  const previewLevel = useMemo(() => (preview && standable(draft) ? toLevel(draft) : null), [preview, draft]);
   const issues = useMemo(() => problems(draft), [draft]);
   const goals = possibleGoals(draft);
   const ready = issues.length === 0;
@@ -97,7 +125,14 @@ export function MakerScreen({ onBack, onPlay, draft, setDraft }: Props) {
       return { ...d, commands, slots, solved: null };
     });
   const step = (field: 'main' | 'F1' | 'F2', by: number) =>
-    setDraft((d) => ({ ...d, slots: { ...d.slots, [field]: Math.max(1, Math.min(field === 'main' ? 40 : 12, d.slots[field] + by)) }, solved: null }));
+    setDraft((d) => ({
+      ...d,
+      slots: {
+        ...d.slots,
+        [field]: Math.max(1, Math.min(field === 'main' ? 40 : 12, d.slots[field] + by)),
+      },
+      solved: null,
+    }));
   const usesIfs = draft.commands.includes('if') || draft.commands.includes('while');
   const cell = `min(44px, calc((100vw - 48px) / ${draft.w}))`;
 
@@ -121,38 +156,77 @@ export function MakerScreen({ onBack, onPlay, draft, setDraft }: Props) {
             <span className="sr-only">Floor name</span>
             <input value={draft.title} maxLength={TITLE_MAX} onChange={(e) => setDraft((d) => ({ ...d, title: e.target.value }))} aria-label="Floor name" />
           </label>
-          <div className="maker-grid" style={{ gridTemplateColumns: `repeat(${draft.w}, ${cell})`, gridAutoRows: cell }} role="grid">
-            {draft.tiles.map((row, y) =>
-              row.map((t, x) => {
-                const h = draft.heights[y][x];
-                const box = draft.boxes[`${x},${y}`];
-                const target = draft.targets[`${x},${y}`];
-                const bot = draft.bot.x === x && draft.bot.y === y;
-                return (
-                  <button
-                    key={`${x},${y}`}
-                    type="button"
-                    className={`mk-cell mk-${t === '.' ? 'floor' : t === '#' ? 'wall' : t === '_' ? 'gap' : t} mk-h${h}`}
-                    onClick={() => tap(x, y)}
-                    aria-label={`Row ${y + 1}, column ${x + 1}`}
-                  >
-                    {h > 0 && <span className="mk-height">{h}</span>}
-                    {target && <span className="mk-target">◎{target > 1 ? target : ''}</span>}
-                    {box && <span className="mk-box">▣{box > 1 ? box : ''}</span>}
-                    {bot && <span className="mk-bot">{ARROW[draft.bot.facing]}</span>}
-                  </button>
-                );
-              }),
-            )}
+          <div className="mk-views" role="tablist" aria-label="View">
+            <button
+              type="button"
+              role="tab"
+              aria-selected={!preview}
+              className={`mk-chip${!preview ? ' on' : ''}`}
+              onClick={() => (fx.tap(), setPreview(false))}
+            >
+              ✎ Paint
+            </button>
+            <button type="button" role="tab" aria-selected={preview} className={`mk-chip${preview ? ' on' : ''}`} onClick={() => (fx.tap(), setPreview(true))}>
+              ◇ 3D preview
+            </button>
           </div>
-          <div className="maker-tools" role="toolbar" aria-label="Tools">
-            {TOOLS.map(({ tool: t, label }) => (
-              <button key={t} type="button" className={`mk-tool mk-tool-${t === '.' ? 'floor' : t === '#' ? 'wall' : t === '_' ? 'gap' : t}${tool === t ? ' on' : ''}`} aria-pressed={tool === t} onClick={() => (fx.tap(), setTool(t))}>
-                {label}
-              </button>
-            ))}
-          </div>
-          <p className="maker-tip">{TOOL_TIPS[tool] ?? (['g', 'b', 'y'].includes(tool) ? TOOL_TIPS.r : 'Tap tiles to paint them.')}</p>
+          {preview ? (
+            previewLevel ? (
+              <div className={`board-wrap band-${draft.band} mk-preview`} key={draft.band}>
+                <Board update={{ world: createWorld(previewLevel), stepMs: 0 }} rotateSignal={0} band={draft.band} />
+              </div>
+            ) : (
+              <p className="maker-tip">LoopBot needs a floor tile to stand on before the preview can show.</p>
+            )
+          ) : (
+            <div
+              className="maker-grid"
+              style={{
+                gridTemplateColumns: `repeat(${draft.w}, ${cell})`,
+                gridAutoRows: cell,
+              }}
+              role="grid"
+            >
+              {draft.tiles.map((row, y) =>
+                row.map((t, x) => {
+                  const h = draft.heights[y][x];
+                  const box = draft.boxes[`${x},${y}`];
+                  const target = draft.targets[`${x},${y}`];
+                  const bot = draft.bot.x === x && draft.bot.y === y;
+                  return (
+                    <button
+                      key={`${x},${y}`}
+                      type="button"
+                      className={`mk-cell mk-${t === '.' ? 'floor' : t === '#' ? 'wall' : t === '_' ? 'gap' : t} mk-h${h}`}
+                      onClick={() => tap(x, y)}
+                      aria-label={`Row ${y + 1}, column ${x + 1}`}
+                    >
+                      {h > 0 && <span className="mk-height">{h}</span>}
+                      {target && <span className="mk-target">◎{target > 1 ? target : ''}</span>}
+                      {box && <span className="mk-box">▣{box > 1 ? box : ''}</span>}
+                      {bot && <span className="mk-bot">{ARROW[draft.bot.facing]}</span>}
+                    </button>
+                  );
+                }),
+              )}
+            </div>
+          )}
+          {!preview && (
+            <div className="maker-tools" role="toolbar" aria-label="Tools">
+              {TOOLS.map(({ tool: t, label }) => (
+                <button
+                  key={t}
+                  type="button"
+                  className={`mk-tool mk-tool-${t === '.' ? 'floor' : t === '#' ? 'wall' : t === '_' ? 'gap' : t}${tool === t ? ' on' : ''}`}
+                  aria-pressed={tool === t}
+                  onClick={() => (fx.tap(), setTool(t))}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          )}
+          {!preview && <p className="maker-tip">{TOOL_TIPS[tool] ?? (['g', 'b', 'y'].includes(tool) ? TOOL_TIPS.r : 'Tap tiles to paint them.')}</p>}
         </section>
 
         <section className="maker-rules" aria-label="Rules">
@@ -181,7 +255,13 @@ export function MakerScreen({ onBack, onPlay, draft, setDraft }: Props) {
                   type="button"
                   className={`mk-chip${draft.goalsOff.includes(g) ? '' : ' on'}`}
                   aria-pressed={!draft.goalsOff.includes(g)}
-                  onClick={() => setDraft((d) => ({ ...d, goalsOff: d.goalsOff.includes(g) ? d.goalsOff.filter((v) => v !== g) : [...d.goalsOff, g], solved: null }))}
+                  onClick={() =>
+                    setDraft((d) => ({
+                      ...d,
+                      goalsOff: d.goalsOff.includes(g) ? d.goalsOff.filter((v) => v !== g) : [...d.goalsOff, g],
+                      solved: null,
+                    }))
+                  }
                 >
                   {GOAL_LABEL[g]}
                 </button>
@@ -193,7 +273,13 @@ export function MakerScreen({ onBack, onPlay, draft, setDraft }: Props) {
           <div className="mk-group">
             <span>Commands</span>
             {ALL_COMMANDS.map((c) => (
-              <button key={c} type="button" className={`mk-chip tone-${COMMAND_META[c].tone}${draft.commands.includes(c) ? ' on' : ''}`} aria-pressed={draft.commands.includes(c)} onClick={() => toggleCommand(c)}>
+              <button
+                key={c}
+                type="button"
+                className={`mk-chip tone-${COMMAND_META[c].tone}${draft.commands.includes(c) ? ' on' : ''}`}
+                aria-pressed={draft.commands.includes(c)}
+                onClick={() => toggleCommand(c)}
+              >
                 {COMMAND_META[c].label}
               </button>
             ))}
@@ -208,7 +294,13 @@ export function MakerScreen({ onBack, onPlay, draft, setDraft }: Props) {
                   type="button"
                   className={`mk-chip${draft.sensors.includes(s) ? ' on' : ''}`}
                   aria-pressed={draft.sensors.includes(s)}
-                  onClick={() => setDraft((d) => ({ ...d, sensors: d.sensors.includes(s) ? d.sensors.filter((v) => v !== s) : [...d.sensors, s], solved: null }))}
+                  onClick={() =>
+                    setDraft((d) => ({
+                      ...d,
+                      sensors: d.sensors.includes(s) ? d.sensors.filter((v) => v !== s) : [...d.sensors, s],
+                      solved: null,
+                    }))
+                  }
                 >
                   {SENSOR_LABEL[s]}
                 </button>
@@ -250,6 +342,11 @@ export function MakerScreen({ onBack, onPlay, draft, setDraft }: Props) {
             <button type="button" className="pill" onClick={() => (fx.tap(), setSheet('new'))}>
               New
             </button>
+            <button type="button" className="pill" onClick={() => (fx.tap(), setSheet('mine'))}>
+              My floors
+            </button>
+          </div>
+          <div className="maker-actions">
             <button type="button" className="pill primary" disabled={!ready} onClick={() => (fx.tap(), onPlay(toLevel(draft), 'test'))}>
               ▶ Test play
             </button>
@@ -260,7 +357,21 @@ export function MakerScreen({ onBack, onPlay, draft, setDraft }: Props) {
         </section>
       </div>
 
-      {sheet === 'share' && <ShareSheet code={encodeFloor(toLevel(draft))} title={toLevel(draft).title} onClose={() => setSheet(null)} />}
+      {sheet === 'share' && <ShareSheet code={encodeFloor(toLevel(draft))} title={toLevel(draft).title} par={draft.solved!} onClose={() => setSheet(null)} />}
+      {sheet === 'mine' && (
+        <MyFloorsSheet
+          onEdit={(f) => {
+            const r = decodeFloor(f.code);
+            if (r.ok) setDraft(() => fromLevel(r.level));
+            setSheet(null);
+          }}
+          onPlay={(f) => {
+            const r = decodeFloor(f.code);
+            if (r.ok) onPlay(r.level, 'code');
+          }}
+          onClose={() => setSheet(null)}
+        />
+      )}
       {sheet === 'code' && <CodeSheet onPlay={(l) => onPlay(l, 'code')} onClose={() => setSheet(null)} />}
       {sheet === 'new' && (
         <div className="results-backdrop" onClick={() => setSheet(null)}>
@@ -296,8 +407,10 @@ function Stepper({ label, value, onChange, min, max }: { label: string; value: n
   );
 }
 
-function ShareSheet({ code, title, onClose }: { code: string; title: string; onClose(): void }) {
+function ShareSheet({ code, title, par, onClose }: { code: string; title: string; par: { commands: number; steps: number }; onClose(): void }) {
   const [note, setNote] = useState<string | null>(null);
+  // A shared floor goes in My floors, so it can be found, played or edited again later.
+  useEffect(() => void saveMyFloor({ code, title, par }), [code, title, par]);
   const share = async () => {
     fx.tap();
     const r = await shareText(`Can you solve my LoopBot floor "${title}"? Open the Floor maker, tap Play a code and enter:\n${code}`);
@@ -346,14 +459,94 @@ function CodeSheet({ onPlay, onClose }: { onPlay(l: LevelFile): void; onClose():
       <div className="results sheet" role="dialog" aria-label="Play a floor code" onClick={(e) => e.stopPropagation()}>
         <h2>Play a floor code</h2>
         <p>Paste or type a code a friend sent you. It starts with LBF1.</p>
-        <textarea className="maker-input" rows={3} value={text} onChange={(e) => (setText(e.target.value), setError(null))} placeholder="LBF1-..." aria-label="Floor code" autoCapitalize="characters" spellCheck={false} />
-        {error && <p className="maker-error" role="alert">{error}</p>}
+        <textarea
+          className="maker-input"
+          rows={3}
+          value={text}
+          onChange={(e) => (setText(e.target.value), setError(null))}
+          placeholder="LBF1-..."
+          aria-label="Floor code"
+          autoCapitalize="characters"
+          spellCheck={false}
+        />
+        {error && (
+          <p className="maker-error" role="alert">
+            {error}
+          </p>
+        )}
         <div className="results-actions">
           <button type="button" className="pill" onClick={onClose}>
             Cancel
           </button>
           <button type="button" className="pill primary" disabled={!text.trim()} onClick={play}>
             Play
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MyFloorsSheet({ onEdit, onPlay, onClose }: { onEdit(f: SavedFloor): void; onPlay(f: SavedFloor): void; onClose(): void }) {
+  const [list, setList] = useState(loadMyFloors);
+  const [confirm, setConfirm] = useState<string | null>(null);
+  const [note, setNote] = useState<string | null>(null);
+  return (
+    <div className="results-backdrop" onClick={onClose}>
+      <div className="results sheet mk-mine" role="dialog" aria-label="My floors" onClick={(e) => e.stopPropagation()}>
+        <h2>My floors</h2>
+        {list.length === 0 ? (
+          <p>Floors you share show up here, so you can play, edit or send them again.</p>
+        ) : (
+          <ul className="mk-list">
+            {list.map((f) => (
+              <li key={f.code}>
+                <div className="mk-list-name">
+                  <strong>{f.title}</strong>
+                  <span>
+                    par {f.par.commands} commands · {f.par.steps} steps
+                  </span>
+                </div>
+                <div className="mk-list-actions">
+                  <button type="button" className="mk-chip on" onClick={() => (fx.tap(), onPlay(f))}>
+                    Play
+                  </button>
+                  <button type="button" className="mk-chip on" onClick={() => (fx.tap(), onEdit(f))}>
+                    Edit
+                  </button>
+                  <button
+                    type="button"
+                    className="mk-chip on"
+                    onClick={async () => {
+                      fx.tap();
+                      const r = await shareText(`Can you solve my LoopBot floor "${f.title}"? Open the Floor maker, tap Play a code and enter:\n${f.code}`);
+                      setNote(r === 'copied' ? 'Copied! Paste it anywhere.' : r === 'failed' ? "Couldn't share from here." : null);
+                    }}
+                  >
+                    Share
+                  </button>
+                  <button
+                    type="button"
+                    className={`mk-chip${confirm === f.code ? ' on danger' : ''}`}
+                    aria-label={confirm === f.code ? `Tap again to delete ${f.title}` : `Delete ${f.title}`}
+                    onClick={() => {
+                      fx.tap();
+                      if (confirm !== f.code) return setConfirm(f.code);
+                      setList(removeMyFloor(f.code));
+                      setConfirm(null);
+                    }}
+                  >
+                    {confirm === f.code ? 'Delete?' : '✕'}
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+        {note && <p className="tip">{note}</p>}
+        <div className="results-actions">
+          <button type="button" className="pill" onClick={onClose}>
+            Close
           </button>
         </div>
       </div>

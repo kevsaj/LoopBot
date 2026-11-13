@@ -1,5 +1,6 @@
-import { describe, expect, it } from 'vitest';
-import { newDraft, paint, problems, resize, toLevel } from './draft';
+import { describe, expect, it, vi } from 'vitest';
+import { fromLevel, loadMyFloors, MAX_SAVED, newDraft, paint, problems, removeMyFloor, resize, saveMyFloor, toLevel } from './draft';
+import { LEVELS } from '../levels';
 import { decodeFloor, encodeFloor } from './shareCode';
 import { validateLevel } from '../levels/validate';
 
@@ -65,5 +66,33 @@ describe('floor maker draft', () => {
       expect(r.level.title).toBe('Box drop');
       expect(r.level.goals.sort()).toEqual(['all_targets_filled', 'bot_on_exit']);
     }
+  });
+
+  it('a floor from a code turns back into the same draft', () => {
+    for (const l of LEVELS.slice(0, 20)) {
+      const d = fromLevel(l);
+      const back = toLevel(d);
+      expect(back.tiles, l.id).toEqual(l.tiles);
+      expect([...back.goals].sort(), l.id).toEqual([...l.goals].sort());
+      expect(back.par, l.id).toEqual(l.par);
+      expect(back.boxes, l.id).toEqual([...l.boxes].sort((a, b) => a.y - b.y || a.x - b.x));
+    }
+  });
+
+  it('My floors keeps the newest first, without repeats, up to the limit', () => {
+    const store = new Map<string, string>();
+    vi.stubGlobal('localStorage', {
+      getItem: (k: string) => store.get(k) ?? null,
+      setItem: (k: string, v: string) => void store.set(k, v),
+      removeItem: (k: string) => void store.delete(k),
+    });
+    saveMyFloor({ code: 'A', title: 'a', par: { commands: 1, steps: 1 } }, 1);
+    saveMyFloor({ code: 'B', title: 'b', par: { commands: 1, steps: 1 } }, 2);
+    saveMyFloor({ code: 'A', title: 'a2', par: { commands: 1, steps: 1 } }, 3);
+    expect(loadMyFloors().map((f) => f.title)).toEqual(['a2', 'b']);
+    expect(removeMyFloor('A').map((f) => f.code)).toEqual(['B']);
+    for (let i = 0; i < MAX_SAVED + 5; i++) saveMyFloor({ code: `C${i}`, title: 't', par: { commands: 1, steps: 1 } }, 10 + i);
+    expect(loadMyFloors()).toHaveLength(MAX_SAVED);
+    vi.unstubAllGlobals();
   });
 });

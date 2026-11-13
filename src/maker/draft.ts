@@ -4,6 +4,7 @@
 import type { Facing, Goal, LevelFile, PaletteCommand, Sensor } from '../sim/types';
 import { validateLevel } from '../levels/validate';
 import { cleanTitle } from './shareCode';
+import { markSavesDirty } from '../storage/persist';
 
 export const MAKER = import.meta.env.DEV || import.meta.env.VITE_MAKER === '1';
 
@@ -34,7 +35,20 @@ export interface Draft {
 }
 
 export const DEFAULT_COMMANDS: PaletteCommand[] = ['forward', 'turn_left', 'turn_right', 'jump', 'pick_up', 'drop', 'activate', 'repeat'];
-export const ALL_COMMANDS: PaletteCommand[] = ['forward', 'turn_left', 'turn_right', 'jump', 'pick_up', 'drop', 'activate', 'repeat', 'if', 'while', 'F1', 'F2'];
+export const ALL_COMMANDS: PaletteCommand[] = [
+  'forward',
+  'turn_left',
+  'turn_right',
+  'jump',
+  'pick_up',
+  'drop',
+  'activate',
+  'repeat',
+  'if',
+  'while',
+  'F1',
+  'F2',
+];
 export const MAKER_SENSORS: Sensor[] = ['box_ahead', 'carrying', 'on_target', 'on_switch', 'tile_is'];
 export const LOOKS = [
   { band: 'lobby', label: 'Lobby' },
@@ -102,7 +116,9 @@ export function paint(d: Draft, x: number, y: number, tool: Tool): Draft {
   if (tool === 'bot') {
     if (d.bot.x === x && d.bot.y === y) {
       const order: Facing[] = ['north', 'east', 'south', 'west'];
-      return edited(d, { bot: { x, y, facing: order[(order.indexOf(d.bot.facing) + 1) % 4] } });
+      return edited(d, {
+        bot: { x, y, facing: order[(order.indexOf(d.bot.facing) + 1) % 4] },
+      });
     }
     return edited(d, { bot: { ...d.bot, x, y } });
   }
@@ -140,8 +156,20 @@ export function resize(d: Draft, w: number, h: number): Draft {
   const tiles = grid(w, h, '.').map((r, y) => r.map((v, x) => d.tiles[y]?.[x] ?? v));
   const heights = grid(w, h, 0).map((r, y) => r.map((v, x) => d.heights[y]?.[x] ?? v));
   const keep = (m: Record<string, number>) => Object.fromEntries(Object.entries(m).filter(([p]) => Number(p.split(',')[0]) < w && Number(p.split(',')[1]) < h));
-  const bot = { ...d.bot, x: Math.min(d.bot.x, w - 1), y: Math.min(d.bot.y, h - 1) };
-  return edited(d, { w, h, tiles, heights, boxes: keep(d.boxes), targets: keep(d.targets), bot });
+  const bot = {
+    ...d.bot,
+    x: Math.min(d.bot.x, w - 1),
+    y: Math.min(d.bot.y, h - 1),
+  };
+  return edited(d, {
+    w,
+    h,
+    tiles,
+    heights,
+    boxes: keep(d.boxes),
+    targets: keep(d.targets),
+    bot,
+  });
 }
 
 /** The goals this floor can have, from what's on it. */
@@ -199,7 +227,8 @@ export function problems(d: Draft): string[] {
   if (!goalsOf(d).length) out.push('Give the floor a goal: an exit tile, a target or a switch.');
   const boxes = Object.values(d.boxes).reduce((a, b) => a + b, 0);
   const need = Object.values(d.targets).reduce((a, b) => a + b, 0);
-  if (goalsOf(d).includes('all_targets_filled') && boxes < need) out.push(`The targets need ${need} ${need === 1 ? 'box' : 'boxes'}, but the floor has ${boxes ? `only ${boxes}` : 'none'}.`);
+  if (goalsOf(d).includes('all_targets_filled') && boxes < need)
+    out.push(`The targets need ${need} ${need === 1 ? 'box' : 'boxes'}, but the floor has ${boxes ? `only ${boxes}` : 'none'}.`);
   if (flat.includes('d') && !flat.includes('s')) out.push('Doors open with a switch. Add a switch, or take the door away.');
   if (!d.commands.some((c) => c === 'forward' || c === 'jump')) out.push('Allow forward or jump, or LoopBot can never move.');
   if (!out.length) {
@@ -207,4 +236,76 @@ export function problems(d: Draft): string[] {
     if (errs.length) out.push(...errs.map((e) => e.replace(/^[^:]*: /, '')));
   }
   return out;
+}
+
+/** Turns a floor (from a share code) back into a draft the maker can edit. Its par carries over. */
+export function fromLevel(l: LevelFile): Draft {
+  const { w, h } = l.size;
+  const toMap = (list: Array<{ x: number; y: number; count: number }>) => Object.fromEntries(list.map((p) => [`${p.x},${p.y}`, p.count]));
+  const d: Draft = {
+    title: l.title,
+    band: LOOKS.some((x) => x.band === l.band) ? l.band : 'lobby',
+    w,
+    h,
+    tiles: l.tiles.map((r) => [...r]),
+    heights: Array.from({ length: h }, (_, y) => Array.from({ length: w }, (_, x) => Number(l.heights?.[y]?.[x] ?? 0))),
+    boxes: toMap(l.boxes),
+    targets: toMap(l.targets),
+    bot: { ...l.bot },
+    goalsOff: [],
+    commands: ALL_COMMANDS.filter((c) => l.commands.includes(c)),
+    sensors: (l.sensors ?? []).filter((s) => s !== 'wall_ahead'),
+    slots: {
+      main: l.slots.main ?? 8,
+      F1: l.slots.F1 ?? 0,
+      F2: l.slots.F2 ?? 0,
+    },
+    solved: { ...l.par },
+  };
+  d.goalsOff = possibleGoals(d).filter((g) => !l.goals.includes(g));
+  return d;
+}
+
+// --- My floors: floors this player shared, kept so they can be edited, played or shared again ---
+
+const LIST_KEY = 'loopbot.maker.floors';
+export const MAX_SAVED = 30;
+
+export interface SavedFloor {
+  code: string;
+  title: string;
+  par: { commands: number; steps: number };
+  /** When it was saved (ms). Newest first in the list. */
+  at: number;
+}
+
+export function loadMyFloors(): SavedFloor[] {
+  try {
+    const list = JSON.parse(localStorage.getItem(LIST_KEY) ?? '[]') as SavedFloor[];
+    return Array.isArray(list) ? list.filter((f) => typeof f?.code === 'string') : [];
+  } catch {
+    return [];
+  }
+}
+
+function storeMyFloors(list: SavedFloor[]) {
+  try {
+    localStorage.setItem(LIST_KEY, JSON.stringify(list));
+    markSavesDirty();
+  } catch {
+    /* storage full */
+  }
+}
+
+/** Adds a floor to the top of the list (the same code moves up rather than repeating). */
+export function saveMyFloor(f: Omit<SavedFloor, 'at'>, now = Date.now()): SavedFloor[] {
+  const list = [{ ...f, at: now }, ...loadMyFloors().filter((x) => x.code !== f.code)].slice(0, MAX_SAVED);
+  storeMyFloors(list);
+  return list;
+}
+
+export function removeMyFloor(code: string): SavedFloor[] {
+  const list = loadMyFloors().filter((x) => x.code !== code);
+  storeMyFloors(list);
+  return list;
 }
