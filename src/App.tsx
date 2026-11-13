@@ -26,8 +26,8 @@ import type { LevelFile } from './sim/types';
 import { currentStreak, yesterday, dailyLevel, dateKey, loadDaily, pruneOldDailies, recordArchiveClear, recordDailyClear, saveDaily } from './daily';
 import { DailyArchive } from './daily/DailyArchive';
 import type { DailyState } from './daily';
-import { MAX_FREEZES, PLUS_MAX_FREEZES } from './daily';
-import { hasPlus, initPurchases, plusUnlocked } from './store/purchases';
+import { MAX_FREEZES, PLUS_MAX_FREEZES, dailyHintReward } from './daily';
+import { hasPlus, initPurchases, onHintsGranted, plusUnlocked } from './store/purchases';
 
 /** Each tower remembers its own floor: Tower 1 keeps the original key so old saves carry over. */
 const floorKey = (tower: number) => (tower === 1 ? 'loopbot.floor' : `loopbot.floor.t${tower}`);
@@ -138,14 +138,25 @@ export default function App() {
     },
     [ride, setProgress],
   );
-  const clearDaily = useCallback((date: string, stars: number) => {
-    setDailyState((s) => {
-      // a past day from the archive keeps its stars, but only today's clear moves the streak
-      const next = date === dateKey() ? recordDailyClear(s, date, stars, hasPlus() ? PLUS_MAX_FREEZES : MAX_FREEZES) : recordArchiveClear(s, date, stars);
+  const dailyRef = useRef(daily);
+  dailyRef.current = daily;
+  const clearDaily = useCallback(
+    (date: string, stars: number) => {
+      const before = dailyRef.current;
+      // a past day from the archive keeps its stars, but only today's clear moves the streak or earns hints
+      const today = date === dateKey();
+      const next = today ? recordDailyClear(before, date, stars, hasPlus() ? PLUS_MAX_FREEZES : MAX_FREEZES) : recordArchiveClear(before, date, stars);
       saveDaily(next);
-      return next;
-    });
-  }, []);
+      dailyRef.current = next;
+      setDailyState(next);
+      // the first clear of the day earns a hint, and every 7-day streak 3 more
+      const earned = today ? dailyHintReward(before, next, date) : 0;
+      if (earned) setProgress((p) => ({ ...p, hints: p.hints + earned }));
+    },
+    [setProgress],
+  );
+  // Hints bought in the store, or the Plus bonus, go straight into the wallet.
+  useEffect(() => onHintsGranted((n) => setProgress((p) => ({ ...p, hints: p.hints + n }))), [setProgress]);
   const elevator = doors && (
     <div className={`elevator ${doors}`} aria-hidden="true">
       <span className="door left" />

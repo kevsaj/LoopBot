@@ -3,7 +3,7 @@ import bank from './bank.json';
 import type { DailyEntry } from './entry';
 import { expandDaily } from './entry';
 import { BANK_DAYS, bankIndex, dateKey, dayNumber, difficultyFor, keyFromDay, weekday } from './calendar';
-import { archiveDates, currentStreak, recordArchiveClear, recordDailyClear } from './index';
+import { archiveDates, currentStreak, dailyHintReward, recordArchiveClear, recordDailyClear } from './index';
 import type { DailyState } from './index';
 import { validateLevel } from '../levels/validate';
 import { Runner } from '../sim/interpreter';
@@ -157,5 +157,26 @@ describe('daily archive', () => {
     expect(a.best['2026-11-01']).toBe(2);
     expect([a.streak, a.longest, a.last, a.freezes]).toEqual([5, 9, '2026-11-13', 1]);
     expect(recordArchiveClear(a, '2026-11-01', 1)).toBe(a);
+  });
+});
+
+describe('daily hints', () => {
+  const empty: DailyState = { best: {}, streak: 0, longest: 0, last: null, freezes: 0, frozen: [] };
+  it('pays one hint for the first clear of a day, and nothing for replays', () => {
+    const a = recordDailyClear(empty, '2026-11-13', 2);
+    expect(dailyHintReward(empty, a, '2026-11-13')).toBe(1);
+    const b = recordDailyClear(a, '2026-11-13', 3);
+    expect(dailyHintReward(a, b, '2026-11-13')).toBe(0);
+  });
+  it('adds 3 more on every 7-day streak', () => {
+    let s = empty;
+    const paid: number[] = [];
+    for (let d = 1; d <= 7; d++) {
+      const date = `2026-11-0${d}`;
+      const next = recordDailyClear(s, date, 1);
+      paid.push(dailyHintReward(s, next, date));
+      s = next;
+    }
+    expect(paid).toEqual([1, 1, 1, 1, 1, 1, 4]);
   });
 });
