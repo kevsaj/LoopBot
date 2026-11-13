@@ -21,6 +21,8 @@ interface Props {
   cursor: Spot | null;
   activeIds: Set<string>;
   crashId: string | null;
+  /** Turns that undo each other (see cancellingTurns): marked so the player can spot them. */
+  cancelIds?: Set<string>;
   /** Put the cursor somewhere; null is the end of the program. */
   onCursor(spot: Spot | null): void;
   onDelete(id: string): void;
@@ -58,6 +60,7 @@ function LineRow({
   row,
   active,
   crashed,
+  cancels,
   dimmed,
   onTap,
   onDelete,
@@ -67,6 +70,7 @@ function LineRow({
   row: Extract<EditorRow, { kind: 'line' | 'loop' }>;
   active: boolean;
   crashed: boolean;
+  cancels?: boolean;
   dimmed: boolean;
   onTap(): void;
   onDelete(): void;
@@ -147,7 +151,7 @@ function LineRow({
         self.current = el;
       }}
       style={{ ['--depth' as string]: row.depth }}
-      className={`row${row.depth ? ' nested' : ''}${row.kind === 'loop' ? ' loop-head' : ''}${dragging || dimmed ? ' placeholder' : ''}${active ? ' active' : ''}${crashed ? ' crashed' : ''}`}
+      className={`row${row.depth ? ' nested' : ''}${row.kind === 'loop' ? ' loop-head' : ''}${dragging || dimmed ? ' placeholder' : ''}${active ? ' active' : ''}${crashed ? ' crashed' : ''}${cancels ? ' cancels' : ''}`}
       onPointerDown={down}
       onPointerMove={moveP}
       onPointerUp={up}
@@ -279,7 +283,7 @@ function EmptySlot({ n, onTap }: { n: number; onTap(): void }) {
   );
 }
 
-export function ProgramList({ blocks, limit, cursor, activeIds, crashId, onCursor, onDelete, onMove, onTimes, conditions, onCond }: Props) {
+export function ProgramList({ blocks, limit, cursor, activeIds, crashId, cancelIds, onCursor, onDelete, onMove, onTimes, conditions, onCond }: Props) {
   const { dragId, fromPalette, dropSpot } = useDragState();
   const { setNodeRef } = useDroppable({ id: LIST_ID });
   const rows = useMemo(() => flatten(blocks), [blocks]);
@@ -337,6 +341,7 @@ export function ProgramList({ blocks, limit, cursor, activeIds, crashId, onCurso
               row={row}
               active={activeIds.has(block.id)}
               crashed={crashId === block.id}
+              cancels={cancelIds?.has(block.id)}
               dimmed={dimmed.has(block.id)}
               // A line puts the cursor after it; a header puts it at the end of the first body.
               onTap={() =>

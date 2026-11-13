@@ -26,7 +26,7 @@ import { recordClear, recordFail } from '../progress';
 import { maybeAskForReview } from '../review';
 import { HintSheet } from './HintSheet';
 import { ResultsCard } from './ResultsCard';
-import { tutorialStep, TUTORIAL_TEXT } from './tutorial';
+import { cancellingTurns, stepLine, tutorialStep, TUTORIAL_TEXT } from './tutorial';
 import { track } from '../telemetry';
 import { FeedbackSheet } from '../FeedbackSheet';
 import { DIFFICULTY_LABEL, difficultyOn, shareText, shortDate } from '../daily';
@@ -189,6 +189,9 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
     if (ev) {
       setActiveIds(new Set([ev.blockId, ...ev.callStack]));
       if (ev.ok) fx.step(ev.action);
+      // Say what each step did. Turns get spelled out: they spin LoopBot without moving it,
+      // which new players often miss when they only watch the board.
+      if (ev.ok && ev.action) setTerminal(stepLine(ev.action));
     }
     const o = r.outcome;
     const cleared = o?.status === 'cleared';
@@ -235,7 +238,11 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
         resultsTimer.current = window.setTimeout(() => setShowResults(true), SPEEDS[speed].ms + 900); // let the light-up wave play first
       } else {
         setActiveIds(new Set());
-        setTerminal(`> program ended after ${o.steps} steps. Not there yet: add more commands.`);
+        setTerminal(
+          cancellingTurns(program).length
+            ? `> program ended after ${o.steps} steps. Two turns in your program cancel out, so LoopBot ends up facing the same way.`
+            : `> program ended after ${o.steps} steps. Not there yet: add more commands.`,
+        );
         fx.denied();
         setProgress((p) => recordFail(p, level.id));
       }
@@ -426,6 +433,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
     playing,
     outcome: outcome?.status ?? null,
   });
+  const cancelIds = useMemo(() => new Set(cancellingTurns(program)), [program]);
   const pulse = (cmd: PaletteCommand) =>
     (tut === 'tap' && cmd === 'forward') || (tut === 'turn' && (cmd === 'turn_left' || cmd === 'turn_right'));
 
@@ -473,8 +481,8 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
           </span>
           <span>step {steps}</span>
         </div>
-        <button type="button" className="rotate-btn" onClick={() => (fx.tap(), setRotateSignal((n) => n + 1))} aria-label="Turn 90: turn the board a quarter turn">
-          ⟲ Turn 90
+        <button type="button" className="rotate-btn" onClick={() => (fx.tap(), setRotateSignal((n) => n + 1))} aria-label="Rotate view: turn the camera a quarter turn. LoopBot does not move.">
+          ⟲ Rotate view
         </button>
         <Terminal text={terminal} status={status} />
       </section>
@@ -559,6 +567,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
               cursor={editor.state.cursor[routine] ?? null}
               activeIds={activeIds}
               crashId={crashId}
+              cancelIds={cancelIds}
               onCursor={(spot) => {
                 fx.tap();
                 editor.setCursor(routine, spot);

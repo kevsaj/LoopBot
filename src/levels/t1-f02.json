@@ -19,6 +19,10 @@
   "slots": { "main": 8 },
   "par": { "commands": 5, "steps": 5 },
   "reference": "forward forward turn_right forward forward",
-  "hints": [],
+  "hints": [
+    "Turns spin LoopBot on the spot. They never move it. Walk to the corner first.",
+    "You need 5 commands: two moves, one turn, two moves.",
+    "forward, forward, turn_right, forward, forward"
+  ],
   "story": { "intro": "PATCH: \"Is somebody down there?\"", "outro": null }
 }
