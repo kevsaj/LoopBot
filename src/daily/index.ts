@@ -215,3 +215,11 @@ export function shareText(date: string, level: LevelFile, stars: number, command
 
 /** Yesterday's date, for tests and the streak. */
 export const yesterday = (date: string) => keyFromDay(dayNumber(date) - 1);
+
+/** Hints earned by a daily clear: 1 for the first clear of the day, 3 more for every 7-day streak. */
+export const DAILY_HINT = 1;
+export const STREAK_HINTS = 3;
+export function dailyHintReward(before: DailyState, after: DailyState, date: string): number {
+  if ((before.best[date] ?? 0) > 0) return 0;
+  return DAILY_HINT + (after.streak > before.streak && after.streak % FREEZE_EVERY === 0 ? STREAK_HINTS : 0);
+}
