@@ -1,8 +1,11 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { ACHIEVEMENTS, earnedIds } from './achievements';
 import type { Stats } from './achievements';
 import { DEFAULT_LOOK, PAINTS, TIPS, tipPoints, unlockedParts } from './looks';
 import type { Progress } from '../progress';
+
+// Dev and test builds preview Plus; these tests are about a player without it.
+vi.mock('../store/purchases', () => ({ PLUS_VISIBLE: false, plusUnlocked: () => false }));
 
 const floors = Array.from({ length: 50 }, (_, i) => `t1-f${String(i + 1).padStart(2, '0')}`);
 const progress = (stars: Record<string, number>, extra: Partial<Progress> = {}): Progress => ({
@@ -59,5 +62,15 @@ describe('looks', () => {
 
   it('draws every tip shape', () => {
     for (const t of TIPS) if (t.id !== 'ball') expect(tipPoints(t.id, 0, 0, 5).length).toBeGreaterThan(4);
+  });
+});
+
+describe('Plus looks', () => {
+  it('has Plus paints, eyes and antennas, each drawable', async () => {
+    const { EYES, isPlusPart, unlockLabel } = await import('./looks');
+    expect(PAINTS.filter((p) => isPlusPart(p.unlock)).length).toBeGreaterThanOrEqual(3);
+    expect(EYES.some((e) => isPlusPart(e.unlock))).toBe(true);
+    for (const t of TIPS.filter((x) => isPlusPart(x.unlock))) expect(tipPoints(t.id, 0, 0, 5).length).toBeGreaterThan(4);
+    expect(unlockLabel({ plus: true })).toBe('Plus');
   });
 });
