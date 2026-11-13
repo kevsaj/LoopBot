@@ -2944,3 +2944,15 @@ button.set-row {
 .band-summit .tower-band {
   color: #f2c25b;
 }
+
+/* --- Plus looks in the locker: a frosty edge, and the lock reads "Plus" in gold --- */
+.swatch.plus {
+  border-color: rgba(159, 216, 255, 0.45);
+  background: linear-gradient(160deg, rgba(159, 216, 255, 0.1), transparent 60%), var(--panel);
+}
+.swatch.plus.on {
+  border-color: #9fd8ff;
+}
+.swatch.plus.locked .swatch-lock {
+  color: var(--warn);
+}
