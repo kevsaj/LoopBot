@@ -48,7 +48,8 @@ export function readBackupCode(input: string): Record<string, string> | null {
   try {
     const saves = JSON.parse(fromB64url(body)) as Record<string, string>;
     if (!saves || typeof saves !== 'object' || typeof saves['loopbot.progress'] !== 'string') return null;
-    JSON.parse(saves['loopbot.progress']);
+    const progress = JSON.parse(saves['loopbot.progress']) as unknown;
+    if (!progress || typeof progress !== 'object' || Array.isArray(progress)) return null;
     return Object.fromEntries(Object.entries(saves).filter(([k, v]) => KEEP.has(k) && typeof v === 'string'));
   } catch {
     return null;

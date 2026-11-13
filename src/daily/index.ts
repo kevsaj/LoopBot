@@ -53,10 +53,30 @@ function fresh(): DailyState {
 export function loadDaily(): DailyState {
   try {
     const raw = localStorage.getItem(KEY);
-    return raw ? { ...fresh(), ...(JSON.parse(raw) as Partial<DailyState>) } : fresh();
+    return raw ? sanitizeDaily(JSON.parse(raw)) : fresh();
   } catch {
     return fresh();
   }
+}
+
+/** Keeps only fields of the right type, so broken or hand-made saves can't crash the game. */
+export function sanitizeDaily(v: unknown): DailyState {
+  const d = fresh();
+  if (!v || typeof v !== 'object' || Array.isArray(v)) return d;
+  const o = v as Record<string, unknown>;
+  const int = (x: unknown, fallback: number) => (typeof x === 'number' && Number.isFinite(x) ? Math.max(0, Math.floor(x)) : fallback);
+  const best: Record<string, number> = {};
+  if (o.best && typeof o.best === 'object' && !Array.isArray(o.best)) {
+    for (const [k, n] of Object.entries(o.best)) if (typeof n === 'number' && Number.isFinite(n)) best[k] = n;
+  }
+  return {
+    best,
+    streak: int(o.streak, 0),
+    longest: int(o.longest, 0),
+    last: typeof o.last === 'string' ? o.last : null,
+    freezes: int(o.freezes, d.freezes!),
+    frozen: Array.isArray(o.frozen) ? o.frozen.filter((x): x is string => typeof x === 'string') : [],
+  };
 }
 
 export function saveDaily(s: DailyState) {
