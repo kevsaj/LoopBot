@@ -3030,3 +3030,60 @@ button.set-row {
   color: var(--accent);
   font-size: 14px;
 }
+
+/* Phones turned sideways: the screen is short, so the title moves above the board on the left
+   and the editor gets the whole right side, with slimmer buttons and a six-across palette.
+   Without this the program list was squeezed to nothing between the buttons and the chips. */
+@media (min-aspect-ratio: 3/2) and (max-height: 520px) {
+  :root {
+    --row-h: 38px;
+  }
+  .floor {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto 1fr;
+    max-width: none;
+  }
+  .topbar {
+    grid-column: 1;
+    grid-row: 1;
+    min-height: 44px;
+    padding: 4px 8px 4px 12px;
+  }
+  .topbar .icon-btn {
+    width: 38px;
+    height: 38px;
+  }
+  .floor-name {
+    font-size: 15px;
+  }
+  .board-wrap,
+  .floor.typing-code .board-wrap {
+    grid-column: 1;
+    grid-row: 2;
+    flex: none;
+    min-height: 0;
+    margin: 0 0 8px 12px;
+  }
+  .editor {
+    grid-column: 2;
+    grid-row: 1 / 3;
+    padding: 6px 12px 8px;
+    gap: 6px;
+  }
+  .pill {
+    min-height: 38px;
+  }
+  .tab {
+    min-height: 34px;
+  }
+  .palette {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 4px;
+    padding: 6px;
+  }
+  .chip {
+    min-height: 40px;
+    font-size: 11px;
+  }
+}
