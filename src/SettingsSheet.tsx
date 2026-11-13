@@ -6,7 +6,8 @@ import type { ReactNode } from 'react';
 import type { Progress } from './progress';
 import { fx, hapticsOn, isMuted, setHapticsOn, setMuted } from './audio/feedback';
 import { musicOn, setMusicOn } from './audio/music';
-import { PLUS_VISIBLE, STORE_AVAILABLE, hasPlus, restorePurchases } from './store/purchases';
+import { SHOP_OPEN, hasPlus, restorePurchases } from './store/purchases';
+import { HintShop } from './store/HintShop';
 import { PlusSheet } from './store/PlusSheet';
 import { bigTextOn, setBigText } from './textSize';
 import { version } from '../package.json';
@@ -119,7 +120,7 @@ export function SettingsSheet({ progress, setProgress, onClose, floor, floorTitl
 
           <ReminderRows />
 
-          {PLUS_VISIBLE && STORE_AVAILABLE && <PurchaseRows />}
+          {SHOP_OPEN && <PurchaseRows hints={progress.hints} />}
 
           <h3 className="set-section">Your progress</h3>
           <BackupRows />
@@ -173,8 +174,9 @@ export function SettingsSheet({ progress, setProgress, onClose, floor, floorTitl
 }
 
 /** Settings > Subscriptions & Purchases: LoopBot Plus and Restore (Kevin, Nov 7: Almanac style). */
-function PurchaseRows() {
+function PurchaseRows({ hints }: { hints: number }) {
   const [sheet, setSheet] = useState(false);
+  const [shop, setShop] = useState(false);
   const [owned, setOwned] = useState(hasPlus);
   const [note, setNote] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -198,7 +200,16 @@ function PurchaseRows() {
             ›
           </span>
         </button>
-        <p className="set-caption">Frostline, Plus looks, the daily archive and more streak freezes. One purchase, no subscription.</p>
+        <p className="set-caption">Frostline, Plus looks, the daily archive, more streak freezes and 20 hints. One purchase, no subscription.</p>
+      </div>
+      <div className="set-item">
+        <button type="button" className="set-row set-link" onClick={() => (fx.tap(), setShop(true))}>
+          <span className="set-label">Hint packs</span>
+          <span className="set-value">{hints} 💡</span>
+          <span className="set-chevron" aria-hidden="true">
+            ›
+          </span>
+        </button>
       </div>
       <div className="set-item">
         <button type="button" className="set-row set-link" onClick={restore} disabled={busy}>
@@ -206,6 +217,7 @@ function PurchaseRows() {
         </button>
         <p className="set-caption">{note ?? 'Bought Plus on another device or reinstalled? Restore it here.'}</p>
       </div>
+      {shop && <HintShop hints={hints} onClose={() => setShop(false)} />}
       {sheet && (
         <PlusSheet
           onClose={() => {

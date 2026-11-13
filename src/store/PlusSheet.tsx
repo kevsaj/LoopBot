@@ -11,6 +11,7 @@ export const PLUS_PERKS: { icon: string; title: string; text: string }[] = [
   { icon: '🎨', title: 'Plus looks', text: 'Paints, eyes and antennas for LoopBot that only Plus players have.' },
   { icon: '📅', title: 'Daily archive', text: 'Replay any daily challenge you missed.' },
   { icon: '🧊', title: 'More streak freezes', text: 'Hold up to 4 freezes instead of 2.' },
+  { icon: '💡', title: '20 bonus hints', text: 'Added to your hints the moment Plus is yours.' },
 ];
 
 export function PlusSheet({ onClose }: { onClose(): void }) {

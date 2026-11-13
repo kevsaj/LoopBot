@@ -4,6 +4,9 @@ import type { LevelFile } from '../sim/types';
 import type { Progress } from '../progress';
 import { FREE_NUDGE_AFTER, nextHintIsFree, revealHint } from '../progress';
 import { fx } from '../audio/feedback';
+import { SHOP_OPEN } from '../store/purchases';
+import { HintShop } from '../store/HintShop';
+import { useState } from 'react';
 
 const TIERS = ['Nudge', 'Structure', 'Solution'];
 
@@ -23,6 +26,7 @@ export function HintSheet({ level, progress, setProgress, onClose, onReveal, onF
   const free = nextHintIsFree(progress, level.id);
   const canPay = free || progress.hints > 0;
   const more = shown < level.hints.length;
+  const [shop, setShop] = useState(false);
 
   const reveal = () => {
     const next = revealHint(progress, level.id, level.hints.length);
@@ -33,40 +37,48 @@ export function HintSheet({ level, progress, setProgress, onClose, onReveal, onF
   };
 
   return (
-    <div className="results-backdrop" onClick={onClose}>
-      <div className="results sheet hints" role="dialog" aria-label="Hints" onClick={(e) => e.stopPropagation()}>
-        <h2>Hints</h2>
-        <p className="tip">
-          You have <strong>{progress.hints}</strong> {progress.hints === 1 ? 'hint' : 'hints'}. Earn one for every 10 floors you 3-star.
-        </p>
-        <ol className="hint-list">
-          {level.hints.slice(0, shown).map((h, i) => (
-            <li key={i}>
-              <span className="hint-tier">{TIERS[i]}</span>
-              <span className={i === 2 ? 'hint-text code' : 'hint-text'}>{h}</span>
-            </li>
-          ))}
-        </ol>
-        {more && (
-          <button type="button" className="pill primary" disabled={!canPay} onClick={reveal}>
-            Show {TIERS[shown]} {free ? '(free)' : '(1 hint)'}
-          </button>
-        )}
-        {more && !canPay && <p className="tip">Out of hints. The Nudge is free after {FREE_NUDGE_AFTER} tries on a floor.</p>}
-        {onFeedback && shown > 0 && (
+    <>
+      <div className="results-backdrop" onClick={onClose}>
+        <div className="results sheet hints" role="dialog" aria-label="Hints" onClick={(e) => e.stopPropagation()}>
+          <h2>Hints</h2>
           <p className="tip">
-            Still stuck?{' '}
-            <button type="button" className="link-btn" onClick={() => (fx.tap(), onFeedback())}>
-              Tell us what's confusing
-            </button>
+            You have <strong>{progress.hints}</strong> {progress.hints === 1 ? 'hint' : 'hints'}. Earn them by 3-starring floors and clearing the daily challenge.
           </p>
-        )}
-        <div className="results-actions">
-          <button type="button" className="pill" onClick={onClose}>
-            Close
-          </button>
+          <ol className="hint-list">
+            {level.hints.slice(0, shown).map((h, i) => (
+              <li key={i}>
+                <span className="hint-tier">{TIERS[i]}</span>
+                <span className={i === 2 ? 'hint-text code' : 'hint-text'}>{h}</span>
+              </li>
+            ))}
+          </ol>
+          {more && (
+            <button type="button" className="pill primary" disabled={!canPay} onClick={reveal}>
+              Show {TIERS[shown]} {free ? '(free)' : '(1 hint)'}
+            </button>
+          )}
+          {more && !canPay && <p className="tip">Out of hints. The Nudge is free after {FREE_NUDGE_AFTER} tries on a floor.</p>}
+          {SHOP_OPEN && (
+            <button type="button" className="link-btn hint-more" onClick={() => (fx.tap(), setShop(true))}>
+              Get more hints
+            </button>
+          )}
+          {onFeedback && shown > 0 && (
+            <p className="tip">
+              Still stuck?{' '}
+              <button type="button" className="link-btn" onClick={() => (fx.tap(), onFeedback())}>
+                Tell us what's confusing
+              </button>
+            </p>
+          )}
+          <div className="results-actions">
+            <button type="button" className="pill" onClick={onClose}>
+              Close
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+      {shop && <HintShop hints={progress.hints} onClose={() => setShop(false)} />}
+    </>
   );
 }
