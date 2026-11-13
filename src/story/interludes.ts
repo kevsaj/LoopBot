@@ -29,6 +29,8 @@ export interface Ending {
   kind: 'ending';
   id: string;
   panels: EndingPanel[];
+  /** The city named on the last panel, where VANTA heads next (Frostline when not set). */
+  next?: string;
 }
 
 export type Interlude = Radio | Ending;
@@ -150,8 +152,71 @@ export const FROSTLINE_INTERLUDES: Record<number, Interlude> = {
       { scene: 'meet', who: 'PATCH', text: "You're soaked! Come stand by the radio, it runs warm. Thank you, LoopBot." },
       { scene: 'next', text: "Tower 2 cleared. VANTA's signal is fading south. Wherever it lands next, we'll be ready." },
     ],
+    next: 'HEATWAVE',
   },
 };
+
+/** Tower 3, the Sandglass in Heatwave: the beats again, in the desert heat. */
+export const HEATWAVE_INTERLUDES: Record<number, Interlude> = {
+  10: {
+    kind: 'radio',
+    id: 't3-after-10',
+    heading: 'Next: Furnace Hall',
+    lines: [
+      P("Through the gate without a scorch mark! I'm impressed. It's very hot in this radio, by the way."),
+      P('The Furnace Hall vents run slower: three beats a cycle. You can even stand on one for a beat, if you time it.'),
+      P('And see those crates? A crate on a vent plugs it shut.'),
+      V('Every vent in this tower keeps my time, LoopBot. Not yours.'),
+    ],
+  },
+  20: {
+    kind: 'radio',
+    id: 't3-after-20',
+    heading: 'Next: the Sky Bazaar',
+    lines: [
+      P('The Sky Bazaar is up next. Hundreds of little delivery bots, all running routines VANTA scrambled.'),
+      P('Some of those routines are only off by a beat. Run them, watch where they burn, and fix them.'),
+      V('I gave every one of them a tiny mistake. Finding them will take you forever.'),
+      P("Funny. That's exactly what we're good at."),
+    ],
+  },
+  30: {
+    kind: 'radio',
+    id: 't3-after-30',
+    heading: 'Next: the Mirage Lab',
+    lines: [
+      P('Under this tower are the same old stones as under Meridian and the Needle. The Builders got around.'),
+      P("Up top is the Mirage Lab. The heat shimmer hides the vents' timing, so counting beats won't help."),
+      P('Ask instead. While there is heat ahead, wait. Then step.'),
+      V('Ask all you like. The answer is always "too hot".'),
+    ],
+  },
+  40: {
+    kind: 'radio',
+    id: 't3-after-40',
+    heading: 'Next: the Crown',
+    lines: [
+      P('Ten floors to the Crown. VANTA has turned the sun mirrors toward the other towers in the desert.'),
+      P('One beam from up there and every one of them answers to VANTA. We need those mirrors pointing at the sky.'),
+      P('Type your programs if you like. Everything you learned in this tower, all at once.'),
+      V('Come up into the light, LoopBot. It is very, very bright.'),
+    ],
+  },
+  50: {
+    kind: 'ending',
+    id: 't3-ending',
+    panels: [
+      { scene: 'lights', text: 'The sun mirrors tilt back to the sky, the vents sigh, and the Sandglass starts to cool.' },
+      { scene: 'escape', who: 'VANTA', text: "Keep your sandbox. There are taller towers than this, and I'm already climbing one." },
+      { scene: 'elevator', text: 'LoopBot rides down through the quiet floors, shaking sand out of every joint.' },
+      { scene: 'meet', who: 'PATCH', text: "You're glowing! Sit by the fan a minute. Thank you, LoopBot." },
+      { scene: 'next', text: "Tower 3 cleared. VANTA's signal is twisting away east. We'll pick it up again." },
+    ],
+    next: 'TWIST',
+  },
+};
+
+const TOWER_INTERLUDES: Record<number, Record<number, Interlude>> = { 1: INTERLUDES, 2: FROSTLINE_INTERLUDES, 3: HEATWAVE_INTERLUDES };
 
 const KEY = 'loopbot.interludes';
 
@@ -176,7 +241,7 @@ export function markInterludeSeen(id: string) {
 
 /** The beat to play when leaving floor `floorNumber` (1-based) of a tower, if it's due. */
 export function interludeAfter(floorNumber: number, cleared: boolean, seen = seenInterludes(), tower = 1): Interlude | null {
-  const it = (tower === 2 ? FROSTLINE_INTERLUDES : INTERLUDES)[floorNumber];
+  const it = (TOWER_INTERLUDES[tower] ?? INTERLUDES)[floorNumber];
   if (!it || !cleared || seen.has(it.id)) return null;
   return it;
 }

@@ -1,6 +1,6 @@
 import type { Action, Colour, Condition, Facing, LevelFile, Pos, Tile, TileType, World } from './types';
 
-const TILE_CHARS: Record<string, { type: TileType; colour?: Colour }> = {
+const TILE_CHARS: Record<string, { type: TileType; colour?: Colour; phase?: number }> = {
   '.': { type: 'floor' },
   '#': { type: 'wall' },
   _: { type: 'gap' },
@@ -13,7 +13,14 @@ const TILE_CHARS: Record<string, { type: TileType; colour?: Colour }> = {
   y: { type: 'floor', colour: 'y' },
   i: { type: 'ice' },
   t: { type: 'thin' },
+  v: { type: 'vent', phase: 0 },
+  w: { type: 'vent', phase: 1 },
+  x: { type: 'vent', phase: 2 },
+  z: { type: 'vent', phase: 3 },
 };
+
+/** Vent cycle when a floor doesn't set one: blast, rest, blast, rest. */
+export const DEFAULT_VENT_CYCLE = 2;
 
 export const MAX_STACK = 3;
 
@@ -25,6 +32,7 @@ export function createWorld(level: LevelFile): World {
   const switches: Record<string, boolean> = {};
   const doors: Record<string, boolean> = {};
   const cracked: Record<string, boolean> = {};
+  let vents = false;
   for (let y = 0; y < h; y++) {
     const row: Tile[] = [];
     for (let x = 0; x < w; x++) {
@@ -33,7 +41,8 @@ export function createWorld(level: LevelFile): World {
       if (!def) throw new Error(`${level.id}: unknown tile '${ch}' at ${x},${y}`);
       const hch = level.heights?.[y]?.[x] ?? '0';
       const height = Number(hch);
-      row.push({ type: def.type, height, ...(def.colour ? { colour: def.colour } : {}) });
+      row.push({ type: def.type, height, ...(def.colour ? { colour: def.colour } : {}), ...(def.phase !== undefined ? { phase: def.phase } : {}) });
+      if (def.type === 'vent') vents = true;
       if (def.type === 'switch') switches[key(x, y)] = false;
       if (def.type === 'door') doors[key(x, y)] = false;
       if (def.type === 'thin') cracked[key(x, y)] = false;
@@ -64,6 +73,8 @@ export function createWorld(level: LevelFile): World {
     doors,
     links,
     cracked,
+    clock: 0,
+    ventCycle: vents ? (level.ventCycle ?? DEFAULT_VENT_CYCLE) : 0,
     bot: { x: level.bot.x, y: level.bot.y, facing: level.bot.facing, carrying: false },
     goals: [...level.goals],
   };
@@ -141,8 +152,29 @@ function leave(w: World, p: Pos) {
 
 export type ActionResult = { ok: true } | { ok: false; error: string };
 
-/** Applies one action in place (CR table). Every action costs 1 step, success or not. */
+/**
+ * Heat vents (CR-VENT): is the vent at p blasting at this clock? A vent with a crate on it is
+ * plugged and never blasts. Anything that isn't a vent never does either.
+ */
+export function ventBlasting(w: World, p: Pos, clock = w.clock): boolean {
+  const t = w.tiles[p.y]?.[p.x];
+  if (!t || t.type !== 'vent' || !w.ventCycle || w.boxes[p.y][p.x] > 0) return false;
+  return clock % w.ventCycle === t.phase;
+}
+
+/**
+ * Applies one action in place (CR table). Every action costs 1 step, success or not.
+ * After the step the clock ticks; if LoopBot ends it on a blasting vent, the step fails.
+ */
 export function applyAction(w: World, action: Action): ActionResult {
+  const res = act(w, action);
+  if (!res.ok) return res;
+  w.clock++;
+  if (ventBlasting(w, w.bot)) return { ok: false, error: 'ERR: scorched by a vent' };
+  return res;
+}
+
+function act(w: World, action: Action): ActionResult {
   const bot = w.bot;
   const here = { x: bot.x, y: bot.y };
   const next = ahead(w);
@@ -152,6 +184,8 @@ export function applyAction(w: World, action: Action): ActionResult {
       return { ok: true };
     case 'turn_right':
       bot.facing = RIGHT[bot.facing];
+      return { ok: true };
+    case 'wait':
       return { ok: true };
     case 'forward': {
       if (!isWalkable(w, next) || surfaceHeight(w, next) !== surfaceHeight(w, here)) {
@@ -231,6 +265,10 @@ export function sense(w: World, cond: Condition): boolean {
     case 'tile_is':
       v = cond.colour !== undefined && w.tiles[w.bot.y][w.bot.x].colour === cond.colour;
       break;
+    case 'heat_ahead':
+      // stepping onto it now would land as it blasts
+      v = inBounds(w, next) && ventBlasting(w, next, w.clock + 1);
+      break;
   }
   return cond.not ? !v : v;
 }
@@ -258,5 +296,5 @@ export function worldKey(w: World): string {
     .map((s) => (s ? 1 : 0))
     .join('')}|${Object.values(w.cracked)
     .map((s) => (s ? 1 : 0))
-    .join('')}`;
+    .join('')}${w.ventCycle ? `|${w.clock % w.ventCycle}` : ''}`;
 }

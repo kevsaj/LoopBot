@@ -16,6 +16,7 @@ import type { Tower } from './levels/towers';
 import { PLUS_VISIBLE, STORE_AVAILABLE, plusUnlocked } from './store/purchases';
 import { dailyUnlocked } from './daily';
 import { PlusSheet } from './store/PlusSheet';
+import './heatwave.css';
 
 interface Props {
   levels: LevelFile[];
@@ -50,12 +51,21 @@ const BAND_NAMES: Record<string, string> = {
   signal: 'Signal Hut',
   aurora: 'Aurora Lab',
   summit: 'The Summit',
+  dunegate: 'The Dune Gate',
+  furnace: 'Furnace Hall',
+  bazaar: 'Sky Bazaar',
+  mirage: 'Mirage Lab',
+  crown: 'The Crown',
 };
+
+/** What lies under each tower, shown at the foot of its map. */
+const GROUND: Record<number, string> = { 1: 'Sub-basement', 2: 'Ice cellar', 3: 'Old cistern' };
 
 /** The towers row: the one you're in, and the others to switch to. Plus towers show a lock until owned. */
 function TowerSwitch({ tower, towers, onPick, onLocked }: { tower: number; towers: Tower[]; onPick(n: number): void; onLocked(t: Tower): void }) {
   // A Plus tower only shows once Plus is on sale, or while previewing it.
   const shown = towers.filter((t) => !t.plus || PLUS_VISIBLE || plusUnlocked());
+  // (A preview tower is only in the list at all in dev and preview builds: see levels/towers.ts.)
   if (shown.length < 2) return null;
   return (
     <nav className="tower-switch" aria-label="Towers">
@@ -284,7 +294,7 @@ export function TowerMap({ levels, tower, towers, onTowerPick, progress, current
               </ol>
             </section>
           ))}
-        <div className="tower-ground">{tower === 2 ? 'Ice cellar' : 'Sub-basement'}</div>
+        <div className="tower-ground">{GROUND[tower] ?? 'Sub-basement'}</div>
       </div>
       <div className="tower-footer">
         {note ? (

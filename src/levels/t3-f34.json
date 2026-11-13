@@ -1,0 +1,61 @@
+{
+  "id": "t3-f34",
+  "title": "Bug Hunt: Never Waits",
+  "band": "mirage",
+  "size": {
+    "w": 8,
+    "h": 5
+  },
+  "tiles": [
+    "########",
+    "#.w.x.v#",
+    "######.#",
+    "######e#",
+    "########"
+  ],
+  "heights": null,
+  "ventCycle": 3,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait",
+    "repeat",
+    "while"
+  ],
+  "sensors": [
+    "heat_ahead"
+  ],
+  "slots": {
+    "main": 7
+  },
+  "par": {
+    "commands": 6,
+    "steps": 10
+  },
+  "reference": "repeat 2 { while not wall_ahead { while heat_ahead { wait } forward } turn_right }",
+  "starter": "repeat 2 { while not wall_ahead { while not heat_ahead { wait } forward } turn_right }",
+  "hints": [
+    "The loop asks the right question, then ignores the answer. Run it.",
+    "Waiting needs to happen while the heat is there, not after.",
+    "repeat 2 { while not wall_ahead { while heat_ahead { wait } forward } turn_right }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

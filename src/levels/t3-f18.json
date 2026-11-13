@@ -1,0 +1,56 @@
+{
+  "id": "t3-f18",
+  "title": "Bake Switch",
+  "band": "furnace",
+  "size": {
+    "w": 7,
+    "h": 6
+  },
+  "tiles": [
+    "#######",
+    "#.vsw.#",
+    "#x###x#",
+    "#.w.dv#",
+    "###e###",
+    "#######"
+  ],
+  "heights": null,
+  "ventCycle": 3,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait"
+  ],
+  "slots": {
+    "main": 11
+  },
+  "par": {
+    "commands": 9,
+    "steps": 9
+  },
+  "reference": "turn_right wait forward forward turn_left forward forward turn_right forward",
+  "hints": [
+    "The switch sits between two vents.",
+    "A switch is a plain tile: you can stand on it as long as you like.",
+    "turn_right wait forward forward turn_left forward forward turn_right forward"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

@@ -1,0 +1,89 @@
+/* Tower 3, Heatwave (the Sandglass). Kept in its own file so it never collides with other work in styles.css. */
+
+.tower-tab-3.on {
+  border-color: #ffb466;
+  box-shadow: 0 0 0 1px rgba(255, 180, 102, 0.35), 0 0 14px rgba(255, 160, 80, 0.22);
+}
+.tower-3 .tower-roof .beacon {
+  background: #ffc861;
+  box-shadow: 0 0 18px #ff9d3c;
+}
+
+/* Dune Gate: a hot afternoon, dunes rolling away under a white sun. */
+.board-wrap.band-dunegate {
+  background:
+    radial-gradient(circle at 78% 18%, rgba(255, 250, 220, 0.95) 0 10px, rgba(255, 230, 170, 0.3) 11px, transparent 52px),
+    linear-gradient(180deg, #6e3320 0%, #b45e34 34%, #eaa35e 70%, #f9e2b8 100%);
+}
+.board-wrap.band-dunegate::after,
+.board-wrap.band-crown::after {
+  height: 100%;
+  opacity: 0.55;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300' preserveAspectRatio='none'><path fill='%23c9783f' fill-opacity='0.45' d='M0 300V250q60-34 130-10t120-6q70-30 150 6v60z'/><path fill='%23a65f30' fill-opacity='0.4' d='M0 300V272q80-26 170-4t230-10v42z'/></svg>") center / 100% 100% no-repeat;
+}
+/* Furnace Hall: dark brick, and the red glow of the furnace from below. */
+.board-wrap.band-furnace {
+  background:
+    radial-gradient(ellipse 70% 34% at 50% 100%, rgba(255, 110, 50, 0.45), transparent 70%),
+    linear-gradient(180deg, #1a0d0a 0%, #2e1510 50%, #4a1d14 82%, #7a2e1a 100%);
+}
+/* Sky Bazaar: dusk over the market, strings of lanterns. */
+.board-wrap.band-bazaar {
+  background:
+    radial-gradient(ellipse 60% 30% at 50% 0%, rgba(255, 200, 120, 0.25), transparent 70%),
+    linear-gradient(180deg, #2a1b3d 0%, #5a2f52 45%, #b0584e 80%, #e89a5c 100%);
+}
+.board-wrap.band-bazaar::after {
+  height: 100%;
+  opacity: 0.8;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300' preserveAspectRatio='none'><path d='M0 30Q100 70 200 34T400 40' fill='none' stroke='%23140c1c' stroke-width='1.5'/><g fill='%23ffc861'><circle cx='40' cy='44' r='3'/><circle cx='90' cy='54' r='3'/><circle cx='140' cy='52' r='3'/><circle cx='190' cy='38' r='3'/><circle cx='250' cy='34' r='3'/><circle cx='310' cy='42' r='3'/><circle cx='365' cy='42' r='3'/></g></svg>") center / 100% 100% no-repeat;
+}
+/* Mirage Lab: pale heat shimmer, bands of light that never sit still. */
+.board-wrap.band-mirage {
+  background:
+    repeating-linear-gradient(180deg, rgba(255, 255, 255, 0.07) 0 6px, transparent 6px 18px),
+    linear-gradient(180deg, #4a3570 0%, #8a6aae 38%, #d9b0c8 75%, #f6dccc 100%);
+}
+/* The Crown: blinding noon, the sun right overhead. */
+.board-wrap.band-crown {
+  background:
+    radial-gradient(circle at 50% 8%, rgba(255, 255, 235, 1) 0 14px, rgba(255, 230, 150, 0.45) 15px, transparent 70px),
+    linear-gradient(180deg, #7a4210 0%, #c47a22 34%, #f2c45e 70%, #fff0cc 100%);
+}
+
+/* The tower map's bands in Heatwave. */
+.band-dunegate .tower-floors {
+  background: linear-gradient(#3d2618, #301d12);
+  border-color: #c9783f;
+}
+.band-dunegate .tower-band {
+  color: #f6d39a;
+}
+.band-furnace .tower-floors {
+  background: linear-gradient(#2a110c, #200c08);
+  border-color: #b4523a;
+}
+.band-furnace .tower-band {
+  color: #ff9a6a;
+}
+.band-bazaar .tower-floors {
+  background: linear-gradient(#152a29, #10201f);
+  border-color: #2f8f8a;
+}
+.band-bazaar .tower-band {
+  color: #ffc861;
+}
+.band-mirage .tower-floors {
+  background: linear-gradient(#24182e, #1c1226);
+  border-color: #8a6aa8;
+}
+.band-mirage .tower-band {
+  color: #e6c9ff;
+}
+.band-crown .tower-floors {
+  background: linear-gradient(#2e2210, #241a0b);
+  border-color: #d9a53a;
+}
+.band-crown .tower-band {
+  color: #ffd66b;
+}

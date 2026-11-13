@@ -1,0 +1,77 @@
+{
+  "id": "t3-f17",
+  "title": "Cooling Pads",
+  "band": "furnace",
+  "size": {
+    "w": 7,
+    "h": 5
+  },
+  "tiles": [
+    "#######",
+    "#.wxv.#",
+    "#.###.#",
+    "#.xvw.#",
+    "#######"
+  ],
+  "heights": null,
+  "ventCycle": 3,
+  "boxes": [
+    {
+      "x": 1,
+      "y": 2,
+      "count": 1
+    },
+    {
+      "x": 5,
+      "y": 2,
+      "count": 1
+    }
+  ],
+  "targets": [
+    {
+      "x": 2,
+      "y": 3,
+      "count": 1
+    },
+    {
+      "x": 4,
+      "y": 3,
+      "count": 1
+    }
+  ],
+  "bot": {
+    "x": 3,
+    "y": 1,
+    "facing": "west"
+  },
+  "goals": [
+    "all_targets_filled"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait"
+  ],
+  "slots": {
+    "main": 19
+  },
+  "par": {
+    "commands": 17,
+    "steps": 17
+  },
+  "reference": "wait forward forward turn_left pick_up forward forward turn_left drop jump jump forward forward turn_left pick_up turn_left drop",
+  "hints": [
+    "Two crates, two pads, and vents in the way.",
+    "Carry a crate across a vent the same way you cross it yourself.",
+    "wait forward forward turn_left pick_up forward forward turn_left drop jump jump forward forward turn_left pick_up turn_left drop"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

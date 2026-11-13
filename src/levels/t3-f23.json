@@ -1,0 +1,58 @@
+{
+  "id": "t3-f23",
+  "title": "Spice Run",
+  "band": "bazaar",
+  "size": {
+    "w": 6,
+    "h": 6
+  },
+  "tiles": [
+    "######",
+    "#ev.x#",
+    "####w#",
+    "####.#",
+    "#.vxv#",
+    "######"
+  ],
+  "heights": null,
+  "ventCycle": 3,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 4,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait",
+    "F1"
+  ],
+  "slots": {
+    "main": 6,
+    "F1": 4
+  },
+  "par": {
+    "commands": 9,
+    "steps": 14
+  },
+  "reference": "F1 turn_left F1 turn_left F1 def F1 { forward wait forward forward }",
+  "hints": [
+    "Three spice lanes, all alike.",
+    "The turns between them belong in main.",
+    "F1 turn_left F1 turn_left F1 def F1 { forward wait forward forward }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

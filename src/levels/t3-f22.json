@@ -1,0 +1,58 @@
+{
+  "id": "t3-f22",
+  "title": "Bug Hunt: Off the Beat",
+  "band": "bazaar",
+  "size": {
+    "w": 6,
+    "h": 6
+  },
+  "tiles": [
+    "######",
+    "#.vxv#",
+    "####.#",
+    "####w#",
+    "#ev.x#",
+    "######"
+  ],
+  "heights": null,
+  "ventCycle": 3,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait",
+    "repeat"
+  ],
+  "slots": {
+    "main": 6
+  },
+  "par": {
+    "commands": 6,
+    "steps": 14
+  },
+  "reference": "repeat 3 { forward wait forward forward turn_right }",
+  "starter": "repeat 3 { forward forward forward turn_right }",
+  "hints": [
+    "This program walks the stalls fine... until the second vent. Run it and watch.",
+    "Something is missing from the loop. One beat.",
+    "repeat 3 { forward wait forward forward turn_right }"
+  ],
+  "story": {
+    "intro": "PATCH: \"VANTA scrambled this delivery bot's program. It's off the beat. Run it, see where it burns, and fix it.\"",
+    "outro": null
+  }
+}

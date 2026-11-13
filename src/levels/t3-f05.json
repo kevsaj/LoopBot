@@ -1,0 +1,64 @@
+{
+  "id": "t3-f05",
+  "title": "Hot Delivery",
+  "band": "dunegate",
+  "size": {
+    "w": 7,
+    "h": 5
+  },
+  "tiles": [
+    "#######",
+    "#..w..#",
+    "#.#v#.#",
+    "#.wvw.#",
+    "#######"
+  ],
+  "heights": null,
+  "boxes": [
+    {
+      "x": 1,
+      "y": 3,
+      "count": 1
+    }
+  ],
+  "targets": [
+    {
+      "x": 5,
+      "y": 3,
+      "count": 1
+    }
+  ],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "south"
+  },
+  "goals": [
+    "all_targets_filled"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "pick_up",
+    "drop",
+    "wait"
+  ],
+  "slots": {
+    "main": 15
+  },
+  "par": {
+    "commands": 13,
+    "steps": 13
+  },
+  "reference": "forward pick_up turn_left turn_left forward turn_right forward forward forward forward turn_right forward drop",
+  "hints": [
+    "A crate sitting on a vent plugs it. No blast at all.",
+    "Move the crate, then cross.",
+    "forward pick_up turn_left turn_left forward turn_right forward forward forward forward turn_right forward drop"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

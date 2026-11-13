@@ -1,0 +1,60 @@
+{
+  "id": "t3-f32",
+  "title": "Shimmer Hall",
+  "band": "mirage",
+  "size": {
+    "w": 8,
+    "h": 5
+  },
+  "tiles": [
+    "########",
+    "#.w.v..#",
+    "######v#",
+    "#e.w.v.#",
+    "########"
+  ],
+  "heights": null,
+  "ventCycle": 3,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait",
+    "repeat",
+    "while"
+  ],
+  "sensors": [
+    "heat_ahead"
+  ],
+  "slots": {
+    "main": 7
+  },
+  "par": {
+    "commands": 6,
+    "steps": 16
+  },
+  "reference": "repeat 3 { while not wall_ahead { while heat_ahead { wait } forward } turn_right }",
+  "hints": [
+    "Two halls, vents on different beats.",
+    "Ask before every step, and turn at the end of each hall.",
+    "repeat 3 { while not wall_ahead { while heat_ahead { wait } forward } turn_right }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "id": "t3-f29",
+  "title": "Lantern Alley",
+  "band": "bazaar",
+  "size": {
+    "w": 5,
+    "h": 5
+  },
+  "tiles": [
+    "#####",
+    "#ex.#",
+    "###w#",
+    "#...#",
+    "#####"
+  ],
+  "heights": null,
+  "ventCycle": 3,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 3,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait",
+    "repeat",
+    "F1"
+  ],
+  "slots": {
+    "main": 3,
+    "F1": 4
+  },
+  "par": {
+    "commands": 6,
+    "steps": 10
+  },
+  "reference": "repeat 3 { F1 } def F1 { forward forward wait turn_left }",
+  "hints": [
+    "A square walk with a pause on every lap.",
+    "Put the pause inside the routine.",
+    "repeat 3 { F1 } def F1 { forward forward wait turn_left }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

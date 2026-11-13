@@ -1,0 +1,57 @@
+{
+  "id": "t3-f16",
+  "title": "Bellows",
+  "band": "furnace",
+  "size": {
+    "w": 7,
+    "h": 7
+  },
+  "tiles": [
+    "#######",
+    "#.x.w.#",
+    "#w#v#x#",
+    "#.v.x.#",
+    "#x#w#v#",
+    "#.w.v.e",
+    "#######"
+  ],
+  "heights": null,
+  "ventCycle": 3,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait"
+  ],
+  "slots": {
+    "main": 13
+  },
+  "par": {
+    "commands": 11,
+    "steps": 11
+  },
+  "reference": "forward forward forward forward turn_right forward forward forward forward turn_left forward",
+  "hints": [
+    "A grid of vents, all out of step with each other.",
+    "Waiting on a plain tile is always safe.",
+    "forward forward forward forward turn_right forward forward forward forward turn_left forward"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

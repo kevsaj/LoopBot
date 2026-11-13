@@ -1,0 +1,56 @@
+{
+  "id": "t3-f06",
+  "title": "Steady Pace",
+  "band": "dunegate",
+  "size": {
+    "w": 8,
+    "h": 7
+  },
+  "tiles": [
+    "########",
+    "#.v.v..#",
+    "######v#",
+    "######.#",
+    "######v#",
+    "#e.w.w.#",
+    "########"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "wait",
+    "repeat"
+  ],
+  "slots": {
+    "main": 8
+  },
+  "par": {
+    "commands": 7,
+    "steps": 16
+  },
+  "reference": "forward repeat 2 { repeat 4 { forward } turn_right } repeat 5 { forward }",
+  "hints": [
+    "The vents are evenly spaced. So is your program.",
+    "A loop of two forwards crosses a lot of desert.",
+    "forward repeat 2 { repeat 4 { forward } turn_right } repeat 5 { forward }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

@@ -14,7 +14,7 @@ import { ProgramList } from './ProgramList';
 import { EditorDnd, PaletteChip } from './dnd';
 import { CodeEditor, CodeView } from './CodeView';
 import { Terminal } from './Terminal';
-import { COMMAND_META, CONTROL_ORDER, PALETTE_ORDER, blockCommand } from './commands';
+import { COMMAND_META, CONTROL_ORDER, EXTRA_ORDER, PALETTE_ORDER, blockCommand } from './commands';
 import { Board, snapshotBoard } from '../board/Board';
 import { shareImage } from '../share';
 import { canvasToBlob, drawShareCard } from '../shareImage';
@@ -440,6 +440,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
 
   const palette = [
     ...PALETTE_ORDER,
+    ...EXTRA_ORDER.filter((c) => level.commands.includes(c)),
     ...CONTROL_ORDER.filter((c) => level.commands.includes(c)),
     ...FUNCTION_NAMES.filter((f) => (level.slots[f] ?? 0) > 0),
   ];
@@ -671,7 +672,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
       {showResults && outcome?.status === 'cleared' && (
         <ResultsCard
           floorNumber={floorNumber}
-          tower={level.id.startsWith('t2-') ? 2 : 1}
+          tower={Number(/^t(\d+)-/.exec(level.id)?.[1] ?? 1)}
           floorCount={floorCount}
           earned={earned}
           prevBest={prevBest}

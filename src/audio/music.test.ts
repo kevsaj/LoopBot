@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { composeLead, themeForFloor } from './music';
 import type { Theme } from './music';
 
-const THEMES: Theme[] = ['title', 'lobby', 'maintenance', 'workshop', 'control', 'rooftop', 'daily', 'frostgate', 'glacier', 'signal', 'aurora', 'summit'];
+const THEMES: Theme[] = ['title', 'lobby', 'maintenance', 'workshop', 'control', 'rooftop', 'daily', 'frostgate', 'glacier', 'signal', 'aurora', 'summit', 'dunegate', 'furnace', 'bazaar', 'mirage', 'crown'];
 
 describe('music', () => {
   it('gives each band of the tower its theme', () => {
@@ -13,6 +13,10 @@ describe('music', () => {
 
   it('gives each band of Frostline its own theme', () => {
     expect([1, 10, 11, 21, 31, 41, 50].map((n) => themeForFloor(n, 2))).toEqual(['frostgate', 'frostgate', 'glacier', 'signal', 'aurora', 'summit', 'summit']);
+  });
+
+  it('gives each band of Heatwave its own theme', () => {
+    expect([1, 10, 11, 21, 31, 41, 50].map((n) => themeForFloor(n, 3))).toEqual(['dunegate', 'dunegate', 'furnace', 'bazaar', 'mirage', 'crown', 'crown']);
   });
 
   it.each(THEMES)('composes the same %s melody every time, in a singable range', (t) => {

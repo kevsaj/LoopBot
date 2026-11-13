@@ -1,0 +1,58 @@
+{
+  "id": "t3-f21",
+  "title": "Routine Heat",
+  "band": "bazaar",
+  "size": {
+    "w": 6,
+    "h": 6
+  },
+  "tiles": [
+    "######",
+    "#.vxv#",
+    "####.#",
+    "####w#",
+    "#ev.x#",
+    "######"
+  ],
+  "heights": null,
+  "ventCycle": 3,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait",
+    "F1"
+  ],
+  "slots": {
+    "main": 4,
+    "F1": 5
+  },
+  "par": {
+    "commands": 8,
+    "steps": 14
+  },
+  "reference": "F1 F1 F1 def F1 { forward wait forward forward turn_right }",
+  "hints": [
+    "Every side of the stall walk is the same: same steps, same pause.",
+    "Write one side in F1 and call it three times.",
+    "F1 F1 F1 def F1 { forward wait forward forward turn_right }"
+  ],
+  "story": {
+    "intro": "PATCH: \"The Sky Bazaar. Stalls, awnings, and vents under every rug. Remember F1? Write a routine once, call it by name.\"",
+    "outro": null
+  }
+}

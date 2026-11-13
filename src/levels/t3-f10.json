@@ -1,0 +1,56 @@
+{
+  "id": "t3-f10",
+  "title": "The Dune Gate",
+  "band": "dunegate",
+  "size": {
+    "w": 8,
+    "h": 7
+  },
+  "tiles": [
+    "########",
+    "#.wv.w.#",
+    "#v####v#",
+    "#.w.s..#",
+    "####v###",
+    "#e.d.w.#",
+    "########"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait"
+  ],
+  "slots": {
+    "main": 18
+  },
+  "par": {
+    "commands": 16,
+    "steps": 16
+  },
+  "reference": "turn_right wait forward forward turn_left forward forward forward turn_right activate forward forward turn_right forward forward forward",
+  "hints": [
+    "Find the switch, open the gate, and keep the rhythm the whole way.",
+    "Plan which vents you cross on odd steps and which on even.",
+    "turn_right wait forward forward turn_left forward forward forward turn_right activate forward forward turn_right forward forward forward"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

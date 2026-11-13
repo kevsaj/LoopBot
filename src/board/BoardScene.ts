@@ -157,6 +157,71 @@ const BANDS: Record<string, Partial<typeof C>> = {
     edge: 0x120f24,
     void: 0x0b0a1c,
   },
+  // Tower 3, Heatwave (the Sandglass). Dune Gate: warm sandstone paving between ochre walls.
+  dunegate: {
+    floorTop: 0xf0d3a0,
+    floorL: 0xcfa874,
+    floorR: 0xb08a5a,
+    floorEdge: 0xfff0d2,
+    wallTop: 0xc9783f,
+    wallL: 0xa65f30,
+    wallR: 0x874c27,
+    wallCap: 0xe8a165,
+    edge: 0x3d2414,
+    void: 0x2a160c,
+  },
+  // Furnace Hall: soot-dark iron floor plates and brick, lit red from below.
+  furnace: {
+    floorTop: 0x9a8a80,
+    floorL: 0x6f625b,
+    floorR: 0x584d47,
+    floorEdge: 0xc9b6a8,
+    wallTop: 0x7a2e22,
+    wallL: 0x5e231a,
+    wallR: 0x481b14,
+    wallCap: 0xb4523a,
+    edge: 0x1c0d09,
+    void: 0x140806,
+  },
+  // Sky Bazaar: patterned tiles in turquoise and cream under striped awnings.
+  bazaar: {
+    floorTop: 0xe9dcc0,
+    floorL: 0xbfae8e,
+    floorR: 0x9f8f72,
+    floorEdge: 0xfff6e2,
+    wallTop: 0x2f8f8a,
+    wallL: 0x23706c,
+    wallR: 0x1b5754,
+    wallCap: 0xf2b84b,
+    edge: 0x1a2422,
+    void: 0x2a1a22,
+  },
+  // Mirage Lab: pale shimmering glass over lilac walls.
+  mirage: {
+    floorTop: 0xf3e6e9,
+    floorL: 0xcdb8c4,
+    floorR: 0xae98a6,
+    floorEdge: 0xffffff,
+    wallTop: 0x8a6aa8,
+    wallL: 0x6c5288,
+    wallR: 0x55406c,
+    wallCap: 0xc9a8e6,
+    edge: 0x24162e,
+    void: 0x1c1024,
+  },
+  // The Crown: polished gold mirrors and white stone, high in the sun.
+  crown: {
+    floorTop: 0xfaf2df,
+    floorL: 0xd9cba8,
+    floorR: 0xbcab86,
+    floorEdge: 0xffffff,
+    wallTop: 0xd9a53a,
+    wallL: 0xb3842a,
+    wallR: 0x8f6820,
+    wallCap: 0xffd66b,
+    edge: 0x3a2a10,
+    void: 0x2a1c08,
+  },
   // Summit: wind-scoured snow and dark rock, the beacon glowing gold.
   summit: {
     floorTop: 0xf3f6fa,
@@ -199,7 +264,7 @@ type Grid = { rx: number; ry: number };
 
 /** Everything drawStatic reads that can change during a run: crates, switches and doors. */
 function staticKey(w: World): string {
-  return `${w.boxes.map((r) => r.join('')).join('/')}|${Object.values(w.switches).join()}|${Object.values(w.doors).join()}|${Object.values(w.cracked ?? {}).join()}`;
+  return `${w.boxes.map((r) => r.join('')).join('/')}|${Object.values(w.switches).join()}|${Object.values(w.doors).join()}|${Object.values(w.cracked ?? {}).join()}${w.ventCycle ? `|${w.clock % w.ventCycle}` : ''}`;
 }
 
 /** How LoopBot's eye looks right now. */
@@ -424,6 +489,58 @@ export class BoardScene extends Phaser.Scene {
     this.rim(g, sx, sy, 0xf6c49a, scale);
   }
 
+  /**
+   * A Heatwave vent (CR-VENT): a dark grate with a row of embers that light up as its blast comes
+   * round (all lit = blasting now), and a plume of fire while it blasts. A crate on top plugs it.
+   */
+  private vent(g: Phaser.GameObjects.Graphics, sx: number, sy: number, w: World, x: number, y: number, depth: number) {
+    const cycle = w.ventCycle || 2;
+    const phase = w.tiles[y][x].phase ?? 0;
+    const plugged = w.boxes[y][x] > 0;
+    const wait = (((phase - w.clock) % cycle) + cycle) % cycle; // steps until it blasts; 0 = blasting now
+    const hot = !plugged && wait === 0;
+    const next = !plugged && wait === 1;
+    this.diamond(g, sx, sy, hot ? 0xff7a2e : next ? 0x9a3b22 : 0x3a2c2a, 0.86, 1);
+    this.diamond(g, sx, sy, hot ? 0xffd27a : 0x22191a, 0.62, hot ? 0.9 : 1);
+    // grate slats across the opening
+    g.lineStyle(2, hot ? 0xffe9b8 : 0x5c4842, 0.9);
+    for (const k of [-1, 0, 1]) {
+      const cx = sx + k * TW * 0.12;
+      const cy = sy - k * TH * 0.12;
+      g.lineBetween(cx - TW * 0.15, cy - TH * 0.15, cx + TW * 0.15, cy + TH * 0.15);
+    }
+    // the countdown: one ember per beat of the cycle, lit as the blast gets closer
+    const lit = plugged ? 0 : cycle - wait;
+    for (let i = 0; i < cycle; i++) {
+      const ex = sx - TW * 0.3 + (TW * 0.6 * (i + 0.5)) / cycle;
+      const ey = sy + TH * 0.3;
+      g.fillStyle(i < lit ? (hot ? 0xfff1c2 : 0xff8a3d) : 0x1a1212, i < lit ? 1 : 0.7);
+      g.fillEllipse(ex, ey, TW * 0.075, TH * 0.075);
+    }
+    if (next) {
+      const warn = this.add.graphics();
+      warn.setDepth(depth);
+      this.diamond(warn, sx, sy, 0xff6a2a, 0.62, 0.35);
+      this.layer.add(warn);
+      if (!this.reduced) this.tweens.add({ targets: warn, alpha: 0.15, yoyo: true, repeat: -1, duration: 420, ease: 'Sine.easeInOut' });
+    }
+    if (hot) {
+      // a plume of fire: layered flame tongues, flickering
+      const plume = this.add.graphics();
+      plume.setDepth(depth);
+      const tongue = (cx: number, h: number, half: number, color: number, alpha: number) => {
+        plume.fillStyle(color, alpha);
+        plume.fillTriangle(cx - half, sy, cx + half, sy, cx, sy - h);
+      };
+      tongue(sx, 62, TW * 0.28, 0xff5a1f, 0.55);
+      tongue(sx - TW * 0.1, 46, TW * 0.16, 0xff8c2a, 0.75);
+      tongue(sx + TW * 0.1, 50, TW * 0.16, 0xff8c2a, 0.75);
+      tongue(sx, 34, TW * 0.13, 0xffd36a, 0.9);
+      this.layer.add(plume);
+      if (!this.reduced) this.tweens.add({ targets: plume, alpha: 0.7, yoyo: true, repeat: -1, duration: 160, ease: 'Sine.easeInOut' });
+    }
+  }
+
   private drawStatic(w: World) {
     for (const child of [...this.layer.list]) {
       if (child === this.bot) continue;
@@ -492,6 +609,8 @@ export class BoardScene extends Phaser.Scene {
             g.lineBetween(sx - TW * 0.2, sy - TH * 0.02, sx - TW * 0.04, sy - TH * 0.2);
             g.lineStyle(1.5, 0xffffff, 0.55);
             g.lineBetween(sx + TW * 0.02, sy + TH * 0.16, sx + TW * 0.16, sy + TH * 0.01);
+          } else if (t.type === 'vent') {
+            this.vent(g, sx, sy, w, x, y, (grid.rx + grid.ry) * 10 + 6);
           } else if (t.type === 'exit') {
             // the service lift: a glowing pad with a soft beam that pulses
             this.diamond(g, sx, sy, C.exit, 0.8);
@@ -948,7 +1067,7 @@ export class BoardScene extends Phaser.Scene {
       if (n >= 3) this.twirl(w, dur + 260);
       this.time.delayedCall(dur + 200, () => this.wiggleAntenna(22));
       this.lightUp(w, dur);
-    } else if (u.action === 'turn_left' || u.action === 'turn_right' || u.action === 'pick_up' || u.action === 'drop' || u.action === 'activate') {
+    } else if (u.action === 'turn_left' || u.action === 'turn_right' || u.action === 'pick_up' || u.action === 'drop' || u.action === 'activate' || u.action === 'wait') {
       this.tweens.add({ targets: this.bot, scaleY: 0.88, yoyo: true, duration: Math.min(90, dur / 2 || 90) });
     }
   }

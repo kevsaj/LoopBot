@@ -1,0 +1,46 @@
+{
+  "id": "t3-f02",
+  "title": "Every Other Step",
+  "band": "dunegate",
+  "size": {
+    "w": 8,
+    "h": 3
+  },
+  "tiles": [
+    "########",
+    "#.wvwve#",
+    "########"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "wait"
+  ],
+  "slots": {
+    "main": 8
+  },
+  "par": {
+    "commands": 6,
+    "steps": 6
+  },
+  "reference": "wait forward forward forward forward forward",
+  "hints": [
+    "Vents with the dark grate blast on odd steps, the bright ones on even steps.",
+    "Get the rhythm right once and you never break stride.",
+    "wait forward forward forward forward forward"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

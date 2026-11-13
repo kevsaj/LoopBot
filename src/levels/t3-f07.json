@@ -1,0 +1,56 @@
+{
+  "id": "t3-f07",
+  "title": "Hot Stairs",
+  "band": "dunegate",
+  "size": {
+    "w": 8,
+    "h": 3
+  },
+  "tiles": [
+    "########",
+    "#.wvwe##",
+    "########"
+  ],
+  "heights": [
+    "00000000",
+    "00123300",
+    "00000000"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "wait",
+    "repeat"
+  ],
+  "slots": {
+    "main": 5
+  },
+  "par": {
+    "commands": 4,
+    "steps": 5
+  },
+  "reference": "wait repeat 3 { jump } forward",
+  "hints": [
+    "Three steps up, and the first one is about to blast.",
+    "Wait once, then let a loop do the climbing.",
+    "wait repeat 3 { jump } forward"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

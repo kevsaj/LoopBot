@@ -1,0 +1,58 @@
+{
+  "id": "t3-f08",
+  "title": "Plug It",
+  "band": "dunegate",
+  "size": {
+    "w": 7,
+    "h": 4
+  },
+  "tiles": [
+    "#######",
+    "#..vve#",
+    "#.#####",
+    "#######"
+  ],
+  "heights": null,
+  "boxes": [
+    {
+      "x": 1,
+      "y": 2,
+      "count": 1
+    }
+  ],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "south"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "wait"
+  ],
+  "slots": {
+    "main": 10
+  },
+  "par": {
+    "commands": 8,
+    "steps": 8
+  },
+  "reference": "pick_up turn_left forward drop jump wait jump forward",
+  "hints": [
+    "Two vents side by side: nobody crosses those on foot.",
+    "A crate on a vent plugs it. Then the crate is a stepping stone.",
+    "pick_up turn_left forward drop jump wait jump forward"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

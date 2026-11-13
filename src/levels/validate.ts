@@ -5,7 +5,9 @@ import { SENSORS } from '../sim/types';
 import { MAX_DEPTH, MAX_TIMES, MIN_TIMES, countBlocks, loopHeight, parseReference } from '../sim/program';
 import { FUNCTION_NAMES } from '../sim/types';
 
-const TILE_CHARS = new Set(['.', '#', '_', 's', 'd', 'e', 'r', 'g', 'b', 'y', 'i', 't']);
+const TILE_CHARS = new Set(['.', '#', '_', 's', 'd', 'e', 'r', 'g', 'b', 'y', 'i', 't', 'v', 'w', 'x', 'z']);
+/** Heatwave vent tiles and the phase each one blasts on (CR-VENT). */
+const VENT_PHASE: Record<string, number> = { v: 0, w: 1, x: 2, z: 3 };
 const FACINGS = ['north', 'east', 'south', 'west'];
 const GOALS = ['all_targets_filled', 'bot_on_exit', 'all_switches_on'];
 
@@ -31,6 +33,12 @@ export function validateLevel(l: LevelFile, opts: { custom?: boolean } = {}): st
   const walkable = (x: number, y: number) => inside(x, y) && !'#_'.includes(l.tiles[y][x]);
   if (!FACINGS.includes(l.bot.facing)) e('bot.facing must be north, east, south or west');
   if (!walkable(l.bot.x, l.bot.y)) e('bot must start on a walkable tile');
+  const cycle = l.ventCycle ?? 2;
+  if (l.ventCycle !== undefined && (!Number.isInteger(cycle) || cycle < 2 || cycle > 4)) e('ventCycle must be 2, 3 or 4');
+  l.tiles.forEach((row, y) => {
+    for (const ch of row) if (ch in VENT_PHASE && VENT_PHASE[ch] >= cycle) e(`vent '${ch}' in row ${y} never blasts in a ${cycle}-step cycle`);
+  });
+  if (l.tiles[l.bot.y]?.[l.bot.x] === 'v') e('bot must not start on a vent that blasts at step 0');
   for (const b of l.boxes) {
     if (!walkable(b.x, b.y)) e(`box at ${b.x},${b.y} is not on a walkable tile`);
     if (b.count < 1 || b.count > 3) e(`box stack at ${b.x},${b.y} must be 1 to 3`);

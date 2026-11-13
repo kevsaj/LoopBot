@@ -1,0 +1,59 @@
+{
+  "id": "t3-f46",
+  "title": "Relay Climb",
+  "band": "crown",
+  "size": {
+    "w": 6,
+    "h": 6
+  },
+  "tiles": [
+    "######",
+    "#.w###",
+    "##.v##",
+    "###.x#",
+    "####e#",
+    "######"
+  ],
+  "heights": null,
+  "ventCycle": 3,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait",
+    "F1"
+  ],
+  "typing": true,
+  "slots": {
+    "main": 4,
+    "F1": 5
+  },
+  "par": {
+    "commands": 8,
+    "steps": 14
+  },
+  "reference": "F1 F1 F1 def F1 { wait forward turn_right forward turn_left }",
+  "hints": [
+    "A staircase down the Crown, and every flight is the same.",
+    "Write one flight in F1 and loop it.",
+    "F1 F1 F1 def F1 { wait forward turn_right forward turn_left }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

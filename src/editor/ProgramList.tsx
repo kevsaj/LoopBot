@@ -204,6 +204,7 @@ const SENSOR_LABEL: Record<string, string> = {
   carrying: 'carrying',
   on_target: 'on target',
   on_switch: 'on switch',
+  heat_ahead: 'heat ahead',
 };
 /** A condition in words: "wall ahead", "not on red". */
 export function condLabel(c: Condition): string {

@@ -1,0 +1,58 @@
+{
+  "id": "t3-f44",
+  "title": "Solar Yard",
+  "band": "crown",
+  "size": {
+    "w": 8,
+    "h": 7
+  },
+  "tiles": [
+    "########",
+    "#.w.x.s#",
+    "#v####v#",
+    "#.x.w.x#",
+    "#w######",
+    "#.v.d.e#",
+    "########"
+  ],
+  "heights": null,
+  "ventCycle": 3,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait"
+  ],
+  "typing": true,
+  "slots": {
+    "main": 29
+  },
+  "par": {
+    "commands": 27,
+    "steps": 27
+  },
+  "reference": "wait forward forward forward forward forward turn_left turn_left activate forward wait forward forward forward forward turn_left forward forward wait forward forward turn_left forward forward forward forward forward",
+  "hints": [
+    "The long way round. Every tile counts and every beat counts.",
+    "Hit the switch, then thread the vents down to the gate.",
+    "wait forward forward forward forward forward turn_left turn_left activate forward wait forward forward forward forward turn_left forward forward wait forward forward turn_left forward forward forward forward forward"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "id": "t3-f50",
+  "title": "The Sun Crown",
+  "band": "crown",
+  "size": {
+    "w": 8,
+    "h": 8
+  },
+  "tiles": [
+    "########",
+    "#.w.v.s#",
+    "######v#",
+    "#..w.#.#",
+    "#d##e#d#",
+    "#v####x#",
+    "#sv.x..#",
+    "########"
+  ],
+  "heights": null,
+  "ventCycle": 3,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait",
+    "repeat",
+    "while",
+    "if"
+  ],
+  "sensors": [
+    "heat_ahead",
+    "on_switch"
+  ],
+  "typing": true,
+  "slots": {
+    "main": 9
+  },
+  "par": {
+    "commands": 8,
+    "steps": 33
+  },
+  "reference": "repeat 6 { while not wall_ahead { while heat_ahead { wait } forward } if on_switch { activate } turn_right }",
+  "hints": [
+    "Two switches, two gates, and vents on their own beats all the way into the Crown.",
+    "Walk each hall carefully, flip a switch when you stand on one, and turn right at every wall.",
+    "repeat 6 { while not wall_ahead { while heat_ahead { wait } forward } if on_switch { activate } turn_right }"
+  ],
+  "story": {
+    "intro": "VANTA: \"The sun mirrors are mine. One beam from the Crown and every tower in the desert answers to me.\"",
+    "outro": "PATCH: \"Mirrors down, Crown dark, and VANTA's fleeing east. The Sandglass is cooling. You did it, LoopBot.\""
+  },
+  "links": [
+    {
+      "switch": {
+        "x": 6,
+        "y": 1
+      },
+      "doors": [
+        {
+          "x": 6,
+          "y": 4
+        }
+      ]
+    },
+    {
+      "switch": {
+        "x": 1,
+        "y": 6
+      },
+      "doors": [
+        {
+          "x": 1,
+          "y": 4
+        }
+      ]
+    }
+  ]
+}

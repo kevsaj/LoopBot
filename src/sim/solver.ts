@@ -131,6 +131,8 @@ function usefulActions(level: LevelFile): Action[] {
   const w = createWorld(level);
   const hasBoxes = w.boxes.some((row) => row.some((n) => n > 0));
   const hasSwitch = w.tiles.some((row) => row.some((t) => t.type === 'switch'));
+  // Waiting only ever helps while a vent is counting down.
+  const hasVents = w.ventCycle > 0;
   // Boxes can be stacked, so any floor with boxes may have steps to jump.
   let steps = hasBoxes;
   for (let y = 0; y < w.h; y++)
@@ -145,6 +147,7 @@ function usefulActions(level: LevelFile): Action[] {
     pick_up: hasBoxes,
     drop: hasBoxes,
     activate: hasSwitch,
+    wait: hasVents,
   };
   return ACTIONS.filter((a) => level.commands.includes(a) && can[a]);
 }
