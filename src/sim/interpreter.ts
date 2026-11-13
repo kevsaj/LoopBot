@@ -100,7 +100,10 @@ export class Runner {
 
   constructor(program: Program, level: LevelFile) {
     this.world = createWorld(level);
-    const frozen = structuredClone(program);
+    // A plain JSON copy, not structuredClone: that only arrived in Android System WebView 98
+    // and Safari 15.4, and an older WebView crashed here on Run (Nov 2026 playtest errors).
+    // A Program is plain data (ids, strings, numbers, nested arrays), so JSON copies it exactly.
+    const frozen = JSON.parse(JSON.stringify(program)) as Program;
     this.gen = runBlocks(frozen, this.world, frozen.main, 'main', [], { n: 0 });
   }
 
