@@ -2944,3 +2944,27 @@ button.set-row {
 .band-summit .tower-band {
   color: #f2c25b;
 }
+
+/* --- Hint packs --- */
+.hint-packs {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 12px 0 4px;
+}
+.hint-pack {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 54px;
+  padding: 0 18px;
+  font-size: 17px;
+}
+.hint-pack .hp-price {
+  font-weight: 700;
+  color: var(--warn);
+}
+.hint-more {
+  margin-top: 4px;
+}

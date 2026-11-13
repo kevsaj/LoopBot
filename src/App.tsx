@@ -25,8 +25,8 @@ import type { Interlude as Beat } from './story/interludes';
 import type { LevelFile } from './sim/types';
 import { currentStreak, yesterday, dailyLevel, dateKey, loadDaily, pruneOldDailies, recordDailyClear, saveDaily } from './daily';
 import type { DailyState } from './daily';
-import { MAX_FREEZES, PLUS_MAX_FREEZES } from './daily';
-import { hasPlus, initPurchases, plusUnlocked } from './store/purchases';
+import { MAX_FREEZES, PLUS_MAX_FREEZES, dailyHintReward } from './daily';
+import { hasPlus, initPurchases, onHintsGranted, plusUnlocked } from './store/purchases';
 
 /** Each tower remembers its own floor: Tower 1 keeps the original key so old saves carry over. */
 const floorKey = (tower: number) => (tower === 1 ? 'loopbot.floor' : `loopbot.floor.t${tower}`);
@@ -135,13 +135,23 @@ export default function App() {
     },
     [ride, setProgress],
   );
-  const clearDaily = useCallback((date: string, stars: number) => {
-    setDailyState((s) => {
-      const next = recordDailyClear(s, date, stars, hasPlus() ? PLUS_MAX_FREEZES : MAX_FREEZES);
+  const dailyRef = useRef(daily);
+  dailyRef.current = daily;
+  const clearDaily = useCallback(
+    (date: string, stars: number) => {
+      const before = dailyRef.current;
+      const next = recordDailyClear(before, date, stars, hasPlus() ? PLUS_MAX_FREEZES : MAX_FREEZES);
       saveDaily(next);
-      return next;
-    });
-  }, []);
+      dailyRef.current = next;
+      setDailyState(next);
+      // the first clear of the day earns a hint, and every 7-day streak 3 more
+      const earned = dailyHintReward(before, next, date);
+      if (earned) setProgress((p) => ({ ...p, hints: p.hints + earned }));
+    },
+    [setProgress],
+  );
+  // Hints bought in the store, or the Plus bonus, go straight into the wallet.
+  useEffect(() => onHintsGranted((n) => setProgress((p) => ({ ...p, hints: p.hints + n }))), [setProgress]);
   const elevator = doors && (
     <div className={`elevator ${doors}`} aria-hidden="true">
       <span className="door left" />
