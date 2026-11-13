@@ -85,6 +85,7 @@ const SENSOR_LABEL: Record<Sensor, string> = {
   on_target: 'on target',
   on_switch: 'on switch',
   tile_is: 'tile is (colour)',
+  heat_ahead: 'heat ahead',
 };
 
 const ARROW = { north: '▲', east: '▶', south: '▼', west: '◀' };

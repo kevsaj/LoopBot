@@ -15,7 +15,8 @@ import { sharedAudio } from './feedback';
 
 export type Theme =
   | 'title' | 'lobby' | 'maintenance' | 'workshop' | 'control' | 'rooftop' | 'daily'
-  | 'frostgate' | 'glacier' | 'signal' | 'aurora' | 'summit';
+  | 'frostgate' | 'glacier' | 'signal' | 'aurora' | 'summit'
+  | 'dunegate' | 'furnace' | 'bazaar' | 'mirage' | 'crown';
 
 interface Recipe {
   bpm: number;
@@ -46,6 +47,8 @@ const DORIAN = [0, 2, 3, 5, 7, 9, 10];
 const MIXOLYDIAN = [0, 2, 4, 5, 7, 9, 10];
 const AEOLIAN = [0, 2, 3, 5, 7, 8, 10];
 const LYDIAN = [0, 2, 4, 6, 7, 9, 11];
+/** A flat second over a major third: the warm, dusty sound of Heatwave. */
+const PHRYGIAN_DOMINANT = [0, 1, 4, 5, 7, 8, 10];
 
 const RECIPES: Record<Theme, Recipe> = {
   // Night sky over the city: slow, open, no drums.
@@ -158,6 +161,56 @@ const RECIPES: Record<Theme, Recipe> = {
     kick: 'x.....x...x.....', snare: '....x.......x...', hat: 'x.xxx.xxx.xxx.xx',
     seed: 109,
   },
+  // Tower 3, Heatwave (the Sandglass). Floors 1-10: the Dune Gate, a hand-drum walk across hot sand.
+  dunegate: {
+    bpm: 92, root: 40, mode: PHRYGIAN_DOMINANT, chords: [0, 1, 0, 6], sevenths: false,
+    pad: { wave: 'triangle', cutoff: 1600, gain: 0.04 },
+    bass: 'x.....o...x.....', bassWave: 'triangle',
+    arp: '0.2.1.2.0.2.3.2.', arpWave: 'triangle',
+    lead: { wave: 'sine', density: 0.4, gain: 0.05 },
+    kick: 'x.....x.....x...', snare: '................', hat: '..x...x...x..x..',
+    seed: 113,
+  },
+  // Floors 11-20: Furnace Hall, a slow three-beat swing like bellows breathing.
+  furnace: {
+    bpm: 84, root: 38, mode: AEOLIAN, chords: [0, 5, 6, 4], sevenths: true,
+    pad: { wave: 'sawtooth', cutoff: 900, gain: 0.03 },
+    bass: 'x.....x.....o...', bassWave: 'sawtooth',
+    arp: '0..1..2..1..0...', arpWave: 'triangle',
+    lead: { wave: 'triangle', density: 0.3, gain: 0.045 },
+    kick: 'x.....x.....x...', snare: '......x.........', hat: '...x.....x.....x',
+    seed: 127,
+  },
+  // Floors 21-30: the Sky Bazaar, a busy market groove with a plucked arp.
+  bazaar: {
+    bpm: 108, root: 43, mode: PHRYGIAN_DOMINANT, chords: [0, 3, 1, 0], sevenths: false,
+    pad: { wave: 'triangle', cutoff: 1500, gain: 0.03 },
+    bass: 'x.x...o.x..x..o.', bassWave: 'square',
+    arp: '0212321202123432', arpWave: 'square',
+    lead: { wave: 'sine', density: 0.45, gain: 0.04 },
+    kick: 'x..x..x...x..x..', snare: '....x.......x...', hat: 'x.xxx.x.x.xxx.x.',
+    seed: 131,
+  },
+  // Floors 31-40: the Mirage Lab, wavering chords that never quite settle.
+  mirage: {
+    bpm: 86, root: 41, mode: LYDIAN, chords: [0, 1, 5, 4], sevenths: true,
+    pad: { wave: 'sine', cutoff: 2000, gain: 0.045 },
+    bass: 'x.......o.......', bassWave: 'sine',
+    arp: '4.3.2.1.0.1.2.3.', arpWave: 'sine',
+    lead: { wave: 'triangle', density: 0.3, gain: 0.04 },
+    kick: 'x.........x.....', snare: '........x.......', hat: '..x...x...x...x.',
+    seed: 137,
+  },
+  // Floors 41-50: the Crown, the sun mirrors blazing: the biggest theme in the desert.
+  crown: {
+    bpm: 124, root: 40, mode: PHRYGIAN_DOMINANT, chords: [0, 6, 5, 1], sevenths: false,
+    pad: { wave: 'sawtooth', cutoff: 1800, gain: 0.03 },
+    bass: 'x..x..x.x..x..o.', bassWave: 'triangle',
+    arp: '0123432101234321', arpWave: 'triangle',
+    lead: { wave: 'square', density: 0.45, gain: 0.025 },
+    kick: 'x.....x...x.....', snare: '....x.......x...', hat: 'x.xxx.xxx.xxx.xx',
+    seed: 139,
+  },
   // The daily challenge: cheerful and a little different every bar.
   daily: {
     bpm: 104, root: 46, mode: IONIAN, chords: [0, 3, 5, 4], sevenths: false,
@@ -173,6 +226,7 @@ const RECIPES: Record<Theme, Recipe> = {
 /** Which theme plays on a tower floor, by its 1-based number. */
 export function themeForFloor(n: number, tower = 1): Theme {
   if (tower === 2) return (['frostgate', 'glacier', 'signal', 'aurora', 'summit'] as const)[Math.min(4, Math.floor((n - 1) / 10))];
+  if (tower === 3) return (['dunegate', 'furnace', 'bazaar', 'mirage', 'crown'] as const)[Math.min(4, Math.floor((n - 1) / 10))];
   if (n <= 10) return 'lobby';
   if (n <= 20) return 'maintenance';
   if (n <= 30) return 'workshop';

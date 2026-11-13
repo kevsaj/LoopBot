@@ -1,0 +1,46 @@
+{
+  "id": "t3-f01",
+  "title": "Hot Step",
+  "band": "dunegate",
+  "size": {
+    "w": 5,
+    "h": 3
+  },
+  "tiles": [
+    "#####",
+    "#.we#",
+    "#####"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "wait"
+  ],
+  "slots": {
+    "main": 5
+  },
+  "par": {
+    "commands": 3,
+    "steps": 3
+  },
+  "reference": "wait forward forward",
+  "hints": [
+    "The vent blasts every other step. Count before you walk.",
+    "Let one blast pass, then go.",
+    "wait forward forward"
+  ],
+  "story": {
+    "intro": "PATCH: \"Heatwave. VANTA cranked the Sandglass's cooling into reverse, and now the vents blow fire. They keep time, though. Watch the glow.\"",
+    "outro": "PATCH: \"See? Wait one beat and the heat goes right past you.\""
+  }
+}

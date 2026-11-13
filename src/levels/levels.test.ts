@@ -1,12 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { LEVELS } from './index';
 import { FROSTLINE } from './frostline';
+import { HEATWAVE } from './heatwave';
 import { validateLevel } from './validate';
 import { Runner } from '../sim/interpreter';
 import { countBlocks, countCommands, parseReference } from '../sim/program';
 import { shortestActionPath, smallestProgram } from '../sim/solver';
 
-describe.each([...LEVELS, ...FROSTLINE].map((l) => [l.id, l] as const))('floor %s', (_id, level) => {
+describe.each([...LEVELS, ...FROSTLINE, ...HEATWAVE].map((l) => [l.id, l] as const))('floor %s', (_id, level) => {
   it('LV-1: matches the floor format', () => {
     expect(validateLevel(level)).toEqual([]);
   });

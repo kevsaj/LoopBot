@@ -1,0 +1,53 @@
+{
+  "id": "t3-f11",
+  "title": "Slow Burn",
+  "band": "furnace",
+  "size": {
+    "w": 8,
+    "h": 3
+  },
+  "tiles": [
+    "########",
+    "#.wxv.e#",
+    "########"
+  ],
+  "heights": null,
+  "ventCycle": 3,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait"
+  ],
+  "slots": {
+    "main": 8
+  },
+  "par": {
+    "commands": 6,
+    "steps": 6
+  },
+  "reference": "wait forward forward forward forward forward",
+  "hints": [
+    "Up here the vents take three steps to come round. Three kinds of grate, three beats.",
+    "A vent here gives you two safe beats in a row.",
+    "wait forward forward forward forward forward"
+  ],
+  "story": {
+    "intro": "PATCH: \"The Furnace Hall. These vents run slower, three beats a cycle. That means you can stand on one for a moment. Just one.\"",
+    "outro": null
+  }
+}

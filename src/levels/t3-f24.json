@@ -1,0 +1,59 @@
+{
+  "id": "t3-f24",
+  "title": "Bug Hunt: Too Early",
+  "band": "bazaar",
+  "size": {
+    "w": 6,
+    "h": 6
+  },
+  "tiles": [
+    "######",
+    "#xw.v#",
+    "#.##x#",
+    "#v##v#",
+    "#e##.#",
+    "######"
+  ],
+  "heights": null,
+  "ventCycle": 3,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 4,
+    "y": 4,
+    "facing": "north"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait",
+    "F1"
+  ],
+  "slots": {
+    "main": 5,
+    "F1": 5
+  },
+  "par": {
+    "commands": 8,
+    "steps": 14
+  },
+  "reference": "F1 F1 F1 def F1 { forward wait forward forward turn_left }",
+  "starter": "F1 F1 F1 def F1 { wait forward forward forward turn_left }",
+  "hints": [
+    "The routine is right, nearly. It waits at the wrong moment.",
+    "Move the wait, do not add one.",
+    "F1 F1 F1 def F1 { forward wait forward forward turn_left }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

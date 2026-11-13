@@ -1,0 +1,70 @@
+{
+  "id": "t3-f43",
+  "title": "Mirror Plugs",
+  "band": "crown",
+  "size": {
+    "w": 8,
+    "h": 8
+  },
+  "tiles": [
+    "########",
+    "#......#",
+    "#vvvvvv#",
+    "#vvvvvv#",
+    "#vvvvvv#",
+    "#vvvvvv#",
+    "#.....e#",
+    "########"
+  ],
+  "heights": null,
+  "ventCycle": 3,
+  "boxes": [
+    {
+      "x": 2,
+      "y": 1,
+      "count": 1
+    },
+    {
+      "x": 5,
+      "y": 1,
+      "count": 1
+    }
+  ],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait"
+  ],
+  "typing": true,
+  "slots": {
+    "main": 16
+  },
+  "par": {
+    "commands": 14,
+    "steps": 14
+  },
+  "reference": "jump jump forward pick_up forward turn_right forward drop jump jump forward forward turn_left forward",
+  "hints": [
+    "Four rows of vents, all on the same beat. Nobody walks across those.",
+    "Crates are stepping stones, and a crate sitting on a vent plugs it.",
+    "jump jump forward pick_up forward turn_right forward drop jump jump forward forward turn_left forward"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

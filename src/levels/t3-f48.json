@@ -1,0 +1,64 @@
+{
+  "id": "t3-f48",
+  "title": "Bug Hunt: Last Check",
+  "band": "crown",
+  "size": {
+    "w": 8,
+    "h": 5
+  },
+  "tiles": [
+    "########",
+    "#s.v.v.#",
+    "#d######",
+    "#.v.v.e#",
+    "########"
+  ],
+  "heights": null,
+  "ventCycle": 3,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 6,
+    "y": 1,
+    "facing": "west"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait",
+    "repeat",
+    "while",
+    "if"
+  ],
+  "sensors": [
+    "heat_ahead",
+    "on_switch"
+  ],
+  "typing": true,
+  "slots": {
+    "main": 9
+  },
+  "par": {
+    "commands": 8,
+    "steps": 18
+  },
+  "reference": "repeat 3 { while not wall_ahead { while heat_ahead { wait } forward } if on_switch { activate } turn_left }",
+  "starter": "repeat 3 { while not wall_ahead { while heat_ahead { wait } forward } if wall_ahead { activate } turn_left }",
+  "hints": [
+    "The program flips the switch... sometimes. Run it.",
+    "Check what you are standing on, not what is ahead.",
+    "repeat 3 { while not wall_ahead { while heat_ahead { wait } forward } if on_switch { activate } turn_left }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "id": "t3-f27",
+  "title": "Carpet Lines",
+  "band": "bazaar",
+  "size": {
+    "w": 7,
+    "h": 7
+  },
+  "tiles": [
+    "#######",
+    "#.wxw.#",
+    "#####w#",
+    "#####v#",
+    "#####x#",
+    "#####e#",
+    "#######"
+  ],
+  "heights": null,
+  "ventCycle": 3,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait",
+    "repeat",
+    "F1",
+    "F2"
+  ],
+  "slots": {
+    "main": 2,
+    "F1": 3,
+    "F2": 3
+  },
+  "par": {
+    "commands": 8,
+    "steps": 13
+  },
+  "reference": "repeat 2 { F2 } def F1 { wait forward forward } def F2 { F1 F1 turn_right }",
+  "hints": [
+    "A routine can call another routine.",
+    "F2 can use F1 twice, then turn.",
+    "repeat 2 { F2 } def F1 { wait forward forward } def F2 { F1 F1 turn_right }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

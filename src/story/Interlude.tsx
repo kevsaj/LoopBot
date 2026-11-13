@@ -99,7 +99,7 @@ export function Interlude({ beat, onDone }: { beat: Beat; onDone(): void }) {
         </div>
       ) : (
         <div className="ending">
-          <Scene scene={beat.panels[step].scene} key={step} />
+          <Scene scene={beat.panels[step].scene} next={beat.next} key={step} />
           <p className="ending-caption" aria-live="polite">
             {current.who && <span className={`speaker speaker-${current.who.toLowerCase()}`}>{current.who}</span>}
             <span aria-hidden={!typed.done}>{current.text.slice(0, typed.shown)}</span>
@@ -142,7 +142,7 @@ function PatchBot() {
 const WINDOWS = Array.from({ length: 36 }, (_, i) => ({ x: 14 + (i % 4) * 9, y: 16 + Math.floor(i / 4) * 9, d: ((i * 37) % 23) / 10 }));
 
 /** A small drawn scene for each ending panel. */
-function Scene({ scene }: { scene: EndingScene }) {
+function Scene({ scene, next = 'FROSTLINE' }: { scene: EndingScene; next?: string }) {
   return (
     <div className={`ending-scene scene-${scene}`} aria-hidden="true">
       <svg viewBox="0 0 200 140" preserveAspectRatio="xMidYMax meet">
@@ -182,7 +182,7 @@ function Scene({ scene }: { scene: EndingScene }) {
           <g className="north">
             <path d="M150 40 L182 40 M172 30 L182 40 L172 50" stroke="#9fd2ff" strokeWidth="3" fill="none" strokeLinecap="round" />
             <text x="166" y="66" textAnchor="middle" fill="#9fd2ff" fontSize="10" fontWeight="700">
-              FROSTLINE
+              {next}
             </text>
             <text x="166" y="78" textAnchor="middle" fill="#a7a9c4" fontSize="7">
               coming soon

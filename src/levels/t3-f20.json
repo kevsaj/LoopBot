@@ -1,0 +1,58 @@
+{
+  "id": "t3-f20",
+  "title": "Furnace Heart",
+  "band": "furnace",
+  "size": {
+    "w": 8,
+    "h": 8
+  },
+  "tiles": [
+    "########",
+    "#.xw.v.#",
+    "#w##x#w#",
+    "#.v.s.x#",
+    "#x#v#w##",
+    "#.w.d.v#",
+    "###.##e#",
+    "########"
+  ],
+  "heights": null,
+  "ventCycle": 3,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait"
+  ],
+  "slots": {
+    "main": 20
+  },
+  "par": {
+    "commands": 18,
+    "steps": 18
+  },
+  "reference": "forward forward forward turn_left turn_left turn_left forward forward turn_left forward turn_right forward forward turn_left wait forward turn_right forward",
+  "hints": [
+    "The heart of the furnace: a switch, a gate, and a vent on every corner.",
+    "Plan the whole route and count every beat.",
+    "forward forward forward turn_left turn_left turn_left forward forward turn_left forward turn_right forward forward turn_left wait forward turn_right forward"
+  ],
+  "story": {
+    "intro": "VANTA: \"Hot enough for you, little toaster? The furnace runs on my clock now.\"",
+    "outro": "PATCH: \"Out of the furnace in one piece! VANTA's running for the Sky Bazaar.\""
+  }
+}

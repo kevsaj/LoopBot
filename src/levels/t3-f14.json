@@ -1,0 +1,54 @@
+{
+  "id": "t3-f14",
+  "title": "Hot Pace",
+  "band": "furnace",
+  "size": {
+    "w": 8,
+    "h": 3
+  },
+  "tiles": [
+    "########",
+    "#.vwvwe#",
+    "########"
+  ],
+  "heights": null,
+  "ventCycle": 3,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait",
+    "repeat"
+  ],
+  "slots": {
+    "main": 4
+  },
+  "par": {
+    "commands": 3,
+    "steps": 6
+  },
+  "reference": "wait repeat 5 { forward }",
+  "hints": [
+    "Step, step, rest. Step, step, rest.",
+    "A loop can keep a three-beat rhythm.",
+    "wait repeat 5 { forward }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

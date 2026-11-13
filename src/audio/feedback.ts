@@ -174,7 +174,7 @@ export const fx = {
     buzz('light');
   },
   step(action: string) {
-    const f = { forward: 440, jump: 620, turn_left: 360, turn_right: 380, pick_up: 520, drop: 300, activate: 700 }[action] ?? 440;
+    const f = { forward: 440, jump: 620, turn_left: 360, turn_right: 380, pick_up: 520, drop: 300, activate: 700, wait: 330 }[action] ?? 440;
     tone(f, 0.07, { type: 'triangle', gain: 0.08 });
   },
   crash() {

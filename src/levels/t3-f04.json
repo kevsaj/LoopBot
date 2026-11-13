@@ -1,0 +1,52 @@
+{
+  "id": "t3-f04",
+  "title": "Vent Garden",
+  "band": "dunegate",
+  "size": {
+    "w": 7,
+    "h": 7
+  },
+  "tiles": [
+    "#######",
+    "#.wvw.#",
+    "#v#.#.#",
+    "#w#e#w#",
+    "#v#w#v#",
+    "#.....#",
+    "#######"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "wait"
+  ],
+  "slots": {
+    "main": 15
+  },
+  "par": {
+    "commands": 13,
+    "steps": 13
+  },
+  "reference": "turn_right wait forward forward forward forward turn_left forward forward turn_left wait forward forward",
+  "hints": [
+    "There is more than one way down. Some are cooler than others.",
+    "Every turn and every wait shifts your rhythm by one step.",
+    "turn_right wait forward forward forward forward turn_left forward forward turn_left wait forward forward"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

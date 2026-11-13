@@ -88,6 +88,7 @@ const STEP_LINE: Record<Action, string> = {
   pick_up: '> ▲ pick up',
   drop: '> ▼ drop',
   activate: '> ◉ activate',
+  wait: '> ‖ wait: stayed put for one step',
 };
 
 /** The terminal line for one step of a run. */

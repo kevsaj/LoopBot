@@ -1,0 +1,59 @@
+{
+  "id": "t3-f25",
+  "title": "Two Routines",
+  "band": "bazaar",
+  "size": {
+    "w": 7,
+    "h": 5
+  },
+  "tiles": [
+    "#######",
+    "#...###",
+    "###w.x#",
+    "#####e#",
+    "#######"
+  ],
+  "heights": null,
+  "ventCycle": 3,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait",
+    "F1",
+    "F2"
+  ],
+  "slots": {
+    "main": 5,
+    "F1": 3,
+    "F2": 3
+  },
+  "par": {
+    "commands": 10,
+    "steps": 11
+  },
+  "reference": "F1 F2 F1 F2 def F1 { forward wait forward } def F2 { turn_right forward turn_left }",
+  "hints": [
+    "Two moves keep coming back: a timed dash and a side step.",
+    "Give each its own routine.",
+    "F1 F2 F1 F2 def F1 { forward wait forward } def F2 { turn_right forward turn_left }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

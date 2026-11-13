@@ -1,0 +1,50 @@
+{
+  "id": "t3-f03",
+  "title": "Turn for Time",
+  "band": "dunegate",
+  "size": {
+    "w": 5,
+    "h": 5
+  },
+  "tiles": [
+    "#####",
+    "#.v.#",
+    "###w#",
+    "###e#",
+    "#####"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "wait"
+  ],
+  "slots": {
+    "main": 7
+  },
+  "par": {
+    "commands": 5,
+    "steps": 5
+  },
+  "reference": "forward forward turn_right forward forward",
+  "hints": [
+    "Turning in place takes a step too.",
+    "Count the turn when you time the vent.",
+    "forward forward turn_right forward forward"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

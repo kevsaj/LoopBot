@@ -1,0 +1,61 @@
+{
+  "id": "t3-f47",
+  "title": "Mirror Walk",
+  "band": "crown",
+  "size": {
+    "w": 6,
+    "h": 6
+  },
+  "tiles": [
+    "######",
+    "#.vxv#",
+    "####.#",
+    "####w#",
+    "#ev.x#",
+    "######"
+  ],
+  "heights": null,
+  "ventCycle": 3,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait",
+    "F1",
+    "F2"
+  ],
+  "typing": true,
+  "slots": {
+    "main": 4,
+    "F1": 4,
+    "F2": 3
+  },
+  "par": {
+    "commands": 9,
+    "steps": 14
+  },
+  "reference": "F2 F2 F1 def F1 { forward wait forward forward } def F2 { F1 turn_right }",
+  "hints": [
+    "Three sides of the mirror field, every one the same timed dash.",
+    "A routine for the dash, and one more for dash-and-turn.",
+    "F2 F2 F1 def F1 { forward wait forward forward } def F2 { F1 turn_right }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

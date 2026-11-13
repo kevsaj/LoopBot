@@ -228,3 +228,42 @@ describe('thin ice (Frostline)', () => {
     expect(w.status).toBe('crashed');
   });
 });
+
+describe('heat vents and wait (Heatwave)', () => {
+  const vents = (tiles: string[], over: Partial<LevelFile> = {}) =>
+    level({ size: { w: tiles[0].length, h: tiles.length }, tiles, commands: ['forward', 'turn_left', 'turn_right', 'pick_up', 'drop', 'wait'], ...over });
+
+  it('a vent blasts on its phase of the cycle: arriving then scorches LoopBot', () => {
+    // 'w' blasts when the clock is odd: LoopBot lands on it after step 1
+    const o = run(vents(['#####', '#.we#', '#####']), 'forward forward');
+    expect(o.status === 'crashed' && o.error).toBe('ERR: scorched by a vent at step 1');
+    // 'v' blasts when the clock is even: arriving after step 1 is safe, and LoopBot is gone by step 2
+    expect(run(vents(['#####', '#.ve#', '#####']), 'forward forward')).toMatchObject({ status: 'cleared', steps: 2 });
+  });
+
+  it('wait costs a step and lets the blast pass', () => {
+    expect(run(vents(['#####', '#.we#', '#####']), 'wait forward forward')).toMatchObject({ status: 'cleared', steps: 3 });
+    // standing still on a vent is not safe: it comes round again
+    const o = run(vents(['#####', '#.ve#', '#####']), 'forward wait forward');
+    expect(o.status === 'crashed' && o.error).toBe('ERR: scorched by a vent at step 2');
+  });
+
+  it('follows the floor cycle, and a crate on a vent plugs it', () => {
+    const three = vents(['######', '#.x.e#', '######'], { ventCycle: 3 });
+    expect(run(three, 'forward forward forward').status).toBe('cleared');
+    expect(run(three, 'wait forward').status).toBe('crashed');
+    // a crate sitting on a vent plugs it: LoopBot can stand on top through a whole cycle
+    const plug = vents(['#####', '#.ve#', '#####'], { boxes: [{ x: 2, y: 1, count: 1 }], commands: ['forward', 'jump', 'wait'] });
+    expect(run(plug, 'jump wait jump')).toMatchObject({ status: 'cleared', steps: 3 });
+  });
+
+  it('heat_ahead asks whether stepping forward now would land in a blast', () => {
+    const l = vents(['######', '#.w.e#', '######'], { commands: ['forward', 'wait', 'while', 'if'], sensors: ['heat_ahead'] });
+    expect(run(l, 'if heat_ahead { wait } forward forward forward').status).toBe('cleared');
+    expect(run(l, 'while not heat_ahead { wait } forward').status).toBe('crashed');
+  });
+
+  it('writes wait() in the code view', () => {
+    expect(toCode(parseReference('wait forward')).map((l) => l.text)).toContain('    wait()');
+  });
+});

@@ -1,0 +1,63 @@
+{
+  "id": "t3-f15",
+  "title": "Crate Cover",
+  "band": "furnace",
+  "size": {
+    "w": 7,
+    "h": 7
+  },
+  "tiles": [
+    "#######",
+    "#.....#",
+    "#vvvvv#",
+    "#vvvvv#",
+    "#vvvvv#",
+    "#..e..#",
+    "#######"
+  ],
+  "heights": null,
+  "ventCycle": 3,
+  "boxes": [
+    {
+      "x": 1,
+      "y": 1,
+      "count": 1
+    }
+  ],
+  "targets": [],
+  "bot": {
+    "x": 3,
+    "y": 1,
+    "facing": "west"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait"
+  ],
+  "slots": {
+    "main": 12
+  },
+  "par": {
+    "commands": 10,
+    "steps": 10
+  },
+  "reference": "forward pick_up turn_left forward drop jump jump forward turn_left forward",
+  "hints": [
+    "Every vent in the row blasts on the same beat... unless something is sitting on it.",
+    "Plug a vent with the crate and walk over the top.",
+    "forward pick_up turn_left forward drop jump jump forward turn_left forward"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

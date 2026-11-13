@@ -1,0 +1,62 @@
+{
+  "id": "t3-f30",
+  "title": "Bazaar Gate",
+  "band": "bazaar",
+  "size": {
+    "w": 7,
+    "h": 7
+  },
+  "tiles": [
+    "#######",
+    "#####e#",
+    "#####w#",
+    "###.v.#",
+    "###x###",
+    "#.w.###",
+    "#######"
+  ],
+  "heights": null,
+  "ventCycle": 3,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 5,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait",
+    "repeat",
+    "F1",
+    "F2"
+  ],
+  "slots": {
+    "main": 2,
+    "F1": 3,
+    "F2": 4
+  },
+  "par": {
+    "commands": 9,
+    "steps": 15
+  },
+  "reference": "repeat 2 { F2 } def F1 { wait forward forward } def F2 { F1 turn_left F1 turn_right }",
+  "hints": [
+    "The last stall street zigzags up to the gate.",
+    "A zig and a zag, each a timed dash. Two routines.",
+    "repeat 2 { F2 } def F1 { wait forward forward } def F2 { F1 turn_left F1 turn_right }"
+  ],
+  "story": {
+    "intro": "VANTA: \"I reprogrammed every awning in the bazaar. Fix them if you can keep up.\"",
+    "outro": "PATCH: \"Gate's open and the bazaar is cooling off. VANTA's heading for the Mirage Lab.\""
+  }
+}

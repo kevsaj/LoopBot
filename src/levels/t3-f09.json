@@ -1,0 +1,54 @@
+{
+  "id": "t3-f09",
+  "title": "Cool Switch",
+  "band": "dunegate",
+  "size": {
+    "w": 7,
+    "h": 5
+  },
+  "tiles": [
+    "#######",
+    "#.wsw.#",
+    "#v#####",
+    "#.wvde#",
+    "#######"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait"
+  ],
+  "slots": {
+    "main": 19
+  },
+  "par": {
+    "commands": 17,
+    "steps": 17
+  },
+  "reference": "wait forward forward turn_left turn_left activate wait forward forward turn_left forward forward turn_left forward forward forward forward",
+  "hints": [
+    "The switch is between two vents.",
+    "Stand on the switch only between blasts. It is not a vent, so you can stay a while.",
+    "wait forward forward turn_left turn_left activate wait forward forward turn_left forward forward turn_left forward forward forward forward"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

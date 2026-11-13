@@ -1,0 +1,58 @@
+{
+  "id": "t3-f19",
+  "title": "Heat Spiral",
+  "band": "furnace",
+  "size": {
+    "w": 7,
+    "h": 7
+  },
+  "tiles": [
+    "#######",
+    "#.vwv.#",
+    "#.###x#",
+    "#.#e#w#",
+    "#.#.#x#",
+    "#.....#",
+    "#######"
+  ],
+  "heights": null,
+  "ventCycle": 3,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait",
+    "repeat"
+  ],
+  "slots": {
+    "main": 8
+  },
+  "par": {
+    "commands": 7,
+    "steps": 11
+  },
+  "reference": "turn_right forward forward repeat 3 { forward forward turn_left }",
+  "hints": [
+    "The spiral has a rhythm, and so does the program.",
+    "Find the part that repeats.",
+    "turn_right forward forward repeat 3 { forward forward turn_left }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

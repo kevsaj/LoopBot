@@ -1,0 +1,60 @@
+{
+  "id": "t3-f28",
+  "title": "Bug Hunt: Burnt Call",
+  "band": "bazaar",
+  "size": {
+    "w": 5,
+    "h": 5
+  },
+  "tiles": [
+    "#####",
+    "###e#",
+    "#..x#",
+    "#.###",
+    "#####"
+  ],
+  "heights": null,
+  "ventCycle": 3,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 3,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait",
+    "F1",
+    "F2"
+  ],
+  "slots": {
+    "main": 4,
+    "F1": 3,
+    "F2": 3
+  },
+  "par": {
+    "commands": 9,
+    "steps": 8
+  },
+  "reference": "F2 F1 F2 def F1 { forward wait forward } def F2 { turn_left forward turn_right }",
+  "starter": "F1 F2 F2 def F1 { forward wait forward } def F2 { turn_left forward turn_right }",
+  "hints": [
+    "The routines are fine. Main calls them in the wrong order.",
+    "Trace it beat by beat: which call burns?",
+    "F2 F1 F2 def F1 { forward wait forward } def F2 { turn_left forward turn_right }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

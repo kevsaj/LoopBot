@@ -178,6 +178,12 @@ export function ResultsCard({ floorNumber, tower = 1, floorCount, earned, prevBe
             Maintenance floors, functions in the Workshop, and all the way to the Rooftop.
           </p>
         )}
+        {!daily && !custom && !DEMO && floorNumber === floorCount && tower === 3 && (
+          <p className="demo-end">
+            <strong>Tower 3 cleared!</strong> The sun mirrors point at the sky again and the Sandglass is cooling. VANTA's signal is
+            twisting away east, and PATCH is tuning in.
+          </p>
+        )}
         {!daily && !custom && !DEMO && floorNumber === floorCount && tower === 2 && (
           <p className="demo-end">
             <strong>Tower 2 cleared!</strong> The Northstar beacon is dark and Frostline is thawing out. VANTA's signal is fading south, and

@@ -1,0 +1,58 @@
+{
+  "id": "t3-f41",
+  "title": "Sun Deck",
+  "band": "crown",
+  "size": {
+    "w": 6,
+    "h": 6
+  },
+  "tiles": [
+    "######",
+    "#ev.x#",
+    "####w#",
+    "####.#",
+    "#.vxv#",
+    "######"
+  ],
+  "heights": null,
+  "ventCycle": 3,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 4,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait",
+    "repeat"
+  ],
+  "typing": true,
+  "slots": {
+    "main": 7
+  },
+  "par": {
+    "commands": 6,
+    "steps": 14
+  },
+  "reference": "repeat 3 { forward wait forward forward turn_left }",
+  "hints": [
+    "The Crown at last. Type it if you like: the code view is yours to edit now.",
+    "repeat 3: forward, wait, two forwards, turn left.",
+    "repeat 3 { forward wait forward forward turn_left }"
+  ],
+  "story": {
+    "intro": "PATCH: \"The Crown of the Sandglass. VANTA's up top with the sun mirrors. From here on you can type your programs. Blocks still work too.\"",
+    "outro": null
+  }
+}

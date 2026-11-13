@@ -1,0 +1,58 @@
+{
+  "id": "t3-f31",
+  "title": "Ask the Heat",
+  "band": "mirage",
+  "size": {
+    "w": 8,
+    "h": 3
+  },
+  "tiles": [
+    "########",
+    "#.x.v.e#",
+    "########"
+  ],
+  "heights": null,
+  "ventCycle": 3,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait",
+    "repeat",
+    "while"
+  ],
+  "sensors": [
+    "heat_ahead"
+  ],
+  "slots": {
+    "main": 5
+  },
+  "par": {
+    "commands": 4,
+    "steps": 6
+  },
+  "reference": "while not wall_ahead { while heat_ahead { wait } forward }",
+  "hints": [
+    "Counting beats works, but you can also just ask: is there heat ahead?",
+    "While there is heat ahead, wait. Then step.",
+    "while not wall_ahead { while heat_ahead { wait } forward }"
+  ],
+  "story": {
+    "intro": "PATCH: \"The Mirage Lab. Nothing in here is where it looks. Bots in this lab don't count beats, they ask. Try the heat ahead sensor.\"",
+    "outro": null
+  }
+}

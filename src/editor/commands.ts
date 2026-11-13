@@ -9,6 +9,7 @@ export const COMMAND_META: Record<PaletteCommand, { label: string; glyph: string
   pick_up: { label: 'pick up', glyph: '▲', tone: 'hand' },
   drop: { label: 'drop', glyph: '▼', tone: 'hand' },
   activate: { label: 'activate', glyph: '◉', tone: 'act' },
+  wait: { label: 'wait', glyph: '‖', tone: 'turn' },
   repeat: { label: 'repeat', glyph: '⟳', tone: 'flow' },
   if: { label: 'if', glyph: '?', tone: 'flow' },
   while: { label: 'while', glyph: '∞', tone: 'flow' },
@@ -19,6 +20,9 @@ export const COMMAND_META: Record<PaletteCommand, { label: string; glyph: string
 
 /** The Lobby palette, always shown so locked commands appear greyed out (ED-8). */
 export const PALETTE_ORDER: PaletteCommand[] = ['forward', 'turn_left', 'turn_right', 'jump', 'pick_up', 'drop', 'activate'];
+
+/** Heatwave's wait joins the palette only on floors that have it, so other towers never see it locked. */
+export const EXTRA_ORDER: PaletteCommand[] = ['wait'];
 
 /** Control blocks join the palette on the floors that allow them (repeat from Floor 11). */
 export const CONTROL_ORDER: PaletteCommand[] = ['repeat', 'while', 'if'];

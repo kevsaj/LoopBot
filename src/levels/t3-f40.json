@@ -1,0 +1,64 @@
+{
+  "id": "t3-f40",
+  "title": "Mirage Core",
+  "band": "mirage",
+  "size": {
+    "w": 8,
+    "h": 8
+  },
+  "tiles": [
+    "########",
+    "#.w.v..#",
+    "######.#",
+    "#.v..#w#",
+    "#.##e#.#",
+    "#v####x#",
+    "#..v.x.#",
+    "########"
+  ],
+  "heights": null,
+  "ventCycle": 3,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait",
+    "repeat",
+    "while",
+    "if"
+  ],
+  "sensors": [
+    "heat_ahead"
+  ],
+  "slots": {
+    "main": 7
+  },
+  "par": {
+    "commands": 6,
+    "steps": 30
+  },
+  "reference": "repeat 6 { while not wall_ahead { while heat_ahead { wait } forward } turn_right }",
+  "hints": [
+    "The core spirals in to the exit, and every vent keeps its own beat.",
+    "Ask before every single step, and turn right at every wall.",
+    "repeat 6 { while not wall_ahead { while heat_ahead { wait } forward } turn_right }"
+  ],
+  "story": {
+    "intro": "VANTA: \"The mirage core runs this whole lab. Step on the wrong beat and you'll melt like the rest of them.\"",
+    "outro": "PATCH: \"Core's cooled and VANTA just bolted for the Crown. One more climb, LoopBot.\""
+  }
+}

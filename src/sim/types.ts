@@ -6,7 +6,8 @@ export type Facing = 'north' | 'east' | 'south' | 'west';
 /** Tile types from CR-1. Colour tiles are plain floor tiles with a colour. */
 /** 'ice' (Frostline): step onto it and LoopBot slides on until something stops it. */
 /** 'thin' (Frostline): thin ice holds LoopBot once, and cracks into a gap when LoopBot steps off. */
-export type TileType = 'floor' | 'wall' | 'gap' | 'switch' | 'door' | 'exit' | 'ice' | 'thin';
+/** 'vent' (Heatwave): a heat vent that blasts on a timer; LoopBot can't be on it when it fires (CR-VENT). */
+export type TileType = 'floor' | 'wall' | 'gap' | 'switch' | 'door' | 'exit' | 'ice' | 'thin' | 'vent';
 
 export type Colour = 'r' | 'g' | 'b' | 'y';
 
@@ -15,9 +16,12 @@ export interface Tile {
   /** Base height, 0 to 3. */
   height: number;
   colour?: Colour;
+  /** Vents only: the vent blasts on the steps where clock % cycle equals this. */
+  phase?: number;
 }
 
-export type Action = 'forward' | 'jump' | 'turn_left' | 'turn_right' | 'pick_up' | 'drop' | 'activate';
+/** 'wait' (Heatwave): LoopBot stays put for one step, to let a vent blast pass. */
+export type Action = 'forward' | 'jump' | 'turn_left' | 'turn_right' | 'pick_up' | 'drop' | 'activate' | 'wait';
 
 export const ACTIONS: readonly Action[] = [
   'forward',
@@ -27,13 +31,15 @@ export const ACTIONS: readonly Action[] = [
   'pick_up',
   'drop',
   'activate',
+  'wait',
 ];
 
 export type FunctionName = 'F1' | 'F2' | 'F3';
 export const FUNCTION_NAMES: readonly FunctionName[] = ['F1', 'F2', 'F3'];
 
-export type Sensor = 'wall_ahead' | 'box_ahead' | 'carrying' | 'on_target' | 'on_switch' | 'tile_is';
-export const SENSORS: readonly Sensor[] = ['wall_ahead', 'box_ahead', 'carrying', 'on_target', 'on_switch', 'tile_is'];
+/** heat_ahead (Heatwave): the tile ahead is a vent that will be blasting if LoopBot steps onto it now. */
+export type Sensor = 'wall_ahead' | 'box_ahead' | 'carrying' | 'on_target' | 'on_switch' | 'tile_is' | 'heat_ahead';
+export const SENSORS: readonly Sensor[] = ['wall_ahead', 'box_ahead', 'carrying', 'on_target', 'on_switch', 'tile_is', 'heat_ahead'];
 
 export interface Condition {
   sensor: Sensor;
@@ -95,6 +101,12 @@ export interface LevelFile {
    * finding and fixing what's wrong is the puzzle.
    */
   starter?: string;
+  /**
+   * Heatwave vents (CR-VENT): how many steps one vent cycle lasts, 2 to 4 (default 2). Vent tiles
+   * are 'v', 'w', 'x' and 'z' for phases 0 to 3: a vent blasts after every step that leaves the
+   * clock (steps taken so far) at its phase, counted modulo the cycle.
+   */
+  ventCycle?: number;
 }
 
 export interface World {
@@ -111,6 +123,10 @@ export interface World {
   links: Array<{ switch: Pos; doors: Pos[] }>;
   /** Thin ice that has cracked into a gap, keyed "x,y". */
   cracked: Record<string, boolean>;
+  /** Steps taken so far (Heatwave vents run on it). */
+  clock: number;
+  /** Steps in one vent cycle; 0 on a floor with no vents. */
+  ventCycle: number;
   bot: { x: number; y: number; facing: Facing; carrying: boolean };
   goals: Goal[];
 }
