@@ -27,6 +27,8 @@ interface Props {
   daily: DailyState;
   onDaily(): void;
   onLocker(): void;
+  /** The floor maker, when it's switched on. */
+  onMaker?(): void;
   /** Something new to see in the locker (a look or achievement not yet looked at). */
   lockerNew: boolean;
 }
@@ -59,7 +61,7 @@ function BigBot({ poked }: { poked: boolean }) {
   );
 }
 
-export function TitleScreen({ levels, towerLabel, progress, booted, onBooted, onPlay, onTower, onSettings, daily, onDaily, onLocker, lockerNew }: Props) {
+export function TitleScreen({ levels, towerLabel, progress, booted, onBooted, onPlay, onTower, onSettings, daily, onDaily, onLocker, lockerNew, onMaker }: Props) {
   const [settled, setSettled] = useState(() => booted || reducedMotion());
   const [poked, setPoked] = useState(false);
   useEffect(() => {
@@ -134,6 +136,11 @@ export function TitleScreen({ levels, towerLabel, progress, booted, onBooted, on
           </button>
         )}
         {!fresh && !DEMO && <DailyButton className="title-daily" progress={progress} daily={daily} onOpen={onDaily} />}
+        {!fresh && !DEMO && onMaker && (
+          <button type="button" className="pill title-maker" onClick={() => (fx.tap(), onMaker())}>
+            🛠 Floor maker
+          </button>
+        )}
       </div>
     </div>
   );

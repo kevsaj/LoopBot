@@ -27,6 +27,8 @@ import { currentStreak, yesterday, dailyLevel, dateKey, loadDaily, pruneOldDaili
 import { DailyArchive } from './daily/DailyArchive';
 import type { DailyState } from './daily';
 import { MAX_FREEZES, PLUS_MAX_FREEZES, dailyHintReward } from './daily';
+import { MakerScreen, useMakerDraft } from './maker/MakerScreen';
+import { MAKER } from './maker/draft';
 import { hasPlus, initPurchases, onHintsGranted, plusUnlocked } from './store/purchases';
 
 /** Each tower remembers its own floor: Tower 1 keeps the original key so old saves carry over. */
@@ -68,7 +70,23 @@ export default function App() {
   }, []);
   // Every launch opens on the title screen, whose intro plays once per session; its Play button
   // goes to the next floor (Floor 1 for a new player), and the tower map is one tap further.
-  const [screen, setScreen] = useState<'title' | 'map' | 'floor' | 'daily'>('title');
+  const [screen, setScreen] = useState<'title' | 'map' | 'floor' | 'daily' | 'maker' | 'custom'>('title');
+  // The floor maker's draft, and the player-made floor being played (a test of the draft, or a code).
+  const [draft, setDraft] = useMakerDraft();
+  const [customFloor, setCustomFloor] = useState<{ level: LevelFile; from: 'test' | 'code' } | null>(null);
+  const playCustom = useCallback((level: LevelFile, from: 'test' | 'code') => {
+    // Test play keeps the maker's program between tries; a new code starts with an empty program.
+    const id = from === 'test' ? 'maker' : 'custom';
+    if (from === 'code') {
+      try {
+        localStorage.removeItem('loopbot.editor.custom');
+      } catch {
+        /* ignore */
+      }
+    }
+    setCustomFloor({ level: { ...level, id }, from });
+    setScreen('custom');
+  }, []);
   // The daily challenge: today's floor once it's loaded, and the screen to go back to.
   const [daily, setDailyState] = useState<DailyState>(loadDaily);
   // Re-plan the week of daily reminders on launch and whenever the daily changes (a clear skips today's).
@@ -171,7 +189,7 @@ export default function App() {
     () =>
       listenForBack(() => {
         if (screenRef.current === 'title') return false;
-        setScreen(screenRef.current === 'floor' ? 'map' : screenRef.current === 'daily' ? dailyFrom.current : 'title');
+        setScreen(screenRef.current === 'floor' ? 'map' : screenRef.current === 'daily' ? dailyFrom.current : screenRef.current === 'custom' ? 'maker' : 'title');
         return true;
       }),
     [],
@@ -219,7 +237,7 @@ export default function App() {
   );
   // Each band of the tower has its own theme; the title and tower map share one.
   useEffect(() => {
-    setMusicTheme(screen === 'floor' ? themeForFloor(safeIndex + 1, tower) : screen === 'daily' ? 'daily' : 'title');
+    setMusicTheme(screen === 'floor' ? themeForFloor(safeIndex + 1, tower) : screen === 'daily' || screen === 'custom' ? 'daily' : 'title');
   }, [screen, safeIndex, tower]);
 
   if (screen === 'title') {
@@ -238,10 +256,50 @@ export default function App() {
           onDaily={() => openDaily('title')}
           onLocker={openLocker}
           lockerNew={rewards.hasNew}
+          onMaker={MAKER ? () => setScreen('maker') : undefined}
         />
         {settings && <SettingsSheet progress={progress} setProgress={setProgress} onClose={() => setSettings(false)} />}
         {overlays}
         {elevator}
+      </>
+    );
+  }
+  if (screen === 'maker') {
+    return (
+      <>
+        <MakerScreen draft={draft} setDraft={setDraft} onBack={() => setScreen('title')} onPlay={playCustom} />
+        {overlays}
+      </>
+    );
+  }
+  if (screen === 'custom' && customFloor) {
+    const { level: custom, from } = customFloor;
+    return (
+      <>
+        <FloorScreen
+          key={`${custom.id}-${custom.title}`}
+          level={custom}
+          floorNumber={0}
+          floorCount={levels.length}
+          progress={progress}
+          setProgress={setProgress}
+          onGo={() => setScreen('maker')}
+          onTower={() => setScreen('maker')}
+          custom={{
+            back: from === 'test' ? 'Floor maker · test' : 'Floor maker',
+            noPar: from === 'test' && !draft.solved,
+            onClear: (commands, steps) => {
+              if (from !== 'test') return;
+              // The maker's best run sets par: fewest commands first, then fewest steps.
+              const best = draft.solved;
+              const better = !best || commands < best.commands || (commands === best.commands && steps < best.steps);
+              const par = better ? { commands, steps } : best;
+              if (better) setDraft((d) => ({ ...d, solved: par }));
+              return `Par is ${par.commands} commands and ${par.steps} steps. Your floor is ready to share.`;
+            },
+          }}
+        />
+        {overlays}
       </>
     );
   }

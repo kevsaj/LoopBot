@@ -35,6 +35,7 @@ jobs:
       - run: npm run cap:sync
         env:
           VITE_PLUS_PREVIEW: '1'
+          VITE_MAKER: '1'
       # Debug APK to sideload on a phone, and an unsigned release bundle to prove the Play build works.
       - run: node scripts/gradle.mjs assembleDebug bundleRelease --no-daemon
       - uses: actions/upload-artifact@v4

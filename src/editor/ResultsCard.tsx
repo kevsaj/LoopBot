@@ -27,6 +27,8 @@ interface Props {
   onTower(): void;
   /** The daily challenge: shows the streak and a share button instead of "Next floor". */
   daily?: { date: string; streak: number; froze?: boolean; share: string };
+  /** A player-made floor: no tower or streak, just a note and Done. */
+  custom?: { note: string | null; noPar?: boolean };
   /** Tower floors: share a picture of the solved board and program. */
   onShareImage?(): Promise<ShareResult>;
 }
@@ -34,7 +36,7 @@ interface Props {
 const STAR_MS = 420;
 const HEADLINE = ['', 'Floor cleared', 'Nice work!', 'Perfect run!'];
 
-export function ResultsCard({ floorNumber, tower = 1, floorCount, earned, prevBest, commands, steps, par, outro, onClose, onRetry, onNext, onTower, daily, onShareImage }: Props) {
+export function ResultsCard({ floorNumber, tower = 1, floorCount, earned, prevBest, commands, steps, par, outro, onClose, onRetry, onNext, onTower, daily, custom, onShareImage }: Props) {
   const calm = reducedMotion();
   const [shown, setShown] = useState(calm ? 3 : 0);
   const starsRef = useRef<HTMLDivElement>(null);
@@ -101,7 +103,7 @@ export function ResultsCard({ floorNumber, tower = 1, floorCount, earned, prevBe
     const on = await setReminder(true);
     setReminderNote(on ? `Reminder set for ${hourLabel(DEFAULT_HOUR)}. Change it in Settings.` : 'Notifications are off for LoopBot. You can allow them in your phone settings.');
   };
-  const title = daily ? `Daily · ${shortDate(daily.date)}` : `Floor ${floorNumber}`;
+  const title = custom ? 'Your floor' : daily ? `Daily · ${shortDate(daily.date)}` : `Floor ${floorNumber}`;
   const tip =
     earned === 3
       ? null
@@ -124,7 +126,7 @@ export function ResultsCard({ floorNumber, tower = 1, floorCount, earned, prevBe
         </div>
         <div className={`badges${shown >= 3 ? ' in' : ''}`}>
           {best && <span className="badge best">New best!</span>}
-          {prevBest === 0 && <span className="badge first">{daily ? 'Cleared today' : 'First clear'}</span>}
+          {prevBest === 0 && !custom && <span className="badge first">{daily ? 'Cleared today' : 'First clear'}</span>}
           {daily && daily.streak > 0 && (
             <span className="badge streak">
               🔥 {daily.streak}-day streak
@@ -137,24 +139,25 @@ export function ResultsCard({ floorNumber, tower = 1, floorCount, earned, prevBe
             <tr className={commands <= par.commands ? 'met' : ''}>
               <td>Commands</td>
               <td>{commands}</td>
-              <td className="par">par {par.commands}</td>
+              <td className="par">{custom?.noPar ? '' : `par ${par.commands}`}</td>
               <td className="tick" aria-label={commands <= par.commands ? 'par met' : 'over par'}>
-                {commands <= par.commands ? '✓' : ''}
+                {commands <= par.commands && !custom?.noPar ? '✓' : ''}
               </td>
             </tr>
             <tr className={steps <= par.steps ? 'met' : ''}>
               <td>Steps</td>
               <td>{steps}</td>
-              <td className="par">par {par.steps}</td>
+              <td className="par">{custom?.noPar ? '' : `par ${par.steps}`}</td>
               <td className="tick" aria-label={steps <= par.steps ? 'par met' : 'over par'}>
-                {steps <= par.steps ? '✓' : ''}
+                {steps <= par.steps && !custom?.noPar ? '✓' : ''}
               </td>
             </tr>
           </tbody>
         </table>
-        {tip && <p className="tip">{tip}</p>}
+        {tip && !custom?.note && <p className="tip">{tip}</p>}
         {outro && <p className="story">{outro}</p>}
         {!daily && shared && <p className="tip">{shared}</p>}
+        {custom?.note && <p className="tip">{custom.note}</p>}
         {daily && <p className="tip">{shared ?? reminderNote ?? 'Same puzzle for everyone today. A new one arrives at midnight.'}</p>}
         {askReminder && shown >= 3 && (
           <div className="reminder-ask">
@@ -169,19 +172,19 @@ export function ResultsCard({ floorNumber, tower = 1, floorCount, earned, prevBe
             </div>
           </div>
         )}
-        {!daily && DEMO && floorNumber === floorCount && (
+        {!daily && !custom && DEMO && floorNumber === floorCount && (
           <p className="demo-end">
             <strong>You cleared the Lobby!</strong> That's the end of the free demo. LoopBot's climb continues in the full game: loops in the
             Maintenance floors, functions in the Workshop, and all the way to the Rooftop.
           </p>
         )}
-        {!daily && !DEMO && floorNumber === floorCount && tower === 2 && (
+        {!daily && !custom && !DEMO && floorNumber === floorCount && tower === 2 && (
           <p className="demo-end">
             <strong>Tower 2 cleared!</strong> The Northstar beacon is dark and Frostline is thawing out. VANTA's signal is fading south, and
             PATCH is already listening for it.
           </p>
         )}
-        {!daily && !DEMO && floorNumber === floorCount && tower === 1 && (
+        {!daily && !custom && !DEMO && floorNumber === floorCount && tower === 1 && (
           <p className="demo-end">
             <strong>Tower 1 cleared!</strong> Meridian Spire is back online and VANTA's drones are grounded. LoopBot rides the elevator
             down to meet PATCH at last. More towers are on the way.
@@ -191,7 +194,11 @@ export function ResultsCard({ floorNumber, tower = 1, floorCount, earned, prevBe
           <button type="button" className="pill" onClick={() => (fx.tap(), onRetry())}>
             Try again
           </button>
-          {daily ? (
+          {custom ? (
+            <button type="button" className={`pill primary${shown >= 3 ? ' nudge' : ''}`} onClick={() => (fx.tap(), onTower())}>
+              Done
+            </button>
+          ) : daily ? (
             <>
               <ShareButton busy={sharing} onClick={share} />
               <button type="button" className={`pill primary${shown >= 3 ? ' nudge' : ''}`} onClick={() => (fx.tap(), onTower())}>
