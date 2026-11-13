@@ -30,9 +30,11 @@ export default defineConfig(({ mode }) => ({
   base: './',
   build: {
     chunkSizeWarningLimit: 2000,
-    // iOS 15.4 is the oldest the app supports (Capacitor 8 needs 15; the game uses structuredClone,
-    // which arrived in 15.4; an iPad mini 4 stops at iPadOS 15.8).
-    // Vite's default stops at Safari 16, so ask for Safari 15 syntax too.
-    target: ['es2021', 'chrome107', 'edge107', 'firefox104', 'safari15'],
+    // Older phones run an older WebView than you'd think: Android System WebView only updates
+    // through the Play Store, and a 1.0.0 player hit a missing structuredClone (WebView < 98).
+    // esbuild lowers newer syntax to these targets (Chrome 80 is early 2020; iOS 15.4 is the
+    // oldest the app supports). It does not add missing functions, so src/compat.test.ts keeps
+    // newer built-ins like structuredClone out of the game's own code.
+    target: ['es2020', 'chrome80', 'edge80', 'firefox78', 'safari15'],
   },
 }));
