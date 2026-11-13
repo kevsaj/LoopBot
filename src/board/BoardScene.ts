@@ -318,12 +318,19 @@ export class BoardScene extends Phaser.Scene {
     if (!this.world) return;
     const w = this.world;
     const cam = this.cameras.main;
-    const span = Math.max(w.w, w.h);
-    const worldW = span * TW + TW;
-    const worldH = span * TH + 4 * HU * 2 + TH;
-    const zoom = Math.min(cam.width / worldW, cam.height / worldH, 2.2);
+    // The board's real isometric outline: a w x h diamond is (w + h) / 2 tiles across and down,
+    // whichever way it's turned. Long thin floors no longer fit as if they were square, so they
+    // fill the frame instead of floating small in the middle (most of all on tablets).
+    const half = (w.w + w.h) / 2;
+    let top = 0;
+    for (const row of w.tiles) for (const t of row) top = Math.max(top, t.height + (t.type === 'wall' ? WALL_H : 0));
+    const worldW = half * TW + TW * 0.5;
+    const up = (half * TH) / 2 + (top + 3.2) * HU; // tallest tile plus LoopBot and its antenna
+    const down = (half * TH) / 2 + HU * 1.2; // the board's thickness
+    // leave room for the step counter above and PATCH's line below
+    const zoom = Math.min((cam.width * 0.92) / worldW, (cam.height * 0.84) / (up + down), 2.6);
     cam.setZoom(zoom);
-    cam.centerOn(0, -HU);
+    cam.centerOn(0, (down - up) / 2 + 8 / zoom);
   }
 
   // --- drawing ---
