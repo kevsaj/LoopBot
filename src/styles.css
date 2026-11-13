@@ -404,6 +404,23 @@ select:focus-visible {
   border-color: var(--accent);
   box-shadow: 0 0 0 2px var(--accent) inset;
 }
+.row.cancels .line-tile {
+  border-style: dashed;
+  border-color: var(--warn);
+  border-left: 6px solid var(--tone, var(--line));
+}
+.row.cancels .line-tile::after {
+  /* These turns undo each other. */
+  content: '↻↺ cancel out';
+  margin-left: auto;
+  padding: 2px 8px;
+  border-radius: 8px;
+  background: rgba(242, 193, 78, 0.16);
+  color: var(--warn);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
 .row.crashed .line-tile {
   animation: flash 0.25s ease-in-out 4 alternate;
   border-color: var(--bad);

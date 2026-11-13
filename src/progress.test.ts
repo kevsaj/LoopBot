@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { Progress } from './progress';
 import { isUnlocked, nextHintIsFree, recordClear, recordFail, revealHint, START_HINTS } from './progress';
-import { tutorialStep } from './editor/tutorial';
+import { cancellingTurns, tutorialStep } from './editor/tutorial';
 import { emptyProgram, parseReference } from './sim/program';
 
 const fresh = (): Progress => ({ stars: {}, hints: START_HINTS, hintsAwarded: 0, revealed: {}, fails: {}, tutorial: true });
@@ -55,6 +55,32 @@ describe('first-run tutorial', () => {
     expect(tutorialStep({ ...base, floorId: 't1-f02' })).toBe('turn');
     expect(tutorialStep({ ...base, floorId: 't1-f02', program: parseReference('turn_left') })).toBeNull();
     expect(tutorialStep({ ...base, floorId: 't1-f03' })).toBeNull();
+  });
+  it('explains that a turn does not move LoopBot after a short run on Floor 2', () => {
+    const p = parseReference('forward turn_right forward');
+    expect(tutorialStep({ ...base, floorId: 't1-f02', program: p, hasRun: true, outcome: 'ended' })).toBe('spin');
+    expect(tutorialStep({ ...base, floorId: 't1-f02', program: p, hasRun: true, outcome: 'crashed' })).toBe('spin');
+    expect(tutorialStep({ ...base, floorId: 't1-f02', program: p, hasRun: true, outcome: 'cleared' })).toBeNull();
+  });
+  it('spots turns that cancel out on the early floors (the new-player report)', () => {
+    const p = parseReference('forward turn_right turn_left forward');
+    expect(tutorialStep({ ...base, floorId: 't1-f02', program: p })).toBe('cancel');
+    expect(tutorialStep({ ...base, floorId: 't1-f02', program: p, hasRun: true, outcome: 'ended' })).toBe('cancel');
+    expect(tutorialStep({ ...base, floorId: 't1-f07', program: p })).toBe('cancel');
+    expect(tutorialStep({ ...base, floorId: 't1-f11', program: p })).toBeNull();
+  });
+  it('finds cancelling turns, including a full circle and inside loops', () => {
+    const ids = (code: string) => {
+      const p = parseReference(code);
+      const found = new Set(cancellingTurns(p));
+      return p.main.map((b) => found.has(b.id));
+    };
+    expect(ids('forward turn_right turn_left forward')).toEqual([false, true, true, false]);
+    expect(ids('turn_left turn_right')).toEqual([true, true]);
+    expect(ids('turn_right turn_right forward')).toEqual([false, false, false]);
+    expect(ids('turn_left turn_left turn_left turn_left')).toEqual([true, true, true, true]);
+    expect(ids('turn_right forward turn_left')).toEqual([false, false, false]);
+    expect(cancellingTurns(parseReference('repeat 2 { turn_left turn_right }'))).toHaveLength(2);
   });
   it('can be turned off, and stays off on cleared floors', () => {
     expect(tutorialStep({ ...base, enabled: false })).toBeNull();

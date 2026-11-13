@@ -225,12 +225,14 @@ export class BoardScene extends Phaser.Scene {
   private blink = 0;
   /** Sideways glance, -1 to 1. */
   private look = 0;
-  /** Facing drawn right now; differs from the world's while LoopBot twirls. */
-  private shownFacing: Facing = 'north';
+  /** Facing drawn right now, in quarter turns from north (east = 1); differs from the world's while LoopBot turns or twirls. */
+  private shownAngle = 0;
   private crashedNow = false;
   private reduced = false;
   /** The facing arrow on the floor, drawn under LoopBot inside its container. */
   private botArrow!: Phaser.GameObjects.Graphics;
+  /** A curved arrow over LoopBot's head that sweeps round while it turns in place. Drawn above the board, so walls never hide it. */
+  private turnRing!: Phaser.GameObjects.Graphics;
   private ready = false;
   private pending: BoardUpdate | null = null;
   /** What the static layer was last drawn from; most steps (moves, turns) leave it unchanged. */
@@ -246,6 +248,7 @@ export class BoardScene extends Phaser.Scene {
     this.botBody = this.add.graphics();
     this.botShadow = this.add.ellipse(0, 0, TW * 0.42, TH * 0.42, 0x2b2440, 0.28);
     this.botArrow = this.add.graphics();
+    this.turnRing = this.add.graphics().setDepth(1000);
     this.botEye = this.add.graphics();
     this.antennaG = this.add.graphics();
     this.antenna = this.add.container(0, -36, [this.antennaG]);
@@ -580,10 +583,11 @@ export class BoardScene extends Phaser.Scene {
   }
 
   /** Screen offset from a tile's centre to the middle of its edge on the side the bot faces, plus the sideways vector along that edge. */
-  private screenFacing(f: Facing) {
-    const d = { north: [0, -1], east: [1, 0], south: [0, 1], west: [-1, 0] }[f];
-    let [dx, dy] = d;
-    for (let i = 0; i < this.rot; i++) [dx, dy] = [-dy, dx];
+  private screenFacing(f: Facing | number) {
+    // Facing as quarter turns from north; in between values come up while LoopBot is turning.
+    const a = ((typeof f === 'number' ? f : FACINGS.indexOf(f)) + this.rot) * (Math.PI / 2);
+    const dx = Math.sin(a);
+    const dy = -Math.cos(a);
     const iso = (x: number, y: number) => ({ x: ((x - y) * TW) / 4, y: ((x + y) * TH) / 4 });
     const fwd = iso(dx, dy);
     const side = iso(-dy, dx);
@@ -596,17 +600,18 @@ export class BoardScene extends Phaser.Scene {
    * wall, crate or step. The one exception: facing away from the camera, the body would hide
    * it, so it sits just across the edge on the next tile, but only when that tile is clear floor.
    */
-  private drawArrow(w: World, crashed: boolean) {
+  private drawArrow(w: World, crashed: boolean, angle: number = FACINGS.indexOf(w.bot.facing)) {
     const g = this.botArrow;
     g.clear();
-    const { fx, fy, sx, sy } = this.screenFacing(w.bot.facing);
+    const { fx, fy, sx, sy } = this.screenFacing(angle);
+    const turning = Math.abs(angle - Math.round(angle)) > 0.001;
     const at = (along: number, across: number) => ({ x: fx * along + sx * across, y: fy * along + sy * across });
     const next = ahead(w);
     const clear =
       isWalkable(w, next) && w.boxes[next.y][next.x] === 0 && surfaceHeight(w, next) === surfaceHeight(w, { x: w.bot.x, y: w.bot.y });
     // Front-facing it fills the front half of LoopBot's tile (the next tile is drawn over
     // anything past the edge); back-facing it sits on the next tile, clear of the body.
-    const [from, to] = fy > 0 ? [0.46, 0.98] : clear ? [1.0, 1.52] : [0.46, 0.98];
+    const [from, to] = fy > 0 || turning ? [0.46, 0.98] : clear ? [1.0, 1.52] : [0.46, 0.98];
     const tip = at(to, 0);
     const l = at(from, -0.42);
     const r = at(from, 0.42);
@@ -617,14 +622,14 @@ export class BoardScene extends Phaser.Scene {
     g.strokePoints([tip, r, notch, l], true);
   }
 
-  private drawBot(w: World, crashed: boolean, facing: Facing = w.bot.facing) {
+  private drawBot(w: World, crashed: boolean, facing: Facing | number = w.bot.facing) {
     const g = this.botBody;
     g.clear();
-    this.shownFacing = facing;
+    this.shownAngle = typeof facing === 'number' ? facing : FACINGS.indexOf(facing);
     this.crashedNow = crashed;
     const body = crashed ? C.crash : C.bot;
-    const { fx, fy } = this.screenFacing(facing);
-    this.drawArrow(w, crashed);
+    const { fx, fy } = this.screenFacing(this.shownAngle);
+    this.drawArrow(w, crashed, this.shownAngle);
     // body: a rounded little block
     this.prism(g, 0, -16, 12, body, C.botL, C.botR, 0.44);
     // a warm status light on the body: LoopBot's "heart"
@@ -644,7 +649,7 @@ export class BoardScene extends Phaser.Scene {
   private drawEye() {
     const g = this.botEye;
     g.clear();
-    const { fx, fy, sx, sy } = this.screenFacing(this.shownFacing);
+    const { fx, fy, sx, sy } = this.screenFacing(this.shownAngle);
     // Facing away from the camera the eye is on the far side of the head: dim it so it does not read as facing us.
     const alpha = fy < 0 ? 0.35 : 1;
     const ex = fx * 0.4 + sx * 0.12 * this.look;
@@ -789,6 +794,72 @@ export class BoardScene extends Phaser.Scene {
     this.tweens.add({ targets: this.botShadow, scale: 0.7, duration: 150, yoyo: true, repeat: times - 1, delay, ease: 'Quad.easeOut' });
   }
 
+  /**
+   * A turn in place, shown so it cannot be missed: LoopBot swings smoothly from its old facing to
+   * the new one while a curved arrow sweeps round it on the floor, then the arrow fades.
+   * Turning never moves LoopBot, and this makes that visible even at 4x.
+   */
+  private animateTurn(w: World, crashed: boolean, fromAngle: number, dir: 1 | -1, dur: number) {
+    const ring = this.turnRing;
+    ring.setAlpha(1);
+    const draw = (t: number) => this.drawTurnRing(fromAngle, dir, t, crashed);
+    if (this.reduced || dur === 0) {
+      draw(1);
+    } else {
+      this.drawBot(w, crashed, fromAngle);
+      this.tweens.addCounter({
+        from: 0,
+        to: 1,
+        duration: dur,
+        ease: 'Sine.easeInOut',
+        onUpdate: (tw) => {
+          if (this.world !== w) return;
+          const t = tw.getValue() ?? 0;
+          this.drawBot(w, crashed, fromAngle + dir * t);
+          draw(t);
+        },
+        onComplete: () => {
+          if (this.world === w) this.drawBot(w, crashed);
+        },
+      });
+    }
+    this.tweens.add({ targets: ring, alpha: 0, delay: dur + 260, duration: 420, onComplete: () => ring.clear() });
+  }
+
+  /**
+   * The curved arrow for a turn: a flat ring segment just over LoopBot's head, from behind the old
+   * facing round to the new one, with a head. It uses the same flat projection as the facing
+   * arrow, so it reads clockwise for turn right and anticlockwise for turn left from any view.
+   */
+  private drawTurnRing(fromAngle: number, dir: 1 | -1, t: number, crashed: boolean) {
+    const g = this.turnRing;
+    g.clear();
+    g.setPosition(this.bot.x, this.bot.y - 48);
+    const r = 1.4;
+    const pt = (a: number, rr = r) => {
+      const { fx, fy } = this.screenFacing(a);
+      return new Phaser.Geom.Point(fx * rr, fy * rr);
+    };
+    const start = fromAngle - dir * 0.45;
+    const end = start + dir * (0.25 + 1.1 * t);
+    const pts: Phaser.Geom.Point[] = [];
+    const n = 20;
+    for (let i = 0; i <= n; i++) pts.push(pt(start + ((end - start) * i) / n));
+    const colour = crashed ? C.crash : C.eye;
+    g.lineStyle(6, 0x2b2440, 0.45);
+    g.strokePoints(pts, false);
+    g.lineStyle(3.5, colour, 1);
+    g.strokePoints(pts, false);
+    // arrowhead at the moving end, pointing along the curve
+    const tip = pt(end + dir * 0.22);
+    const outer = pt(end, r * 1.32);
+    const inner = pt(end, r * 0.68);
+    g.lineStyle(1.5, 0x2b2440, 0.6);
+    g.fillStyle(colour, 1);
+    g.fillPoints([tip, outer, inner], true);
+    g.strokePoints([tip, outer, inner], true);
+  }
+
   /** A full spin on the spot: LoopBot shows each side in turn, then faces the way it really faces. */
   private twirl(w: World, delay: number) {
     if (this.reduced) return;
@@ -810,9 +881,14 @@ export class BoardScene extends Phaser.Scene {
     this.botPose.setPosition(0, 0).setAngle(0);
     this.botShadow.setScale(1);
     if (fresh) this.look = 0;
+    this.tweens.killTweensOf(this.turnRing);
+    this.turnRing.clear();
     this.drawBot(w, !!u.crashed);
     this.tweens.killTweensOf(this.bot);
     const dur = Math.max(0, u.stepMs * 0.8);
+    if (prev && !fresh && (u.action === 'turn_left' || u.action === 'turn_right') && prev.bot.facing !== w.bot.facing) {
+      this.animateTurn(w, !!u.crashed, FACINGS.indexOf(prev.bot.facing), u.action === 'turn_right' ? 1 : -1, dur);
+    }
     const moved = prev && (prev.bot.x !== w.bot.x || prev.bot.y !== w.bot.y);
     if (!prev || dur === 0 || !moved) {
       this.bot.setPosition(to.sx, to.sy);
