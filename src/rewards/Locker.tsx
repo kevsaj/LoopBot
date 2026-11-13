@@ -6,7 +6,9 @@ import { fx } from '../audio/feedback';
 import type { Stats } from './achievements';
 import { ACHIEVEMENTS, totalStars } from './achievements';
 import type { Look, TipShape, Unlock } from './looks';
-import { EYES, PAINTS, TIPS, isUnlocked, saveLook, unlockLabel, applyLookCss } from './looks';
+import { EYES, PAINTS, TIPS, isPlusPart, isUnlocked, plusPartsShown, saveLook, unlockLabel, applyLookCss } from './looks';
+import { PLUS_VISIBLE, STORE_AVAILABLE } from '../store/purchases';
+import { PlusSheet } from '../store/PlusSheet';
 import { AntennaTip } from './AntennaTip';
 
 interface Props {
@@ -34,15 +36,19 @@ export function LookBot({ top, left, eye, tip, size = 120 }: { top: string; left
   );
 }
 
-function Swatch({ label, unlock, unlocked, on, onPick, children }: { label: string; unlock: Unlock | null; unlocked: boolean; on: boolean; onPick(): void; children: React.ReactNode }) {
+function Swatch({ label, unlock, unlocked, on, onPick, onPlus, children }: { label: string; unlock: Unlock | null; unlocked: boolean; on: boolean; onPick(): void; onPlus?(): void; children: React.ReactNode }) {
   return (
     <button
       type="button"
-      className={`swatch${on ? ' on' : ''}${unlocked ? '' : ' locked'}`}
+      className={`swatch${on ? ' on' : ''}${unlocked ? '' : ' locked'}${isPlusPart(unlock) ? ' plus' : ''}`}
       aria-pressed={on}
       aria-label={unlocked ? label : `${label}, locked: ${unlockLabel(unlock)}`}
       onClick={() => {
-        if (!unlocked) return fx.denied();
+        if (!unlocked) {
+          // a Plus look opens the Plus screen when it's on sale
+          if (isPlusPart(unlock) && onPlus) return (fx.tap(), onPlus());
+          return fx.denied();
+        }
         fx.snap();
         onPick();
       }}
@@ -56,6 +62,10 @@ function Swatch({ label, unlock, unlocked, on, onPick, children }: { label: stri
 
 export function Locker({ stats, earned, look, onLook, onClose }: Props) {
   const [tab, setTab] = useState<'looks' | 'achievements'>('looks');
+  const [plusSheet, setPlusSheet] = useState(false);
+  const [, setRefresh] = useState(0);
+  const shown = <T extends { unlock: Unlock | null }>(list: T[]) => (plusPartsShown() ? list : list.filter((x) => !isPlusPart(x.unlock)));
+  const onPlus = PLUS_VISIBLE && STORE_AVAILABLE ? () => setPlusSheet(true) : undefined;
   const paint = PAINTS.find((p) => p.id === look.paint) ?? PAINTS[0];
   const eye = EYES.find((e) => e.id === look.eye) ?? EYES[0];
   const set = (l: Look) => {
@@ -93,31 +103,31 @@ export function Locker({ stats, earned, look, onLook, onClose }: Props) {
             <>
               <h3 className="set-section">Paint</h3>
               <div className="swatches">
-                {PAINTS.map((p) => (
-                  <Swatch key={p.id} label={p.name} unlock={p.unlock} unlocked={isUnlocked(p.unlock, stats, earned)} on={p.id === look.paint} onPick={() => set({ ...look, paint: p.id })}>
+                {shown(PAINTS).map((p) => (
+                  <Swatch key={p.id} onPlus={onPlus} label={p.name} unlock={p.unlock} unlocked={isUnlocked(p.unlock, stats, earned)} on={p.id === look.paint} onPick={() => set({ ...look, paint: p.id })}>
                     <LookBot top={p.top} left={p.left} eye={eye.color} tip={look.tip} size={44} />
                   </Swatch>
                 ))}
               </div>
               <h3 className="set-section">Eye</h3>
               <div className="swatches">
-                {EYES.map((e) => (
-                  <Swatch key={e.id} label={e.name} unlock={e.unlock} unlocked={isUnlocked(e.unlock, stats, earned)} on={e.id === look.eye} onPick={() => set({ ...look, eye: e.id })}>
+                {shown(EYES).map((e) => (
+                  <Swatch key={e.id} onPlus={onPlus} label={e.name} unlock={e.unlock} unlocked={isUnlocked(e.unlock, stats, earned)} on={e.id === look.eye} onPick={() => set({ ...look, eye: e.id })}>
                     <span className="eye-dot" style={{ background: e.color }} />
                   </Swatch>
                 ))}
               </div>
               <h3 className="set-section">Antenna</h3>
               <div className="swatches">
-                {TIPS.map((t) => (
-                  <Swatch key={t.id} label={t.name} unlock={t.unlock} unlocked={isUnlocked(t.unlock, stats, earned)} on={t.id === look.tip} onPick={() => set({ ...look, tip: t.id })}>
+                {shown(TIPS).map((t) => (
+                  <Swatch key={t.id} onPlus={onPlus} label={t.name} unlock={t.unlock} unlocked={isUnlocked(t.unlock, stats, earned)} on={t.id === look.tip} onPick={() => set({ ...look, tip: t.id })}>
                     <svg viewBox="-12 -12 24 24" width="30" height="30" aria-hidden="true">
                       <AntennaTip cx={0} cy={0} r={7} shape={t.id} fill={eye.color} />
                     </svg>
                   </Swatch>
                 ))}
               </div>
-              <p className="set-caption">Earn stars on tower floors and achievements to unlock more. Looks are just for fun.</p>
+              <p className="set-caption">Earn stars on tower floors and achievements to unlock more{plusPartsShown() ? ', and LoopBot Plus adds Frostline looks' : ''}. Looks are just for fun.</p>
             </>
           ) : (
             <ul className="achievements">
@@ -148,6 +158,14 @@ export function Locker({ stats, earned, look, onLook, onClose }: Props) {
           )}
         </div>
       </div>
+      {plusSheet && (
+        <PlusSheet
+          onClose={() => {
+            setPlusSheet(false);
+            setRefresh((n) => n + 1);
+          }}
+        />
+      )}
     </div>
   );
 }

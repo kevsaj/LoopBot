@@ -5,8 +5,10 @@
 
 import type { Stats } from './achievements';
 import { totalStars } from './achievements';
+import { PLUS_VISIBLE, plusUnlocked } from '../store/purchases';
 
-export type Unlock = { stars: number } | { achievement: string; label: string };
+/** How a look part unlocks: tower stars, an achievement, or LoopBot Plus. */
+export type Unlock = { stars: number } | { achievement: string; label: string } | { plus: true };
 
 export interface Paint {
   id: string;
@@ -25,7 +27,7 @@ export interface EyeColor {
   unlock: Unlock | null;
 }
 
-export type TipShape = 'ball' | 'star' | 'heart' | 'bolt' | 'crown' | 'ring';
+export type TipShape = 'ball' | 'star' | 'heart' | 'bolt' | 'crown' | 'ring' | 'snowflake' | 'gem';
 
 export interface Tip {
   id: TipShape;
@@ -41,6 +43,11 @@ export const PAINTS: Paint[] = [
   { id: 'rose', name: 'Rose', top: '#ffd6e2', left: '#eba9be', right: '#cc8ba0', unlock: { stars: 75 } },
   { id: 'graphite', name: 'Graphite', top: '#7d7a8c', left: '#5c5a6b', right: '#474555', unlock: { stars: 100 } },
   { id: 'gold', name: 'Gold', top: '#ffe28a', left: '#e5ba4f', right: '#c49a37', unlock: { achievement: 'perfectionist', label: 'Perfectionist' } },
+  // LoopBot Plus looks, from Frostline
+  { id: 'frost', name: 'Frost', top: '#e6f6ff', left: '#b4daf3', right: '#8cb8d9', unlock: { plus: true } },
+  { id: 'aurora', name: 'Aurora', top: '#d4f8e8', left: '#94dfbf', right: '#9b88d9', unlock: { plus: true } },
+  { id: 'northstar', name: 'Northstar', top: '#46598f', left: '#33436f', right: '#263354', unlock: { plus: true } },
+  { id: 'ember', name: 'Ember', top: '#ffa587', left: '#e57256', right: '#bb5039', unlock: { plus: true } },
 ];
 
 export const EYES: EyeColor[] = [
@@ -50,6 +57,8 @@ export const EYES: EyeColor[] = [
   { id: 'lime', name: 'Lime', color: '#b8f56a', unlock: { stars: 60 } },
   { id: 'violet', name: 'Violet', color: '#b9a2ff', unlock: { stars: 90 } },
   { id: 'white', name: 'Snow', color: '#f2fbff', unlock: { stars: 120 } },
+  { id: 'ice', name: 'Ice', color: '#8fdcff', unlock: { plus: true } },
+  { id: 'beacon', name: 'Beacon', color: '#ffd34d', unlock: { plus: true } },
 ];
 
 export const TIPS: Tip[] = [
@@ -59,7 +68,15 @@ export const TIPS: Tip[] = [
   { id: 'bolt', name: 'Bolt', unlock: { achievement: 'decision-maker', label: 'Decision maker' } },
   { id: 'ring', name: 'Ring', unlock: { achievement: 'no-hints', label: 'Figured it out' } },
   { id: 'crown', name: 'Crown', unlock: { achievement: 'spire', label: 'Spire cleared' } },
+  { id: 'snowflake', name: 'Snowflake', unlock: { plus: true } },
+  { id: 'gem', name: 'Gem', unlock: { plus: true } },
 ];
+
+/** Whether a part comes with LoopBot Plus. */
+export const isPlusPart = (unlock: Unlock | null) => !!unlock && 'plus' in unlock;
+
+/** Plus parts only show once Plus is on sale, or to players who already have it. */
+export const plusPartsShown = () => PLUS_VISIBLE || plusUnlocked();
 
 export interface Look {
   paint: string;
@@ -72,11 +89,13 @@ const KEY = 'loopbot.look';
 
 export function isUnlocked(unlock: Unlock | null, stats: Stats, earned: Set<string>): boolean {
   if (!unlock) return true;
+  if ('plus' in unlock) return plusUnlocked();
   return 'stars' in unlock ? totalStars(stats) >= unlock.stars : earned.has(unlock.achievement);
 }
 
 export function unlockLabel(unlock: Unlock | null): string {
   if (!unlock) return 'Free';
+  if ('plus' in unlock) return 'Plus';
   return 'stars' in unlock ? `${unlock.stars} ★` : `🏆 ${unlock.label}`;
 }
 
@@ -163,6 +182,16 @@ export function tipPoints(shape: TipShape, cx: number, cy: number, r: number): [
   } else if (shape === 'crown') {
     const c: [number, number][] = [[-1, 0.7], [-1.1, -0.6], [-0.5, 0], [0, -0.9], [0.5, 0], [1.1, -0.6], [1, 0.7]];
     c.forEach(([x, y]) => pts.push([cx + x * r, cy + y * r]));
+  } else if (shape === 'snowflake') {
+    // six thin arms
+    for (let i = 0; i < 12; i++) {
+      const a = -Math.PI / 2 + (i * Math.PI) / 6;
+      const rr = i % 2 ? r * 0.32 : r * 1.25;
+      pts.push([cx + Math.cos(a) * rr, cy + Math.sin(a) * rr]);
+    }
+  } else if (shape === 'gem') {
+    const d: [number, number][] = [[0, -1.2], [0.85, -0.35], [0.55, 0.9], [-0.55, 0.9], [-0.85, -0.35]];
+    d.forEach(([x, y]) => pts.push([cx + x * r, cy + y * r]));
   } else if (shape === 'ring') {
     // a ring is drawn as a thick outline, so return the circle's points
     for (let i = 0; i < 20; i++) {
