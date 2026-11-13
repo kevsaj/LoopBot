@@ -177,13 +177,13 @@ const INTROS = [
  * Old daily floors leave editor saves and hint counters behind. Clear everything from days
  * other than `today`, so storage doesn't grow day after day.
  */
-export function pruneOldDailies(today: string, p: Progress): Progress {
-  const keep = `daily-${today}`;
+export function pruneOldDailies(today: string, p: Progress, playing: string = today): Progress {
+  const keepIds = new Set([`daily-${today}`, `daily-${playing}`]);
   try {
     const stale: string[] = [];
     for (let i = 0; i < localStorage.length; i++) {
       const k = localStorage.key(i);
-      if (k?.startsWith('loopbot.editor.daily-') && k !== `loopbot.editor.${keep}`) stale.push(k);
+      if (k?.startsWith('loopbot.editor.daily-') && !keepIds.has(k.slice('loopbot.editor.'.length))) stale.push(k);
     }
     stale.forEach((k) => localStorage.removeItem(k));
   } catch {
@@ -193,7 +193,7 @@ export function pruneOldDailies(today: string, p: Progress): Progress {
     const out: Record<string, number> = {};
     let changed = false;
     for (const [k, v] of Object.entries(m)) {
-      if (isDailyId(k) && k !== keep) changed = true;
+      if (isDailyId(k) && !keepIds.has(k)) changed = true;
       else out[k] = v;
     }
     return changed ? out : m;
@@ -215,6 +215,25 @@ export function shareText(date: string, level: LevelFile, stars: number, command
 
 /** Yesterday's date, for tests and the streak. */
 export const yesterday = (date: string) => keyFromDay(dayNumber(date) - 1);
+
+// --- The daily archive (LoopBot Plus): replay the puzzles of the last few weeks ---
+
+/** How many past days the archive offers. */
+export const ARCHIVE_DAYS = 30;
+
+/** The archive's dates, newest first: the days before `today`. */
+export function archiveDates(today: string = dateKey(), days = ARCHIVE_DAYS): string[] {
+  return Array.from({ length: days }, (_, i) => keyFromDay(dayNumber(today) - 1 - i));
+}
+
+/**
+ * Records a clear of a past day's puzzle from the archive. It keeps the best stars for that day
+ * but never touches the streak, freezes or hints: those belong to playing on the day.
+ */
+export function recordArchiveClear(s: DailyState, date: string, stars: number): DailyState {
+  if ((s.best[date] ?? 0) >= stars) return s;
+  return { ...s, best: { ...s.best, [date]: stars } };
+}
 
 /** Hints earned by a daily clear: 1 for the first clear of the day, 3 more for every 7-day streak. */
 export const DAILY_HINT = 1;

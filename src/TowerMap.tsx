@@ -14,6 +14,7 @@ import { DailyButton } from './daily/DailyButton';
 import type { DailyState } from './daily';
 import type { Tower } from './levels/towers';
 import { PLUS_VISIBLE, STORE_AVAILABLE, plusUnlocked } from './store/purchases';
+import { dailyUnlocked } from './daily';
 import { PlusSheet } from './store/PlusSheet';
 
 interface Props {
@@ -29,6 +30,8 @@ interface Props {
   onHome(): void;
   daily: DailyState;
   onDaily(): void;
+  /** Opens the daily archive (LoopBot Plus). */
+  onArchive(): void;
   onLocker(): void;
   lockerNew: boolean;
 }
@@ -123,7 +126,7 @@ export function MiniBot() {
   );
 }
 
-export function TowerMap({ levels, tower, towers, onTowerPick, progress, current, onPick, onSettings, onHome, daily, onDaily, onLocker, lockerNew }: Props) {
+export function TowerMap({ levels, tower, towers, onTowerPick, progress, current, onPick, onSettings, onHome, daily, onDaily, onArchive, onLocker, lockerNew }: Props) {
   const ids = levels.map((l) => l.id);
   const totalStars = ids.reduce((n, id) => n + (progress.stars[id] ?? 0), 0);
   const cleared = ids.filter((id) => (progress.stars[id] ?? 0) > 0).length;
@@ -205,6 +208,11 @@ export function TowerMap({ levels, tower, towers, onTowerPick, progress, current
       </div>
       <TowerSwitch tower={tower} towers={towers} onPick={onTowerPick} onLocked={lockedTower} />
       {!DEMO && <DailyButton className="tower-daily" progress={progress} daily={daily} onOpen={onDaily} />}
+      {!DEMO && dailyUnlocked(progress) && (PLUS_VISIBLE || plusUnlocked()) && (
+        <button type="button" className="link-btn daily-archive-link" onClick={() => (fx.tap(), onArchive())}>
+          📅 Daily archive: replay missed days
+        </button>
+      )}
       <div className="tower-scroll">
         <div className="tower-roof" aria-hidden="true">
           <span className="beacon" />
