@@ -6,12 +6,13 @@ import { useState } from 'react';
 import { fx } from './audio/feedback';
 import type { FeedbackContext } from './telemetry';
 import { TELEMETRY_AVAILABLE, feedbackMailto, sendFeedback } from './telemetry';
+import { msg, t } from './i18n';
 
 const MOODS = [
-  { key: 'stuck', label: 'Stuck', icon: '🤔' },
-  { key: 'bug', label: 'Bug', icon: '🐞' },
-  { key: 'idea', label: 'Idea', icon: '💡' },
-  { key: 'love', label: 'Love it', icon: '💜' },
+  { key: 'stuck', label: msg('Stuck'), icon: '🤔' },
+  { key: 'bug', label: msg('Bug'), icon: '🐞' },
+  { key: 'idea', label: msg('Idea'), icon: '💡' },
+  { key: 'love', label: msg('Love it'), icon: '💜' },
 ] as const;
 
 interface Props extends FeedbackContext {
@@ -35,22 +36,22 @@ export function FeedbackSheet({ floor, floorTitle, onClose }: Props) {
 
   return (
     <div className="results-backdrop" onClick={onClose}>
-      <div className="results sheet feedback" role="dialog" aria-label="Send feedback" onClick={(e) => e.stopPropagation()}>
+      <div className="results sheet feedback" role="dialog" aria-label={t('Send feedback')} onClick={(e) => e.stopPropagation()}>
         {state === 'sent' ? (
           <>
-            <h2>Thanks!</h2>
-            <p className="tip">Your note is on its way. Every message helps make LoopBot better.</p>
+            <h2>{t('Thanks!')}</h2>
+            <p className="tip">{t('Your note is on its way. Every message helps make LoopBot better.')}</p>
             <div className="results-actions">
               <button type="button" className="pill primary" onClick={() => (fx.tap(), onClose())}>
-                Back to the game
+                {t('Back to the game')}
               </button>
             </div>
           </>
         ) : (
           <>
-            <h2>Send feedback</h2>
-            {floor && <p className="tip fb-where">About {floorTitle ? `“${floorTitle}”` : 'this floor'}</p>}
-            <div className="fb-moods" role="radiogroup" aria-label="What is it about?">
+            <h2>{t('Send feedback')}</h2>
+            {floor && <p className="tip fb-where">{floorTitle ? t('About “{title}”', { title: floorTitle }) : t('About this floor')}</p>}
+            <div className="fb-moods" role="radiogroup" aria-label={t('What is it about?')}>
               {MOODS.map((m) => (
                 <button
                   key={m.key}
@@ -60,7 +61,7 @@ export function FeedbackSheet({ floor, floorTitle, onClose }: Props) {
                   className={`fb-mood${mood === m.key ? ' on' : ''}`}
                   onClick={() => (fx.tap(), setMood(m.key))}
                 >
-                  <span aria-hidden="true">{m.icon}</span> {m.label}
+                  <span aria-hidden="true">{m.icon}</span> {t(m.label)}
                 </button>
               ))}
             </div>
@@ -70,45 +71,45 @@ export function FeedbackSheet({ floor, floorTitle, onClose }: Props) {
                   className="fb-text"
                   rows={4}
                   maxLength={2000}
-                  placeholder="What happened? What did you expect?"
+                  placeholder={t('What happened? What did you expect?')}
                   value={text}
                   onChange={(e) => setText(e.target.value)}
                   disabled={state === 'sending'}
                 />
                 <p className="set-caption fb-note">
-                  Sent anonymously with the floor and app version. Please leave out your name and contact details. Want a reply?{' '}
+                  {t('Sent anonymously with the floor and app version. Please leave out your name and contact details. Want a reply?')}{' '}
                   <a href={feedbackMailto(ctx)} target="_blank" rel="noreferrer">
-                    Email us
+                    {t('Email us')}
                   </a>
                   .
                 </p>
                 {state === 'failed' && (
                   <p className="tip fb-error">
-                    Couldn't send (no internet?).{' '}
+                    {t("Couldn't send (no internet?).")}{' '}
                     <a href={feedbackMailto(ctx)} target="_blank" rel="noreferrer">
-                      Send it by email
+                      {t('Send it by email')}
                     </a>{' '}
-                    or try again later.
+                    {t('or try again later.')}
                   </p>
                 )}
                 <div className="results-actions">
                   <button type="button" className="pill" onClick={() => (fx.tap(), onClose())}>
-                    Cancel
+                    {t('Cancel')}
                   </button>
                   <button type="button" className="pill primary" disabled={state === 'sending' || !text.trim()} onClick={send}>
-                    {state === 'sending' ? 'Sending…' : 'Send'}
+                    {state === 'sending' ? t('Sending…') : t('Send')}
                   </button>
                 </div>
               </>
             ) : (
               <>
-                <p className="tip">Tell us by email: the floor and app version are filled in for you.</p>
+                <p className="tip">{t('Tell us by email: the floor and app version are filled in for you.')}</p>
                 <div className="results-actions">
                   <button type="button" className="pill" onClick={() => (fx.tap(), onClose())}>
-                    Cancel
+                    {t('Cancel')}
                   </button>
                   <a className="pill primary" href={feedbackMailto(ctx)} target="_blank" rel="noreferrer" onClick={() => fx.tap()}>
-                    Write an email
+                    {t('Write an email')}
                   </a>
                 </div>
               </>

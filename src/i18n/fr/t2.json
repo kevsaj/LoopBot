@@ -1,0 +1,369 @@
+{
+ "t2-f01": {
+  "title": "Premier gel",
+  "hints": [
+   "La glace est glissante. Un seul avancer et LoopBot glisse jusqu'à ce que quelque chose l'arrête.",
+   "Un seul bloc suffit ici."
+  ],
+  "intro": "PATCH : « Frostline. Le drone de VANTA s'est posé sur l'Aiguille Northstar, et le chauffage est coupé. Tout est glacé. Attention où tu mets les pieds. »",
+  "outro": "PATCH : « Ha ! Un pas, cinq cases. La glace marche à ta place. »"
+ },
+ "t2-f02": {
+  "title": "Dérapage au coin",
+  "hints": [
+   "Une glissade s'arrête quand la glace frappe un mur. C'est un bon endroit pour tourner.",
+   "Glisse vers l'est, tourne à droite, glisse vers le sud."
+  ]
+ },
+ "t2-f03": {
+  "title": "Coin sec",
+  "hints": [
+   "Le sol ordinaire n'est pas glissant. Une glissade qui y arrive s'arrête net.",
+   "Glisse jusqu'au coin sec, puis tourne vers la sortie."
+  ]
+ },
+ "t2-f04": {
+  "title": "La patinoire",
+  "hints": [
+   "Tu ne peux t'arrêter que là où quelque chose t'arrête. Cherche des murs contre lesquels glisser.",
+   "La sortie est proche, mais le chemin droit glisse plus loin. Monte et fais le tour : cinq glissades, qui finissent chacune contre un mur."
+  ]
+ },
+ "t2-f05": {
+  "title": "Frein à caisse",
+  "hints": [
+   "Une caisse sur la glace arrête une glissade juste avant elle. Tu peux en placer une où il le faut.",
+   "Dépose la caisse sur la voie du haut depuis le coin sec en dessous. Puis reviens par le haut en partant de la droite."
+  ]
+ },
+ "t2-f06": {
+  "title": "Boucle de glissades",
+  "hints": [
+   "Chaque glissade a une longueur différente, mais les murs t'arrêtent toujours à un coin.",
+   "Les quatre mêmes blocs montent chaque marche : glisser, tourner à gauche, glisser, tourner à droite. Répète-les."
+  ]
+ },
+ "t2-f07": {
+  "title": "Marches gelées",
+  "hints": [
+   "Une glissade s'arrête devant une marche à monter ou à descendre. Un saut te fait aussi atterrir sur la glace, et tu continues à glisser.",
+   "Glisse une fois, puis saute à chaque marche."
+  ]
+ },
+ "t2-f08": {
+  "title": "Livraison au frais",
+  "hints": [
+   "Tu peux transporter une caisse en glissant.",
+   "Ramasse la caisse, puis trouve l'arrêt juste à côté de la plaque. Deux des mouvements sont pareils."
+  ]
+ },
+ "t2-f09": {
+  "title": "Interrupteur de dégel",
+  "hints": [
+   "Un interrupteur n'est pas glissant, alors une glissade s'y arrête.",
+   "Arrête-toi sur l'interrupteur et active-le, puis glisse jusqu'à la porte ouverte. Tourner et glisser se fait deux fois."
+  ]
+ },
+ "t2-f10": {
+  "title": "La porte gelée",
+  "hints": [
+   "La porte s'ouvre avec l'interrupteur de droite. La glissade du haut ne s'arrêtera pas toute seule à la porte.",
+   "Une caisse sur la glace crée un arrêt. Apporte la caisse du coin au bon endroit, active l'interrupteur et refais le tour. Tu peux aussi sauter par-dessus une caisse."
+  ],
+  "intro": "VANTA : « Un autre robot ? Mignon. La porte est gelée, petit grille-pain. Profite du froid. »",
+  "outro": "PATCH : « La porte est franchie ! VANTA monte. Nous aussi. »"
+ },
+ "t2-f11": {
+  "title": "Fissures fines",
+  "hints": [
+   "Les cases striées de blanc sont de la glace mince. Elles te portent une fois, puis se brisent en trou quand tu en sors.",
+   "Fais le tour : par le bas, monte jusqu'à l'interrupteur, active-le, puis traverse la glace mince jusqu'à la porte."
+  ],
+  "intro": "PATCH : « La Cour du glacier. De la glace mince ici, LoopBot. Elle te porte une fois, puis elle disparaît. Impossible de revenir par où tu es venu. »"
+ },
+ "t2-f12": {
+  "title": "Pas de retour",
+  "hints": [
+   "Les deux interrupteurs, puis la sortie, et chaque case mince une seule fois. Quel interrupteur d'abord ?",
+   "Commence par l'interrupteur de gauche, va par le haut jusqu'à celui de droite, puis descends par la droite et entre."
+  ]
+ },
+ "t2-f13": {
+  "title": "Pierre de gué",
+  "hints": [
+   "La glace mince arrête une glissade, comme toute case qui n'est pas de la glace. Mais une seule fois.",
+   "Sers-toi de la case mince comme arrêt en chemin, puis reviens à la sortie par l'autre côté."
+  ]
+ },
+ "t2-f14": {
+  "title": "Lacets",
+  "hints": [
+   "Un escalier d'interrupteurs. Les mêmes quelques mouvements mènent à chacun.",
+   "Avancer, activer, tourner à gauche, avancer, tourner à droite. Répète."
+  ]
+ },
+ "t2-f15": {
+  "title": "Traversée à la caisse",
+  "hints": [
+   "Une caisse, une plaque, des trous dans la glace, et chaque case mince ne te porte qu'une fois.",
+   "Trouve un trajet jusqu'à la caisse, puis jusqu'à la plaque, qui ne passe jamais deux fois sur la même case."
+  ]
+ },
+ "t2-f16": {
+  "title": "Patinoire fissurée",
+  "hints": [
+   "De la glace où glisser, de la glace mince où s'arrêter, et un interrupteur à activer avant que la sortie compte.",
+   "Trouve où chaque glissade s'arrête. Les cases minces sont tes freins, une fois chacune."
+  ]
+ },
+ "t2-f17": {
+  "title": "Trois lampes",
+  "hints": [
+   "Trois interrupteurs. La glace mince choisit l'ordre pour toi, si tu regardes bien.",
+   "L'interrupteur du milieu d'abord, puis celui en haut à droite, puis fais tout le tour jusqu'à celui en bas à gauche."
+  ]
+ },
+ "t2-f18": {
+  "title": "Cour fragile",
+  "hints": [
+   "La sortie est au milieu, l'interrupteur est dans le coin, et la cour se fissure.",
+   "Monte et fais le tour par le haut, puis descends par la droite jusqu'à l'interrupteur, et glisse pour revenir."
+  ]
+ },
+ "t2-f19": {
+  "title": "Marches qui fondent",
+  "hints": [
+   "Chaque marche monte ou descend, alors chaque mouvement est un saut.",
+   "Sauter, tourner à gauche, sauter, tourner à droite, et encore."
+  ]
+ },
+ "t2-f20": {
+  "title": "Cœur du glacier",
+  "hints": [
+   "Deux interrupteurs, loin l'un de l'autre, et la sortie juste à côté du départ. La glace ne te laissera pas prendre le raccourci.",
+   "En bas et à droite jusqu'à l'interrupteur du bas d'abord, puis monte par la droite jusqu'à celui du haut, puis glisse jusqu'à la sortie."
+  ],
+  "intro": "VANTA : « Tu brises ma glace, je brise tes circuits. Continue, petit robot. »",
+  "outro": "PATCH : « Le cœur du glacier, et t'en es sorti comme si de rien n'était. VANTA manque de glace. »"
+ },
+ "t2-f21": {
+  "title": "Vérification de routine",
+  "hints": [
+   "Chaque coin a un interrupteur, et chaque côté finit au suivant. Les côtés n'ont pas la même longueur, mais une glissade s'en fiche.",
+   "Apprends F1 une fois : avancer, activer, tourner à droite. Le Principal ne fait que l'appeler."
+  ],
+  "intro": "PATCH : « La Cabane radio. Des radios, des routines, et un robot bien gelé. Tu te souviens de F1 ? On écrit une routine une fois, puis on l'appelle par son nom. »"
+ },
+ "t2-f22": {
+  "title": "Chasse au bogue : mauvais sens",
+  "hints": [
+   "Ce programme vient de l'escalier de la Porte du givre. Cet escalier-ci va dans l'autre sens. Lance-le et regarde où ça se gâte.",
+   "Seuls les virages sont à corriger. Pour monter vers la gauche, tu tournes d'abord à droite, puis à gauche."
+  ],
+  "intro": "PATCH : « VANTA a laissé un programme brouillé dans ce robot. Il marche presque. Lance-le, regarde où il plante, et répare-le. Ça s'appelle déboguer. »"
+ },
+ "t2-f23": {
+  "title": "Marches à relais",
+  "hints": [
+   "Chaque relais est une marche plus haut. Glisse jusqu'à la marche, saute dessus, active-le.",
+   "Les trois mêmes mouvements pour chaque relais, peu importe la longueur de la glace. Mets-les dans F1."
+  ]
+ },
+ "t2-f24": {
+  "title": "Chasse au bogue : un de moins",
+  "hints": [
+   "Le programme marche bien, puis s'arrête tout simplement. Compte les interrupteurs.",
+   "Quatre coins, quatre interrupteurs. Combien de fois la boucle tourne-t-elle ?"
+  ]
+ },
+ "t2-f25": {
+  "title": "Deux routines",
+  "hints": [
+   "Deux interrupteurs par côté. Une routine peut appeler une autre routine.",
+   "F1 active un interrupteur et glisse jusqu'au suivant. F2 fait F1 deux fois et tourne au coin. Le Principal appelle F2."
+  ]
+ },
+ "t2-f26": {
+  "title": "Chasse au bogue : dans le désordre",
+  "hints": [
+   "LoopBot s'arrête sur une erreur au premier relais. Lis l'erreur, puis lis F1.",
+   "Les blocs de F1 sont tous bons, mais l'un est au mauvais endroit. Tu ne peux activer qu'un interrupteur sur lequel tu te tiens."
+  ]
+ },
+ "t2-f27": {
+  "title": "Lignes de givre",
+  "hints": [
+   "De la glace mince tout autour, un interrupteur toutes les trois cases. Tu n'as droit qu'à un tour, alors ne gaspille pas un pas.",
+   "F1 fait trois cases et active un interrupteur. F2 fait ça deux fois et tourne au coin. Le Principal répète F2."
+  ]
+ },
+ "t2-f28": {
+  "title": "Chasse au bogue : mauvais appel",
+  "hints": [
+   "Ça va bien sur deux côtés, puis ça s'arrête trop tôt. Regarde quelle routine le Principal appelle.",
+   "Le Principal devrait appeler la même routine sur chaque côté."
+  ]
+ },
+ "t2-f29": {
+  "title": "Entrepôt frigorifique",
+  "hints": [
+   "Trois caisses, trois plaques, et de la glace entre les alcôves. Chaque alcôve demande le même travail.",
+   "F1 : glisser jusqu'à l'alcôve suivante, tourner, ramasser la caisse, faire demi-tour, la déposer sur la plaque, se retourner. Répète F1."
+  ]
+ },
+ "t2-f30": {
+  "title": "Mât radio",
+  "hints": [
+   "Deux bogues cette fois. Lance, lis l'erreur, corrige une chose, relance.",
+   "F1 doit arriver sur un relais avant de l'activer. Et le mât se fait en tournant vers la droite."
+  ],
+  "intro": "VANTA : « J'ai rebranché le mât radio à ma façon. Vas-y, répare-le. Je t'attends. En fait, non. »",
+  "outro": "PATCH : « Le mât fonctionne et je t'entends clairement. VANTA se dirige vers le Labo Aurore. »"
+ },
+ "t2-f31": {
+  "title": "Spirale aurore",
+  "hints": [
+   "Le Labo Aurore. Ici, les robots vérifient au lieu de compter. Continue de tourner et de glisser jusqu'à ce que tu sois sur l'interrupteur.",
+   "Un bloc tant que répète tant que sa question le dit. Demande : non sur un interrupteur ?"
+  ],
+  "intro": "PATCH : « Le Labo Aurore. VANTA se cache quelque part ici. Les robots de ce labo ne comptent pas leurs pas, ils posent des questions. Essaie un bloc tant que. »"
+ },
+ "t2-f32": {
+  "title": "Plaques de signal",
+  "hints": [
+   "Chaque glissade finit sur une plaque de signal. Le rouge veut dire tourner à gauche, le bleu tourner à droite.",
+   "Glisse, puis demande : suis-je sur le rouge ? Si oui, tourne à gauche, sinon tourne à droite. Répète."
+  ]
+ },
+ "t2-f33": {
+  "title": "Couloir aveugle",
+  "hints": [
+   "Des couloirs de glace mince, tous de longueurs différentes. Compter ne rentrera pas, alors vérifie plutôt.",
+   "Tant qu'il n'y a pas de mur devant, avance. Puis tourne à droite. Répète ça."
+  ]
+ },
+ "t2-f34": {
+  "title": "Chasse au bogue : à l'envers",
+  "hints": [
+   "LoopBot plante avant même de bouger. Lis le bloc tant que à voix haute.",
+   "Il devrait continuer tant qu'il n'est PAS sur l'interrupteur."
+  ]
+ },
+ "t2-f35": {
+  "title": "Chasse-neige",
+  "hints": [
+   "Des caisses bloquent la voie, et chaque caisse a un recoin de neige juste à côté.",
+   "À chaque mouvement : s'il y a une caisse devant, ramasse-la, avance à sa place, dépose-la dans le recoin à ta gauche et retourne-toi. Sinon, avance."
+  ]
+ },
+ "t2-f36": {
+  "title": "Chasse au bogue : fils croisés",
+  "hints": [
+   "Le premier virage part déjà du mauvais côté. Compare le programme avec les plaques de signal.",
+   "Le rouge, c'est à gauche, le bleu, à droite. Regarde quelle branche a quel virage."
+  ]
+ },
+ "t2-f37": {
+  "title": "Aurores boréales",
+  "hints": [
+   "Des couloirs de longueurs différentes, et une plaque de signal à chaque coin.",
+   "Deux questions : y a-t-il un mur devant (continue de marcher jusqu'à ce qu'il y en ait un), et sur quelle couleur suis-je (tourne de ce côté)."
+  ]
+ },
+ "t2-f38": {
+  "title": "Chasse au bogue : sans fin",
+  "hints": [
+   "LoopBot tourne et tourne jusqu'à ce que la limite de pas l'arrête. Il manque quelque chose dans la boucle.",
+   "Une boucle qui ne bouge jamais n'arrive jamais à l'interrupteur. Ajoute le bloc manquant."
+  ]
+ },
+ "t2-f39": {
+  "title": "Balayage des capteurs",
+  "hints": [
+   "Chaque glissade s'arrête sur un interrupteur ou une plaque rouge. Les interrupteurs te font tourner à droite, les plaques rouges à gauche.",
+   "Après chaque glissade : sur un interrupteur ? Active-le et tourne à droite. Sinon, tourne à gauche."
+  ]
+ },
+ "t2-f40": {
+  "title": "Cœur aurore",
+  "hints": [
+   "De longs couloirs, des interrupteurs en chemin, et une plaque de signal à chaque coin. Une seule boucle peut tout gérer.",
+   "Dans un tant que (pas de mur devant) : avancer, et activer chaque interrupteur où tu arrives. Au coin, le rouge fait tourner à gauche, le bleu à droite. Répète."
+  ],
+  "intro": "VANTA : « Le cœur aurore garde tout ce labo au froid. Éteins-le, et tu ne m'attraperas jamais dans le noir. »",
+  "outro": "PATCH : « Le cœur est éteint, les lumières sont allumées, et VANTA vient de filer vers le sommet. Une dernière montée, LoopBot. »"
+ },
+ "t2-f41": {
+  "title": "Rebords glacés",
+  "hints": [
+   "De la glace, de la glace mince et des rebords. Chaque rebord a une plaque jaune juste devant.",
+   "À chaque mouvement : sur le jaune ? Saute. Sinon, avance. Essaie de le taper : ouvre Code, puis Taper du code."
+  ],
+  "intro": "PATCH : « Le sommet de l'Aiguille Northstar. VANTA est tout en haut. À partir d'ici, tu peux taper tes programmes. Les blocs marchent encore aussi. »"
+ },
+ "t2-f42": {
+  "title": "Chasse au bogue : escalier en colimaçon",
+  "hints": [
+   "LoopBot tourne vers le mur dès la première marche. Regarde de quel côté il fait face quand il saute.",
+   "Glisse, puis saute sur la marche, et seulement après tourne au coin. Un bloc est au mauvais endroit."
+  ]
+ },
+ "t2-f43": {
+  "title": "Glissade en couleurs",
+  "hints": [
+   "De longues glissades, des courtes, et une plaque de couleur à chaque arrêt.",
+   "Après chaque glissade : le rouge fait tourner à gauche, le bleu à droite."
+  ]
+ },
+ "t2-f44": {
+  "title": "Cour dans le blanc",
+  "hints": [
+   "Aucun motif ici, juste une cour gelée avec trois interrupteurs. Planifie tout le trajet avant de partir.",
+   "La glace mince ne te porte qu'une fois, alors choisis l'ordre : l'interrupteur en bas à gauche d'abord, puis les deux de droite, puis la sortie."
+  ]
+ },
+ "t2-f45": {
+  "title": "Chasse au bogue : trois bogues",
+  "hints": [
+   "Trois bogues différents cette fois. Trouves-en un, lance, puis cherche le suivant.",
+   "Vérifie combien de fois ça répète, ce que demande le bloc tant que, et quelle couleur fait tourner de quel côté."
+  ]
+ },
+ "t2-f46": {
+  "title": "Montée des relais",
+  "hints": [
+   "Un relais sur chaque palier, jusqu'en haut de la spirale.",
+   "Chaque palier est pareil : glisser, sauter en haut, activer le relais, tourner à gauche. Apprends ça à F1."
+  ]
+ },
+ "t2-f47": {
+  "title": "Poudrerie",
+  "hints": [
+   "Les mêmes idées qu'au Cœur aurore, mais cette fois, donne un nom à chaque idée.",
+   "F1 parcourt un couloir et active chaque interrupteur en chemin. F2 lit la plaque du coin et tourne. Le Principal ne fait que répéter F1 F2."
+  ]
+ },
+ "t2-f48": {
+  "title": "Chasse au bogue : dernière vérification",
+  "hints": [
+   "LoopBot arrive à la sortie, mais rien ne se passe. Regarde ce qu'il saute.",
+   "Chaque interrupteur doit être activé, et la boucle a besoin d'assez de tours pour aller au bout."
+  ]
+ },
+ "t2-f49": {
+  "title": "Descente d'avalanche",
+  "hints": [
+   "La dernière course avant le pic. Des couloirs, des interrupteurs et des plaques de signal, tout sur de la glace mince.",
+   "Parcours chaque couloir jusqu'à un mur en activant les interrupteurs au passage. Au coin, le rouge fait tourner à gauche et le bleu à droite. Répète."
+  ]
+ },
+ "t2-f50": {
+  "title": "Pic Northstar",
+  "hints": [
+   "La montée finale. Chaque côté est différent, mais chacun finit sur un relais.",
+   "F1 : quitte d'abord le relais, puis jusqu'à ce que tu sois sur le suivant, saute sur le jaune et avance sinon. Active-le. Le Principal répète F1 et tourne à droite."
+  ],
+  "intro": "VANTA : « La balise Northstar voit toute la ville. Quatre relais se dressent entre toi et moi, LoopBot, et tu ne les atteindras jamais tous. »",
+  "outro": "PATCH : « Relais éteints, balise éteinte, et VANTA n'a plus nulle part où fuir. Frostline est libre. T'as réussi, LoopBot. »"
+ }
+}

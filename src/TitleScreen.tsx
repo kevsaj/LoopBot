@@ -12,6 +12,7 @@ import { reducedMotion } from './fx/confetti';
 import { DEMO } from './demo';
 import { DailyButton } from './daily/DailyButton';
 import type { DailyState } from './daily';
+import { t } from './i18n';
 
 interface Props {
   levels: LevelFile[];
@@ -96,10 +97,10 @@ export function TitleScreen({ levels, towerLabel, progress, booted, onBooted, on
         <span className="title-sun" />
         <span className="title-skyline" />
       </div>
-      <button type="button" className="icon-btn title-locker" aria-label={`Locker: looks and achievements${lockerNew ? ', something new' : ''}`} onClick={() => (fx.tap(), onLocker())}>
+      <button type="button" className="icon-btn title-locker" aria-label={lockerNew ? t('Locker: looks and achievements, something new') : t('Locker: looks and achievements')} onClick={() => (fx.tap(), onLocker())}>
         🏆{lockerNew && <span className="new-dot" aria-hidden="true" />}
       </button>
-      <button type="button" className="icon-btn title-settings" aria-label="Settings" onClick={() => (fx.tap(), onSettings())}>
+      <button type="button" className="icon-btn title-settings" aria-label={t('Settings')} onClick={() => (fx.tap(), onSettings())}>
         ⚙
       </button>
 
@@ -111,8 +112,8 @@ export function TitleScreen({ levels, towerLabel, progress, booted, onBooted, on
           Loop<span>Bot</span>
         </h1>
         <p className="title-sub">
-          {towerLabel ?? 'Tower 1 · Meridian Spire'}
-          {DEMO ? ' · Demo' : ''}
+          {towerLabel ?? t('Tower {n} · {name}', { n: 1, name: t('Meridian Spire') })}
+          {DEMO ? ` · ${t('Demo')}` : ''}
         </p>
       </div>
 
@@ -125,20 +126,20 @@ export function TitleScreen({ levels, towerLabel, progress, booted, onBooted, on
             onPlay(next);
           }}
         >
-          <span className="title-play-label">▶ {fresh ? 'Play' : 'Continue'}</span>
+          <span className="title-play-label">▶ {fresh ? t('Play') : t('Continue')}</span>
           <span className="title-play-floor">
-            Floor {next + 1} · {levels[next].title}
+            {t('Floor {n} · {title}', { n: next + 1, title: levels[next].title })}
           </span>
         </button>
         {!fresh && (
           <button type="button" className="pill title-map" onClick={() => (fx.tap(), onTower())}>
-            Tower map <span className="title-stats">★ {stars} · {cleared} / {ids.length} floors</span>
+            {t('Tower map')} <span className="title-stats">★ {stars} · {t('{n} / {total} floors', { n: cleared, total: ids.length })}</span>
           </button>
         )}
         {!fresh && !DEMO && <DailyButton className="title-daily" progress={progress} daily={daily} onOpen={onDaily} />}
         {!fresh && !DEMO && onMaker && (
           <button type="button" className="pill title-maker" onClick={() => (fx.tap(), onMaker())}>
-            🛠 Floor maker
+            🛠 {t('Floor maker')}
           </button>
         )}
       </div>

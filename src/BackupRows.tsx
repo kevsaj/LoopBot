@@ -4,6 +4,7 @@
 import { useState } from 'react';
 import { fx } from './audio/feedback';
 import { makeBackupCode, readBackupCode, restoreBackupCode } from './storage/backup';
+import { t } from './i18n';
 
 async function copyText(text: string): Promise<boolean> {
   try {
@@ -45,12 +46,12 @@ export function BackupRows() {
   const restore = () => {
     if (!readBackupCode(paste)) {
       fx.denied();
-      setError("That code doesn't look right. Check that you copied all of it.");
+      setError(t("That code doesn't look right. Check that you copied all of it."));
       return;
     }
-    if (!window.confirm('Replace the progress on this device with the progress in this code?')) return;
+    if (!window.confirm(t('Replace the progress on this device with the progress in this code?'))) return;
     const r = restoreBackupCode(paste);
-    if (!r.ok) return setError(r.reason);
+    if (!r.ok) return setError(t(r.reason));
     fx.tap();
     window.location.reload();
   };
@@ -59,19 +60,19 @@ export function BackupRows() {
     <>
       <div className="set-item">
         <button type="button" className="set-row set-link" onClick={() => void copy()}>
-          <span className="set-label">Copy backup code</span>
-          <span className="set-value">{copied === 'copied' ? 'Copied' : ''}</span>
+          <span className="set-label">{t('Copy backup code')}</span>
+          <span className="set-value">{copied === 'copied' ? t('Copied') : ''}</span>
         </button>
         <p className="set-caption">
           {copied === 'show'
-            ? 'Copy this code somewhere safe:'
-            : 'A code with your floors, stars, hints and streak. Paste it in a note or email it to yourself.'}
+            ? t('Copy this code somewhere safe:')
+            : t('A code with your floors, stars, hints and streak. Paste it in a note or email it to yourself.')}
         </p>
         {copied === 'show' && <textarea className="fb-text backup-code" readOnly value={code} rows={3} onFocus={(e) => e.target.select()} />}
       </div>
       <div className="set-item">
         <button type="button" className="set-row set-link" aria-expanded={restoring} onClick={() => (fx.tap(), setRestoring(!restoring), setError(''))}>
-          <span className="set-label">Restore from a backup code</span>
+          <span className="set-label">{t('Restore from a backup code')}</span>
           <span className="set-chevron" aria-hidden="true">
             {restoring ? '⌄' : '›'}
           </span>
@@ -81,7 +82,7 @@ export function BackupRows() {
             <textarea
               className="fb-text backup-code"
               rows={3}
-              placeholder="Paste your code (starts with LB1-)"
+              placeholder={t('Paste your code (starts with LB1-)')}
               value={paste}
               onChange={(e) => (setPaste(e.target.value), setError(''))}
               autoCapitalize="off"
@@ -90,11 +91,11 @@ export function BackupRows() {
             />
             {error && <p className="set-caption fb-error">{error}</p>}
             <button type="button" className="pill primary" disabled={!paste.trim()} onClick={restore}>
-              Restore
+              {t('Restore')}
             </button>
           </div>
         ) : (
-          <p className="set-caption">For a new phone or after reinstalling. Replaces the progress on this device.</p>
+          <p className="set-caption">{t('For a new phone or after reinstalling. Replaces the progress on this device.')}</p>
         )}
       </div>
     </>

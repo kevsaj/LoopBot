@@ -410,8 +410,8 @@ select:focus-visible {
   border-left: 6px solid var(--tone, var(--line));
 }
 .row.cancels .line-tile::after {
-  /* These turns undo each other. */
-  content: '↻↺ cancel out';
+  /* These turns undo each other (the words come from the program, in the player's language). */
+  content: attr(data-cancel);
   margin-left: auto;
   padding: 2px 8px;
   border-radius: 8px;
@@ -3468,4 +3468,27 @@ button.set-row {
 .mk-chip.danger {
   border-color: #e0566a;
   box-shadow: inset 0 -2px 0 #e0566a;
+}
+
+/* --- French ---
+   French runs about a third longer than English. These rules only apply when the page is in
+   French (index.html gets lang="fr-CA"), so English screens stay exactly as they were. */
+:lang(fr) .chip {
+  white-space: normal;
+  line-height: 1.1;
+  text-align: center;
+  font-size: 11px;
+}
+:lang(fr) .run-controls .pill {
+  white-space: nowrap;
+  padding: 0 4px;
+}
+:lang(fr) .results-actions {
+  flex-wrap: wrap;
+}
+:lang(fr) .results-actions .pill.primary {
+  flex-basis: 100%;
+}
+:lang(fr) .row.cancels .line-tile::after {
+  white-space: nowrap;
 }

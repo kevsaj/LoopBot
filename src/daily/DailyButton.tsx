@@ -6,6 +6,7 @@ import type { Progress } from '../progress';
 import type { DailyState } from './index';
 import { DAILY_UNLOCK_FLOOR, DIFFICULTY_LABEL, currentStreak, dailyUnlocked, dateKey, difficultyOn, streakNeedsFreeze } from './index';
 import { fx } from '../audio/feedback';
+import { t, tn } from '../i18n';
 
 interface Props {
   className: string;
@@ -37,8 +38,8 @@ export function DailyButton({ className, progress, daily, onOpen }: Props) {
           window.setTimeout(() => setShake(false), 420);
         }}
       >
-        <span className="daily-main">Daily challenge</span>
-        <span className="daily-sub">Opens after Floor {DAILY_UNLOCK_FLOOR}</span>
+        <span className="daily-main">{t('Daily challenge')}</span>
+        <span className="daily-sub">{t('Opens after Floor {n}', { n: DAILY_UNLOCK_FLOOR })}</span>
       </button>
     );
   }
@@ -47,14 +48,22 @@ export function DailyButton({ className, progress, daily, onOpen }: Props) {
       type="button"
       className={`pill daily-btn ${className}${best ? ' done' : ''}${atRisk ? ' at-risk' : ''}`}
       onClick={() => (fx.tap(), onOpen())}
-      aria-label={`Daily challenge, ${DIFFICULTY_LABEL[diff]}${best ? `, cleared today with ${best} stars` : ''}${streak ? `, ${streak} day streak` : ''}${daily.freezes ? `, ${daily.freezes} streak freeze${daily.freezes > 1 ? 's' : ''}` : ''}`}
+      aria-label={[
+        t('Daily challenge'),
+        t(DIFFICULTY_LABEL[diff]),
+        best ? tn(best, 'cleared today with {n} star', 'cleared today with {n} stars') : '',
+        streak ? tn(streak, '{n}-day streak', '{n}-day streak') : '',
+        daily.freezes ? tn(daily.freezes, '{n} streak freeze', '{n} streak freezes') : '',
+      ]
+        .filter(Boolean)
+        .join(', ')}
     >
       <span className="daily-main">
         <span className="daily-cal" aria-hidden="true">
           {Number(today.slice(8))}
         </span>
-        Daily challenge
-        <span className={`daily-diff diff-${diff}`}>{DIFFICULTY_LABEL[diff]}</span>
+        {t('Daily challenge')}
+        <span className={`daily-diff diff-${diff}`}>{t(DIFFICULTY_LABEL[diff])}</span>
       </span>
       <span className="daily-sub">
         {best ? (
@@ -66,11 +75,11 @@ export function DailyButton({ className, progress, daily, onOpen }: Props) {
             ))}
           </span>
         ) : (
-          <span>{needsFreeze ? 'A freeze is holding your streak' : atRisk ? 'Keep your streak alive' : 'New puzzle today'}</span>
+          <span>{needsFreeze ? t('A freeze is holding your streak') : atRisk ? t('Keep your streak alive') : t('New puzzle today')}</span>
         )}
         {streak > 0 && <span className="daily-streak">🔥 {streak}</span>}
         {(daily.freezes ?? 0) > 0 && (
-          <span className="daily-freeze" title="Streak freezes: each one covers a missed day">
+          <span className="daily-freeze" title={t('Streak freezes: each one covers a missed day')}>
             🧊 {daily.freezes}
           </span>
         )}

@@ -7,6 +7,8 @@ import type { DailyState } from './index';
 import { ARCHIVE_DAYS, DIFFICULTY_LABEL, archiveDates, difficultyOn, shortDate } from './index';
 import { PLUS_VISIBLE, STORE_AVAILABLE, plusUnlocked } from '../store/purchases';
 import { PlusSheet } from '../store/PlusSheet';
+import { t, tn } from '../i18n';
+import { rich } from '../i18n/rich';
 
 interface Props {
   daily: DailyState;
@@ -22,26 +24,26 @@ export function DailyArchive({ daily, onPlay, onClose }: Props) {
 
   return (
     <div className="results-backdrop settings-screen" onClick={onClose}>
-      <div className="settings daily-archive" role="dialog" aria-label="Daily archive" onClick={(e) => e.stopPropagation()}>
+      <div className="settings daily-archive" role="dialog" aria-label={t('Daily archive')} onClick={(e) => e.stopPropagation()}>
         <header className="settings-head">
-          <button type="button" className="settings-close" aria-label="Close" onClick={() => (fx.tap(), onClose())}>
+          <button type="button" className="settings-close" aria-label={t('Close')} onClick={() => (fx.tap(), onClose())}>
             ✕
           </button>
-          <h2>Daily archive</h2>
+          <h2>{t('Daily archive')}</h2>
         </header>
         <div className="settings-body">
           {owned ? (
             <p className="set-caption">
-              The last {ARCHIVE_DAYS} days of puzzles. You've cleared {cleared} of them. Replays keep their stars but don't change your streak.
+              {t("The last {days} days of puzzles. You've cleared {n} of them. Replays keep their stars but don't change your streak.", { days: ARCHIVE_DAYS, n: cleared })}
             </p>
           ) : (
             <div className="archive-locked">
               <p className="plus-lede">
-                Missed a day? With LoopBot <span className="plus-word">Plus</span> you can replay the last {ARCHIVE_DAYS} daily puzzles.
+                {rich(t('Missed a day? With LoopBot {plus} you can replay the last {days} daily puzzles.', { days: ARCHIVE_DAYS }), { plus: <span className="plus-word">Plus</span> })}
               </p>
               {PLUS_VISIBLE && STORE_AVAILABLE && (
                 <button type="button" className="pill primary plus-buy" onClick={() => (fx.tap(), setPlusSheet(true))}>
-                  See LoopBot Plus
+                  {t('See LoopBot Plus')}
                 </button>
               )}
             </div>
@@ -56,7 +58,7 @@ export function DailyArchive({ daily, onPlay, onClose }: Props) {
                     type="button"
                     className={`archive-day${best ? ' done' : ''}${owned ? '' : ' locked'}`}
                     aria-disabled={!owned}
-                    aria-label={`${shortDate(d)}, ${DIFFICULTY_LABEL[diff]}${best ? `, ${best} stars` : ', not cleared'}${owned ? '' : ', needs Plus'}`}
+                    aria-label={[shortDate(d), t(DIFFICULTY_LABEL[diff]), best ? tn(best, '{n} star', '{n} stars') : t('not cleared'), owned ? '' : t('needs Plus')].filter(Boolean).join(', ')}
                     onClick={() => {
                       if (!owned) return fx.denied();
                       fx.tap();
@@ -64,9 +66,9 @@ export function DailyArchive({ daily, onPlay, onClose }: Props) {
                     }}
                   >
                     <span className="ad-date">{shortDate(d)}</span>
-                    <span className={`daily-diff diff-${diff}`}>{DIFFICULTY_LABEL[diff]}</span>
+                    <span className={`daily-diff diff-${diff}`}>{t(DIFFICULTY_LABEL[diff])}</span>
                     <span className="ad-stars" aria-hidden="true">
-                      {best ? [1, 2, 3].map((i) => <span key={i} className={i <= best ? 'on' : ''}>★</span>) : owned ? 'Play ›' : '🔒'}
+                      {best ? [1, 2, 3].map((i) => <span key={i} className={i <= best ? 'on' : ''}>★</span>) : owned ? t('Play ›') : '🔒'}
                     </span>
                   </button>
                 </li>

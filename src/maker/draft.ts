@@ -5,6 +5,7 @@ import type { Facing, Goal, LevelFile, PaletteCommand, Sensor } from '../sim/typ
 import { validateLevel } from '../levels/validate';
 import { cleanTitle } from './shareCode';
 import { markSavesDirty } from '../storage/persist';
+import { msg, t, tn } from '../i18n';
 
 export const MAKER = import.meta.env.DEV || import.meta.env.VITE_MAKER === '1';
 
@@ -51,11 +52,11 @@ export const ALL_COMMANDS: PaletteCommand[] = [
 ];
 export const MAKER_SENSORS: Sensor[] = ['box_ahead', 'carrying', 'on_target', 'on_switch', 'tile_is'];
 export const LOOKS = [
-  { band: 'lobby', label: 'Lobby' },
-  { band: 'maintenance', label: 'Maintenance' },
-  { band: 'workshop', label: 'Workshop' },
-  { band: 'control', label: 'Control Room' },
-  { band: 'rooftop', label: 'Rooftop' },
+  { band: 'lobby', label: msg('Lobby') },
+  { band: 'maintenance', label: msg('Maintenance') },
+  { band: 'workshop', label: msg('Workshop') },
+  { band: 'control', label: msg('Control Room') },
+  { band: 'rooftop', label: msg('Rooftop') },
 ];
 
 const grid = <T>(w: number, h: number, v: T): T[][] => Array.from({ length: h }, () => Array.from({ length: w }, () => v));
@@ -64,7 +65,8 @@ export function newDraft(): Draft {
   const tiles = grid(5, 5, '.');
   tiles[4][4] = 'e';
   return {
-    title: 'My floor',
+    // Share codes only carry plain letters, so a translation of this must too (see cleanTitle).
+    title: t('My floor'),
     band: 'lobby',
     w: 5,
     h: 5,
@@ -223,14 +225,18 @@ export function toLevel(d: Draft, id = 'maker'): LevelFile {
 export function problems(d: Draft): string[] {
   const out: string[] = [];
   const flat = d.tiles.flat();
-  if (!walkable(d.tiles[d.bot.y]?.[d.bot.x] ?? '#')) out.push('LoopBot needs to start on a floor tile, not a wall or a gap.');
-  if (!goalsOf(d).length) out.push('Give the floor a goal: an exit tile, a target or a switch.');
+  if (!walkable(d.tiles[d.bot.y]?.[d.bot.x] ?? '#')) out.push(t('LoopBot needs to start on a floor tile, not a wall or a gap.'));
+  if (!goalsOf(d).length) out.push(t('Give the floor a goal: an exit tile, a target or a switch.'));
   const boxes = Object.values(d.boxes).reduce((a, b) => a + b, 0);
   const need = Object.values(d.targets).reduce((a, b) => a + b, 0);
   if (goalsOf(d).includes('all_targets_filled') && boxes < need)
-    out.push(`The targets need ${need} ${need === 1 ? 'box' : 'boxes'}, but the floor has ${boxes ? `only ${boxes}` : 'none'}.`);
-  if (flat.includes('d') && !flat.includes('s')) out.push('Doors open with a switch. Add a switch, or take the door away.');
-  if (!d.commands.some((c) => c === 'forward' || c === 'jump')) out.push('Allow forward or jump, or LoopBot can never move.');
+    out.push(
+      boxes
+        ? tn(need, 'The targets need {n} box, but the floor has only {have}.', 'The targets need {n} boxes, but the floor has only {have}.', { have: boxes })
+        : tn(need, 'The targets need {n} box, but the floor has none.', 'The targets need {n} boxes, but the floor has none.'),
+    );
+  if (flat.includes('d') && !flat.includes('s')) out.push(t('Doors open with a switch. Add a switch, or take the door away.'));
+  if (!d.commands.some((c) => c === 'forward' || c === 'jump')) out.push(t('Allow forward or jump, or LoopBot can never move.'));
   if (!out.length) {
     const errs = validateLevel(toLevel(d), { custom: true });
     if (errs.length) out.push(...errs.map((e) => e.replace(/^[^:]*: /, '')));

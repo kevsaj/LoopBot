@@ -4,6 +4,7 @@
 
 import type { Action, Block, LevelFile, Program, Routine, World } from './types';
 import { applyAction, cloneWorld, createWorld, goalsMet, sense } from './world';
+import { msg } from '../i18n';
 
 export const STEP_LIMIT = 500; // CR-9
 export const CALL_DEPTH_LIMIT = 32; // CR-6
@@ -48,7 +49,7 @@ function* runBlocks(
   ticks: { n: number },
 ): Generator<Yielded, void, void> {
   for (const block of blocks) {
-    if (++ticks.n > TICK_LIMIT) throw new Halt('ERR: step limit, possible endless loop', block.id);
+    if (++ticks.n > TICK_LIMIT) throw new Halt(msg('ERR: step limit, possible endless loop'), block.id);
     switch (block.kind) {
       case 'action': {
         const res = applyAction(world, block.action);
@@ -75,12 +76,12 @@ function* runBlocks(
         break;
       case 'while':
         while (sense(world, block.cond)) {
-          if (++ticks.n > TICK_LIMIT) throw new Halt('ERR: step limit, possible endless loop', block.id);
+          if (++ticks.n > TICK_LIMIT) throw new Halt(msg('ERR: step limit, possible endless loop'), block.id);
           yield* runBlocks(program, world, block.body, routine, callStack, ticks);
         }
         break;
       case 'call':
-        if (callStack.length >= CALL_DEPTH_LIMIT) throw new Halt('ERR: too many nested calls', block.id);
+        if (callStack.length >= CALL_DEPTH_LIMIT) throw new Halt(msg('ERR: too many nested calls'), block.id);
         yield* runBlocks(program, world, program[block.fn], block.fn, [...callStack, block.id], ticks);
         break;
     }
@@ -139,7 +140,7 @@ export class Runner {
       this.finish({
         status: 'crashed',
         steps: this.steps,
-        error: 'ERR: step limit, possible endless loop',
+        error: msg('ERR: step limit, possible endless loop'),
         blockId: ev.blockId,
       });
     }

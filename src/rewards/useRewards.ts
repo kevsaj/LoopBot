@@ -8,6 +8,7 @@ import type { DailyState } from '../daily';
 import { ACHIEVEMENTS, earnedIds } from './achievements';
 import type { Stats } from './achievements';
 import { partName, unlockedParts } from './looks';
+import { t } from '../i18n';
 
 const KEY = 'loopbot.rewardsSeen';
 
@@ -56,9 +57,9 @@ export function useRewards(floors: string[], progress: Progress, daily: DailySta
     const next: Toast[] = fresh.map((k) => {
       if (k.startsWith('ach:')) {
         const a = ACHIEVEMENTS.find((x) => `ach:${x.id}` === k)!;
-        return { id: k, icon: a.icon, text: `Achievement: ${a.title}` };
+        return { id: k, icon: a.icon, text: t('Achievement: {title}', { title: t(a.title) }) };
       }
-      return { id: k, icon: '🎨', text: `New look: ${partName(k)}` };
+      return { id: k, icon: '🎨', text: t('New look: {name}', { name: partName(k) }) };
     });
     setToasts((t) => [...t, ...next]);
     // achievements count as seen once toasted; new looks stay "new" until the Locker opens

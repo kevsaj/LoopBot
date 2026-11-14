@@ -16,6 +16,8 @@ import { BackupRows } from './BackupRows';
 import { ReminderRows } from './ReminderRows';
 import type { FeedbackContext } from './telemetry';
 import { TELEMETRY_AVAILABLE, setStatsOn, statsOn } from './telemetry';
+import { LANGUAGES, deviceLang, langPref, setLangPref, t } from './i18n';
+import type { LangPref } from './i18n';
 
 /** LoopBot's pages on the KIS Studios site, also linked from the Google Play listing. */
 export const SITE = 'https://www.kisstudios.net/loopbot';
@@ -50,6 +52,37 @@ function LinkRow({ href, children, value }: { href: string; children: ReactNode;
   );
 }
 
+/** Settings > Language: follow the phone, or pick one. Each language is named in itself. */
+function LanguageRow() {
+  const [pref, setPref] = useState<LangPref>(langPref);
+  const device = LANGUAGES.find((l) => l.code === deviceLang())?.name ?? 'English';
+  return (
+    <div className="set-item">
+      <label className="set-row">
+        <span className="set-label">{t('Language')}</span>
+        <select
+          className="set-select"
+          value={pref}
+          onChange={(e) => {
+            const next = e.target.value as LangPref;
+            fx.tap();
+            setPref(next);
+            setLangPref(next);
+          }}
+        >
+          <option value="auto">{t('Automatic ({language})', { language: device })}</option>
+          {LANGUAGES.map((l) => (
+            <option key={l.code} value={l.code} lang={l.code}>
+              {l.name}
+            </option>
+          ))}
+        </select>
+      </label>
+      <p className="set-caption">{t("Automatic follows your device's language.")}</p>
+    </div>
+  );
+}
+
 export function SettingsSheet({ progress, setProgress, onClose, floor, floorTitle }: Props) {
   const [sound, setSound] = useState(!isMuted());
   const [music, setMusic] = useState(musicOn());
@@ -61,19 +94,20 @@ export function SettingsSheet({ progress, setProgress, onClose, floor, floorTitl
   return (
     // The backdrop class lets Android's Back close this screen like any other sheet.
     <div className="results-backdrop settings-screen" onClick={onClose}>
-      <div className="settings" role="dialog" aria-label="Settings" onClick={(e) => e.stopPropagation()}>
+      <div className="settings" role="dialog" aria-label={t('Settings')} onClick={(e) => e.stopPropagation()}>
         <header className="settings-head">
-          <button type="button" className="settings-close" aria-label="Close settings" onClick={() => (fx.tap(), onClose())}>
+          <button type="button" className="settings-close" aria-label={t('Close settings')} onClick={() => (fx.tap(), onClose())}>
             ✕
           </button>
-          <h2>Settings</h2>
+          <h2>{t('Settings')}</h2>
         </header>
 
         <div className="settings-body">
-          <h3 className="set-section">General</h3>
+          <h3 className="set-section">{t('General')}</h3>
+          <LanguageRow />
           <Toggle
-            label="Music"
-            caption="A theme for each part of the tower"
+            label={t('Music')}
+            caption={t('A theme for each part of the tower')}
             on={music}
             onChange={(on) => {
               setMusicOn(on);
@@ -82,8 +116,8 @@ export function SettingsSheet({ progress, setProgress, onClose, floor, floorTitl
             }}
           />
           <Toggle
-            label="Sound effects"
-            caption="Clicks, LoopBot's chirps and the fanfare when you clear a floor"
+            label={t('Sound effects')}
+            caption={t("Clicks, LoopBot's chirps and the fanfare when you clear a floor")}
             on={sound}
             onChange={(on) => {
               setMuted(!on);
@@ -92,8 +126,8 @@ export function SettingsSheet({ progress, setProgress, onClose, floor, floorTitl
             }}
           />
           <Toggle
-            label="Vibration"
-            caption="A small buzz on taps, bumps and cleared floors"
+            label={t('Vibration')}
+            caption={t('A small buzz on taps, bumps and cleared floors')}
             on={haptics}
             onChange={(on) => {
               setHapticsOn(on);
@@ -102,8 +136,8 @@ export function SettingsSheet({ progress, setProgress, onClose, floor, floorTitl
             }}
           />
           <Toggle
-            label="Larger text"
-            caption="Bigger text for the program, the palette, the story and the menus"
+            label={t('Larger text')}
+            caption={t('Bigger text for the program, the palette, the story and the menus')}
             on={bigText}
             onChange={(on) => {
               setBigText(on);
@@ -112,8 +146,8 @@ export function SettingsSheet({ progress, setProgress, onClose, floor, floorTitl
             }}
           />
           <Toggle
-            label="Tutorial tips"
-            caption="Step-by-step tips on the first floors of each new idea"
+            label={t('Tutorial tips')}
+            caption={t('Step-by-step tips on the first floors of each new idea')}
             on={progress.tutorial}
             onChange={(on) => setProgress((p) => ({ ...p, tutorial: on }))}
           />
@@ -122,14 +156,14 @@ export function SettingsSheet({ progress, setProgress, onClose, floor, floorTitl
 
           {SHOP_OPEN && <PurchaseRows hints={progress.hints} />}
 
-          <h3 className="set-section">Your progress</h3>
+          <h3 className="set-section">{t('Your progress')}</h3>
           <BackupRows />
 
-          <h3 className="set-section">Privacy</h3>
+          <h3 className="set-section">{t('Privacy')}</h3>
           {TELEMETRY_AVAILABLE && (
             <Toggle
-              label="Share anonymous stats"
-              caption="Which floors are tricky (runs, hints, time per floor), so we can make them better. No name, email or account."
+              label={t('Share anonymous stats')}
+              caption={t('Which floors are tricky (runs, hints, time per floor), so we can make them better. No name, email or account.')}
               on={stats}
               onChange={(on) => {
                 setStatsOn(on);
@@ -139,32 +173,32 @@ export function SettingsSheet({ progress, setProgress, onClose, floor, floorTitl
             />
           )}
           <div className="set-item">
-            <LinkRow href={`${SITE}/privacy`}>Privacy policy</LinkRow>
-            <p className="set-caption">LoopBot collects no personal data. Your progress stays on this device.</p>
+            <LinkRow href={`${SITE}/privacy`}>{t('Privacy policy')}</LinkRow>
+            <p className="set-caption">{t('LoopBot collects no personal data. Your progress stays on this device.')}</p>
           </div>
           <div className="set-item">
-            <LinkRow href={`${SITE}/terms`}>Terms of service</LinkRow>
+            <LinkRow href={`${SITE}/terms`}>{t('Terms of service')}</LinkRow>
           </div>
 
-          <h3 className="set-section">About</h3>
+          <h3 className="set-section">{t('About')}</h3>
           <div className="set-item">
             <button type="button" className="set-row set-link" onClick={() => (fx.tap(), setFeedback(true))}>
-              <span className="set-label">Send feedback</span>
+              <span className="set-label">{t('Send feedback')}</span>
               <span className="set-chevron" aria-hidden="true">
                 ›
               </span>
             </button>
-            <p className="set-caption">Found a bug or stuck on a floor? We read every message.</p>
+            <p className="set-caption">{t('Found a bug or stuck on a floor? We read every message.')}</p>
           </div>
           <div className="set-item">
             <div className="set-row">
-              <span className="set-label">Version</span>
+              <span className="set-label">{t('Version')}</span>
               <span className="set-value">{version}</span>
             </div>
           </div>
           <div className="set-item">
             <LinkRow href="https://www.kisstudios.net/" value="KIS Studios">
-              Made by
+              {t('Made by')}
             </LinkRow>
           </div>
         </div>
@@ -187,24 +221,24 @@ function PurchaseRows({ hints }: { hints: number }) {
     const r = await restorePurchases();
     setBusy(false);
     if (r === 'restored') setOwned(true);
-    setNote(r === 'restored' ? 'LoopBot Plus restored.' : r === 'nothing' ? 'No purchases found for this store account.' : "Couldn't reach the store. Try again later.");
+    setNote(r === 'restored' ? t('LoopBot Plus restored.') : r === 'nothing' ? t('No purchases found for this store account.') : t("Couldn't reach the store. Try again later."));
   };
   return (
     <>
-      <h3 className="set-section">Subscriptions &amp; Purchases</h3>
+      <h3 className="set-section">{t('Subscriptions & Purchases')}</h3>
       <div className="set-item">
         <button type="button" className="set-row set-link" onClick={() => (fx.tap(), setSheet(true))}>
           <span className="set-label">LoopBot Plus</span>
-          <span className="set-value">{owned ? 'Owned ✓' : 'Get'}</span>
+          <span className="set-value">{owned ? t('Owned ✓') : t('Get')}</span>
           <span className="set-chevron" aria-hidden="true">
             ›
           </span>
         </button>
-        <p className="set-caption">Frostline, Plus looks, the daily archive, more streak freezes and 20 hints. One purchase, no subscription.</p>
+        <p className="set-caption">{t('Frostline, Plus looks, the daily archive, more streak freezes and 20 hints. One purchase, no subscription.')}</p>
       </div>
       <div className="set-item">
         <button type="button" className="set-row set-link" onClick={() => (fx.tap(), setShop(true))}>
-          <span className="set-label">Hint packs</span>
+          <span className="set-label">{t('Hint packs')}</span>
           <span className="set-value">{hints} 💡</span>
           <span className="set-chevron" aria-hidden="true">
             ›
@@ -213,9 +247,9 @@ function PurchaseRows({ hints }: { hints: number }) {
       </div>
       <div className="set-item">
         <button type="button" className="set-row set-link" onClick={restore} disabled={busy}>
-          <span className="set-label">Restore purchases</span>
+          <span className="set-label">{t('Restore purchases')}</span>
         </button>
-        <p className="set-caption">{note ?? 'Bought Plus on another device or reinstalled? Restore it here.'}</p>
+        <p className="set-caption">{note ?? t('Bought Plus on another device or reinstalled? Restore it here.')}</p>
       </div>
       {shop && <HintShop hints={hints} onClose={() => setShop(false)} />}
       {sheet && (

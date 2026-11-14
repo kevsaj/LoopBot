@@ -4,7 +4,7 @@
 import { useEffect, useState } from 'react';
 import { fx } from '../audio/feedback';
 
-const SPEAKER = /^(PATCH|VANTA)\b:?\s*/;
+const SPEAKER = /^(PATCH|VANTA)\b\s*:?\s*/;
 
 /** Tiny in-house portraits: PATCH is an old radio terminal, VANTA a single red eye on a PA screen. */
 export function Portrait({ who }: { who: string }) {

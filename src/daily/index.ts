@@ -8,6 +8,7 @@ import type { DailyEntry, Difficulty } from './entry';
 import { DEMO } from '../demo';
 import { bankIndex, dateKey, dayNumber, difficultyFor, keyFromDay } from './calendar';
 import { markSavesDirty } from '../storage/persist';
+import { lang, msg, t, tn } from '../i18n';
 
 export { dateKey } from './calendar';
 export type { Difficulty } from './entry';
@@ -134,7 +135,7 @@ export function streakNeedsFreeze(s: DailyState, today: string = dateKey()): boo
   return gap > 1 && gap - 1 <= (s.freezes ?? 0);
 }
 
-export const DIFFICULTY_LABEL: Record<Difficulty, string> = { easy: 'Easy', medium: 'Medium', hard: 'Hard' };
+export const DIFFICULTY_LABEL: Record<Difficulty, string> = { easy: msg('Easy'), medium: msg('Medium'), hard: msg('Hard') };
 
 export function difficultyOn(date: string): Difficulty {
   return difficultyFor(dayNumber(date));
@@ -143,7 +144,7 @@ export function difficultyOn(date: string): Difficulty {
 /** "Sun, Nov 8" */
 export function shortDate(date: string): string {
   const [y, m, d] = date.split('-').map(Number);
-  return new Date(y, m - 1, d).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+  return new Date(y, m - 1, d).toLocaleDateString(lang() === 'fr' ? 'fr-CA' : 'en-US', { weekday: 'short', month: 'short', day: 'numeric' });
 }
 
 export const isDailyId = (id: string) => id.startsWith('daily-');
@@ -160,17 +161,18 @@ function loadBank(): Promise<DailyEntry[]> {
 export async function dailyLevel(date: string): Promise<LevelFile> {
   const entries = await loadBank();
   const level = expandDaily(entries[bankIndex(date) % entries.length], `daily-${date}`);
-  return { ...level, story: { intro: `PATCH: "${INTROS[dayNumber(date) % INTROS.length]}"`, outro: null } };
+  const line = t(INTROS[dayNumber(date) % INTROS.length]);
+  return { ...level, story: { intro: lang() === 'fr' ? `PATCH : « ${line} »` : `PATCH: "${line}"`, outro: null } };
 }
 
 const INTROS = [
-  "Today's signal just came in. Same puzzle for every bot in the city.",
-  'Fresh floor plan from the Spire archive. Loop it if you can.',
-  "VANTA scrambled a service level overnight. Let's unscramble it.",
-  'One puzzle, one day. Hit par and the whole city hears about it.',
-  'New day, new route. Spot the pattern before you build.',
-  "I found a floor that isn't on any map. Want a look?",
-  "Daily drill, rookie. Keep the streak alive.",
+  msg("Today's signal just came in. Same puzzle for every bot in the city."),
+  msg('Fresh floor plan from the Spire archive. Loop it if you can.'),
+  msg("VANTA scrambled a service level overnight. Let's unscramble it."),
+  msg('One puzzle, one day. Hit par and the whole city hears about it.'),
+  msg('New day, new route. Spot the pattern before you build.'),
+  msg("I found a floor that isn't on any map. Want a look?"),
+  msg('Daily drill, rookie. Keep the streak alive.'),
 ];
 
 /**
@@ -206,10 +208,10 @@ export function pruneOldDailies(today: string, p: Progress, playing: string = to
 /** The result line players can share: no spoilers, just how they did. */
 export function shareText(date: string, level: LevelFile, stars: number, commands: number, streak: number): string {
   const lines = [
-    `LoopBot Daily · ${shortDate(date)} · ${DIFFICULTY_LABEL[difficultyOn(date)]}`,
-    `${'★'.repeat(stars)}${'☆'.repeat(3 - stars)}  ${commands} commands (par ${level.par.commands})`,
+    `${t('LoopBot Daily')} · ${shortDate(date)} · ${t(DIFFICULTY_LABEL[difficultyOn(date)])}`,
+    `${'★'.repeat(stars)}${'☆'.repeat(3 - stars)}  ${tn(commands, '{n} command (par {par})', '{n} commands (par {par})', { par: level.par.commands })}`,
   ];
-  if (streak > 1) lines.push(`🔥 ${streak}-day streak`);
+  if (streak > 1) lines.push(`🔥 ${tn(streak, '{n}-day streak', '{n}-day streak')}`);
   return lines.join('\n');
 }
 

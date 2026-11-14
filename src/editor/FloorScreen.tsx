@@ -31,6 +31,7 @@ import { cancellingTurns, stepLine, tutorialStep, TUTORIAL_TEXT } from './tutori
 import { track } from '../telemetry';
 import { FeedbackSheet } from '../FeedbackSheet';
 import { DIFFICULTY_LABEL, difficultyOn, shareText, shortDate } from '../daily';
+import { t, tn } from '../i18n';
 
 const SPEEDS = [
   { label: '1x', ms: 520 },
@@ -83,6 +84,17 @@ export interface DailyProps {
   onClear(stars: number): void;
 }
 
+/** A crash line in the current language: "ERR: blocked ahead at step 4". */
+function runError(error: string): string {
+  const m = /^(.*) at step (\d+)$/.exec(error);
+  return m ? t('{error} at step {n}', { error: t(m[1]), n: m[2] }) : t(error);
+}
+
+/** A routine's tab name: Main, F1, F2, F3. */
+export function routineName(r: Routine): string {
+  return r === 'main' ? t('Main') : r;
+}
+
 export function stars(level: LevelFile, commands: number, steps: number) {
   if (commands <= level.par.commands && steps <= level.par.steps) return 3;
   if (commands <= level.par.commands) return 2;
@@ -128,7 +140,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
   const [steps, setSteps] = useState(0);
   const [activeIds, setActiveIds] = useState<Set<string>>(new Set());
   const [crashId, setCrashId] = useState<string | null>(null);
-  const [terminal, setTerminal] = useState<string>(level.story.intro ?? '> ready');
+  const [terminal, setTerminal] = useState<string>(() => level.story.intro ?? t('> ready'));
   const [outcome, setOutcome] = useState<Outcome | null>(null);
   const [showResults, setShowResults] = useState(false);
   // Best stars before the latest clear, so the results card can say "New best!".
@@ -172,7 +184,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
       setOutcome(null);
       setShowResults(false);
       setBoard({ world: createWorld(level), stepMs: 0 });
-      if (!quiet) setTerminal('> reset');
+      if (!quiet) setTerminal(t('> reset'));
     },
     [level],
   );
@@ -186,7 +198,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
       programRef.current = program;
       if (runner.current) {
         // Say why the run stopped, unless the edit already says what happened (Clear, typed code).
-        if (playingRef.current) setTerminal('> program changed: run stopped');
+        if (playingRef.current) setTerminal(t('> program changed: run stopped'));
         reset(true);
       }
     }
@@ -230,13 +242,13 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
       track({ type: 'run', floor: level.id, result: o.status, commands: countCommands(program), steps: o.steps, run: v.runs });
       if (o.status === 'crashed') {
         setCrashId(o.blockId);
-        setTerminal(o.error);
+        setTerminal(runError(o.error));
         fx.crash();
         fx.voice('uhoh', 0.35);
         fail();
       } else if (o.status === 'cleared') {
         const s = stars(level, countCommands(program), o.steps);
-        setTerminal(`> floor cleared in ${o.steps} steps`);
+        setTerminal(tn(o.steps, '> floor cleared in {n} step', '> floor cleared in {n} steps'));
         fx.win();
         fx.voice('yay', 0.55);
         if (customRef.current) {
@@ -262,8 +274,8 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
         setActiveIds(new Set());
         setTerminal(
           cancellingTurns(program).length
-            ? `> program ended after ${o.steps} steps. Two turns in your program cancel out, so LoopBot ends up facing the same way.`
-            : `> program ended after ${o.steps} steps. Not there yet: add more commands.`,
+            ? tn(o.steps, '> program ended after {n} step. Two turns in your program cancel out, so LoopBot ends up facing the same way.', '> program ended after {n} steps. Two turns in your program cancel out, so LoopBot ends up facing the same way.')
+            : tn(o.steps, '> program ended after {n} step. Not there yet: add more commands.', '> program ended after {n} steps. Not there yet: add more commands.'),
         );
         fx.denied();
         fail();
@@ -286,17 +298,17 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
     fx.tap();
     if (playing) {
       setPlaying(false); // Pause
-      setTerminal('> paused');
+      setTerminal(t('> paused'));
       return;
     }
     if (program.main.length === 0) {
-      setTerminal('> the program is empty. Tap a command below to add it.');
+      setTerminal(t('> the program is empty. Tap a command below to add it.'));
       fx.denied();
       return;
     }
     if (!runner.current || runner.current.done) {
       reset(true);
-      setTerminal('> running');
+      setTerminal(t('> running'));
     }
     setHasRun(true);
     setPlaying(true);
@@ -308,7 +320,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
     fx.tap();
     setPlaying(false);
     if (program.main.length === 0) {
-      setTerminal('> the program is empty. Tap a command below to add it.');
+      setTerminal(t('> the program is empty. Tap a command below to add it.'));
       fx.denied();
       return;
     }
@@ -330,17 +342,17 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
   const canAdd = (cmd: PaletteCommand, spot: Spot = cursorSpot()) => {
     if (!level.commands.includes(cmd)) {
       fx.denied();
-      setTerminal(`> ${COMMAND_META[cmd].label} unlocks on a later floor`);
+      setTerminal(t('> {command} unlocks on a later floor', { command: t(COMMAND_META[cmd].label) }));
       return false;
     }
     if (full) {
       fx.denied();
-      setTerminal(`> no empty slots left in ${routine}`);
+      setTerminal(t('> no empty slots left in {routine}', { routine: routineName(routine) }));
       return false;
     }
     if (!canPlace(list, spot, makeBlock(cmd))) {
       fx.denied();
-      setTerminal(`> loops can only nest ${MAX_DEPTH} deep`);
+      setTerminal(t('> loops can only nest {n} deep', { n: MAX_DEPTH }));
       return false;
     }
     return true;
@@ -349,7 +361,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
     if (typing) {
       // The text box would overwrite a block added behind it.
       fx.denied();
-      setTerminal('> finish typing (Use this code or Cancel) to add blocks');
+      setTerminal(t('> finish typing (Use this code or Cancel) to add blocks'));
       return;
     }
     if (!canAdd(cmd)) return;
@@ -379,7 +391,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
     // The slots may have filled up since, or the loop it sat in may be gone.
     if (countBlocks(target) + countBlocks([deleted.block]) > (level.slots[deleted.r] ?? 0)) {
       fx.denied();
-      setTerminal(`> no room to put it back in ${deleted.r}`);
+      setTerminal(t('> no room to put it back in {routine}', { routine: routineName(deleted.r) }));
       return;
     }
     const spot = listAt(target, deleted.spot.parent) ? deleted.spot : { parent: null, index: target.length };
@@ -398,7 +410,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
     setConfirmClear(false);
     editor.clear();
     fx.remove();
-    setTerminal('> program cleared. Undo brings it back.');
+    setTerminal(t('> program cleared. Undo brings it back.'));
   };
 
   const undo = () => {
@@ -465,29 +477,29 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
       <header className="topbar">
         <div className="floor-title">
           {custom ? (
-            <button type="button" className="back-btn" onClick={() => (fx.tap(), onTower())} aria-label={`${custom.back}: back`}>
+            <button type="button" className="back-btn" onClick={() => (fx.tap(), onTower())} aria-label={t('{place}: back', { place: custom.back })}>
               ‹ {custom.back}
             </button>
           ) : daily ? (
-            <button type="button" className="back-btn" onClick={() => (fx.tap(), onTower())} aria-label={`Daily · ${shortDate(daily.date)}: back`}>
-              ‹ Daily · {shortDate(daily.date)}
+            <button type="button" className="back-btn" onClick={() => (fx.tap(), onTower())} aria-label={t('{place}: back', { place: t('Daily · {date}', { date: shortDate(daily.date) }) })}>
+              ‹ {t('Daily · {date}', { date: shortDate(daily.date) })}
             </button>
           ) : (
-            <button type="button" className="back-btn" onClick={() => (fx.tap(), onTower())} aria-label={`Tower · Floor ${floorNumber}: back to the tower map`}>
-              ‹ Tower · Floor {floorNumber}
+            <button type="button" className="back-btn" onClick={() => (fx.tap(), onTower())} aria-label={t('Tower · Floor {n}: back to the tower map', { n: floorNumber })}>
+              ‹ {t('Tower · Floor {n}', { n: floorNumber })}
             </button>
           )}
           <h1 className="floor-name">
             {level.title}
-            {daily && <span className={`daily-diff diff-${difficultyOn(daily.date)}`}>{DIFFICULTY_LABEL[difficultyOn(daily.date)]}</span>}
+            {daily && <span className={`daily-diff diff-${difficultyOn(daily.date)}`}>{t(DIFFICULTY_LABEL[difficultyOn(daily.date)])}</span>}
           </h1>
         </div>
         {level.hints.length > 0 && (
-          <button type="button" className="hint-btn" onClick={() => (fx.tap(), setSheet('hints'))} aria-label={`Hint, ${progress.hints} left`}>
-            Hint <span className="hint-count">{progress.hints}</span>
+          <button type="button" className="hint-btn" onClick={() => (fx.tap(), setSheet('hints'))} aria-label={t('Hint, {n} left', { n: progress.hints })}>
+            {t('Hint')} <span className="hint-count">{progress.hints}</span>
           </button>
         )}
-        <button type="button" className="icon-btn fb-btn" aria-label="Send feedback about this floor" onClick={() => (fx.tap(), setSheet('feedback'))}>
+        <button type="button" className="icon-btn fb-btn" aria-label={t('Send feedback about this floor')} onClick={() => (fx.tap(), setSheet('feedback'))}>
           <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
             <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H10l-4.5 4v-4A2.5 2.5 0 0 1 4 13.5z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
             <circle cx="8.5" cy="9.5" r="1.2" fill="currentColor" />
@@ -495,7 +507,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
             <circle cx="15.5" cy="9.5" r="1.2" fill="currentColor" />
           </svg>
         </button>
-        <button type="button" className="icon-btn" aria-label="Settings" onClick={() => (fx.tap(), setSheet('settings'))}>
+        <button type="button" className="icon-btn" aria-label={t('Settings')} onClick={() => (fx.tap(), setSheet('settings'))}>
           ⚙
         </button>
       </header>
@@ -504,12 +516,13 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
         <Board update={board} rotateSignal={rotateSignal} band={level.band} />
         <div className="step-counter" aria-live="polite">
           <span>
-            {total} / {Object.values(level.slots).reduce((a, b) => a + (b ?? 0), 0)} commands{custom?.noPar ? '' : ` · par ${level.par.commands}`}
+            {t('{used} / {slots} commands', { used: total, slots: Object.values(level.slots).reduce((a, b) => a + (b ?? 0), 0) })}
+            {custom?.noPar ? '' : ` · ${t('par {n}', { n: level.par.commands })}`}
           </span>
-          <span>step {steps}</span>
+          <span>{t('step {n}', { n: steps })}</span>
         </div>
-        <button type="button" className="rotate-btn" onClick={() => (fx.tap(), setRotateSignal((n) => n + 1))} aria-label="Rotate view: turn the camera a quarter turn. LoopBot does not move.">
-          ⟲ Rotate view
+        <button type="button" className="rotate-btn" onClick={() => (fx.tap(), setRotateSignal((n) => n + 1))} aria-label={t('Rotate view: turn the camera a quarter turn. LoopBot does not move.')}>
+          ⟲ {t('Rotate view')}
         </button>
         <Terminal text={terminal} status={status} />
       </section>
@@ -518,47 +531,47 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
         <EditorDnd blocks={list} canAdd={canAdd} onDrop={drop} onMove={(id, to) => (editor.move(routine, id, to), fx.snap())}>
         <div className="run-controls">
           <button type="button" className={`pill primary${playing ? ' on' : ''}${tut === 'run' ? ' pulse' : ''}`} onClick={run}>
-            {playing ? '❚❚ Pause' : '▶ Run'}
+            {playing ? `❚❚ ${t('Pause')}` : `▶ ${t('Run')}`}
           </button>
           <button type="button" className="pill" onClick={step}>
-            ⏭ Step
+            ⏭ {t('Step')}
           </button>
           <button type="button" className="pill" onClick={() => (fx.tap(), reset())}>
-            ⟲ Reset
+            ⟲ {t('Reset')}
           </button>
-          <button type="button" className="pill speed" onClick={() => (fx.tap(), setSpeed((s) => (s + 1) % SPEEDS.length))} aria-label={`Speed ${SPEEDS[speed].label}`}>
+          <button type="button" className="pill speed" onClick={() => (fx.tap(), setSpeed((s) => (s + 1) % SPEEDS.length))} aria-label={t('Speed {speed}', { speed: SPEEDS[speed].label })}>
             {SPEEDS[speed].label}
           </button>
         </div>
 
         <div className="tabs">
-          <div className="tab-list" role="tablist" aria-label="Program">
+          <div className="tab-list" role="tablist" aria-label={t('Program')}>
           {routines.map((r) => (
             <button key={r} type="button" role="tab" aria-selected={tab === r} className={`tab${tab === r ? ' on' : ''}`} onClick={() => (fx.tap(), setShowCode(false), setTyping(0), setRoutine(r))}>
-              {r === 'main' ? 'Main' : r}
+              {routineName(r)}
             </button>
           ))}
           </div>
           <span className="tab-gap" />
-          <button type="button" className="tab-tool" onClick={undo} disabled={!editor.state.past.length} aria-label="Undo">
+          <button type="button" className="tab-tool" onClick={undo} disabled={!editor.state.past.length} aria-label={t('Undo')}>
             ↶
           </button>
-          <button type="button" className="tab-tool" onClick={redo} disabled={!editor.state.future.length} aria-label="Redo">
+          <button type="button" className="tab-tool" onClick={redo} disabled={!editor.state.future.length} aria-label={t('Redo')}>
             ↷
           </button>
           <button type="button" className={`tab-tool clear${confirmClear ? ' confirm' : ''}`} onClick={clear} disabled={total === 0 && !confirmClear}>
-            {confirmClear ? 'Clear all?' : 'Clear'}
+            {confirmClear ? t('Clear all?') : t('Clear')}
           </button>
           <button type="button" aria-pressed={tab === 'code'} className={`tab${tab === 'code' ? ' on' : ''}`} onClick={() => (fx.tap(), setTyping(0), setShowCode((v) => !v))}
-            aria-label={showCode ? 'Code, showing. Tap again to go back to the program' : 'Code'}>
-            Code
+            aria-label={showCode ? t('Code, showing. Tap again to go back to the program') : t('Code')}>
+            {t('Code')}
           </button>
         </div>
 
         <div className="program-wrap">
           {tut && (
             <div className={`tutorial-bubble tut-${tut}`} role="status">
-              {TUTORIAL_TEXT[tut]}
+              {t(TUTORIAL_TEXT[tut])}
             </div>
           )}
           {tab === 'code' && typing ? (
@@ -570,7 +583,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
               onApply={(p, n) => {
                 fx.snap();
                 editor.setProgram(p);
-                setTerminal(`> code loaded: ${n} command${n === 1 ? '' : 's'}`);
+                setTerminal(tn(n, '> code loaded: {n} command', '> code loaded: {n} commands'));
               }}
               onError={(msg) => {
                 fx.denied();
@@ -583,7 +596,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
               <CodeView program={program} routines={routines} activeIds={activeIds} crashId={crashId} />
               {level.typing && (
                 <button type="button" className="pill type-btn" onClick={() => (fx.tap(), reset(true), setTyping((n) => n + 1))}>
-                  ✎ Type code
+                  ✎ {t('Type code')}
                 </button>
               )}
             </>
@@ -617,15 +630,15 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
           )}
           {deleted && (
             <div className="undo-toast" role="status">
-              Deleted {COMMAND_META[blockCommand(deleted.block)].label}
+              {t('Deleted {command}', { command: t(COMMAND_META[blockCommand(deleted.block)].label) })}
               <button type="button" onClick={undoDelete}>
-                Undo
+                {t('Undo')}
               </button>
             </div>
           )}
         </div>
 
-        <div className="palette" aria-label="Commands">
+        <div className="palette" aria-label={t('Commands')}>
           {palette.map((cmd) => {
             const meta = COMMAND_META[cmd];
             const allowed = level.commands.includes(cmd);
@@ -636,13 +649,13 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
                 allowed={allowed && tab !== 'code'}
                 inactive={!allowed || full}
                 className={`chip tone-${meta.tone}${allowed ? '' : ' locked'}${allowed && full ? ' full' : ''}${pulse(cmd) ? ' pulse' : ''}`}
-                label={allowed ? `Add ${meta.label} (tap, or drag it into the program)` : `${meta.label}, locked on this floor`}
+                label={allowed ? t('Add {command} (tap, or drag it into the program)', { command: t(meta.label) }) : t('{command}, locked on this floor', { command: t(meta.label) })}
                 onClick={() => add(cmd)}
               >
                 <span className="glyph" aria-hidden="true">
                   {meta.glyph}
                 </span>
-                <span>{meta.label}</span>
+                <span>{t(meta.label)}</span>
               </PaletteChip>
             );
           })}
@@ -690,10 +703,10 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
             custom
               ? undefined
               : async () => {
-                  const t = towerOf(Number(/^t(\d+)-/.exec(level.id)?.[1] ?? 1));
+                  const tw = towerOf(Number(/^t(\d+)-/.exec(level.id)?.[1] ?? 1));
                   const card = drawShareCard({
-                    title: daily ? `Daily · ${shortDate(daily.date)}` : `Floor ${floorNumber} · ${level.title}`,
-                    subtitle: daily ? `${DIFFICULTY_LABEL[difficultyOn(daily.date)]} puzzle` : `Tower ${t.n} · ${t.name}`,
+                    title: daily ? t('Daily · {date}', { date: shortDate(daily.date) }) : t('Floor {n} · {title}', { n: floorNumber, title: level.title }),
+                    subtitle: daily ? t('{difficulty} puzzle', { difficulty: t(DIFFICULTY_LABEL[difficultyOn(daily.date)]) }) : t('Tower {n} · {name}', { n: tw.n, name: tw.name }),
                     stars: earned,
                     band: level.band,
                     board: await snapshotBoard(),
@@ -709,7 +722,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
                     const text = shareText(daily.date, level, earned, total, daily.streak);
                     return shareImage(png, text, `loopbot-daily-${daily.date}.png`);
                   }
-                  return shareImage(png, `I cleared Floor ${floorNumber} of LoopBot in ${total} commands. Can you do it in fewer?`, `loopbot-floor-${floorNumber}.png`);
+                  return shareImage(png, tn(total, 'I cleared Floor {floor} of LoopBot in {n} command. Can you do it in fewer?', 'I cleared Floor {floor} of LoopBot in {n} commands. Can you do it in fewer?', { floor: floorNumber }), `loopbot-floor-${floorNumber}.png`);
                 }
           }
           daily={

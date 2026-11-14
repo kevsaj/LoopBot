@@ -17,6 +17,7 @@
 
 import type { Facing, Goal, LevelFile, PaletteCommand, Sensor } from '../sim/types';
 import { validateLevel } from '../levels/validate';
+import { msg, t } from '../i18n';
 
 export const CODE_PREFIX = 'LBF1';
 const VERSION = 1;
@@ -170,14 +171,14 @@ export type DecodeResult = { ok: true; level: LevelFile } | { ok: false; error: 
 export function decodeFloor(code: string): DecodeResult {
   try {
     const clean = code.toUpperCase().replace(/[\s-]/g, '');
-    if (!clean.startsWith(CODE_PREFIX)) return { ok: false, error: 'Floor codes start with LBF1.' };
+    if (!clean.startsWith(CODE_PREFIX)) return { ok: false, error: msg('Floor codes start with LBF1.') };
     const all = fromB32(clean.slice(CODE_PREFIX.length));
-    if (all.length < 4) return { ok: false, error: 'The code is too short. Part of it may be missing.' };
+    if (all.length < 4) return { ok: false, error: msg('The code is too short. Part of it may be missing.') };
     const bytes = all.slice(0, -2);
     const s = sum16(bytes);
-    if (all[all.length - 2] !== s >> 8 || all[all.length - 1] !== (s & 255)) return { ok: false, error: "That code doesn't add up. Check for a missing or mistyped letter." };
+    if (all[all.length - 2] !== s >> 8 || all[all.length - 1] !== (s & 255)) return { ok: false, error: msg("That code doesn't add up. Check for a missing or mistyped letter.") };
     const r = new BitReader(bytes);
-    if (r.get(3) !== VERSION) return { ok: false, error: 'That code is from a newer LoopBot. Update the app to play it.' };
+    if (r.get(3) !== VERSION) return { ok: false, error: msg('That code is from a newer LoopBot. Update the app to play it.') };
     const W = r.get(3) + 1;
     const H = r.get(3) + 1;
     const band = BANDS[r.get(4)] ?? 'lobby';
@@ -188,7 +189,7 @@ export function decodeFloor(code: string): DecodeResult {
       let hs = '';
       for (let x = 0; x < W; x++) {
         const t = TILES[r.get(4)];
-        if (!t) return { ok: false, error: "That code doesn't make a floor." };
+        if (!t) return { ok: false, error: msg("That code doesn't make a floor.") };
         row += t;
         hs += String(r.get(2));
       }
@@ -214,7 +215,7 @@ export function decodeFloor(code: string): DecodeResult {
     const title = Array.from({ length: r.get(5) }, () => TITLE_CHARS[r.get(6)]).join('');
     const level: LevelFile = {
       id: 'custom',
-      title: title || 'Custom floor',
+      title: title || t('Custom floor'),
       band,
       size: { w: W, h: H },
       tiles,
@@ -236,7 +237,7 @@ export function decodeFloor(code: string): DecodeResult {
     if (targets.some((t) => t.count < 1)) errs.push('target needs at least one box');
     if (!commands.length) errs.push('no commands');
     for (const fn of ['F1', 'F2'] as const) if (commands.includes(fn) && !slots[fn]) errs.push(`${fn} has no slots`);
-    if (errs.length) return { ok: false, error: "That code doesn't make a playable floor." };
+    if (errs.length) return { ok: false, error: msg("That code doesn't make a playable floor.") };
     return { ok: true, level };
   } catch (err) {
     return { ok: false, error: err instanceof Error && err.message.endsWith('.') ? err.message : "That code doesn't make a floor." };

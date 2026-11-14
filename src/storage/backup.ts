@@ -6,6 +6,7 @@
 // code stays short.
 
 import { applySaves, collectSaves, markSavesDirty } from './persist';
+import { msg } from '../i18n';
 
 const PREFIX = 'LB1-';
 const KEEP = new Set(['loopbot.progress', 'loopbot.daily', 'loopbot.seenUnlocked', 'loopbot.floor', 'loopbot.muted', 'loopbot.haptics', 'loopbot.speed', 'loopbot.look', 'loopbot.rewardsSeen', 'loopbot.interludes', 'loopbot.bigText', 'loopbot.tower', 'loopbot.floor.t2', 'loopbot.seenUnlocked.t2', 'loopbot.floor.t3', 'loopbot.seenUnlocked.t3', 'loopbot.hintLedger']);
@@ -59,7 +60,7 @@ export function readBackupCode(input: string): Record<string, string> | null {
 /** Replaces this device's progress with the code's. The caller reloads the game afterwards. */
 export function restoreBackupCode(input: string): RestoreResult {
   const saves = readBackupCode(input);
-  if (!saves) return { ok: false, reason: "That code doesn't look right. Check that you copied all of it." };
+  if (!saves) return { ok: false, reason: msg("That code doesn't look right. Check that you copied all of it.") };
   const keys = applySaves(saves, false);
   markSavesDirty();
   return { ok: true, keys };

@@ -14,6 +14,7 @@ import type { DropData } from './dnd';
 import { EMPTY_PREFIX, LIST_ID, useDragState } from './dnd';
 import type { EditorRow } from './rows';
 import { flatten, sameSpot, subtreeIds } from './rows';
+import { msg, t, tn } from '../i18n';
 
 interface Props {
   blocks: Block[];
@@ -39,16 +40,16 @@ export function Tile({ block, line, lifted }: { block: Block; line?: number; lif
   const meta = COMMAND_META[blockCommand(block)];
   const inside = childLists(block).reduce((n, c) => n + countBlocks(c.list), 0);
   return (
-    <span className={`line-tile tone-${meta.tone}${lifted ? ' lifted' : ''}`}>
+    <span className={`line-tile tone-${meta.tone}${lifted ? ' lifted' : ''}`} data-cancel={t('↻↺ cancel out')}>
       {line != null && <span className="line-no">{line}</span>}
       <span className="glyph" aria-hidden="true">
         {meta.glyph}
       </span>
-      <span className="line-label">{meta.label}</span>
+      <span className="line-label">{t(meta.label)}</span>
       {lifted && block.kind === 'repeat' && (
         <span className="line-arg">
           × {block.times}
-          {inside ? ` · ${inside} inside` : ''}
+          {inside ? ` · ${t('{n} inside', { n: inside })}` : ''}
         </span>
       )}
     </span>
@@ -142,8 +143,8 @@ function LineRow({
 
   const armed = dx < -SWIPE_DELETE_PX;
   const label =
-    COMMAND_META[blockCommand(block)].label +
-    (block.kind === 'repeat' ? ` ${block.times} times` : block.kind === 'if' || block.kind === 'while' ? ` ${condLabel(block.cond)}` : '');
+    t(COMMAND_META[blockCommand(block)].label) +
+    (block.kind === 'repeat' ? ` ${tn(block.times, '{n} time', '{n} times')}` : block.kind === 'if' || block.kind === 'while' ? ` ${condLabel(block.cond)}` : '');
   return (
     <li
       ref={(el) => {
@@ -158,14 +159,18 @@ function LineRow({
       onPointerCancel={cancel}
     >
       <span className={`swipe-bg${armed ? ' armed' : ''}`} aria-hidden="true">
-        Delete
+        {t('Delete')}
       </span>
       <button
         ref={drag.setNodeRef}
         type="button"
         className="row-btn"
         style={{ transform: `translateX(${dx}px)`, transition: gesture.current?.swiping ? 'none' : 'transform 160ms ease', opacity: leaving ? 0 : 1 }}
-        aria-label={`Line ${row.line}: ${label}. Enter to put the cursor ${row.kind === 'loop' ? 'inside the loop' : 'after it'}, Delete to remove, Alt and arrow keys to move.`}
+        aria-label={
+          row.kind === 'loop'
+            ? t('Line {n}: {label}. Enter to put the cursor inside the loop, Delete to remove, Alt and arrow keys to move.', { n: row.line, label })
+            : t('Line {n}: {label}. Enter to put the cursor after it, Delete to remove, Alt and arrow keys to move.', { n: row.line, label })
+        }
         {...drag.attributes}
         {...drag.listeners}
         onKeyDown={key}
@@ -182,34 +187,38 @@ function Times({ times, onChange }: { times: number; onChange(n: number): void }
   const stop = (e: PointerEvent) => e.stopPropagation();
   return (
     <span className="times" onPointerDown={stop} onPointerUp={stop}>
-      <button type="button" aria-label="Fewer times" disabled={times <= MIN_TIMES} onClick={() => onChange(times - 1)}>
+      <button type="button" aria-label={t('Fewer times')} disabled={times <= MIN_TIMES} onClick={() => onChange(times - 1)}>
         −
       </button>
       <span className="times-n" aria-live="polite">
         ×{times}
       </span>
-      <button type="button" aria-label="More times" disabled={times >= MAX_TIMES} onClick={() => onChange(times + 1)}>
+      <button type="button" aria-label={t('More times')} disabled={times >= MAX_TIMES} onClick={() => onChange(times + 1)}>
         +
       </button>
     </span>
   );
 }
 
-const COLOUR_NAMES: Record<string, string> = { r: 'red', g: 'green', b: 'blue', y: 'yellow' };
+const COLOUR_NAMES: Record<string, string> = { r: msg('red'), g: msg('green'), b: msg('blue'), y: msg('yellow') };
 /** The shape drawn on each coloured tile, shown with the colour name (colour is never the only signal). */
 export const COLOUR_GLYPH: Record<string, string> = { r: '●', g: '▲', b: '■', y: '✚' };
 const SENSOR_LABEL: Record<string, string> = {
-  wall_ahead: 'wall ahead',
-  box_ahead: 'crate ahead',
-  carrying: 'carrying',
-  on_target: 'on target',
-  on_switch: 'on switch',
-  heat_ahead: 'heat ahead',
+  wall_ahead: msg('wall ahead'),
+  box_ahead: msg('crate ahead'),
+  carrying: msg('carrying'),
+  on_target: msg('on target'),
+  on_switch: msg('on switch'),
+  heat_ahead: msg('heat ahead'),
 };
 /** A condition in words: "wall ahead", "not on red". */
 export function condLabel(c: Condition): string {
-  const s = c.sensor === 'tile_is' ? `on ${COLOUR_GLYPH[c.colour ?? ''] ?? ''} ${COLOUR_NAMES[c.colour ?? ''] ?? c.colour}` : SENSOR_LABEL[c.sensor];
-  return c.not ? `not ${s}` : s;
+  const colour = COLOUR_NAMES[c.colour ?? ''];
+  const s =
+    c.sensor === 'tile_is'
+      ? t('on {glyph} {colour}', { glyph: COLOUR_GLYPH[c.colour ?? ''] ?? '', colour: colour ? t(colour) : (c.colour ?? '') })
+      : t(SENSOR_LABEL[c.sensor]);
+  return c.not ? t('not {condition}', { condition: s }) : s;
 }
 const sameCond = (a: Condition, b: Condition) => a.sensor === b.sensor && (a.colour ?? '') === (b.colour ?? '');
 
@@ -225,9 +234,9 @@ function CondPicker({ cond, options, onChange }: { cond: Condition; options: Con
   return (
     <span className="cond" onPointerDown={stop} onPointerUp={stop}>
       <button type="button" className={`cond-not${cond.not ? ' on' : ''}`} aria-pressed={!!cond.not} onClick={() => onChange({ ...cond, not: !cond.not || undefined })}>
-        not
+        {t('not')}
       </button>
-      <button type="button" className="cond-sensor" disabled={options.length < 2} aria-label={`Condition: ${condLabel(cond)}. Tap for the next sensor.`} onClick={next}>
+      <button type="button" className="cond-sensor" disabled={options.length < 2} aria-label={t('Condition: {condition}. Tap for the next sensor.', { condition: condLabel(cond) })} onClick={next}>
         {base}?
       </button>
     </span>
@@ -239,8 +248,8 @@ function ElseRow({ row, dimmed, onTap }: { row: Extract<EditorRow, { kind: 'else
   const drop = useDroppable({ id: row.key, data: { before: row.before, after: row.after } satisfies DropData });
   return (
     <li ref={drop.setNodeRef} style={{ ['--depth' as string]: row.depth }} className={`row else-row${row.depth ? ' nested' : ''}${dimmed ? ' placeholder' : ''}`}>
-      <button type="button" className="row-btn" onClick={onTap} aria-label="Else: what happens when the condition is false. Tap to add commands here.">
-        else
+      <button type="button" className="row-btn" onClick={onTap} aria-label={t('Else: what happens when the condition is false. Tap to add commands here.')}>
+        {t('else')}
       </button>
     </li>
   );
@@ -250,7 +259,7 @@ function ElseRow({ row, dimmed, onTap }: { row: Extract<EditorRow, { kind: 'else
 function EndRow({ row, dimmed, onTap }: { row: Extract<EditorRow, { kind: 'end' }>; dimmed: boolean; onTap(): void }) {
   const drop = useDroppable({ id: row.key, data: { before: row.before, after: row.after } satisfies DropData });
   const empty = childLists(row.block).every((c) => c.list.length === 0);
-  const what = row.block.kind === 'if' ? 'if' : 'loop';
+  const isIf = row.block.kind === 'if';
   return (
     <li
       ref={drop.setNodeRef}
@@ -261,9 +270,17 @@ function EndRow({ row, dimmed, onTap }: { row: Extract<EditorRow, { kind: 'end' 
         type="button"
         className="row-btn"
         onClick={onTap}
-        aria-label={empty ? `Empty ${what}. Tap to add commands inside it.` : `End of ${what}. Tap to add commands after it.`}
+        aria-label={
+          empty
+            ? isIf
+              ? t('Empty if. Tap to add commands inside it.')
+              : t('Empty loop. Tap to add commands inside it.')
+            : isIf
+              ? t('End of if. Tap to add commands after it.')
+              : t('End of loop. Tap to add commands after it.')
+        }
       >
-        {empty ? `Drop or tap commands into the ${what}` : ''}
+        {empty ? (isIf ? t('Drop or tap commands into the if') : t('Drop or tap commands into the loop')) : ''}
       </button>
     </li>
   );
@@ -277,7 +294,7 @@ function EmptySlot({ n, onTap }: { n: number; onTap(): void }) {
   const { setNodeRef, isOver } = useDroppable({ id: `${EMPTY_PREFIX}${n}` });
   return (
     <li ref={setNodeRef} className={`row empty-slot${isOver ? ' over' : ''}`}>
-      <button type="button" className="row-btn" onClick={onTap} aria-label="Empty slot. Tap to add commands at the end.">
+      <button type="button" className="row-btn" onClick={onTap} aria-label={t('Empty slot. Tap to add commands at the end.')}>
         <span className="line-no">{n}</span>
       </button>
     </li>
@@ -306,7 +323,7 @@ export function ProgramList({ blocks, limit, cursor, activeIds, crashId, cancelI
   };
 
   return (
-    <ol ref={setNodeRef} className={`program${fromPalette ? (room ? ' receiving' : ' no-room') : ''}`} aria-label="Program">
+    <ol ref={setNodeRef} className={`program${fromPalette ? (room ? ' receiving' : ' no-room') : ''}`} aria-label={t('Program')}>
       {rows.map((row) => {
         const here = sameSpot(lineAt, row.before) ? (
           <Cursor key={`c-${row.key}`} drop={!!dragId} depth={row.kind === 'end' ? row.depth + 1 : row.depth} />

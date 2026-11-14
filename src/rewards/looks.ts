@@ -6,6 +6,7 @@
 import type { Stats } from './achievements';
 import { totalStars } from './achievements';
 import { PLUS_VISIBLE, plusUnlocked } from '../store/purchases';
+import { msg, t } from '../i18n';
 
 /** How a look part unlocks: tower stars, an achievement, or LoopBot Plus. */
 export type Unlock = { stars: number } | { achievement: string; label: string } | { plus: true };
@@ -36,40 +37,40 @@ export interface Tip {
 }
 
 export const PAINTS: Paint[] = [
-  { id: 'classic', name: 'Classic', top: '#f7f3ea', left: '#d9d2c4', right: '#bdb5a6', unlock: null },
-  { id: 'sky', name: 'Sky', top: '#cfe6ff', left: '#a3c6ec', right: '#82a7d1', unlock: { stars: 15 } },
-  { id: 'mint', name: 'Mint', top: '#d3f5e6', left: '#a6dcc4', right: '#86bfa6', unlock: { stars: 30 } },
-  { id: 'sunset', name: 'Sunset', top: '#ffd9b3', left: '#f0b07a', right: '#d0905c', unlock: { stars: 50 } },
-  { id: 'rose', name: 'Rose', top: '#ffd6e2', left: '#eba9be', right: '#cc8ba0', unlock: { stars: 75 } },
-  { id: 'graphite', name: 'Graphite', top: '#7d7a8c', left: '#5c5a6b', right: '#474555', unlock: { stars: 100 } },
-  { id: 'gold', name: 'Gold', top: '#ffe28a', left: '#e5ba4f', right: '#c49a37', unlock: { achievement: 'perfectionist', label: 'Perfectionist' } },
+  { id: 'classic', name: msg('Classic'), top: '#f7f3ea', left: '#d9d2c4', right: '#bdb5a6', unlock: null },
+  { id: 'sky', name: msg('Sky'), top: '#cfe6ff', left: '#a3c6ec', right: '#82a7d1', unlock: { stars: 15 } },
+  { id: 'mint', name: msg('Mint'), top: '#d3f5e6', left: '#a6dcc4', right: '#86bfa6', unlock: { stars: 30 } },
+  { id: 'sunset', name: msg('Sunset'), top: '#ffd9b3', left: '#f0b07a', right: '#d0905c', unlock: { stars: 50 } },
+  { id: 'rose', name: msg('Rose'), top: '#ffd6e2', left: '#eba9be', right: '#cc8ba0', unlock: { stars: 75 } },
+  { id: 'graphite', name: msg('Graphite'), top: '#7d7a8c', left: '#5c5a6b', right: '#474555', unlock: { stars: 100 } },
+  { id: 'gold', name: msg('Gold'), top: '#ffe28a', left: '#e5ba4f', right: '#c49a37', unlock: { achievement: 'perfectionist', label: msg('Perfectionist') } },
   // LoopBot Plus looks, from Frostline
-  { id: 'frost', name: 'Frost', top: '#e6f6ff', left: '#b4daf3', right: '#8cb8d9', unlock: { plus: true } },
-  { id: 'aurora', name: 'Aurora', top: '#d4f8e8', left: '#94dfbf', right: '#9b88d9', unlock: { plus: true } },
-  { id: 'northstar', name: 'Northstar', top: '#46598f', left: '#33436f', right: '#263354', unlock: { plus: true } },
-  { id: 'ember', name: 'Ember', top: '#ffa587', left: '#e57256', right: '#bb5039', unlock: { plus: true } },
+  { id: 'frost', name: msg('Frost'), top: '#e6f6ff', left: '#b4daf3', right: '#8cb8d9', unlock: { plus: true } },
+  { id: 'aurora', name: msg('Aurora'), top: '#d4f8e8', left: '#94dfbf', right: '#9b88d9', unlock: { plus: true } },
+  { id: 'northstar', name: msg('Northstar'), top: '#46598f', left: '#33436f', right: '#263354', unlock: { plus: true } },
+  { id: 'ember', name: msg('Ember'), top: '#ffa587', left: '#e57256', right: '#bb5039', unlock: { plus: true } },
 ];
 
 export const EYES: EyeColor[] = [
-  { id: 'teal', name: 'Teal', color: '#7ff2e0', unlock: null },
-  { id: 'amber', name: 'Amber', color: '#ffc861', unlock: { stars: 20 } },
-  { id: 'pink', name: 'Pink', color: '#ff8fc7', unlock: { stars: 40 } },
-  { id: 'lime', name: 'Lime', color: '#b8f56a', unlock: { stars: 60 } },
-  { id: 'violet', name: 'Violet', color: '#b9a2ff', unlock: { stars: 90 } },
-  { id: 'white', name: 'Snow', color: '#f2fbff', unlock: { stars: 120 } },
-  { id: 'ice', name: 'Ice', color: '#8fdcff', unlock: { plus: true } },
-  { id: 'beacon', name: 'Beacon', color: '#ffd34d', unlock: { plus: true } },
+  { id: 'teal', name: msg('Teal'), color: '#7ff2e0', unlock: null },
+  { id: 'amber', name: msg('Amber'), color: '#ffc861', unlock: { stars: 20 } },
+  { id: 'pink', name: msg('Pink'), color: '#ff8fc7', unlock: { stars: 40 } },
+  { id: 'lime', name: msg('Lime'), color: '#b8f56a', unlock: { stars: 60 } },
+  { id: 'violet', name: msg('Violet'), color: '#b9a2ff', unlock: { stars: 90 } },
+  { id: 'white', name: msg('Snow'), color: '#f2fbff', unlock: { stars: 120 } },
+  { id: 'ice', name: msg('Ice'), color: '#8fdcff', unlock: { plus: true } },
+  { id: 'beacon', name: msg('Beacon'), color: '#ffd34d', unlock: { plus: true } },
 ];
 
 export const TIPS: Tip[] = [
-  { id: 'ball', name: 'Ball', unlock: null },
-  { id: 'star', name: 'Star', unlock: { achievement: 'perfect-10', label: 'Perfect ten' } },
-  { id: 'heart', name: 'Heart', unlock: { achievement: 'streak-7', label: 'On a roll' } },
-  { id: 'bolt', name: 'Bolt', unlock: { achievement: 'decision-maker', label: 'Decision maker' } },
-  { id: 'ring', name: 'Ring', unlock: { achievement: 'no-hints', label: 'Figured it out' } },
-  { id: 'crown', name: 'Crown', unlock: { achievement: 'spire', label: 'Spire cleared' } },
-  { id: 'snowflake', name: 'Snowflake', unlock: { plus: true } },
-  { id: 'gem', name: 'Gem', unlock: { plus: true } },
+  { id: 'ball', name: msg('Ball'), unlock: null },
+  { id: 'star', name: msg('Star'), unlock: { achievement: 'perfect-10', label: msg('Perfect ten') } },
+  { id: 'heart', name: msg('Heart'), unlock: { achievement: 'streak-7', label: msg('On a roll') } },
+  { id: 'bolt', name: msg('Bolt'), unlock: { achievement: 'decision-maker', label: msg('Decision maker') } },
+  { id: 'ring', name: msg('Ring'), unlock: { achievement: 'no-hints', label: msg('Figured it out') } },
+  { id: 'crown', name: msg('Crown'), unlock: { achievement: 'spire', label: msg('Spire cleared') } },
+  { id: 'snowflake', name: msg('Snowflake'), unlock: { plus: true } },
+  { id: 'gem', name: msg('Gem'), unlock: { plus: true } },
 ];
 
 /** Whether a part comes with LoopBot Plus. */
@@ -94,9 +95,9 @@ export function isUnlocked(unlock: Unlock | null, stats: Stats, earned: Set<stri
 }
 
 export function unlockLabel(unlock: Unlock | null): string {
-  if (!unlock) return 'Free';
+  if (!unlock) return t('Free');
   if ('plus' in unlock) return 'Plus';
-  return 'stars' in unlock ? `${unlock.stars} ★` : `🏆 ${unlock.label}`;
+  return 'stars' in unlock ? `${unlock.stars} ★` : `🏆 ${t(unlock.label)}`;
 }
 
 /** Every look part the player has, as "paint:sky", "eye:amber", "tip:star". */
@@ -111,8 +112,9 @@ export function unlockedParts(stats: Stats, earned: Set<string>): Set<string> {
 export function partName(key: string): string {
   const [kind, id] = key.split(':');
   const list = kind === 'paint' ? PAINTS : kind === 'eye' ? EYES : TIPS;
-  const name = list.find((x) => x.id === id)?.name ?? id;
-  return kind === 'paint' ? `${name} paint` : kind === 'eye' ? `${name} eye` : `${name} antenna`;
+  const found = list.find((x) => x.id === id)?.name;
+  const name = found ? t(found) : id;
+  return kind === 'paint' ? t('{name} paint', { name }) : kind === 'eye' ? t('{name} eye', { name }) : t('{name} antenna', { name });
 }
 
 export function loadLook(): Look {

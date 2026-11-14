@@ -4,6 +4,7 @@
 
 import type { Progress } from '../progress';
 import type { DailyState } from '../daily';
+import { msg } from '../i18n';
 
 export interface Stats {
   /** Tower floor ids in order (t1-f01 ...). */
@@ -44,21 +45,21 @@ const count = (have: (s: Stats) => number, need: number) => ({
 });
 
 export const ACHIEVEMENTS: Achievement[] = [
-  { id: 'first-steps', title: 'First steps', how: 'Clear Floor 1', icon: '👣', earned: (s) => cleared(s, 1) },
-  { id: 'lobby', title: 'Lobby secured', how: 'Clear the Lobby (Floor 10)', icon: '🛎️', earned: (s) => cleared(s, 10) },
-  { id: 'loop-de-loop', title: 'Loop-de-loop', how: 'Clear your first repeat floor (Floor 11)', icon: '🔁', earned: (s) => cleared(s, 11) },
-  { id: 'function-junction', title: 'Function junction', how: 'Clear your first function floor (Floor 21)', icon: '🧩', earned: (s) => cleared(s, 21) },
-  { id: 'decision-maker', title: 'Decision maker', how: 'Clear your first if/while floor (Floor 31)', icon: '🔀', earned: (s) => cleared(s, 31) },
-  { id: 'hacker', title: 'Typed it out', how: 'Reach the Rooftop and clear Floor 41', icon: '⌨️', earned: (s) => cleared(s, 41) },
-  { id: 'spire', title: 'Spire cleared', how: 'Clear Floor 50 and ground VANTA', icon: '🏙️', earned: (s) => cleared(s, 50) },
-  { id: 'perfect-10', title: 'Perfect ten', how: 'Get 3 stars on 10 floors', icon: '✨', ...count(threeStarCount, 10) },
-  { id: 'stars-75', title: 'Star collector', how: 'Earn 75 stars in the tower', icon: '⭐', ...count(totalStars, 75) },
-  { id: 'perfectionist', title: 'Perfectionist', how: 'Get 3 stars on all 50 floors', icon: '🏆', ...count(threeStarCount, 50) },
-  { id: 'nailed-it', title: 'Nailed it', how: 'Clear 10 floors from Floor 11 on with no failed runs', icon: '🎯', ...count(cleanClears, 10) },
-  { id: 'no-hints', title: 'Figured it out', how: 'Clear a whole band of 10 floors without a hint', icon: '🧠', earned: bandWithoutHints },
-  { id: 'daily-1', title: 'Daily driver', how: 'Clear a daily challenge', icon: '📅', ...count(dailyClears, 1) },
-  { id: 'streak-7', title: 'On a roll', how: 'Reach a 7-day daily streak', icon: '🔥', ...count((s) => s.daily.longest, 7) },
-  { id: 'streak-30', title: 'Unstoppable', how: 'Reach a 30-day daily streak', icon: '☄️', ...count((s) => s.daily.longest, 30) },
+  { id: 'first-steps', title: msg('First steps'), how: msg('Clear Floor 1'), icon: '👣', earned: (s) => cleared(s, 1) },
+  { id: 'lobby', title: msg('Lobby secured'), how: msg('Clear the Lobby (Floor 10)'), icon: '🛎️', earned: (s) => cleared(s, 10) },
+  { id: 'loop-de-loop', title: msg('Loop-de-loop'), how: msg('Clear your first repeat floor (Floor 11)'), icon: '🔁', earned: (s) => cleared(s, 11) },
+  { id: 'function-junction', title: msg('Function junction'), how: msg('Clear your first function floor (Floor 21)'), icon: '🧩', earned: (s) => cleared(s, 21) },
+  { id: 'decision-maker', title: msg('Decision maker'), how: msg('Clear your first if/while floor (Floor 31)'), icon: '🔀', earned: (s) => cleared(s, 31) },
+  { id: 'hacker', title: msg('Typed it out'), how: msg('Reach the Rooftop and clear Floor 41'), icon: '⌨️', earned: (s) => cleared(s, 41) },
+  { id: 'spire', title: msg('Spire cleared'), how: msg('Clear Floor 50 and ground VANTA'), icon: '🏙️', earned: (s) => cleared(s, 50) },
+  { id: 'perfect-10', title: msg('Perfect ten'), how: msg('Get 3 stars on 10 floors'), icon: '✨', ...count(threeStarCount, 10) },
+  { id: 'stars-75', title: msg('Star collector'), how: msg('Earn 75 stars in the tower'), icon: '⭐', ...count(totalStars, 75) },
+  { id: 'perfectionist', title: msg('Perfectionist'), how: msg('Get 3 stars on all 50 floors'), icon: '🏆', ...count(threeStarCount, 50) },
+  { id: 'nailed-it', title: msg('Nailed it'), how: msg('Clear 10 floors from Floor 11 on with no failed runs'), icon: '🎯', ...count(cleanClears, 10) },
+  { id: 'no-hints', title: msg('Figured it out'), how: msg('Clear a whole band of 10 floors without a hint'), icon: '🧠', earned: bandWithoutHints },
+  { id: 'daily-1', title: msg('Daily driver'), how: msg('Clear a daily challenge'), icon: '📅', ...count(dailyClears, 1) },
+  { id: 'streak-7', title: msg('On a roll'), how: msg('Reach a 7-day daily streak'), icon: '🔥', ...count((s) => s.daily.longest, 7) },
+  { id: 'streak-30', title: msg('Unstoppable'), how: msg('Reach a 30-day daily streak'), icon: '☄️', ...count((s) => s.daily.longest, 30) },
 ];
 
 export function earnedIds(s: Stats): Set<string> {

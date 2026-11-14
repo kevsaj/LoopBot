@@ -3,6 +3,7 @@
 
 import type { Facing, LevelFile } from '../sim/types';
 import { parseReference } from '../sim/program';
+import { t, tn } from '../i18n';
 
 export type Difficulty = 'easy' | 'medium' | 'hard';
 
@@ -30,8 +31,8 @@ export function expandDaily(e: DailyEntry, id: string): LevelFile {
   const loops = program.main.filter((b) => b.kind === 'repeat').length;
   const structure =
     e.goal === 'switches'
-      ? `Par is ${e.par.commands} commands. Find the stretch of path between two switches and loop it.`
-      : `Par is ${e.par.commands} commands. ${loops > 1 ? 'There is more than one pattern here.' : 'One repeat block can carry most of the walk.'}`;
+      ? tn(e.par.commands, 'Par is {n} command. Find the stretch of path between two switches and loop it.', 'Par is {n} commands. Find the stretch of path between two switches and loop it.')
+      : `${tn(e.par.commands, 'Par is {n} command.', 'Par is {n} commands.')} ${loops > 1 ? t('There is more than one pattern here.') : t('One repeat block can carry most of the walk.')}`;
   return {
     id,
     title: e.title,
@@ -49,8 +50,8 @@ export function expandDaily(e: DailyEntry, id: string): LevelFile {
     reference: e.reference,
     hints: [
       e.goal === 'switches'
-        ? 'Every switch has to end up on. Watch how the path between them repeats.'
-        : 'Trace the path to the exit with your finger. Where does it start repeating itself?',
+        ? t('Every switch has to end up on. Watch how the path between them repeats.')
+        : t('Trace the path to the exit with your finger. Where does it start repeating itself?'),
       structure,
       e.reference,
     ],
