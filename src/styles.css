@@ -899,6 +899,8 @@ select:focus-visible {
   display: flex;
   gap: 6px;
   justify-content: center;
+  /* Keep each badge its own height: stretching it to the row left the word stuck at the top. */
+  align-items: center;
   opacity: 0;
 }
 .badges.in {
@@ -906,10 +908,18 @@ select:focus-visible {
   animation: headline 0.35s cubic-bezier(0.2, 1.5, 0.4, 1);
 }
 .badge {
-  padding: 2px 10px;
+  /* Centre the word with flex, not padding, so it stays centred whatever the font's metrics
+     (Android WebView, larger text, French). */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 24px;
+  padding: 0 10px;
   border-radius: 999px;
   font-size: 12px;
   font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
 }
 .badge.best {
   background: var(--warn);
@@ -1467,14 +1477,19 @@ select:focus-visible {
   color: #dfe6ff;
 }
 .speaker {
-  display: inline-block;
+  /* Flex keeps the name centred next to its portrait: as inline content the taller portrait
+     pushed the name to the bottom of the tag. */
+  display: inline-flex;
+  align-items: center;
   margin-right: 8px;
-  padding: 0 6px;
+  /* Letter spacing also trails the last letter, so the right side gives that back. */
+  padding: 0 calc(6px - 0.06em) 0 6px;
   border-radius: 4px;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.06em;
-  vertical-align: 1px;
+  line-height: 16px;
+  vertical-align: middle;
 }
 .speaker-patch {
   background: #2f6390;
@@ -1498,6 +1513,7 @@ select:focus-visible {
   height: 14px;
   margin-right: 4px;
   vertical-align: -2px;
+  flex: none;
 }
 
 /* Web demo */
@@ -2548,7 +2564,7 @@ button.set-row {
   height: 40px;
 }
 .radio-body .speaker {
-  display: block;
+  display: flex;
   width: max-content;
   margin-bottom: 4px;
 }
