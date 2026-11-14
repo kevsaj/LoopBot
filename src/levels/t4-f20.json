@@ -1,0 +1,57 @@
+{
+  "id": "t4-f20",
+  "title": "The Jade Garden",
+  "band": "garden",
+  "size": {
+    "w": 8,
+    "h": 8
+  },
+  "tiles": [
+    "########",
+    "#.#...a#",
+    "#.#.##.#",
+    "#.#e##.#",
+    "#.####.#",
+    "#.####.#",
+    "#a....a#",
+    "########"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "south"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat"
+  ],
+  "slots": {
+    "main": 6
+  },
+  "par": {
+    "commands": 5,
+    "steps": 21
+  },
+  "reference": "repeat 2 { repeat 9 { forward forward } turn_left }",
+  "hints": [
+    "All the way round the garden wall, then one turn into the centre.",
+    "A loop inside a loop goes a long way. Turn left at the end.",
+    "repeat 2 { repeat 9 { forward forward } turn_left }"
+  ],
+  "story": {
+    "intro": "PATCH: \"The garden wall goes all the way round. Count the laps, not the corners.\"",
+    "outro": null
+  }
+}

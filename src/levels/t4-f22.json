@@ -1,0 +1,61 @@
+{
+  "id": "t4-f22",
+  "title": "Bug Hunt: Double Turn",
+  "band": "loom",
+  "size": {
+    "w": 5,
+    "h": 5
+  },
+  "tiles": [
+    "#####",
+    "#..c#",
+    "###.#",
+    "#e.c#",
+    "#####"
+  ],
+  "heights": [
+    "00000",
+    "00010",
+    "00010",
+    "01000",
+    "00000"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat"
+  ],
+  "slots": {
+    "main": 4
+  },
+  "par": {
+    "commands": 3,
+    "steps": 6
+  },
+  "reference": "repeat 3 { forward jump }",
+  "starter": "repeat 3 { forward jump turn_right }",
+  "hints": [
+    "The turntables already turn you. Run it and watch.",
+    "Take out the extra turn.",
+    "repeat 3 { forward jump }"
+  ],
+  "story": {
+    "intro": "PATCH: \"VANTA left this loom's program almost right. Run it, watch where it goes wrong, then fix it.\"",
+    "outro": null
+  }
+}

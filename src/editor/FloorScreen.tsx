@@ -27,7 +27,7 @@ import { recordClear, recordFail } from '../progress';
 import { maybeAskForReview } from '../review';
 import { HintSheet } from './HintSheet';
 import { ResultsCard } from './ResultsCard';
-import { cancellingTurns, stepLine, tutorialStep, TUTORIAL_TEXT } from './tutorial';
+import { cancellingTurns, spinNote, stepLine, tutorialStep, TUTORIAL_TEXT } from './tutorial';
 import { track } from '../telemetry';
 import { FeedbackSheet } from '../FeedbackSheet';
 import { DIFFICULTY_LABEL, difficultyOn, shareText, shortDate } from '../daily';
@@ -222,7 +222,10 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
       if (ev.ok) fx.step(ev.action);
       // Say what each step did. Turns get spelled out: they spin LoopBot without moving it,
       // which new players often miss when they only watch the board.
-      if (ev.ok && ev.action) setTerminal(stepLine(ev.action));
+      if (ev.ok && ev.action) {
+        const spun = spinNote(ev.action, world);
+        setTerminal(spun ? `${stepLine(ev.action)} · ${spun}` : stepLine(ev.action));
+      }
     }
     const o = r.outcome;
     const cleared = o?.status === 'cleared';

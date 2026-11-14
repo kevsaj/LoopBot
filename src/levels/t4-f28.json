@@ -1,0 +1,70 @@
+{
+  "id": "t4-f28",
+  "title": "Bug Hunt: Out of Order",
+  "band": "loom",
+  "size": {
+    "w": 8,
+    "h": 8
+  },
+  "tiles": [
+    "########",
+    "####..c#",
+    "######.#",
+    "######.#",
+    "######.#",
+    "######.#",
+    "#e....c#",
+    "########"
+  ],
+  "heights": [
+    "00000000",
+    "00000000",
+    "00000010",
+    "00000020",
+    "00000030",
+    "00000030",
+    "00001230",
+    "00000000"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 4,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "F1",
+    "F2"
+  ],
+  "slots": {
+    "main": 6,
+    "F1": 3,
+    "F2": 4
+  },
+  "par": {
+    "commands": 10,
+    "steps": 12
+  },
+  "reference": "F1 F2 F1 F2 F1 def F1 { forward forward } def F2 { jump jump jump }",
+  "starter": "F2 F1 F2 F1 F2 def F1 { forward forward } def F2 { jump jump jump }",
+  "hints": [
+    "Both routines are right. They run in the wrong order.",
+    "Walk first, then climb.",
+    "F1 F2 F1 F2 F1 def F1 { forward forward } def F2 { jump jump jump }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

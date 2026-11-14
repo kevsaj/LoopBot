@@ -15,6 +15,7 @@ import type { Colour, PaletteCommand, Sensor } from '../sim/types';
 import FR_T1 from '../i18n/fr/t1.json';
 import FR_T2 from '../i18n/fr/t2.json';
 import FR_T3 from '../i18n/fr/t3.json';
+import FR_T4 from '../i18n/fr/t4.json';
 import FR_DAILY from '../i18n/fr/daily.json';
 import { frenchSpacing } from '../i18n/fr';
 
@@ -26,11 +27,14 @@ export interface FloorText {
   outro?: string | null;
 }
 
-/** Same switch as levels/towers.ts: Heatwave's words only ship in the builds that have Heatwave. */
-const PREVIEW = import.meta.env.DEV || import.meta.env.VITE_PLUS_PREVIEW === '1';
+/**
+ * Same switches as levels/towers.ts: the city packs' words (Heatwave, Twist) only ship in the
+ * builds that have those towers, which are preview builds and builds with the store turned on.
+ */
+const PACKS_IN_BUILD = import.meta.env.DEV || import.meta.env.VITE_PLUS_PREVIEW === '1' || import.meta.env.VITE_PLUS === '1';
 
 export const FLOOR_TEXT: Record<Exclude<Lang, 'en'>, Record<string, FloorText>> = {
-  fr: spaced({ ...FR_T1, ...FR_T2, ...(PREVIEW ? FR_T3 : {}) }),
+  fr: spaced({ ...FR_T1, ...FR_T2, ...(PACKS_IN_BUILD ? { ...FR_T3, ...FR_T4 } : {}) }),
 };
 
 function spaced(floors: Record<string, FloorText>): Record<string, FloorText> {
@@ -45,7 +49,7 @@ const DAILY_WORDS: Record<Exclude<Lang, 'en'>, { order: string; words: Record<st
   fr: FR_DAILY,
 };
 
-const SENSORS = new Set<string>(['wall_ahead', 'box_ahead', 'carrying', 'on_target', 'on_switch', 'heat_ahead', 'tile_is']);
+const SENSORS = new Set<string>(['wall_ahead', 'box_ahead', 'carrying', 'on_target', 'on_switch', 'heat_ahead', 'facing_north', 'tile_is']);
 
 /**
  * A program in the same words as the blocks: "repeat 3 { forward turn_right }" becomes

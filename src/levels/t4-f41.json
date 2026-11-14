@@ -1,0 +1,63 @@
+{
+  "id": "t4-f41",
+  "title": "Glass Deck",
+  "band": "pinnacle",
+  "size": {
+    "w": 6,
+    "h": 6
+  },
+  "tiles": [
+    "######",
+    "#...c#",
+    "####.#",
+    "####.#",
+    "#e..c#",
+    "######"
+  ],
+  "heights": [
+    "000000",
+    "000010",
+    "000010",
+    "000010",
+    "032220",
+    "000000"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat"
+  ],
+  "typing": true,
+  "slots": {
+    "main": 5
+  },
+  "par": {
+    "commands": 4,
+    "steps": 9
+  },
+  "reference": "repeat 3 { forward forward jump }",
+  "hints": [
+    "Two steps and a jump, then the table turns you.",
+    "Loop forward, forward, jump.",
+    "repeat 3 { forward forward jump }"
+  ],
+  "story": {
+    "intro": "PATCH: \"The Pinnacle. Type your programs if you like. The turntables don't care how you write them.\"",
+    "outro": null
+  }
+}

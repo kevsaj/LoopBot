@@ -1,0 +1,62 @@
+{
+  "id": "t4-f49",
+  "title": "Typhoon Run",
+  "band": "pinnacle",
+  "size": {
+    "w": 8,
+    "h": 7
+  },
+  "tiles": [
+    "########",
+    "#e.#####",
+    "##.a####",
+    "###...##",
+    "#####c.#",
+    "######.#",
+    "########"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 6,
+    "y": 5,
+    "facing": "north"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "while",
+    "if"
+  ],
+  "sensors": [
+    "facing_north"
+  ],
+  "typing": true,
+  "slots": {
+    "main": 7
+  },
+  "par": {
+    "commands": 6,
+    "steps": 14
+  },
+  "reference": "repeat 6 { while not wall_ahead { forward } if facing_north { turn_left } else { turn_right } }",
+  "hints": [
+    "A long stair north and west, with turntables on some corners.",
+    "Walk, ask the compass, turn. Six times.",
+    "repeat 6 { while not wall_ahead { forward } if facing_north { turn_left } else { turn_right } }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

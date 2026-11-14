@@ -1,7 +1,7 @@
 import type { Action, Colour, Condition, Facing, LevelFile, Pos, Tile, TileType, World } from './types';
 import { msg } from '../i18n';
 
-const TILE_CHARS: Record<string, { type: TileType; colour?: Colour; phase?: number }> = {
+const TILE_CHARS: Record<string, { type: TileType; colour?: Colour; phase?: number; spin?: 1 | -1 }> = {
   '.': { type: 'floor' },
   '#': { type: 'wall' },
   _: { type: 'gap' },
@@ -18,6 +18,8 @@ const TILE_CHARS: Record<string, { type: TileType; colour?: Colour; phase?: numb
   w: { type: 'vent', phase: 1 },
   x: { type: 'vent', phase: 2 },
   z: { type: 'vent', phase: 3 },
+  c: { type: 'spinner', spin: 1 },
+  a: { type: 'spinner', spin: -1 },
 };
 
 /** Vent cycle when a floor doesn't set one: blast, rest, blast, rest. */
@@ -42,7 +44,7 @@ export function createWorld(level: LevelFile): World {
       if (!def) throw new Error(`${level.id}: unknown tile '${ch}' at ${x},${y}`);
       const hch = level.heights?.[y]?.[x] ?? '0';
       const height = Number(hch);
-      row.push({ type: def.type, height, ...(def.colour ? { colour: def.colour } : {}), ...(def.phase !== undefined ? { phase: def.phase } : {}) });
+      row.push({ type: def.type, height, ...(def.colour ? { colour: def.colour } : {}), ...(def.phase !== undefined ? { phase: def.phase } : {}), ...(def.spin ? { spin: def.spin } : {}) });
       if (def.type === 'vent') vents = true;
       if (def.type === 'switch') switches[key(x, y)] = false;
       if (def.type === 'door') doors[key(x, y)] = false;
@@ -146,6 +148,18 @@ function slide(w: World) {
   }
 }
 
+/**
+ * Turntables (CR-SPIN): a bot that arrives on a spinner is turned a quarter turn, clockwise or
+ * anticlockwise, as part of the same step. Turning or waiting on one does nothing more, and a
+ * crate on a spinner jams it.
+ */
+function spin(w: World) {
+  const bot = w.bot;
+  const t = w.tiles[bot.y][bot.x];
+  if (t.type !== 'spinner' || w.boxes[bot.y][bot.x] > 0) return;
+  bot.facing = t.spin === -1 ? LEFT[bot.facing] : RIGHT[bot.facing];
+}
+
 /** Thin ice (CR-THIN) cracks into a gap once LoopBot steps off it. */
 function leave(w: World, p: Pos) {
   if (w.tiles[p.y][p.x].type === 'thin') w.cracked[key(p.x, p.y)] = true;
@@ -196,6 +210,7 @@ function act(w: World, action: Action): ActionResult {
       bot.x = next.x;
       bot.y = next.y;
       slide(w);
+      spin(w);
       return { ok: true };
     }
     case 'jump': {
@@ -208,6 +223,7 @@ function act(w: World, action: Action): ActionResult {
       bot.x = next.x;
       bot.y = next.y;
       slide(w);
+      spin(w);
       return { ok: true };
     }
     case 'pick_up': {
@@ -269,6 +285,9 @@ export function sense(w: World, cond: Condition): boolean {
     case 'heat_ahead':
       // stepping onto it now would land as it blasts
       v = inBounds(w, next) && ventBlasting(w, next, w.clock + 1);
+      break;
+    case 'facing_north':
+      v = w.bot.facing === 'north';
       break;
   }
   return cond.not ? !v : v;

@@ -1,0 +1,54 @@
+{
+  "id": "t4-f44",
+  "title": "Window Washer",
+  "band": "pinnacle",
+  "size": {
+    "w": 8,
+    "h": 5
+  },
+  "tiles": [
+    "########",
+    "#s..c..#",
+    "######.#",
+    "#e.d.a.#",
+    "########"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 6,
+    "y": 2,
+    "facing": "south"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate"
+  ],
+  "typing": true,
+  "slots": {
+    "main": 31
+  },
+  "par": {
+    "commands": 29,
+    "steps": 29
+  },
+  "reference": "turn_left turn_left forward turn_left forward forward turn_left forward forward forward turn_left turn_left activate forward forward forward turn_left forward forward turn_right forward forward turn_right forward turn_right forward forward forward forward",
+  "hints": [
+    "The switch is at the far end. The turntables meet you both ways.",
+    "Get to the switch, come back, then go through the door.",
+    "turn_left turn_left forward turn_left forward forward turn_left forward forward forward turn_left turn_left activate forward forward forward turn_left forward forward turn_right forward forward turn_right forward turn_right forward forward forward forward"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

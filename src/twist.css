@@ -1,0 +1,180 @@
+/* Tower 4, Twist (the Helix). Kept in its own file so it never collides with other work in styles.css. */
+
+.tower-tab-4.on {
+  border-color: #7fd6c8;
+  box-shadow: 0 0 0 1px rgba(127, 214, 200, 0.35), 0 0 14px rgba(110, 200, 190, 0.22);
+}
+.tower-4 .tower-roof .beacon {
+  background: #a8f0e4;
+  box-shadow: 0 0 18px #4fd0bf;
+}
+
+/* Ferry Terrace: morning over the river, a twisting glass tower on the far bank. */
+.board-wrap.band-ferry {
+  background:
+    radial-gradient(circle at 20% 22%, rgba(255, 244, 214, 0.9) 0 9px, rgba(255, 230, 180, 0.25) 10px, transparent 46px),
+    linear-gradient(180deg, #1d3a4a 0%, #2f6a78 40%, #7fb7b0 75%, #f2e2c4 100%);
+}
+.board-wrap.band-ferry::after,
+.board-wrap.band-pinnacle::after {
+  height: 100%;
+  opacity: 0.5;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300' preserveAspectRatio='none'><path fill='%2318313b' fill-opacity='0.55' d='M300 300V120q8-30 22-60q6 30 14 60v180z'/><path fill='%2318313b' fill-opacity='0.45' d='M0 300V262h30v-20h18v20h40v-34h16v34h60v-14h24v14h110v-30h20v30h82v38z'/><path fill='%23ffffff' fill-opacity='0.12' d='M0 286q100-8 200 0t200 0v14H0z'/></svg>") center / 100% 100% no-repeat;
+}
+/* Jade Garden: green shade, round moon gates, and leaves. */
+.board-wrap.band-garden {
+  background:
+    radial-gradient(ellipse 60% 40% at 50% 55%, rgba(200, 240, 200, 0.18), transparent 70%),
+    linear-gradient(180deg, #10261f 0%, #1f4a3a 45%, #3f7a5c 80%, #a8d4a0 100%);
+}
+.board-wrap.band-garden::after {
+  height: 100%;
+  opacity: 0.5;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300' preserveAspectRatio='none'><circle cx='70' cy='250' r='48' fill='none' stroke='%230b1a14' stroke-width='10' stroke-opacity='0.5'/><circle cx='340' cy='240' r='38' fill='none' stroke='%230b1a14' stroke-width='8' stroke-opacity='0.4'/><path fill='%230b1a14' fill-opacity='0.45' d='M0 300v-24h400v24z'/></svg>") center / 100% 100% no-repeat;
+}
+/* Silk Loom: dusk through tall windows, threads strung across. */
+.board-wrap.band-loom {
+  background:
+    radial-gradient(ellipse 60% 30% at 50% 0%, rgba(255, 200, 150, 0.22), transparent 70%),
+    linear-gradient(180deg, #2a1630 0%, #5a2a4e 45%, #a8435a 80%, #f0a07a 100%);
+}
+.board-wrap.band-loom::after {
+  height: 100%;
+  opacity: 0.55;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300' preserveAspectRatio='none'><g stroke='%23ffd9b0' stroke-opacity='0.35' stroke-width='1'><path d='M0 20L400 60'/><path d='M0 40L400 80'/><path d='M0 60L400 100'/><path d='M0 300L400 250'/><path d='M0 280L400 230'/></g></svg>") center / 100% 100% no-repeat;
+}
+/* Lantern Lab: a dark night, paper lanterns hanging overhead. */
+.board-wrap.band-lantern {
+  background:
+    radial-gradient(ellipse 70% 30% at 50% 100%, rgba(224, 88, 58, 0.25), transparent 70%),
+    linear-gradient(180deg, #0a0d1e 0%, #161a36 50%, #3a2440 82%, #6a2c34 100%);
+}
+.board-wrap.band-lantern::after {
+  height: 100%;
+  opacity: 0.4;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300' preserveAspectRatio='none'><path d='M0 18Q100 52 200 22T400 26' fill='none' stroke='%23050610' stroke-width='1.5'/><g fill='%23e0583a'><ellipse cx='50' cy='38' rx='6' ry='8'/><ellipse cx='120' cy='44' rx='6' ry='8'/><ellipse cx='200' cy='30' rx='6' ry='8'/><ellipse cx='280' cy='26' rx='6' ry='8'/><ellipse cx='355' cy='30' rx='6' ry='8'/></g><g fill='%23ffc861' fill-opacity='0.8'><ellipse cx='50' cy='38' rx='2.5' ry='4'/><ellipse cx='120' cy='44' rx='2.5' ry='4'/><ellipse cx='200' cy='30' rx='2.5' ry='4'/><ellipse cx='280' cy='26' rx='2.5' ry='4'/><ellipse cx='355' cy='30' rx='2.5' ry='4'/></g></svg>") center / 100% 100% no-repeat;
+}
+/* The Pinnacle: clear high sky, the river far below. */
+.board-wrap.band-pinnacle {
+  background:
+    radial-gradient(circle at 82% 14%, rgba(255, 255, 240, 0.95) 0 10px, rgba(255, 250, 220, 0.3) 11px, transparent 50px),
+    linear-gradient(180deg, #0f2a4a 0%, #3a6aa0 38%, #8fbfe6 74%, #eaf4ff 100%);
+}
+
+/* The compass on Twist boards: a small dial in the corner; the needle turns with the view. */
+.board-compass {
+  position: absolute;
+  z-index: 2;
+  top: 58px;
+  right: 14px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 2px solid rgba(243, 213, 138, 0.9);
+  background: radial-gradient(circle, rgba(30, 32, 50, 0.85) 0 60%, rgba(30, 32, 50, 0.65) 61%);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+}
+.board-compass-needle {
+  position: absolute;
+  inset: 0;
+  transition: transform 0.35s ease;
+}
+.board-compass-needle::before {
+  /* the north half of the needle, red, from the centre up */
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 6px;
+  width: 0;
+  height: 0;
+  margin-left: -6px;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 19px solid #ff6a48;
+}
+.board-compass-needle::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 6px;
+  width: 0;
+  height: 0;
+  margin-left: -5px;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 17px solid #cfd3e6;
+}
+.board-compass-n {
+  position: absolute;
+  left: 50%;
+  top: -15px;
+  width: 16px;
+  margin-left: -8px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 800;
+  color: #f3d58a;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+  transition: transform 0.35s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  .board-compass-needle,
+  .board-compass-n {
+    transition: none;
+  }
+}
+
+/* The tower map's bands in Twist. */
+.band-ferry .tower-floors {
+  background: linear-gradient(#17303a, #12262e);
+  border-color: #3f6f78;
+}
+.band-ferry .tower-band {
+  color: #a8e0d8;
+}
+.band-garden .tower-floors {
+  background: linear-gradient(#14301f, #0f2618);
+  border-color: #2f7a5a;
+}
+.band-garden .tower-band {
+  color: #9be6b8;
+}
+.band-loom .tower-floors {
+  background: linear-gradient(#2e1426, #24101e);
+  border-color: #a8435a;
+}
+.band-loom .tower-band {
+  color: #ffb39a;
+}
+.band-lantern .tower-floors {
+  background: linear-gradient(#141428, #0e0e1e);
+  border-color: #e0583a;
+}
+.band-lantern .tower-band {
+  color: #ffc861;
+}
+.band-pinnacle .tower-floors {
+  background: linear-gradient(#142a44, #0f2036);
+  border-color: #5c88b8;
+}
+.band-pinnacle .tower-band {
+  color: #cfe6ff;
+}
+
+/* The Twist city pack's store screen: the Plus sheet's layout in river colours. */
+.pack-twist .plus-perks li {
+  border-color: rgba(127, 214, 200, 0.28);
+  background: linear-gradient(135deg, rgba(110, 200, 190, 0.1), rgba(160, 230, 220, 0.03));
+}
+.pack-sheet.pack-twist .pill.plus-buy {
+  background: linear-gradient(180deg, #a8f0e4, #4fb8aa);
+  border-color: #6fcfc2;
+  color: #0c2a28;
+}
+.pack-twist .plus-owned {
+  color: #a8f0e4;
+}
+.pack-twist .pack-word {
+  color: #7fd6c8;
+}

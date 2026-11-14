@@ -1,0 +1,60 @@
+{
+  "id": "t4-f13",
+  "title": "Twisting Steps",
+  "band": "garden",
+  "size": {
+    "w": 8,
+    "h": 5
+  },
+  "tiles": [
+    "########",
+    "#.....c#",
+    "######.#",
+    "#e....c#",
+    "########"
+  ],
+  "heights": [
+    "00000000",
+    "00011000",
+    "00000010",
+    "00110010",
+    "00000000"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat"
+  ],
+  "slots": {
+    "main": 4
+  },
+  "par": {
+    "commands": 3,
+    "steps": 12
+  },
+  "reference": "repeat 6 { forward jump }",
+  "hints": [
+    "Step, jump, step, jump... and the tables take the corners.",
+    "Loop forward and jump.",
+    "repeat 6 { forward jump }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

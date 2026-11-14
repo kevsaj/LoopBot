@@ -1,0 +1,54 @@
+{
+  "id": "t4-f07",
+  "title": "Spin Switch",
+  "band": "ferry",
+  "size": {
+    "w": 7,
+    "h": 6
+  },
+  "tiles": [
+    "#######",
+    "#.c.s.#",
+    "###d###",
+    "###.###",
+    "###e###",
+    "#######"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate"
+  ],
+  "slots": {
+    "main": 14
+  },
+  "par": {
+    "commands": 12,
+    "steps": 12
+  },
+  "reference": "forward turn_left forward forward turn_left turn_left activate forward turn_left forward forward forward",
+  "hints": [
+    "The switch opens the door. The turntable gets in the way both times.",
+    "After each spin, turn back the way you meant to go.",
+    "forward turn_left forward forward turn_left turn_left activate forward turn_left forward forward forward"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

@@ -2,6 +2,15 @@ import { useEffect, useRef } from 'react';
 import type Phaser from 'phaser';
 import type { BoardScene, BoardUpdate } from './BoardScene';
 import { fx } from '../audio/feedback';
+import { t } from '../i18n';
+
+/** Twist's bands: their floors show a compass, for the turntables and the facing north sensor. */
+const COMPASS_BANDS = new Set(['ferry', 'garden', 'loom', 'lantern', 'pinnacle']);
+/**
+ * Where north points on screen after 0 to 3 quarter turns of the view, in degrees clockwise from
+ * straight up. North runs along the board's isometric diagonal, so the angles aren't 90 apart.
+ */
+const NORTH_DEG = [63.4, 116.6, 243.4, 296.6];
 
 /**
  * Phaser is most of the app's code, so it loads on its own: the tower map opens without it, and
@@ -81,5 +90,23 @@ export function Board({ update, rotateSignal, band }: Props) {
     if (scene.current?.poke(e.clientX - r.left, e.clientY - r.top)) fx.voice('poke');
   };
 
-  return <div className="board-canvas" ref={host} aria-hidden="true" onPointerDown={poke} />;
+  return (
+    <>
+      <div className="board-canvas" ref={host} aria-hidden="true" onPointerDown={poke} />
+      {COMPASS_BANDS.has(band) && <Compass deg={NORTH_DEG[rotateSignal % 4]} />}
+    </>
+  );
+}
+
+/** A small compass in the board's corner. Its needle turns with the view, so it always points at the board's north. */
+function Compass({ deg }: { deg: number }) {
+  return (
+    <div className="board-compass" role="img" aria-label={t('Compass: the needle points north')}>
+      <div className="board-compass-needle" style={{ transform: `rotate(${deg}deg)` }}>
+        <span className="board-compass-n" style={{ transform: `rotate(${-deg}deg)` }}>
+          {t('N')}
+        </span>
+      </div>
+    </div>
+  );
 }

@@ -1,0 +1,63 @@
+{
+  "id": "t4-f50",
+  "title": "The Helix Crown",
+  "band": "pinnacle",
+  "size": {
+    "w": 7,
+    "h": 8
+  },
+  "tiles": [
+    "#######",
+    "####ce#",
+    "###..##",
+    "##.a###",
+    "##.####",
+    "#c.####",
+    "#.#####",
+    "#######"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 6,
+    "facing": "north"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "while",
+    "if"
+  ],
+  "sensors": [
+    "facing_north"
+  ],
+  "typing": true,
+  "slots": {
+    "main": 7
+  },
+  "par": {
+    "commands": 6,
+    "steps": 13
+  },
+  "reference": "repeat 5 { while not wall_ahead { forward } if facing_north { turn_right } else { turn_left } }",
+  "hints": [
+    "The last stair. Ask before every turn.",
+    "While no wall, forward. If facing north, turn right, else left.",
+    "repeat 5 { while not wall_ahead { forward } if facing_north { turn_right } else { turn_left } }"
+  ],
+  "story": {
+    "intro": "PATCH: \"The Helix Crown. VANTA is aiming the tower's mast at every port on the coast. Ask the compass and climb.\"",
+    "outro": null
+  }
+}

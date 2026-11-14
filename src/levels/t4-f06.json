@@ -1,0 +1,52 @@
+{
+  "id": "t4-f06",
+  "title": "Free Turns",
+  "band": "ferry",
+  "size": {
+    "w": 7,
+    "h": 7
+  },
+  "tiles": [
+    "#######",
+    "#..c..#",
+    "#.#.#.#",
+    "#c.a.c#",
+    "#.#.#.#",
+    "#..a.e#",
+    "#######"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump"
+  ],
+  "slots": {
+    "main": 10
+  },
+  "par": {
+    "commands": 8,
+    "steps": 8
+  },
+  "reference": "forward forward forward forward forward forward forward forward",
+  "hints": [
+    "Some routes have more turntables than others. Every one is a free turn.",
+    "Find the path where the tables do all the turning.",
+    "forward forward forward forward forward forward forward forward"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

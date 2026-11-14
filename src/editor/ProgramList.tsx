@@ -210,6 +210,7 @@ const SENSOR_LABEL: Record<string, string> = {
   on_target: msg('on target'),
   on_switch: msg('on switch'),
   heat_ahead: msg('heat ahead'),
+  facing_north: msg('facing north'),
 };
 /** A condition in words: "wall ahead", "not on red". */
 export function condLabel(c: Condition): string {

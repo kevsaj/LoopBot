@@ -1,0 +1,55 @@
+{
+  "id": "t4-f15",
+  "title": "Against the Spin",
+  "band": "garden",
+  "size": {
+    "w": 8,
+    "h": 6
+  },
+  "tiles": [
+    "########",
+    "###...a#",
+    "######.#",
+    "######.#",
+    "###e..a#",
+    "########"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 3,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat"
+  ],
+  "slots": {
+    "main": 6
+  },
+  "par": {
+    "commands": 5,
+    "steps": 13
+  },
+  "reference": "repeat 3 { repeat 3 { forward } turn_left turn_left }",
+  "hints": [
+    "These turntables turn you left, but the path goes right.",
+    "Three steps, then turn round twice. Loop it.",
+    "repeat 3 { repeat 3 { forward } turn_left turn_left }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

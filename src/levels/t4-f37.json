@@ -1,0 +1,61 @@
+{
+  "id": "t4-f37",
+  "title": "Night Market",
+  "band": "lantern",
+  "size": {
+    "w": 7,
+    "h": 7
+  },
+  "tiles": [
+    "#######",
+    "#####e#",
+    "####.a#",
+    "##c..##",
+    "#..####",
+    "#.#####",
+    "#######"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 5,
+    "facing": "north"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "while",
+    "if"
+  ],
+  "sensors": [
+    "facing_north"
+  ],
+  "slots": {
+    "main": 7
+  },
+  "par": {
+    "commands": 6,
+    "steps": 12
+  },
+  "reference": "repeat 5 { while not wall_ahead { forward } if facing_north { turn_right } else { turn_left } }",
+  "hints": [
+    "Short steps, many corners, a few turntables.",
+    "The same loop as before. Count the corners you turn yourself.",
+    "repeat 5 { while not wall_ahead { forward } if facing_north { turn_right } else { turn_left } }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

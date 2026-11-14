@@ -1,0 +1,63 @@
+{
+  "id": "t4-f34",
+  "title": "Bug Hunt: Backwards Compass",
+  "band": "lantern",
+  "size": {
+    "w": 7,
+    "h": 8
+  },
+  "tiles": [
+    "#######",
+    "#####e#",
+    "#####.#",
+    "####c.#",
+    "####.##",
+    "#....##",
+    "#.#####",
+    "#######"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 6,
+    "facing": "north"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "while",
+    "if"
+  ],
+  "sensors": [
+    "facing_north"
+  ],
+  "slots": {
+    "main": 7
+  },
+  "par": {
+    "commands": 6,
+    "steps": 12
+  },
+  "reference": "repeat 4 { while not wall_ahead { forward } if facing_north { turn_right } else { turn_left } }",
+  "starter": "repeat 4 { while not wall_ahead { forward } if facing_north { turn_left } else { turn_right } }",
+  "hints": [
+    "Run it. It turns the right amount, the wrong way.",
+    "Swap the two turns.",
+    "repeat 4 { while not wall_ahead { forward } if facing_north { turn_right } else { turn_left } }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

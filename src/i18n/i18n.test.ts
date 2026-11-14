@@ -8,12 +8,13 @@ import { TOWERS } from '../levels/towers';
 import { LEVELS } from '../levels';
 import { FROSTLINE } from '../levels/frostline';
 import { HEATWAVE } from '../levels/heatwave';
+import { TWIST } from '../levels/twist';
 import { INTERLUDES } from '../story/interludes';
 import bank from '../daily/bank.json';
 
 const keys = collectKeys(join(__dirname, '..'));
 const texts = [...new Set(keys.map((k) => k.text))];
-const ALL_FLOORS = [...LEVELS, ...FROSTLINE, ...HEATWAVE];
+const ALL_FLOORS = [...LEVELS, ...FROSTLINE, ...HEATWAVE, ...TWIST];
 
 afterEach(() => setLangForTest('en'));
 
@@ -117,7 +118,7 @@ describe('in French', () => {
       const answer = fr.hints[2];
       if (!answer) continue;
       if (level.typing) expect(answer, level.id).toBe(level.hints[2]);
-      else expect(answer, level.id).not.toMatch(/\b(forward|turn_left|turn_right|jump|pick_up|drop|activate|wait|repeat|while|if|else|def|not|wall_ahead|box_ahead|on_switch|heat_ahead|tile_is)\b/);
+      else expect(answer, level.id).not.toMatch(/\b(forward|turn_left|turn_right|jump|pick_up|drop|activate|wait|repeat|while|if|else|def|not|wall_ahead|box_ahead|on_switch|heat_ahead|facing_north|tile_is)\b/);
     }
   });
 

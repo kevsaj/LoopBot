@@ -47,6 +47,12 @@ const SKIES: Record<string, string[]> = {
   bazaar: ['#2a1b3d', '#5a2f52', '#b0584e', '#e89a5c'],
   mirage: ['#4a3570', '#8a6aae', '#d9b0c8', '#f6dccc'],
   crown: ['#7a4210', '#c47a22', '#f2c45e', '#fff0cc'],
+  // Tower 4, Twist
+  ferry: ['#1d3a4a', '#2f6a78', '#7fb7b0', '#f2e2c4'],
+  garden: ['#10261f', '#1f4a3a', '#3f7a5c', '#a8d4a0'],
+  loom: ['#2a1630', '#5a2a4e', '#a8435a', '#f0a07a'],
+  lantern: ['#0a0d1e', '#161a36', '#3a2440', '#b8463a'],
+  pinnacle: ['#0f2a4a', '#3a6aa0', '#8fbfe6', '#eaf4ff'],
 };
 
 /** How many code lines fit; longer programs end with "…". */

@@ -1,0 +1,54 @@
+{
+  "id": "t4-f16",
+  "title": "Lotus Loop",
+  "band": "garden",
+  "size": {
+    "w": 7,
+    "h": 5
+  },
+  "tiles": [
+    "#######",
+    "#c.c###",
+    "#.#.###",
+    "#c.sde#",
+    "#######"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 2,
+    "facing": "north"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat"
+  ],
+  "slots": {
+    "main": 6
+  },
+  "par": {
+    "commands": 5,
+    "steps": 9
+  },
+  "reference": "repeat 2 { repeat 5 { forward } turn_left activate }",
+  "hints": [
+    "The ring of turntables carries you round. The switch is on the way.",
+    "Ride round, turn to face the switch, activate. Do it again.",
+    "repeat 2 { repeat 5 { forward } turn_left activate }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

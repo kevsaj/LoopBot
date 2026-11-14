@@ -1,0 +1,49 @@
+{
+  "id": "t4-f01",
+  "title": "First Spin",
+  "band": "ferry",
+  "size": {
+    "w": 4,
+    "h": 5
+  },
+  "tiles": [
+    "####",
+    "#.c#",
+    "##.#",
+    "##e#",
+    "####"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right"
+  ],
+  "slots": {
+    "main": 5
+  },
+  "par": {
+    "commands": 3,
+    "steps": 3
+  },
+  "reference": "forward forward forward",
+  "hints": [
+    "That round tile is a turntable. It turns you as you step on.",
+    "Just walk. Count the steps to the lift.",
+    "forward forward forward"
+  ],
+  "story": {
+    "intro": "PATCH: \"Twist. VANTA got into the Helix and set every turntable spinning. Step on one and it turns you a quarter turn.\"",
+    "outro": "PATCH: \"Three steps, one corner, and you never pressed turn. The tower did it for you.\""
+  }
+}

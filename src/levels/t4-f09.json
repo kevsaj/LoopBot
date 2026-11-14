@@ -1,0 +1,63 @@
+{
+  "id": "t4-f09",
+  "title": "Two Tables",
+  "band": "ferry",
+  "size": {
+    "w": 7,
+    "h": 7
+  },
+  "tiles": [
+    "#######",
+    "#.a...#",
+    "#.##..#",
+    "#c..c.#",
+    "#.##.##",
+    "#...ae#",
+    "#######"
+  ],
+  "heights": [
+    "0000000",
+    "0000000",
+    "0000000",
+    "0001000",
+    "0000000",
+    "0000000",
+    "0000000"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate"
+  ],
+  "slots": {
+    "main": 13
+  },
+  "par": {
+    "commands": 11,
+    "steps": 11
+  },
+  "reference": "forward turn_right forward forward turn_right forward forward turn_left forward forward forward",
+  "hints": [
+    "Two ways round, and the turntables turn you differently on each.",
+    "Plan the route, then count the turns you still need.",
+    "forward turn_right forward forward turn_right forward forward turn_left forward forward forward"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

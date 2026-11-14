@@ -1,0 +1,363 @@
+{
+ "t4-f01": {
+  "title": "Premier tour",
+  "hints": [
+   "Cette tuile ronde est une plaque tournante. Elle te tourne quand tu montes dessus.",
+   "Marche, tout simplement. Compte les pas jusqu'à l'ascenseur."
+  ],
+  "intro": "PATCH : « Twist. VANTA s'est infiltré dans l'Hélice et a fait tourner toutes les plaques. Monte sur une plaque et elle te tourne d'un quart de tour. »",
+  "outro": "PATCH : « Trois pas, un coin, et tu n'as jamais appuyé sur tourner. La tour l'a fait pour toi. »"
+ },
+ "t4-f02": {
+  "title": "Dans le mauvais sens",
+  "hints": [
+   "Cette plaque te tourne à gauche. L'ascenseur est tout droit.",
+   "Monte dessus, retourne-toi dans ta direction, puis marche."
+  ]
+ },
+ "t4-f03": {
+  "title": "Escalier en zigzag",
+  "hints": [
+   "Chaque plaque te tourne dans un sens différent. Suis les flèches.",
+   "Ici, tu n'as jamais besoin de tourner toi-même."
+  ]
+ },
+ "t4-f04": {
+  "title": "Tour en hauteur",
+  "hints": [
+   "Un saut sur une plaque tournante te fait tourner aussi.",
+   "Saute, saute encore, puis avance jusqu'à l'ascenseur."
+  ]
+ },
+ "t4-f05": {
+  "title": "Carrousel",
+  "hints": [
+   "Quatre plaques en anneau te tournent toujours à droite. Où veux-tu descendre ?",
+   "Fais le tour, puis tourne pour sortir vers l'ascenseur."
+  ]
+ },
+ "t4-f06": {
+  "title": "Virages gratuits",
+  "hints": [
+   "Certains chemins ont plus de plaques que d'autres. Chacune est un virage gratuit.",
+   "Trouve le chemin où les plaques font tous les virages."
+  ]
+ },
+ "t4-f07": {
+  "title": "Interrupteur tournant",
+  "hints": [
+   "L'interrupteur ouvre la porte. La plaque te dérange à l'aller et au retour.",
+   "Après chaque tour, retourne-toi dans la direction voulue."
+  ]
+ },
+ "t4-f08": {
+  "title": "Colis tournant",
+  "hints": [
+   "Transporte la caisse. La plaque te tourne, caisse comprise.",
+   "Ramasse-la, passe sur la plaque et dépose-la sur la cible."
+  ]
+ },
+ "t4-f09": {
+  "title": "Deux plaques",
+  "hints": [
+   "Deux chemins, et les plaques te tournent différemment sur chacun.",
+   "Choisis ton chemin, puis compte les virages qu'il te reste à faire."
+  ]
+ },
+ "t4-f10": {
+  "title": "La terrasse du traversier",
+  "hints": [
+   "Devine où chaque plaque va te pointer avant de partir.",
+   "Compte les virages gratuits. Ajoute un virage seulement là où les plaques n'aident pas."
+  ]
+ },
+ "t4-f11": {
+  "title": "Escalier en spirale",
+  "hints": [
+   "Les plaques prennent tous les coins pour toi.",
+   "Une seule boucle d'avancer fait tout le tour."
+  ],
+  "intro": "PATCH : « Le jardin de jade monte en spirale à l'intérieur de la tour. Avec des plaques dans les coins, une seule boucle peut te faire faire tout le tour. »"
+ },
+ "t4-f12": {
+  "title": "Demi-virages",
+  "hints": [
+   "Les plaques te tournent à droite. Un coin sur deux, tu tournes à gauche toi-même.",
+   "Répète deux pas et un virage à gauche."
+  ]
+ },
+ "t4-f13": {
+  "title": "Marches tordues",
+  "hints": [
+   "Un pas, un saut, un pas, un saut... et les plaques prennent les coins.",
+   "Répète avancer et sauter."
+  ]
+ },
+ "t4-f14": {
+  "title": "Livraison sur plaque",
+  "hints": [
+   "La caisse tourne sur la plaque avec toi.",
+   "Ramasse, répète avancer, dépose."
+  ]
+ },
+ "t4-f15": {
+  "title": "À contre-tour",
+  "hints": [
+   "Ces plaques te tournent à gauche, mais le chemin va à droite.",
+   "Trois pas, puis tourne deux fois. Répète."
+  ]
+ },
+ "t4-f16": {
+  "title": "Boucle du lotus",
+  "hints": [
+   "L'anneau de plaques te fait faire le tour. L'interrupteur est sur le chemin.",
+   "Fais le tour, tourne-toi vers l'interrupteur, active. Encore une fois."
+  ]
+ },
+ "t4-f17": {
+  "title": "Interrupteur du jardin",
+  "hints": [
+   "L'interrupteur est derrière toi. La plaque t'attend à l'aller et au retour.",
+   "Tourne, retourne-toi, atteins l'interrupteur, puis reviens par le même chemin."
+  ]
+ },
+ "t4-f18": {
+  "title": "Double hélice",
+  "hints": [
+   "La plupart des coins sont des plaques. Un seul ne l'est pas.",
+   "Répète avancer, tourne une fois, répète avancer encore."
+  ]
+ },
+ "t4-f19": {
+  "title": "Porte de lune",
+  "hints": [
+   "Les plaques te font faire le tour de la porte. Tu tournes seulement pour entrer.",
+   "Répète avancer autour de l'anneau, tourne à gauche. Deux fois."
+  ]
+ },
+ "t4-f20": {
+  "title": "Le jardin de jade",
+  "hints": [
+   "Tout le tour du mur du jardin, puis un virage vers le centre.",
+   "Une boucle dans une boucle va très loin. Tourne à gauche à la fin."
+  ],
+  "intro": "PATCH : « Le mur du jardin fait tout le tour. Compte les tours, pas les coins. »"
+ },
+ "t4-f21": {
+  "title": "Routine tournante",
+  "hints": [
+   "Chaque côté est pareil : un pas, un saut, un pas sur une plaque.",
+   "Apprends un côté à F1, puis appelle-la trois fois."
+  ],
+  "intro": "PATCH : « Le métier à soie. Les robots tisserands d'ici répètent une seule routine. Apprends-la une fois, appelle-la par son nom. »"
+ },
+ "t4-f22": {
+  "title": "Chasse au bogue : double virage",
+  "hints": [
+   "Les plaques te tournent déjà. Lance le programme et regarde.",
+   "Enlève le virage de trop."
+  ],
+  "intro": "PATCH : « VANTA a laissé le programme de ce métier presque juste. Lance-le, regarde où ça se gâte, puis répare-le. »"
+ },
+ "t4-f23": {
+  "title": "Tout droit",
+  "hints": [
+   "La routine tourne à gauche chaque fois. La plaque te tourne d'abord à droite.",
+   "F1 : deux pas et un virage à gauche. Appelle-la quatre fois."
+  ]
+ },
+ "t4-f24": {
+  "title": "Chasse au bogue : demi-tour raté",
+  "hints": [
+   "Les plaques te tournent à gauche. Un seul virage à droite ne te ramène qu'à moitié.",
+   "Tourne deux fois à droite dans la routine."
+  ]
+ },
+ "t4-f25": {
+  "title": "Escalier du métier",
+  "hints": [
+   "Deux montées par le même escalier, deux fois.",
+   "F1 : avancer, avancer, sauter. Puis saute et tourne à gauche."
+  ]
+ },
+ "t4-f26": {
+  "title": "Chasse au bogue : mauvaise main",
+  "hints": [
+   "La routine tourne du mauvais côté.",
+   "Ici, chaque coin est un virage à droite."
+  ]
+ },
+ "t4-f27": {
+  "title": "Motif tissé",
+  "hints": [
+   "En haut, en bas, en haut, en bas. Les plaques prennent les coins.",
+   "F1 : trois sauts. Appelle-la quatre fois."
+  ]
+ },
+ "t4-f28": {
+  "title": "Chasse au bogue : dans le désordre",
+  "hints": [
+   "Les deux routines sont bonnes. Elles s'exécutent dans le mauvais ordre.",
+   "Marche d'abord, puis grimpe."
+  ]
+ },
+ "t4-f29": {
+  "title": "Route de la soie",
+  "hints": [
+   "Un pas, un saut, un pas sur une plaque. Encore et encore.",
+   "Répète-le trois fois."
+  ]
+ },
+ "t4-f30": {
+  "title": "Le métier à soie",
+  "hints": [
+   "Les trois mêmes mouvements reviennent trois fois.",
+   "F1 : avancer, sauter, avancer. Puis ajoute les virages."
+  ],
+  "intro": "PATCH : « Le haut du métier. Une routine, trois endroits, et une plaque ou deux entre les deux. »"
+ },
+ "t4-f31": {
+  "title": "Où est le nord ?",
+  "hints": [
+   "Face au nord devant un mur ? Tourne à droite. Face à l'est ? Tourne à gauche.",
+   "Marche jusqu'au mur, puis demande à la boussole de quel côté tourner. Répète."
+  ],
+  "intro": "PATCH : « Le labo des lanternes. Tu vois la boussole au sol ? Demande-lui où tu regardes, et tourne du bon côté à chaque fois. »"
+ },
+ "t4-f32": {
+  "title": "Escalier des lanternes",
+  "hints": [
+   "Les plaques prennent certains coins pour toi. La boussole connaît le reste.",
+   "Tant que pas de mur, avance. Si face au nord tourne à droite, sinon à gauche."
+  ]
+ },
+ "t4-f33": {
+  "title": "Marches de l'ouest",
+  "hints": [
+   "Cet escalier monte vers le nord et l'ouest.",
+   "Si tu es face au nord, tourne à gauche. Sinon, tourne à droite."
+  ]
+ },
+ "t4-f34": {
+  "title": "Chasse au bogue : boussole à l'envers",
+  "hints": [
+   "Lance-le. Il tourne autant qu'il faut, mais du mauvais côté.",
+   "Échange les deux virages."
+  ]
+ },
+ "t4-f35": {
+  "title": "Lanternes de papier",
+  "hints": [
+   "Encore le nord et l'ouest, avec plus de plaques.",
+   "Marche jusqu'au mur, puis laisse la boussole choisir le virage."
+  ]
+ },
+ "t4-f36": {
+  "title": "Chasse au bogue : mauvaise question",
+  "hints": [
+   "LoopBot ne marche jamais. Regarde la question que pose la boucle.",
+   "Marche tant qu'il n'y a pas de mur devant."
+  ]
+ },
+ "t4-f37": {
+  "title": "Marché de nuit",
+  "hints": [
+   "Petits pas, beaucoup de coins, quelques plaques.",
+   "La même boucle qu'avant. Compte les coins où tu tournes toi-même."
+  ]
+ },
+ "t4-f38": {
+  "title": "Chasse au bogue : un pas trop court",
+  "hints": [
+   "Un pas, ce n'est pas toujours assez.",
+   "Continue de marcher jusqu'à un mur."
+  ]
+ },
+ "t4-f39": {
+  "title": "Échelle des lanternes",
+  "hints": [
+   "Nord et ouest, en haut de l'échelle.",
+   "Marche, demande, tourne. Répète."
+  ]
+ },
+ "t4-f40": {
+  "title": "Le labo des lanternes",
+  "hints": [
+   "Des coins partout. Les plaques en prennent certains, la boussole décide du reste.",
+   "Marche jusqu'au mur, demande à la boussole, tourne. Répète six fois."
+  ],
+  "intro": "PATCH : « Dernier étage du labo. Des plaques, des coins et une boussole. Demande avant de tourner. »"
+ },
+ "t4-f41": {
+  "title": "Pont de verre",
+  "hints": [
+   "Deux pas et un saut, puis la plaque te tourne.",
+   "Répète avancer, avancer, sauter."
+  ],
+  "intro": "PATCH : « Le Pinacle. Tape tes programmes si tu veux. Les plaques se fichent de la façon dont tu les écris. »"
+ },
+ "t4-f42": {
+  "title": "Chasse au bogue : sens dessus dessous",
+  "hints": [
+   "Cet escalier va vers le nord et l'ouest.",
+   "Échange les virages."
+  ]
+ },
+ "t4-f43": {
+  "title": "Passerelle du ciel",
+  "hints": [
+   "On monte la passerelle, on la descend. Les plaques font presque tous les virages.",
+   "Compte les sauts, les pas et les deux coins où tu tournes toi-même."
+  ]
+ },
+ "t4-f44": {
+  "title": "Laveur de vitres",
+  "hints": [
+   "L'interrupteur est tout au bout. Les plaques t'attendent à l'aller et au retour.",
+   "Va à l'interrupteur, reviens, puis passe la porte."
+  ]
+ },
+ "t4-f45": {
+  "title": "Chasse au bogue : trois bogues",
+  "hints": [
+   "Trois choses clochent : un nombre, une question et les virages.",
+   "Cinq marches. Marche tant que pas de mur. Au nord, on tourne à droite."
+  ]
+ },
+ "t4-f46": {
+  "title": "Routine d'ascenseur",
+  "hints": [
+   "Chaque volée est pareille : deux pas et un saut.",
+   "F1 : avancer, avancer, sauter. Appelle-la trois fois."
+  ]
+ },
+ "t4-f47": {
+  "title": "Marche miroir",
+  "hints": [
+   "Saute, puis les trois mêmes mouvements, trois fois.",
+   "F1 : sauter, avancer, avancer."
+  ]
+ },
+ "t4-f48": {
+  "title": "Chasse au bogue : dernière vérif",
+  "hints": [
+   "Les deux réponses tournent du même côté.",
+   "Face au nord, tourne à gauche. Sinon, à droite."
+  ]
+ },
+ "t4-f49": {
+  "title": "Course du typhon",
+  "hints": [
+   "Un long escalier vers le nord et l'ouest, avec des plaques dans certains coins.",
+   "Marche, demande à la boussole, tourne. Six fois."
+  ]
+ },
+ "t4-f50": {
+  "title": "La couronne de l'Hélice",
+  "hints": [
+   "Le dernier escalier. Demande avant chaque virage.",
+   "Tant que pas de mur, avance. Si face au nord, tourne à droite, sinon à gauche."
+  ],
+  "intro": "PATCH : « La couronne de l'Hélice. VANTA pointe le mât de la tour vers tous les ports de la côte. Demande à la boussole et grimpe. »"
+ }
+}

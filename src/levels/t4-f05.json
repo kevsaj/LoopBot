@@ -1,0 +1,49 @@
+{
+  "id": "t4-f05",
+  "title": "Roundabout",
+  "band": "ferry",
+  "size": {
+    "w": 6,
+    "h": 4
+  },
+  "tiles": [
+    "######",
+    "#.cc.#",
+    "##cce#",
+    "######"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump"
+  ],
+  "slots": {
+    "main": 9
+  },
+  "par": {
+    "commands": 7,
+    "steps": 7
+  },
+  "reference": "forward forward turn_left turn_left forward turn_left forward",
+  "hints": [
+    "Four turntables in a ring keep turning you right. Where do you want to get off?",
+    "Ride the ring, then turn to step off toward the lift.",
+    "forward forward turn_left turn_left forward turn_left forward"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

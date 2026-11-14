@@ -1,0 +1,63 @@
+{
+  "id": "t4-f21",
+  "title": "Routine Spin",
+  "band": "loom",
+  "size": {
+    "w": 6,
+    "h": 6
+  },
+  "tiles": [
+    "######",
+    "#...c#",
+    "####.#",
+    "####.#",
+    "#e..c#",
+    "######"
+  ],
+  "heights": [
+    "000000",
+    "000110",
+    "000010",
+    "000000",
+    "011000",
+    "000000"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "F1"
+  ],
+  "slots": {
+    "main": 4,
+    "F1": 4
+  },
+  "par": {
+    "commands": 6,
+    "steps": 9
+  },
+  "reference": "F1 F1 F1 def F1 { forward jump forward }",
+  "hints": [
+    "Each side is the same: step, jump, step onto a turntable.",
+    "Teach F1 one side, then call it three times.",
+    "F1 F1 F1 def F1 { forward jump forward }"
+  ],
+  "story": {
+    "intro": "PATCH: \"The Silk Loom. The weaving bots here run one routine over and over. Teach it once, call it by name.\"",
+    "outro": null
+  }
+}

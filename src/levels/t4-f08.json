@@ -1,0 +1,65 @@
+{
+  "id": "t4-f08",
+  "title": "Turntable Parcel",
+  "band": "ferry",
+  "size": {
+    "w": 6,
+    "h": 5
+  },
+  "tiles": [
+    "######",
+    "#.c..#",
+    "#.#a.#",
+    "#....#",
+    "######"
+  ],
+  "heights": null,
+  "boxes": [
+    {
+      "x": 1,
+      "y": 2,
+      "count": 1
+    }
+  ],
+  "targets": [
+    {
+      "x": 4,
+      "y": 3,
+      "count": 1
+    }
+  ],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "all_targets_filled"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate"
+  ],
+  "slots": {
+    "main": 10
+  },
+  "par": {
+    "commands": 8,
+    "steps": 8
+  },
+  "reference": "turn_right pick_up forward forward turn_left forward forward drop",
+  "hints": [
+    "Carry the crate along. The turntable turns you, crate and all.",
+    "Pick it up, ride the turntable, and drop it on the target.",
+    "turn_right pick_up forward forward turn_left forward forward drop"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

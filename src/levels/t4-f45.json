@@ -1,0 +1,64 @@
+{
+  "id": "t4-f45",
+  "title": "Bug Hunt: Three Bugs",
+  "band": "pinnacle",
+  "size": {
+    "w": 7,
+    "h": 8
+  },
+  "tiles": [
+    "#######",
+    "#####e#",
+    "####c.#",
+    "####.##",
+    "###..##",
+    "#..a###",
+    "#.#####",
+    "#######"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 6,
+    "facing": "north"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "while",
+    "if"
+  ],
+  "sensors": [
+    "facing_north"
+  ],
+  "typing": true,
+  "slots": {
+    "main": 7
+  },
+  "par": {
+    "commands": 6,
+    "steps": 13
+  },
+  "reference": "repeat 5 { while not wall_ahead { forward } if facing_north { turn_right } else { turn_left } }",
+  "starter": "repeat 4 { while wall_ahead { forward } if facing_north { turn_left } else { turn_right } }",
+  "hints": [
+    "Three things are wrong: a count, a question and the turns.",
+    "Five walks. Walk while no wall. North turns right.",
+    "repeat 5 { while not wall_ahead { forward } if facing_north { turn_right } else { turn_left } }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

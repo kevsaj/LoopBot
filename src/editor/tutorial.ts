@@ -1,7 +1,7 @@
 // First-run tutorial (doc: "Floor screen sketch and first-run tutorial").
 // Overlays only on the first floors; they never block a tap, and Settings can turn them off.
 
-import type { Action, Block, Program } from '../sim/types';
+import type { Action, Block, Program, World } from '../sim/types';
 import type { RunStatus } from '../sim/interpreter';
 import { msg, t } from '../i18n';
 
@@ -95,4 +95,15 @@ const STEP_LINE: Record<Action, string> = {
 /** The terminal line for one step of a run. */
 export function stepLine(action: Action): string {
   return t(STEP_LINE[action]);
+}
+
+/**
+ * Twist turntables (CR-SPIN) turn LoopBot as it arrives, which is easy to miss on the board, so
+ * the terminal says so. Returns the extra words for a step that landed on a working turntable.
+ */
+export function spinNote(action: Action, w: World): string | null {
+  if (action !== 'forward' && action !== 'jump') return null;
+  const tile = w.tiles[w.bot.y]?.[w.bot.x];
+  if (tile?.type !== 'spinner' || w.boxes[w.bot.y][w.bot.x] > 0) return null;
+  return tile.spin === -1 ? t('the turntable turned LoopBot left') : t('the turntable turned LoopBot right');
 }

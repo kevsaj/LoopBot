@@ -5,7 +5,7 @@ import { SENSORS } from '../sim/types';
 import { MAX_DEPTH, MAX_TIMES, MIN_TIMES, countBlocks, loopHeight, parseReference } from '../sim/program';
 import { FUNCTION_NAMES } from '../sim/types';
 
-const TILE_CHARS = new Set(['.', '#', '_', 's', 'd', 'e', 'r', 'g', 'b', 'y', 'i', 't', 'v', 'w', 'x', 'z']);
+const TILE_CHARS = new Set(['.', '#', '_', 's', 'd', 'e', 'r', 'g', 'b', 'y', 'i', 't', 'v', 'w', 'x', 'z', 'c', 'a']);
 /** Heatwave vent tiles and the phase each one blasts on (CR-VENT). */
 const VENT_PHASE: Record<string, number> = { v: 0, w: 1, x: 2, z: 3 };
 const FACINGS = ['north', 'east', 'south', 'west'];

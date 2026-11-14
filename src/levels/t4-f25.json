@@ -1,0 +1,67 @@
+{
+  "id": "t4-f25",
+  "title": "Loom Stairs",
+  "band": "loom",
+  "size": {
+    "w": 8,
+    "h": 7
+  },
+  "tiles": [
+    "########",
+    "#..c####",
+    "###.####",
+    "###..c##",
+    "#####.##",
+    "#####.e#",
+    "########"
+  ],
+  "heights": [
+    "00000000",
+    "00000000",
+    "00010000",
+    "00022200",
+    "00000100",
+    "00000000",
+    "00000000"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "F1",
+    "F2"
+  ],
+  "slots": {
+    "main": 8,
+    "F1": 4,
+    "F2": 1
+  },
+  "par": {
+    "commands": 10,
+    "steps": 11
+  },
+  "reference": "F1 jump turn_left F1 jump turn_left forward def F1 { forward forward jump }",
+  "hints": [
+    "Two steps up the same stairs, twice.",
+    "F1: forward, forward, jump. Then jump and turn left.",
+    "F1 jump turn_left F1 jump turn_left forward def F1 { forward forward jump }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

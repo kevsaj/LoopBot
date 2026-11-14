@@ -1,0 +1,54 @@
+{
+  "id": "t4-f11",
+  "title": "Spiral Stair",
+  "band": "garden",
+  "size": {
+    "w": 8,
+    "h": 5
+  },
+  "tiles": [
+    "########",
+    "##....c#",
+    "######.#",
+    "###e..c#",
+    "########"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 2,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat"
+  ],
+  "slots": {
+    "main": 3
+  },
+  "par": {
+    "commands": 2,
+    "steps": 9
+  },
+  "reference": "repeat 9 { forward }",
+  "hints": [
+    "The turntables take every corner for you.",
+    "One loop of forward goes all the way round.",
+    "repeat 9 { forward }"
+  ],
+  "story": {
+    "intro": "PATCH: \"The Jade Garden winds up the inside of the tower. With turntables on the corners, one loop can carry you all the way round.\"",
+    "outro": null
+  }
+}
