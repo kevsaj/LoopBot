@@ -2823,52 +2823,207 @@ button.set-row {
 }
 
 /* --- Tower 2, Frostline (the Northstar Needle) --- */
-/* The towers row on the map: the tower you're in is lit, a Plus tower shows a lock until owned. */
-.tower-switch {
-  display: flex;
-  gap: 8px;
+/* The tower picker on the map: a drop-down naming the tower you're in, opening onto every tower. */
+.tower-picker {
+  position: relative;
   padding: 0 16px 8px;
 }
-.tower-tab {
+.tower-picker.open {
+  z-index: 30;
+}
+.tp-scrim {
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 10, 20, 0.55);
+  animation: tp-fade 0.15s ease-out;
+}
+.tp-trigger,
+.tp-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+  text-align: left;
+  color: var(--ink);
+  font: inherit;
+  cursor: pointer;
+}
+.tp-trigger {
+  position: relative;
+  min-height: 56px;
+  padding: 8px 10px 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--panel);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.25);
+  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s, transform 0.08s;
+}
+.tp-trigger:active {
+  transform: translateY(1px);
+  box-shadow: none;
+}
+.tower-picker.open .tp-trigger {
+  border-color: var(--tp-light);
+  background: var(--panel-2);
+  box-shadow: 0 0 0 1px var(--tp-light), 0 0 16px var(--tp-glow);
+}
+.tp-badge {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: var(--tp-soft);
+  border: 1px solid var(--tp-glow);
+  color: var(--tp-light);
+  font-weight: 700;
+  font-size: 16px;
+}
+.tp-text {
   flex: 1;
   min-width: 0;
-  min-height: 48px;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
   gap: 1px;
-  padding: 6px 12px;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  background: var(--panel);
-  color: var(--quiet);
-  text-align: left;
 }
-.tower-tab .tt-num {
+.tp-kicker,
+.tp-sub {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--quiet);
+  font-size: 12px;
+}
+.tp-kicker {
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
-.tower-tab .tt-name {
-  max-width: 100%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+.tp-name {
   color: var(--ink);
-  font-size: 14px;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+/* The "Change ▾" chip: what makes it read as a drop-down at a glance. */
+.tp-change {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 32px;
+  padding: 0 8px 0 10px;
+  border-radius: 999px;
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  font-size: 12px;
   font-weight: 600;
 }
-.tower-tab.on {
-  border-color: var(--accent);
+.tower-picker.open .tp-change {
+  background: var(--tp-light);
+  border-color: var(--tp-light);
+  color: #141726;
+}
+.tp-chevron {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.18s ease-out;
+}
+.tower-picker.open .tp-chevron {
+  transform: rotate(180deg);
+}
+.tp-list {
+  position: absolute;
+  top: calc(100% - 2px);
+  left: 16px;
+  right: 16px;
+  max-height: min(60vh, 420px);
+  overflow-y: auto;
+  padding: 6px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--panel);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+  animation: tp-drop 0.16s ease-out;
+}
+.tp-row {
+  min-height: 56px;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+}
+.tp-row + .tp-row {
+  margin-top: 2px;
+}
+.tp-row:hover,
+.tp-row:focus-visible {
   background: var(--panel-2);
+  outline: none;
 }
-.tower-tab-2.on {
-  border-color: #9fd8ff;
-  box-shadow: 0 0 0 1px rgba(159, 216, 255, 0.35), 0 0 14px rgba(159, 216, 255, 0.2);
+.tp-row.here {
+  background: var(--tp-soft);
 }
-.tower-tab.locked .tt-name {
+.tp-row.locked .tp-name {
   color: var(--quiet);
+}
+.tp-row.locked .tp-badge {
+  filter: grayscale(0.7);
+  opacity: 0.7;
+}
+.tp-state {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  color: var(--quiet);
+}
+.tp-row.here .tp-state {
+  color: var(--tp-light);
+}
+.tp-lock {
+  width: 14px;
+  height: 16px;
+}
+.tp-check {
+  width: 18px;
+  height: 18px;
+}
+.tp-go {
+  font-size: 22px;
+  line-height: 1;
+}
+.big-text .tp-name {
+  font-size: 18px;
+}
+.big-text .tp-kicker,
+.big-text .tp-sub,
+.big-text .tp-change {
+  font-size: 14px;
+}
+@keyframes tp-drop {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+@keyframes tp-fade {
+  from {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tp-list,
+  .tp-scrim {
+    animation: none;
+  }
+  .tp-chevron {
+    transition: none;
+  }
 }
 .tower-2 .tower-roof .beacon {
   background: #9fd8ff;
