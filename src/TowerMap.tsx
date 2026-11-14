@@ -70,39 +70,148 @@ const BAND_NAMES: Record<string, string> = {
 /** What lies under each tower, shown at the foot of its map. */
 const GROUND: Record<number, string> = { 1: msg('Sub-basement'), 2: msg('Ice cellar'), 3: msg('Old cistern'), 4: msg('River vault') };
 
-/** The towers row: the one you're in, and the others to switch to. Plus and city pack towers show a lock until owned. */
-function TowerSwitch({ tower, towers, onPick, onLocked }: { tower: number; towers: Tower[]; onPick(n: number): void; onLocked(t: Tower): void }) {
-  // A Plus tower only shows once Plus is on sale, or while previewing it.
-  const shown = towers.filter((t) => !t.plus || PLUS_VISIBLE || plusUnlocked());
+/** Each tower's own light, used for its beacon and its row in the tower picker. */
+const TOWER_LIGHT: Record<number, string> = { 1: '#7cc4ff', 2: '#9fd8ff', 3: '#ffb466', 4: '#7fd6c8' };
+
+/** The towers the picker lists. A Plus tower only shows once Plus is on sale, or while previewing it. */
+function pickable(towers: Tower[]): Tower[] {
+  return towers.filter((t) => !t.plus || PLUS_VISIBLE || plusUnlocked());
+}
+
+/** Floors cleared in a tower (stars are kept by floor id, so this works for any tower). */
+function clearedIn(t: Tower, progress: Progress): number {
+  return t.levels.filter((l) => (progress.stars[l.id] ?? 0) > 0).length;
+}
+
+/**
+ * The tower picker: a drop-down showing the tower you're in by its full name, opening onto every
+ * tower with its progress, or a lock and what opens it (LoopBot Plus or a city pack). It replaces a
+ * row of tabs that had no room left on phones, and a list scales as more cities arrive.
+ */
+function TowerSwitch({ tower, towers, progress, onPick, onLocked }: { tower: number; towers: Tower[]; progress: Progress; onPick(n: number): void; onLocked(t: Tower): void }) {
+  const [open, setOpen] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
   // (A city pack tower is only in the list at all in preview builds and store builds: see levels/towers.ts.)
+  const shown = pickable(towers);
+
+  useEffect(() => {
+    if (!open) return;
+    // Opening moves focus onto the tower you're in, so the arrow keys and a screen reader start there.
+    listRef.current?.querySelector<HTMLButtonElement>('[aria-current="true"]')?.focus();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setOpen(false);
+        triggerRef.current?.focus();
+      }
+      if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+      const items = [...(listRef.current?.querySelectorAll<HTMLButtonElement>('.tp-row') ?? [])];
+      const at = items.indexOf(document.activeElement as HTMLButtonElement);
+      items[(at + (e.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length]?.focus();
+      e.preventDefault();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [open]);
+
   if (shown.length < 2) return null;
+  const here = shown.find((t) => t.n === tower) ?? shown[0];
+  // Plain rgba rather than CSS color-mix(), which older Android WebViews don't have.
+  const light = (t: Tower) => {
+    const hex = TOWER_LIGHT[t.n] ?? TOWER_LIGHT[1];
+    const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
+    return { ['--tp-light' as string]: hex, ['--tp-soft' as string]: `rgba(${r}, ${g}, ${b}, 0.16)`, ['--tp-glow' as string]: `rgba(${r}, ${g}, ${b}, 0.45)` };
+  };
+  const toggle = () => {
+    fx.tap();
+    setOpen((o) => !o);
+  };
+
   return (
-    <nav className="tower-switch" aria-label={t('Towers')}>
-      {shown.map((t) => {
-        const locked = !towerUnlocked(t);
-        return (
-          <button
-            key={t.n}
-            type="button"
-            className={`tower-tab${t.n === tower ? ' on' : ''}${locked ? ' locked' : ''} tower-tab-${t.n}`}
-            aria-current={t.n === tower ? 'page' : undefined}
-            onClick={() => {
-              if (t.n === tower) return;
-              if (locked) return onLocked(t);
-              fx.tap();
-              onPick(t.n);
-            }}
-          >
-            {/* The lock sits by the number: with three towers on a phone the name gets cut short. */}
-            <span className="tt-num">
-              {tr('Tower {n}', { n: t.n })}
-              {locked && <span aria-label={tr('Locked')}> 🔒</span>}
-            </span>
-            <span className="tt-name">{tr(t.name)}</span>
-          </button>
-        );
-      })}
-    </nav>
+    <div className={`tower-picker${open ? ' open' : ''}`}>
+      {open && <div className="tp-scrim" onClick={() => setOpen(false)} aria-hidden="true" />}
+      <button
+        ref={triggerRef}
+        type="button"
+        className="tp-trigger"
+        style={light(here)}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        aria-label={t('Tower {n}, {name}. Change tower', { n: here.n, name: tr(here.name) })}
+        onClick={toggle}
+      >
+        <span className="tp-badge" aria-hidden="true">
+          {here.n}
+        </span>
+        <span className="tp-text">
+          <span className="tp-kicker">
+            {tr('Tower {n}', { n: here.n })} · {here.city}
+          </span>
+          <span className="tp-name">{tr(here.name)}</span>
+        </span>
+        <span className="tp-change" aria-hidden="true">
+          <span className="tp-change-label">{t('Change')}</span>
+          <svg className="tp-chevron" viewBox="0 0 16 16">
+            <path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </span>
+      </button>
+      {open && (
+        <div ref={listRef} className="tp-list" role="menu" aria-label={t('Towers')}>
+          {shown.map((x) => {
+            const locked = !towerUnlocked(x);
+            const isHere = x.n === tower;
+            const done = clearedIn(x, progress);
+            const total = x.levels.length;
+            const opens = x.pack ? tr('{city} city pack', { city: x.city }) : 'LoopBot Plus';
+            return (
+              <button
+                key={x.n}
+                type="button"
+                role="menuitem"
+                className={`tp-row${isHere ? ' here' : ''}${locked ? ' locked' : ''}`}
+                style={light(x)}
+                aria-current={isHere ? 'true' : undefined}
+                aria-label={
+                  locked
+                    ? t('Tower {n}, {name}, locked: comes with {what}', { n: x.n, name: tr(x.name), what: opens })
+                    : t('Tower {n}, {name}, {done} of {total} floors cleared', { n: x.n, name: tr(x.name), done, total })
+                }
+                onClick={() => {
+                  setOpen(false);
+                  if (isHere) return fx.tap();
+                  if (locked) return onLocked(x);
+                  fx.tap();
+                  onPick(x.n);
+                }}
+              >
+                <span className="tp-badge" aria-hidden="true">
+                  {x.n}
+                </span>
+                <span className="tp-text">
+                  <span className="tp-name">{tr(x.name)}</span>
+                  <span className="tp-sub">{locked ? `${x.city} · ${x.pack ? tr('City pack') : 'LoopBot Plus'}` : `${x.city} · ${tr('{n} / {total} floors', { n: done, total })}`}</span>
+                </span>
+                <span className="tp-state" aria-hidden="true">
+                  {locked ? (
+                    <svg className="tp-lock" viewBox="0 0 16 18">
+                      <path d="M4 8V5.5a4 4 0 0 1 8 0V8" fill="none" stroke="currentColor" strokeWidth="2" />
+                      <rect x="2" y="8" width="12" height="9" rx="2" fill="currentColor" />
+                    </svg>
+                  ) : isHere ? (
+                    <svg className="tp-check" viewBox="0 0 16 16">
+                      <path d="M3 8.5l3.2 3.2L13 5" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  ) : (
+                    <span className="tp-go">›</span>
+                  )}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -190,6 +299,7 @@ export function TowerMap({ levels, tower, towers, onTowerPick, progress, current
     noteTimer.current = window.setTimeout(() => setNote(null), 2200);
   };
   const name = t(towers.find((x) => x.n === tower)?.name ?? 'Meridian Spire');
+  const pickerShown = pickable(towers).length > 1;
 
   const lockedTap = (i: number) => {
     fx.denied();
@@ -207,7 +317,8 @@ export function TowerMap({ levels, tower, towers, onTowerPick, progress, current
           <button type="button" className="back-btn" onClick={() => (fx.tap(), onHome())} aria-label={t('Tower {n}: back to the title screen', { n: tower })}>
             ‹ {t('Tower {n}', { n: tower })}
           </button>
-          <h1 className="floor-name">{name}</h1>
+          {/* With the tower picker showing the name right below, the title stays for screen readers only. */}
+          <h1 className={`floor-name${pickerShown ? ' sr-only' : ''}`}>{name}</h1>
         </div>
         <div className="tower-stars" aria-label={t('{n} of {total} stars', { n: totalStars, total: ids.length * 3 })}>
           ★ {totalStars} / {ids.length * 3}
@@ -227,7 +338,7 @@ export function TowerMap({ levels, tower, towers, onTowerPick, progress, current
           {t('{n} / {total} floors', { n: cleared, total: ids.length })}
         </span>
       </div>
-      <TowerSwitch tower={tower} towers={towers} onPick={onTowerPick} onLocked={lockedTower} />
+      <TowerSwitch tower={tower} towers={towers} progress={progress} onPick={onTowerPick} onLocked={lockedTower} />
       {!DEMO && <DailyButton className="tower-daily" progress={progress} daily={daily} onOpen={onDaily} />}
       {!DEMO && dailyUnlocked(progress) && (PLUS_VISIBLE || plusUnlocked()) && (
         <button type="button" className="link-btn daily-archive-link" onClick={() => (fx.tap(), onArchive())}>

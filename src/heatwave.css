@@ -1,9 +1,5 @@
 /* Tower 3, Heatwave (the Sandglass). Kept in its own file so it never collides with other work in styles.css. */
 
-.tower-tab-3.on {
-  border-color: #ffb466;
-  box-shadow: 0 0 0 1px rgba(255, 180, 102, 0.35), 0 0 14px rgba(255, 160, 80, 0.22);
-}
 .tower-3 .tower-roof .beacon {
   background: #ffc861;
   box-shadow: 0 0 18px #ff9d3c;
