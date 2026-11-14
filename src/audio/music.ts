@@ -16,7 +16,8 @@ import { sharedAudio } from './feedback';
 export type Theme =
   | 'title' | 'lobby' | 'maintenance' | 'workshop' | 'control' | 'rooftop' | 'daily'
   | 'frostgate' | 'glacier' | 'signal' | 'aurora' | 'summit'
-  | 'dunegate' | 'furnace' | 'bazaar' | 'mirage' | 'crown';
+  | 'dunegate' | 'furnace' | 'bazaar' | 'mirage' | 'crown'
+  | 'ferry' | 'garden' | 'loom' | 'lantern' | 'pinnacle';
 
 interface Recipe {
   bpm: number;
@@ -49,6 +50,10 @@ const AEOLIAN = [0, 2, 3, 5, 7, 8, 10];
 const LYDIAN = [0, 2, 4, 6, 7, 9, 11];
 /** A flat second over a major third: the warm, dusty sound of Heatwave. */
 const PHRYGIAN_DOMINANT = [0, 1, 4, 5, 7, 8, 10];
+/** Five notes, no half steps: the open, ringing sound of Twist. */
+const PENTATONIC = [0, 2, 4, 7, 9];
+/** Its minor sister, for the Lantern Lab at night. */
+const MINOR_PENTATONIC = [0, 3, 5, 7, 10];
 
 const RECIPES: Record<Theme, Recipe> = {
   // Night sky over the city: slow, open, no drums.
@@ -211,6 +216,56 @@ const RECIPES: Record<Theme, Recipe> = {
     kick: 'x.....x...x.....', snare: '....x.......x...', hat: 'x.xxx.xxx.xxx.xx',
     seed: 139,
   },
+  // Tower 4, Twist (the Helix). Floors 1-10: the Ferry Terrace, a lilting walk by the river.
+  ferry: {
+    bpm: 96, root: 43, mode: PENTATONIC, chords: [0, 3, 1, 0], sevenths: false,
+    pad: { wave: 'triangle', cutoff: 1700, gain: 0.04 },
+    bass: 'x.....o...x...o.', bassWave: 'triangle',
+    arp: '0.2.3.2.1.2.3.4.', arpWave: 'sine',
+    lead: { wave: 'triangle', density: 0.4, gain: 0.045 },
+    kick: 'x.......x.......', snare: '....x.......x...', hat: '..x...x...x...x.',
+    seed: 149,
+  },
+  // Floors 11-20: the Jade Garden, a slow spiral of plucked notes that keeps coming round.
+  garden: {
+    bpm: 84, root: 41, mode: PENTATONIC, chords: [0, 2, 3, 1], sevenths: false,
+    pad: { wave: 'sine', cutoff: 1900, gain: 0.045 },
+    bass: 'x.......o.......', bassWave: 'sine',
+    arp: '0.1.2.3.4.3.2.1.', arpWave: 'triangle',
+    lead: { wave: 'sine', density: 0.35, gain: 0.05 },
+    kick: 'x...........x...', snare: '................', hat: '....x.......x...',
+    seed: 151,
+  },
+  // Floors 21-30: the Silk Loom, a busy shuttle rhythm, back and forth.
+  loom: {
+    bpm: 112, root: 45, mode: PENTATONIC, chords: [0, 3, 4, 2], sevenths: false,
+    pad: { wave: 'triangle', cutoff: 1500, gain: 0.03 },
+    bass: 'x.x.o...x.x.o...', bassWave: 'square',
+    arp: '0123210101232101', arpWave: 'square',
+    lead: { wave: 'triangle', density: 0.45, gain: 0.04 },
+    kick: 'x...x...x...x...', snare: '....x.......x..x', hat: 'xx.xxx.xxx.xxx.x',
+    seed: 157,
+  },
+  // Floors 31-40: the Lantern Lab, paper lanterns glowing over dark water.
+  lantern: {
+    bpm: 80, root: 40, mode: MINOR_PENTATONIC, chords: [0, 3, 2, 4], sevenths: true,
+    pad: { wave: 'sine', cutoff: 1600, gain: 0.045 },
+    bass: 'x.......x...o...', bassWave: 'sine',
+    arp: '4...2...3...1...', arpWave: 'sine',
+    lead: { wave: 'triangle', density: 0.3, gain: 0.045 },
+    kick: 'x.........x.....', snare: '........x.......', hat: '..x.......x.....',
+    seed: 163,
+  },
+  // Floors 41-50: the Pinnacle, wind round the mast at the very top.
+  pinnacle: {
+    bpm: 126, root: 43, mode: PENTATONIC, chords: [0, 4, 3, 1], sevenths: false,
+    pad: { wave: 'sawtooth', cutoff: 1800, gain: 0.03 },
+    bass: 'x..x..x.x..x..o.', bassWave: 'triangle',
+    arp: '0123432101234321', arpWave: 'triangle',
+    lead: { wave: 'square', density: 0.45, gain: 0.025 },
+    kick: 'x.....x...x.....', snare: '....x.......x...', hat: 'x.xxx.xxx.xxx.xx',
+    seed: 167,
+  },
   // The daily challenge: cheerful and a little different every bar.
   daily: {
     bpm: 104, root: 46, mode: IONIAN, chords: [0, 3, 5, 4], sevenths: false,
@@ -227,6 +282,7 @@ const RECIPES: Record<Theme, Recipe> = {
 export function themeForFloor(n: number, tower = 1): Theme {
   if (tower === 2) return (['frostgate', 'glacier', 'signal', 'aurora', 'summit'] as const)[Math.min(4, Math.floor((n - 1) / 10))];
   if (tower === 3) return (['dunegate', 'furnace', 'bazaar', 'mirage', 'crown'] as const)[Math.min(4, Math.floor((n - 1) / 10))];
+  if (tower === 4) return (['ferry', 'garden', 'loom', 'lantern', 'pinnacle'] as const)[Math.min(4, Math.floor((n - 1) / 10))];
   if (n <= 10) return 'lobby';
   if (n <= 20) return 'maintenance';
   if (n <= 30) return 'workshop';

@@ -29,6 +29,17 @@ export const PACK_INFO: Record<PackId, PackInfo> = {
       { icon: '📻', title: msg('The story goes on'), text: msg("PATCH's radio calls and the chase after VANTA, plus new desert music.") },
     ],
   },
+  twist: {
+    title: msg('Twist'),
+    tower: msg('The Helix'),
+    lede: msg('Tower 4 twists up beside the river. Ride turntables that spin LoopBot as it steps on, and keep track of where you face.'),
+    perks: [
+      { icon: '🌀', title: msg('50 new floors'), text: msg('The Helix, from the Ferry Terrace to the Pinnacle, with 3 stars to win on every floor.') },
+      { icon: '🔄', title: msg('Turntables'), text: msg('Floors that turn you as you walk. Let them take the corners, and loop all the way round.') },
+      { icon: '🧭', title: msg('A compass sensor'), text: msg('Ask "facing north?" with if and while, then write it all as code at the top.') },
+      { icon: '📻', title: msg('The story goes on'), text: msg("PATCH's radio calls and the chase after VANTA, plus new riverside music.") },
+    ],
+  },
 };
 
 export function PackSheet({ pack, onClose }: { pack: PackId; onClose(): void }) {

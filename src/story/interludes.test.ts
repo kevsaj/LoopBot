@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { FROSTLINE_INTERLUDES, HEATWAVE_INTERLUDES, INTERLUDES, interludeAfter } from './interludes';
+import { FROSTLINE_INTERLUDES, HEATWAVE_INTERLUDES, INTERLUDES, TWIST_INTERLUDES, interludeAfter } from './interludes';
 
 describe('story interludes', () => {
   it('play after each band end, once, and only after a clear', () => {
@@ -18,7 +18,7 @@ describe('story interludes', () => {
   });
 
   it('keep lines short enough to read on a phone', () => {
-    for (const it of [INTERLUDES, FROSTLINE_INTERLUDES, HEATWAVE_INTERLUDES].flatMap((t) => Object.values(t))) {
+    for (const it of [INTERLUDES, FROSTLINE_INTERLUDES, HEATWAVE_INTERLUDES, TWIST_INTERLUDES].flatMap((t) => Object.values(t))) {
       const lines = it.kind === 'radio' ? it.lines : it.panels;
       expect(lines.length).toBeGreaterThan(2);
       for (const l of lines) expect(l.text.length).toBeLessThanOrEqual(110);

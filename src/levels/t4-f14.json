@@ -1,0 +1,66 @@
+{
+  "id": "t4-f14",
+  "title": "Table Delivery",
+  "band": "garden",
+  "size": {
+    "w": 7,
+    "h": 5
+  },
+  "tiles": [
+    "#######",
+    "#.b..c#",
+    "#####.#",
+    "#####.#",
+    "#######"
+  ],
+  "heights": null,
+  "boxes": [
+    {
+      "x": 2,
+      "y": 1,
+      "count": 1
+    }
+  ],
+  "targets": [
+    {
+      "x": 5,
+      "y": 3,
+      "count": 1
+    }
+  ],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "all_targets_filled"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat"
+  ],
+  "slots": {
+    "main": 5
+  },
+  "par": {
+    "commands": 4,
+    "steps": 7
+  },
+  "reference": "pick_up repeat 5 { forward } drop",
+  "hints": [
+    "The crate rides the turntable with you.",
+    "Pick up, loop forward, drop.",
+    "pick_up repeat 5 { forward } drop"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

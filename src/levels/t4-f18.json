@@ -1,0 +1,56 @@
+{
+  "id": "t4-f18",
+  "title": "Double Helix",
+  "band": "garden",
+  "size": {
+    "w": 8,
+    "h": 7
+  },
+  "tiles": [
+    "########",
+    "#.....c#",
+    "######.#",
+    "#a.....#",
+    "#.######",
+    "#a....e#",
+    "########"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat"
+  ],
+  "slots": {
+    "main": 7
+  },
+  "par": {
+    "commands": 6,
+    "steps": 20
+  },
+  "reference": "repeat 7 { forward } turn_right repeat 6 { forward forward }",
+  "hints": [
+    "Most corners are turntables. One isn't.",
+    "Loop forward, turn once, loop forward again.",
+    "repeat 7 { forward } turn_right repeat 6 { forward forward }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

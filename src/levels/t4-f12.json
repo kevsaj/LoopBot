@@ -1,0 +1,56 @@
+{
+  "id": "t4-f12",
+  "title": "Half Turns",
+  "band": "garden",
+  "size": {
+    "w": 8,
+    "h": 7
+  },
+  "tiles": [
+    "########",
+    "#.c#####",
+    "##.c####",
+    "###.c###",
+    "####.c##",
+    "#####.e#",
+    "########"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat"
+  ],
+  "slots": {
+    "main": 5
+  },
+  "par": {
+    "commands": 4,
+    "steps": 13
+  },
+  "reference": "repeat 5 { forward forward turn_left }",
+  "hints": [
+    "The tables turn you right. Every other corner, you turn left yourself.",
+    "Loop two steps and one left turn.",
+    "repeat 5 { forward forward turn_left }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "id": "t4-f02",
+  "title": "Wrong Way Round",
+  "band": "ferry",
+  "size": {
+    "w": 6,
+    "h": 3
+  },
+  "tiles": [
+    "######",
+    "#.a.e#",
+    "######"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right"
+  ],
+  "slots": {
+    "main": 6
+  },
+  "par": {
+    "commands": 4,
+    "steps": 4
+  },
+  "reference": "forward turn_right forward forward",
+  "hints": [
+    "This turntable turns you left. The lift is straight on.",
+    "Step on, turn back the way you were going, then walk.",
+    "forward turn_right forward forward"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

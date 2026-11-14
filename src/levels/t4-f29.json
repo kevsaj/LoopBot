@@ -1,0 +1,62 @@
+{
+  "id": "t4-f29",
+  "title": "Silk Road",
+  "band": "loom",
+  "size": {
+    "w": 6,
+    "h": 6
+  },
+  "tiles": [
+    "######",
+    "#...c#",
+    "####.#",
+    "####.#",
+    "#e..c#",
+    "######"
+  ],
+  "heights": [
+    "000000",
+    "000110",
+    "000010",
+    "000020",
+    "033220",
+    "000000"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat"
+  ],
+  "slots": {
+    "main": 5
+  },
+  "par": {
+    "commands": 4,
+    "steps": 9
+  },
+  "reference": "repeat 3 { forward jump forward }",
+  "hints": [
+    "Step, jump, step onto a turntable. Again and again.",
+    "Loop it three times.",
+    "repeat 3 { forward jump forward }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

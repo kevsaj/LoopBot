@@ -1,0 +1,62 @@
+{
+  "id": "t4-f39",
+  "title": "Lantern Ladder",
+  "band": "lantern",
+  "size": {
+    "w": 7,
+    "h": 8
+  },
+  "tiles": [
+    "#######",
+    "#e#####",
+    "#c.####",
+    "##...##",
+    "####c.#",
+    "#####.#",
+    "#####.#",
+    "#######"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 5,
+    "y": 6,
+    "facing": "north"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "while",
+    "if"
+  ],
+  "sensors": [
+    "facing_north"
+  ],
+  "slots": {
+    "main": 7
+  },
+  "par": {
+    "commands": 6,
+    "steps": 13
+  },
+  "reference": "repeat 5 { while not wall_ahead { forward } if facing_north { turn_left } else { turn_right } }",
+  "hints": [
+    "North and west, up the ladder.",
+    "Walk, ask, turn. Loop it.",
+    "repeat 5 { while not wall_ahead { forward } if facing_north { turn_left } else { turn_right } }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

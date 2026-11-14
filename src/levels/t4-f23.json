@@ -1,0 +1,57 @@
+{
+  "id": "t4-f23",
+  "title": "Straight Through",
+  "band": "loom",
+  "size": {
+    "w": 5,
+    "h": 7
+  },
+  "tiles": [
+    "#####",
+    "#e..#",
+    "###.#",
+    "###c#",
+    "###.#",
+    "#...#",
+    "#####"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 5,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "F1"
+  ],
+  "slots": {
+    "main": 5,
+    "F1": 4
+  },
+  "par": {
+    "commands": 7,
+    "steps": 11
+  },
+  "reference": "F1 F1 F1 F1 def F1 { forward forward turn_left }",
+  "hints": [
+    "The routine turns left every time. The turntable turns you right first.",
+    "F1: two steps and a left turn. Call it four times.",
+    "F1 F1 F1 F1 def F1 { forward forward turn_left }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

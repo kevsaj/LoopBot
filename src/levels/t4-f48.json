@@ -1,0 +1,64 @@
+{
+  "id": "t4-f48",
+  "title": "Bug Hunt: Last Check",
+  "band": "pinnacle",
+  "size": {
+    "w": 6,
+    "h": 8
+  },
+  "tiles": [
+    "######",
+    "#e####",
+    "#..###",
+    "##c.##",
+    "###.##",
+    "###.a#",
+    "####.#",
+    "######"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 4,
+    "y": 6,
+    "facing": "north"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "while",
+    "if"
+  ],
+  "sensors": [
+    "facing_north"
+  ],
+  "typing": true,
+  "slots": {
+    "main": 7
+  },
+  "par": {
+    "commands": 6,
+    "steps": 12
+  },
+  "reference": "repeat 5 { while not wall_ahead { forward } if facing_north { turn_left } else { turn_right } }",
+  "starter": "repeat 5 { while not wall_ahead { forward } if facing_north { turn_right } else { turn_right } }",
+  "hints": [
+    "Both answers turn the same way.",
+    "Facing north, turn left. Otherwise, right.",
+    "repeat 5 { while not wall_ahead { forward } if facing_north { turn_left } else { turn_right } }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

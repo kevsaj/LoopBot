@@ -1,0 +1,56 @@
+{
+  "id": "t4-f24",
+  "title": "Bug Hunt: Half a Turn",
+  "band": "loom",
+  "size": {
+    "w": 5,
+    "h": 5
+  },
+  "tiles": [
+    "#####",
+    "#..a#",
+    "###.#",
+    "#e.a#",
+    "#####"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "F1"
+  ],
+  "slots": {
+    "main": 4,
+    "F1": 5
+  },
+  "par": {
+    "commands": 7,
+    "steps": 10
+  },
+  "reference": "F1 F1 F1 def F1 { forward forward turn_right turn_right }",
+  "starter": "F1 F1 F1 def F1 { forward forward turn_right }",
+  "hints": [
+    "The turntables spin you left. One right turn only gets you halfway back.",
+    "Turn right twice in the routine.",
+    "F1 F1 F1 def F1 { forward forward turn_right turn_right }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

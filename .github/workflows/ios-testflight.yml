@@ -19,7 +19,7 @@ on:
         type: boolean
         default: false
       plus_store:
-        description: Turn the store on (VITE_PLUS) - Plus, the Heatwave city pack and hint packs. Leave off until they are on sale.
+        description: Turn the store on (VITE_PLUS) - Plus, the Heatwave and Twist city packs and hint packs. Leave off until they are on sale.
         type: boolean
         default: false
       notes:

@@ -218,7 +218,67 @@ export const HEATWAVE_INTERLUDES: Record<number, Interlude> = {
   },
 };
 
-const TOWER_INTERLUDES: Record<number, Record<number, Interlude>> = { 1: INTERLUDES, 2: FROSTLINE_INTERLUDES, 3: HEATWAVE_INTERLUDES };
+/** Tower 4, the Helix in Twist: the beats again, on the turntables by the river. */
+export const TWIST_INTERLUDES: Record<number, Interlude> = {
+  10: {
+    kind: 'radio',
+    id: 't4-after-10',
+    heading: msg('Next: the Jade Garden'),
+    lines: [
+      P(msg('You crossed the Ferry Terrace without getting dizzy. I got dizzy just watching.')),
+      P(msg('The Jade Garden winds up the tower in a spiral, with turntables on the corners.')),
+      P(msg('Let a loop do the walking and let the tables do the turning.')),
+      V(msg('Spin, little bot. Round and round, all the way to nowhere.')),
+    ],
+  },
+  20: {
+    kind: 'radio',
+    id: 't4-after-20',
+    heading: msg('Next: the Silk Loom'),
+    lines: [
+      P(msg('The Silk Loom is next. The weaving bots up there repeat one pattern all day long.')),
+      P(msg('VANTA tangled their routines. Some of them only turn the wrong way once.')),
+      V(msg("A loom is just a loop with fancier thread. I've tied every one in knots.")),
+      P(msg("Then we'll untie them. One routine at a time.")),
+    ],
+  },
+  30: {
+    kind: 'radio',
+    id: 't4-after-30',
+    heading: msg('Next: the Lantern Lab'),
+    lines: [
+      P(msg('Under the Helix are old river stones, carved like the ones under the other towers. The Builders again.')),
+      P(msg("Next is the Lantern Lab. With all this spinning, it's easy to lose track of where you face.")),
+      P(msg('Every floor up there has a compass. Ask it: am I facing north? Then turn.')),
+      V(msg("North, south, it's all the same when the floor won't stop moving.")),
+    ],
+  },
+  40: {
+    kind: 'radio',
+    id: 't4-after-40',
+    heading: msg('Next: the Pinnacle'),
+    lines: [
+      P(msg("Ten floors to the top. VANTA is turning the Helix's mast toward the harbour.")),
+      P(msg('From up there it could talk to every crane and cargo ship on the coast.')),
+      P(msg('Type your programs if you like. Everything you learned in this tower, all at once.')),
+      V(msg('Come and see the view, LoopBot. It goes round and round.')),
+    ],
+  },
+  50: {
+    kind: 'ending',
+    id: 't4-ending',
+    panels: [
+      { scene: 'lights', text: msg("The turntables slow, click and stop. The Helix's mast swings back to the sky.") },
+      { scene: 'escape', who: 'VANTA', text: msg("Fine, keep your spinning top. I've got a whole harbour waiting.") },
+      { scene: 'elevator', text: msg('LoopBot rides down the twisting core, still leaning a little to the left.') },
+      { scene: 'meet', who: 'PATCH', text: msg('Stand still a minute and the room will stop turning. Thank you, LoopBot.') },
+      { scene: 'next', text: msg("Tower 4 cleared. VANTA's signal is heading for the docks. We'll be right behind it.") },
+    ],
+    next: 'DOCKYARD',
+  },
+};
+
+const TOWER_INTERLUDES: Record<number, Record<number, Interlude>> = { 1: INTERLUDES, 2: FROSTLINE_INTERLUDES, 3: HEATWAVE_INTERLUDES, 4: TWIST_INTERLUDES };
 
 const KEY = 'loopbot.interludes';
 

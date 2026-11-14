@@ -1,0 +1,62 @@
+{
+  "id": "t4-f40",
+  "title": "The Lantern Lab",
+  "band": "lantern",
+  "size": {
+    "w": 8,
+    "h": 8
+  },
+  "tiles": [
+    "########",
+    "######e#",
+    "#####c.#",
+    "####..##",
+    "##..a###",
+    "#c.#####",
+    "#.######",
+    "########"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 6,
+    "facing": "north"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "while",
+    "if"
+  ],
+  "sensors": [
+    "facing_north"
+  ],
+  "slots": {
+    "main": 7
+  },
+  "par": {
+    "commands": 6,
+    "steps": 15
+  },
+  "reference": "repeat 6 { while not wall_ahead { forward } if facing_north { turn_right } else { turn_left } }",
+  "hints": [
+    "Corners everywhere. The tables take some, the compass decides the rest.",
+    "Walk to the wall, ask the compass, turn. Loop it six times.",
+    "repeat 6 { while not wall_ahead { forward } if facing_north { turn_right } else { turn_left } }"
+  ],
+  "story": {
+    "intro": "PATCH: \"Last lab floor. Turntables, corners and a compass. Ask before you turn.\"",
+    "outro": null
+  }
+}

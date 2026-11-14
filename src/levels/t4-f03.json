@@ -1,0 +1,49 @@
+{
+  "id": "t4-f03",
+  "title": "Zigzag Stairs",
+  "band": "ferry",
+  "size": {
+    "w": 6,
+    "h": 5
+  },
+  "tiles": [
+    "######",
+    "#.c###",
+    "##ac##",
+    "###ae#",
+    "######"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right"
+  ],
+  "slots": {
+    "main": 7
+  },
+  "par": {
+    "commands": 5,
+    "steps": 5
+  },
+  "reference": "forward forward forward forward forward",
+  "hints": [
+    "Each turntable turns you a different way. Follow the arrows.",
+    "You never need to turn by yourself here.",
+    "forward forward forward forward forward"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

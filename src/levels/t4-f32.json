@@ -1,0 +1,61 @@
+{
+  "id": "t4-f32",
+  "title": "Lantern Stair",
+  "band": "lantern",
+  "size": {
+    "w": 8,
+    "h": 7
+  },
+  "tiles": [
+    "########",
+    "######e#",
+    "#####c.#",
+    "###...##",
+    "#..a####",
+    "#.######",
+    "########"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 5,
+    "facing": "north"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "while",
+    "if"
+  ],
+  "sensors": [
+    "facing_north"
+  ],
+  "slots": {
+    "main": 7
+  },
+  "par": {
+    "commands": 6,
+    "steps": 13
+  },
+  "reference": "repeat 5 { while not wall_ahead { forward } if facing_north { turn_right } else { turn_left } }",
+  "hints": [
+    "The turntables turn some corners for you. The compass knows the rest.",
+    "While no wall, forward. If facing north turn right, else turn left.",
+    "repeat 5 { while not wall_ahead { forward } if facing_north { turn_right } else { turn_left } }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

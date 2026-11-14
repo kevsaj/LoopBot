@@ -1,0 +1,56 @@
+{
+  "id": "t4-f19",
+  "title": "Moon Gate",
+  "band": "garden",
+  "size": {
+    "w": 7,
+    "h": 7
+  },
+  "tiles": [
+    "#######",
+    "#a...a#",
+    "#.#.#.#",
+    "#.#e#.#",
+    "#.###.#",
+    "#a...a#",
+    "#######"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 3,
+    "y": 5,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat"
+  ],
+  "slots": {
+    "main": 5
+  },
+  "par": {
+    "commands": 4,
+    "steps": 11
+  },
+  "reference": "repeat 2 { repeat 8 { forward } turn_left }",
+  "hints": [
+    "The turntables carry you round the gate. You only turn to go in.",
+    "Loop forward round the ring, turn left. Twice.",
+    "repeat 2 { repeat 8 { forward } turn_left }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

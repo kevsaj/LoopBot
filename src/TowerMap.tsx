@@ -19,6 +19,7 @@ import { PlusSheet } from './store/PlusSheet';
 import { PackSheet } from './store/PackSheet';
 import type { PackId } from './store/packs';
 import './heatwave.css';
+import './twist.css';
 import { msg, t, t as tr, tn } from './i18n';
 
 interface Props {
@@ -59,10 +60,15 @@ const BAND_NAMES: Record<string, string> = {
   bazaar: msg('Sky Bazaar'),
   mirage: msg('Mirage Lab'),
   crown: msg('The Crown'),
+  ferry: msg('Ferry Terrace'),
+  garden: msg('Jade Garden'),
+  loom: msg('Silk Loom'),
+  lantern: msg('Lantern Lab'),
+  pinnacle: msg('The Pinnacle'),
 };
 
 /** What lies under each tower, shown at the foot of its map. */
-const GROUND: Record<number, string> = { 1: msg('Sub-basement'), 2: msg('Ice cellar'), 3: msg('Old cistern') };
+const GROUND: Record<number, string> = { 1: msg('Sub-basement'), 2: msg('Ice cellar'), 3: msg('Old cistern'), 4: msg('River vault') };
 
 /** The towers row: the one you're in, and the others to switch to. Plus and city pack towers show a lock until owned. */
 function TowerSwitch({ tower, towers, onPick, onLocked }: { tower: number; towers: Tower[]; onPick(n: number): void; onLocked(t: Tower): void }) {

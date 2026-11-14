@@ -1,0 +1,62 @@
+{
+  "id": "t4-f31",
+  "title": "Which Way Is North",
+  "band": "lantern",
+  "size": {
+    "w": 7,
+    "h": 8
+  },
+  "tiles": [
+    "#######",
+    "#####e#",
+    "##....#",
+    "##.####",
+    "#..####",
+    "#.#####",
+    "#.#####",
+    "#######"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 6,
+    "facing": "north"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "while",
+    "if"
+  ],
+  "sensors": [
+    "facing_north"
+  ],
+  "slots": {
+    "main": 7
+  },
+  "par": {
+    "commands": 6,
+    "steps": 13
+  },
+  "reference": "repeat 5 { while not wall_ahead { forward } if facing_north { turn_right } else { turn_left } }",
+  "hints": [
+    "Facing north at a wall? Turn right. Facing east? Turn left.",
+    "Walk to the wall, then ask the compass which way to turn. Loop it.",
+    "repeat 5 { while not wall_ahead { forward } if facing_north { turn_right } else { turn_left } }"
+  ],
+  "story": {
+    "intro": "PATCH: \"The Lantern Lab. See the compass on the floor? Ask it which way you face, and turn the right way every time.\"",
+    "outro": null
+  }
+}

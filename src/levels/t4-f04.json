@@ -1,0 +1,56 @@
+{
+  "id": "t4-f04",
+  "title": "Spin Up",
+  "band": "ferry",
+  "size": {
+    "w": 5,
+    "h": 5
+  },
+  "tiles": [
+    "#####",
+    "#.c##",
+    "##.##",
+    "##e##",
+    "#####"
+  ],
+  "heights": [
+    "00000",
+    "00100",
+    "00200",
+    "00200",
+    "00000"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump"
+  ],
+  "slots": {
+    "main": 5
+  },
+  "par": {
+    "commands": 3,
+    "steps": 3
+  },
+  "reference": "jump jump forward",
+  "hints": [
+    "A jump onto a turntable spins you too.",
+    "Jump up, jump again, then step to the lift.",
+    "jump jump forward"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

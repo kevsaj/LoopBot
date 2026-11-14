@@ -222,6 +222,71 @@ const BANDS: Record<string, Partial<typeof C>> = {
     edge: 0x3a2a10,
     void: 0x2a1c08,
   },
+  // Tower 4, Twist (the Helix). Ferry Terrace: river granite and old teal railings.
+  ferry: {
+    floorTop: 0xe4e0d4,
+    floorL: 0xbdb6a6,
+    floorR: 0x9d9686,
+    floorEdge: 0xfaf6ea,
+    wallTop: 0x3f6f78,
+    wallL: 0x2f5860,
+    wallR: 0x24464d,
+    wallCap: 0x7fb7b0,
+    edge: 0x18262a,
+    void: 0x0e1c22,
+  },
+  // Jade Garden: pale paving between clipped jade hedges.
+  garden: {
+    floorTop: 0xeef0e2,
+    floorL: 0xc4c8b0,
+    floorR: 0xa3a890,
+    floorEdge: 0xffffff,
+    wallTop: 0x2f7a5a,
+    wallL: 0x235f46,
+    wallR: 0x1a4a37,
+    wallCap: 0x7ed0a0,
+    edge: 0x10261f,
+    void: 0x0b1a14,
+  },
+  // Silk Loom: cream floorboards and deep silk-red frames.
+  loom: {
+    floorTop: 0xf1e4d8,
+    floorL: 0xcbb6a6,
+    floorR: 0xab9686,
+    floorEdge: 0xfff4ea,
+    wallTop: 0xa8435a,
+    wallL: 0x873448,
+    wallR: 0x6b2939,
+    wallCap: 0xf0a07a,
+    edge: 0x2a1630,
+    void: 0x1e0f22,
+  },
+  // Lantern Lab: slate at night, walls topped with glowing lantern red.
+  lantern: {
+    floorTop: 0x8a8aa6,
+    floorL: 0x63637e,
+    floorR: 0x4f4f68,
+    floorEdge: 0xb4b4d4,
+    wallTop: 0x3a2440,
+    wallL: 0x2c1c32,
+    wallR: 0x221628,
+    wallCap: 0x7a3a4a,
+    edge: 0x0a0d1e,
+    void: 0x06080f,
+  },
+  // The Pinnacle: sky-blue glass and white steel, high above the river.
+  pinnacle: {
+    floorTop: 0xeef4fa,
+    floorL: 0xc2d0de,
+    floorR: 0xa2b2c4,
+    floorEdge: 0xffffff,
+    wallTop: 0x5c88b8,
+    wallL: 0x48709a,
+    wallR: 0x385a7e,
+    wallCap: 0xa8d0f2,
+    edge: 0x0f2a4a,
+    void: 0x0a1a30,
+  },
   // Summit: wind-scoured snow and dark rock, the beacon glowing gold.
   summit: {
     floorTop: 0xf3f6fa,
@@ -541,6 +606,44 @@ export class BoardScene extends Phaser.Scene {
     }
   }
 
+  /**
+   * A Twist turntable (CR-SPIN): a brass disc set into the floor with a curved arrow that shows
+   * which way it turns LoopBot, and a bright bead that circles that way. Clockwise on the board is
+   * clockwise on screen from every view, so the arrow never lies. A crate on top jams it.
+   */
+  private spinner(g: Phaser.GameObjects.Graphics, sx: number, sy: number, dir: 1 | -1, jammed: boolean, depth: number) {
+    const a = TW * 0.33;
+    const b = TH * 0.33;
+    g.fillStyle(0x2b2440, 0.3);
+    g.fillEllipse(sx, sy + 2, a * 2.1, b * 2.1);
+    g.fillStyle(jammed ? 0x9a8a6a : 0xd9a94a, 1);
+    g.fillEllipse(sx, sy, a * 2, b * 2);
+    g.fillStyle(jammed ? 0xb8aa8a : 0xf3d58a, 1);
+    g.fillEllipse(sx, sy - 1, a * 1.7, b * 1.7);
+    // the arrow: three quarters of the way round, then a head pointing the way it turns
+    const r = 0.62;
+    const at = (th: number, k = r) => new Phaser.Geom.Point(sx + Math.cos(th) * a * k, sy - 1 + Math.sin(th) * b * k);
+    const start = dir === 1 ? -Math.PI * 0.9 : -Math.PI * 0.1;
+    const sweep = dir * Math.PI * 1.4;
+    const pts: Phaser.Geom.Point[] = [];
+    for (let i = 0; i <= 18; i++) pts.push(at(start + (sweep * i) / 18));
+    const ink = jammed ? 0x6a5f4c : 0x5a3a12;
+    g.lineStyle(2.5, ink, 0.95);
+    g.strokePoints(pts, false);
+    const end = start + sweep;
+    g.fillStyle(ink, 0.95);
+    g.fillPoints([at(end + dir * 0.55), at(end, r * 1.45), at(end, r * 0.55)], true);
+    if (jammed || this.reduced) return;
+    const bead = this.add.graphics();
+    bead.setDepth(depth);
+    bead.fillStyle(0xfff6d8, 0.95);
+    bead.fillEllipse(0, 0, TW * 0.07, TH * 0.07);
+    this.layer.add(bead);
+    const place = (th: number) => bead.setPosition(sx + Math.cos(th) * a * 0.85, sy - 1 + Math.sin(th) * b * 0.85);
+    place(0);
+    this.tweens.addCounter({ from: 0, to: Math.PI * 2, duration: 2600, repeat: -1, onUpdate: (tw) => place(dir * (tw.getValue() ?? 0)) });
+  }
+
   private drawStatic(w: World) {
     for (const child of [...this.layer.list]) {
       if (child === this.bot) continue;
@@ -611,6 +714,8 @@ export class BoardScene extends Phaser.Scene {
             g.lineBetween(sx + TW * 0.02, sy + TH * 0.16, sx + TW * 0.16, sy + TH * 0.01);
           } else if (t.type === 'vent') {
             this.vent(g, sx, sy, w, x, y, (grid.rx + grid.ry) * 10 + 6);
+          } else if (t.type === 'spinner') {
+            this.spinner(g, sx, sy, t.spin ?? 1, w.boxes[y][x] > 0, (grid.rx + grid.ry) * 10 + 1);
           } else if (t.type === 'exit') {
             // the service lift: a glowing pad with a soft beam that pulses
             this.diamond(g, sx, sy, C.exit, 0.8);
@@ -1017,6 +1122,15 @@ export class BoardScene extends Phaser.Scene {
       this.animateTurn(w, !!u.crashed, FACINGS.indexOf(prev.bot.facing), u.action === 'turn_right' ? 1 : -1, dur);
     }
     const moved = prev && (prev.bot.x !== w.bot.x || prev.bot.y !== w.bot.y);
+    // A turntable (Twist) turned LoopBot as it arrived: walk in still facing the old way, then swing round.
+    if (prev && !fresh && moved && prev.bot.facing !== w.bot.facing && w.tiles[w.bot.y][w.bot.x].type === 'spinner') {
+      const from = FACINGS.indexOf(prev.bot.facing);
+      const dir = (FACINGS.indexOf(w.bot.facing) - from + 4) % 4 === 1 ? 1 : -1;
+      this.drawBot(w, !!u.crashed, from);
+      this.time.delayedCall(dur * 0.6, () => {
+        if (this.world === w) this.animateTurn(w, !!u.crashed, from, dir, dur * 0.4);
+      });
+    }
     if (!prev || dur === 0 || !moved) {
       this.bot.setPosition(to.sx, to.sy);
     } else {

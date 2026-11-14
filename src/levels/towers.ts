@@ -2,6 +2,7 @@ import type { LevelFile } from '../sim/types';
 import { LEVELS } from './index';
 import { FROSTLINE } from './frostline';
 import { HEATWAVE } from './heatwave';
+import { TWIST } from './twist';
 import { DEMO } from '../demo';
 import { msg } from '../i18n';
 import type { PackId } from '../store/packs';
@@ -31,6 +32,7 @@ export const TOWERS: Tower[] = [
   { n: 1, name: msg('Meridian Spire'), city: 'Meridian', levels: LEVELS, plus: false },
   ...(DEMO ? [] : [{ n: 2, name: msg('Northstar Needle'), city: 'Frostline', levels: FROSTLINE, plus: true }]),
   ...(DEMO || !(PREVIEW || STORE_ON) ? [] : [{ n: 3, name: msg('The Sandglass'), city: 'Heatwave', levels: HEATWAVE, plus: false, pack: 'heatwave' as const }]),
+  ...(DEMO || !(PREVIEW || STORE_ON) ? [] : [{ n: 4, name: msg('The Helix'), city: 'Twist', levels: TWIST, plus: false, pack: 'twist' as const }]),
 ];
 
 export function towerOf(n: number): Tower {

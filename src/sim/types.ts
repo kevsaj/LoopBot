@@ -7,7 +7,8 @@ export type Facing = 'north' | 'east' | 'south' | 'west';
 /** 'ice' (Frostline): step onto it and LoopBot slides on until something stops it. */
 /** 'thin' (Frostline): thin ice holds LoopBot once, and cracks into a gap when LoopBot steps off. */
 /** 'vent' (Heatwave): a heat vent that blasts on a timer; LoopBot can't be on it when it fires (CR-VENT). */
-export type TileType = 'floor' | 'wall' | 'gap' | 'switch' | 'door' | 'exit' | 'ice' | 'thin' | 'vent';
+/** 'spinner' (Twist): a turntable that turns LoopBot a quarter turn as it arrives (CR-SPIN). */
+export type TileType = 'floor' | 'wall' | 'gap' | 'switch' | 'door' | 'exit' | 'ice' | 'thin' | 'vent' | 'spinner';
 
 export type Colour = 'r' | 'g' | 'b' | 'y';
 
@@ -18,6 +19,8 @@ export interface Tile {
   colour?: Colour;
   /** Vents only: the vent blasts on the steps where clock % cycle equals this. */
   phase?: number;
+  /** Spinners only: 1 turns LoopBot clockwise (right), -1 anticlockwise (left). */
+  spin?: 1 | -1;
 }
 
 /** 'wait' (Heatwave): LoopBot stays put for one step, to let a vent blast pass. */
@@ -38,8 +41,9 @@ export type FunctionName = 'F1' | 'F2' | 'F3';
 export const FUNCTION_NAMES: readonly FunctionName[] = ['F1', 'F2', 'F3'];
 
 /** heat_ahead (Heatwave): the tile ahead is a vent that will be blasting if LoopBot steps onto it now. */
-export type Sensor = 'wall_ahead' | 'box_ahead' | 'carrying' | 'on_target' | 'on_switch' | 'tile_is' | 'heat_ahead';
-export const SENSORS: readonly Sensor[] = ['wall_ahead', 'box_ahead', 'carrying', 'on_target', 'on_switch', 'tile_is', 'heat_ahead'];
+/** facing_north (Twist): LoopBot faces north, the way the compass on the board points. */
+export type Sensor = 'wall_ahead' | 'box_ahead' | 'carrying' | 'on_target' | 'on_switch' | 'tile_is' | 'heat_ahead' | 'facing_north';
+export const SENSORS: readonly Sensor[] = ['wall_ahead', 'box_ahead', 'carrying', 'on_target', 'on_switch', 'tile_is', 'heat_ahead', 'facing_north'];
 
 export interface Condition {
   sensor: Sensor;

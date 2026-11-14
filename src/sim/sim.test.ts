@@ -267,3 +267,35 @@ describe('heat vents and wait (Heatwave)', () => {
     expect(toCode(parseReference('wait forward')).map((l) => l.text)).toContain('    wait()');
   });
 });
+
+describe('turntables and the compass (Twist)', () => {
+  const spin = (tiles: string[], over: Partial<LevelFile> = {}) => level({ size: { w: tiles[0].length, h: tiles.length }, tiles, ...over });
+
+  it('a turntable turns LoopBot a quarter turn as it arrives, in the same step', () => {
+    // 'c' turns clockwise: heading east, LoopBot leaves it heading south
+    const cw = spin(['####', '#.c#', '##.#', '##e#', '####']);
+    expect(run(cw, 'forward forward forward')).toMatchObject({ status: 'cleared', steps: 3 });
+    // 'a' turns anticlockwise: heading east, LoopBot faces north (a wall) and has to turn back
+    const ccw = spin(['######', '#.a.e#', '######']);
+    expect(run(ccw, 'forward forward').status).toBe('crashed');
+    expect(run(ccw, 'forward turn_right forward forward')).toMatchObject({ status: 'cleared', steps: 4 });
+  });
+
+  it('spins after a jump too, but not when turning on it or when a crate jams it', () => {
+    const up = spin(['#####', '#.c##', '##.##', '##e##', '#####'], { heights: ['00000', '00100', '00100', '00100', '00000'] });
+    expect(run(up, 'jump forward forward').status).toBe('cleared');
+    // turning while standing on a turntable is an ordinary turn
+    const stand = spin(['#####', '#.ce#', '#####'], { bot: { x: 2, y: 1, facing: 'south' } });
+    expect(run(stand, 'turn_left forward')).toMatchObject({ status: 'cleared', steps: 2 });
+    // a crate on a turntable jams it: LoopBot keeps its heading
+    const jam = spin(['######', '#.c.e#', '######'], { boxes: [{ x: 2, y: 1, count: 1 }] });
+    expect(run(jam, 'jump jump forward').status).toBe('cleared');
+  });
+
+  it('facing_north asks which way LoopBot faces, by the compass', () => {
+    const l = spin(['#####', '#e..#', '###.#', '###.#', '#####'], { bot: { x: 3, y: 3, facing: 'north' }, commands: ['forward', 'turn_left', 'turn_right', 'repeat', 'while', 'if'], sensors: ['facing_north'] });
+    const ref = 'repeat 2 { while not wall_ahead { forward } if facing_north { turn_left } else { turn_right } }';
+    expect(run(l, ref).status).toBe('cleared');
+    expect(toCode(parseReference(ref)).map((x) => x.text.trim())).toContain('if facing_north():');
+  });
+});

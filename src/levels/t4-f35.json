@@ -1,0 +1,62 @@
+{
+  "id": "t4-f35",
+  "title": "Paper Lanterns",
+  "band": "lantern",
+  "size": {
+    "w": 7,
+    "h": 8
+  },
+  "tiles": [
+    "#######",
+    "#e#####",
+    "#..####",
+    "##.####",
+    "##c.###",
+    "###..a#",
+    "#####.#",
+    "#######"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 5,
+    "y": 6,
+    "facing": "north"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "while",
+    "if"
+  ],
+  "sensors": [
+    "facing_north"
+  ],
+  "slots": {
+    "main": 7
+  },
+  "par": {
+    "commands": 6,
+    "steps": 13
+  },
+  "reference": "repeat 5 { while not wall_ahead { forward } if facing_north { turn_left } else { turn_right } }",
+  "hints": [
+    "North and west again, with more turntables.",
+    "Walk to the wall, then let the compass choose the turn.",
+    "repeat 5 { while not wall_ahead { forward } if facing_north { turn_left } else { turn_right } }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

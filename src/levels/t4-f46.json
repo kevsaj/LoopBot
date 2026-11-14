@@ -1,0 +1,64 @@
+{
+  "id": "t4-f46",
+  "title": "Elevator Routine",
+  "band": "pinnacle",
+  "size": {
+    "w": 6,
+    "h": 6
+  },
+  "tiles": [
+    "######",
+    "##..c#",
+    "####.#",
+    "#e##.#",
+    "#c..c#",
+    "######"
+  ],
+  "heights": [
+    "000000",
+    "000000",
+    "000010",
+    "030010",
+    "022210",
+    "000000"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 2,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "F1"
+  ],
+  "typing": true,
+  "slots": {
+    "main": 4,
+    "F1": 4
+  },
+  "par": {
+    "commands": 6,
+    "steps": 9
+  },
+  "reference": "F1 F1 F1 def F1 { forward forward jump }",
+  "hints": [
+    "Each flight is the same: two steps and a jump.",
+    "F1: forward, forward, jump. Call it three times.",
+    "F1 F1 F1 def F1 { forward forward jump }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

@@ -2,11 +2,12 @@
 // Google Play, with Restore built in). Nothing here runs on the web or in the itch demo.
 //
 // Setup (once, in Kevin's accounts):
-//  - App Store Connect: non-consumable in-app purchases `loopbot_plus` and `loopbot_pack_heatwave`,
-//    and two consumables, `loopbot_hints_10` and `loopbot_hints_40`.
-//  - Play Console: one-time products with the same four ids.
+//  - App Store Connect: non-consumable in-app purchases `loopbot_plus`, `loopbot_pack_heatwave` and
+//    `loopbot_pack_twist`, and two consumables, `loopbot_hints_10` and `loopbot_hints_40`.
+//  - Play Console: one-time products with the same five ids.
 //  - RevenueCat: entitlement `plus` with `loopbot_plus` attached, entitlement `heatwave` with
-//    `loopbot_pack_heatwave` attached (see store/packs.ts), and an offering whose package holds
+//    `loopbot_pack_heatwave` attached, entitlement `twist` with `loopbot_pack_twist` attached
+//    (see store/packs.ts), and an offering whose package holds
 //    Plus (the package with `loopbot_plus` is what the Plus sheet sells).
 //  - Public SDK keys in .env.local: VITE_REVENUECAT_IOS_KEY and VITE_REVENUECAT_ANDROID_KEY.
 //
@@ -32,7 +33,7 @@ const API_KEY = (Capacitor.getPlatform() === 'ios' ? env.VITE_REVENUECAT_IOS_KEY
 export const STORE_AVAILABLE = Capacitor.isNativePlatform() && API_KEY !== '';
 
 /**
- * Whether the store shows at all: the Plus screen, the Heatwave city pack, hint packs and the
+ * Whether the store shows at all: the Plus screen, the city packs, hint packs and the
  * Settings purchase rows. Off until Plus goes on sale, so players never see something they can't
  * buy yet. VITE_PLUS=1 (the "Plus store" box in the build workflows) turns it on.
  */

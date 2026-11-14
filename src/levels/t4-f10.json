@@ -1,0 +1,55 @@
+{
+  "id": "t4-f10",
+  "title": "The Ferry Terrace",
+  "band": "ferry",
+  "size": {
+    "w": 8,
+    "h": 7
+  },
+  "tiles": [
+    "########",
+    "#.c..a.#",
+    "#.#.##.#",
+    "#a.c.s.#",
+    "#.##d#.#",
+    "#..c.#e#",
+    "########"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate"
+  ],
+  "slots": {
+    "main": 14
+  },
+  "par": {
+    "commands": 12,
+    "steps": 12
+  },
+  "reference": "forward turn_left forward forward forward turn_right forward turn_right forward forward forward forward",
+  "hints": [
+    "Work out where each turntable will point you before you go.",
+    "Count the free turns. Only add a turn where the tables don't help.",
+    "forward turn_left forward forward forward turn_right forward turn_right forward forward forward forward"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

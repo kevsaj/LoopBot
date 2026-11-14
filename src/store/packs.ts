@@ -1,12 +1,12 @@
 // City packs: one tower each, bought once, separate from LoopBot Plus (growth plan: city packs
-// $2.99). Heatwave is the first. Each pack is a non-consumable store product that unlocks a
+// $2.99). Heatwave was the first, Twist the second. Each pack is a non-consumable store product that unlocks a
 // RevenueCat entitlement of the same name, so a later Skyline Pass only needs attaching to every
 // pack's entitlement in RevenueCat to unlock them all.
 //
 // Ownership is cached on the device (loopbot.packs) so packs work offline, and it is never in
 // backup codes: the store is the only thing that can say a pack was bought.
 
-export type PackId = 'heatwave';
+export type PackId = 'heatwave' | 'twist';
 
 export interface CityPack {
   id: PackId;
@@ -19,7 +19,10 @@ export interface CityPack {
   city: string;
 }
 
-export const PACKS: CityPack[] = [{ id: 'heatwave', product: 'loopbot_pack_heatwave', entitlement: 'heatwave', tower: 3, city: 'Heatwave' }];
+export const PACKS: CityPack[] = [
+  { id: 'heatwave', product: 'loopbot_pack_heatwave', entitlement: 'heatwave', tower: 3, city: 'Heatwave' },
+  { id: 'twist', product: 'loopbot_pack_twist', entitlement: 'twist', tower: 4, city: 'Twist' },
+];
 
 export const PACK_PRODUCTS = PACKS.map((p) => p.product);
 
