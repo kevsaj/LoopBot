@@ -2,11 +2,12 @@
 // Google Play, with Restore built in). Nothing here runs on the web or in the itch demo.
 //
 // Setup (once, in Kevin's accounts):
-//  - App Store Connect: a non-consumable in-app purchase, product id `loopbot_plus`, and two
-//    consumables, `loopbot_hints_10` and `loopbot_hints_40`.
-//  - Play Console: one-time products with the same three ids.
-//  - RevenueCat: entitlement `plus` with both products attached, and an offering whose package
-//    holds them (the current offering's first package is what the Plus sheet sells).
+//  - App Store Connect: non-consumable in-app purchases `loopbot_plus` and `loopbot_pack_heatwave`,
+//    and two consumables, `loopbot_hints_10` and `loopbot_hints_40`.
+//  - Play Console: one-time products with the same four ids.
+//  - RevenueCat: entitlement `plus` with `loopbot_plus` attached, entitlement `heatwave` with
+//    `loopbot_pack_heatwave` attached (see store/packs.ts), and an offering whose package holds
+//    Plus (the package with `loopbot_plus` is what the Plus sheet sells).
 //  - Public SDK keys in .env.local: VITE_REVENUECAT_IOS_KEY and VITE_REVENUECAT_ANDROID_KEY.
 //
 // Ownership is cached on the device (loopbot.plus) so Plus works offline; the store's answer
@@ -16,6 +17,9 @@ import { Capacitor } from '@capacitor/core';
 import type { PurchasesPackage, PurchasesStoreProduct } from '@revenuecat/purchases-capacitor';
 import { HINT_PACKS, loadLedger, payPlusBonus, payTransactions, saveLedger } from './hintLedger';
 import type { StoreTransaction } from './hintLedger';
+import { PACK_PRODUCTS, ownsPack, packById, packsFromEntitlements, saveOwnedPacks } from './packs';
+import type { PackId } from './packs';
+import type { Tower } from '../levels/towers';
 
 export const ENTITLEMENT = 'plus';
 export const PLUS_PRODUCT = 'loopbot_plus';
@@ -28,8 +32,9 @@ const API_KEY = (Capacitor.getPlatform() === 'ios' ? env.VITE_REVENUECAT_IOS_KEY
 export const STORE_AVAILABLE = Capacitor.isNativePlatform() && API_KEY !== '';
 
 /**
- * Whether the Plus screen and the Settings rows show at all. Off until Frostline ships, so players
- * never see something they can't use yet. VITE_PLUS=1 turns it on for sandbox testing.
+ * Whether the store shows at all: the Plus screen, the Heatwave city pack, hint packs and the
+ * Settings purchase rows. Off until Plus goes on sale, so players never see something they can't
+ * buy yet. VITE_PLUS=1 (the "Plus store" box in the build workflows) turns it on.
  */
 export const PLUS_VISIBLE = env.VITE_PLUS === '1';
 
@@ -45,6 +50,18 @@ export const PLUS_PREVIEW = import.meta.env.DEV || env.VITE_PLUS_PREVIEW === '1'
 /** Whether Plus content can be played on this device right now. */
 export function plusUnlocked(): boolean {
   return PLUS_PREVIEW || hasPlus();
+}
+
+/** Whether a city pack can be played on this device right now. */
+export function packUnlocked(id: PackId): boolean {
+  return PLUS_PREVIEW || ownsPack(id);
+}
+
+/** Whether a tower can be played here: free, or its Plus / city pack is unlocked. */
+export function towerUnlocked(t: Pick<Tower, 'plus' | 'pack'>): boolean {
+  if (t.plus) return plusUnlocked();
+  if (t.pack) return packUnlocked(t.pack);
+  return true;
 }
 
 type Listener = (owned: boolean) => void;
@@ -107,6 +124,29 @@ export function onPlusChange(l: Listener): () => void {
 type CustomerInfoLike = { entitlements: { active: Record<string, unknown> }; nonSubscriptionTransactions?: readonly StoreTransaction[] };
 const ownsPlus = (info: CustomerInfoLike) => ENTITLEMENT in info.entitlements.active;
 
+type PacksListener = (owned: PackId[]) => void;
+const packListeners = new Set<PacksListener>();
+
+/** Called when the city packs owned on this device change. Returns a function that stops listening. */
+export function onPacksChange(l: PacksListener): () => void {
+  packListeners.add(l);
+  return () => packListeners.delete(l);
+}
+
+/** Takes the store's word for which packs are owned, and returns them. */
+function syncPacks(info: CustomerInfoLike): PackId[] {
+  const owned = packsFromEntitlements(info.entitlements.active);
+  if (saveOwnedPacks(owned)) packListeners.forEach((l) => l(owned));
+  return owned;
+}
+
+/** Everything the store says about this customer: Plus, packs, and hint packs to pay out. */
+function sync(info: CustomerInfoLike) {
+  setOwned(ownsPlus(info));
+  syncPacks(info);
+  payHintPacks(info);
+}
+
 let ready: Promise<typeof import('@revenuecat/purchases-capacitor')> | null = null;
 
 /** Connects to the store once, early in the app's life, and keeps ownership up to date. */
@@ -114,13 +154,9 @@ export function initPurchases(): Promise<boolean> {
   if (!STORE_AVAILABLE) return Promise.resolve(false);
   ready ??= import('@revenuecat/purchases-capacitor').then(async (rc) => {
     await rc.Purchases.configure({ apiKey: API_KEY });
-    await rc.Purchases.addCustomerInfoUpdateListener((info) => {
-      setOwned(ownsPlus(info));
-      payHintPacks(info);
-    });
+    await rc.Purchases.addCustomerInfoUpdateListener(sync);
     const { customerInfo } = await rc.Purchases.getCustomerInfo();
-    setOwned(ownsPlus(customerInfo));
-    payHintPacks(customerInfo);
+    sync(customerInfo);
     return rc;
   });
   return ready.then(
@@ -143,9 +179,10 @@ export async function getPlusOffer(): Promise<PlusOffer | null> {
   try {
     const rc = await ready;
     const { current } = await rc.Purchases.getOfferings();
-    // Plus is the package holding `loopbot_plus`; hint packs may sit in the same offering.
+    // Plus is the package holding `loopbot_plus`; hint packs and city packs may sit in the same offering.
     const pkgs = current?.availablePackages ?? [];
-    const pkg = pkgs.find((p) => p.product.identifier === PLUS_PRODUCT) ?? pkgs.find((p) => !HINT_PACKS.some((h) => h.id === p.product.identifier));
+    const other = (id: string) => HINT_PACKS.some((h) => h.id === id) || PACK_PRODUCTS.includes(id);
+    const pkg = pkgs.find((p) => p.product.identifier === PLUS_PRODUCT) ?? pkgs.find((p) => !other(p.product.identifier));
     return pkg ? { price: pkg.product.priceString, pkg } : null;
   } catch {
     return null;
@@ -174,9 +211,11 @@ export async function restorePurchases(): Promise<RestoreResult> {
   try {
     const rc = await ready;
     const { customerInfo } = await rc.Purchases.restorePurchases();
-    const owned = ownsPlus(customerInfo);
-    setOwned(owned);
-    return owned ? 'restored' : 'nothing';
+    const plus = ownsPlus(customerInfo);
+    setOwned(plus);
+    const packs = syncPacks(customerInfo);
+    payHintPacks(customerInfo);
+    return plus || packs.length ? 'restored' : 'nothing';
   } catch {
     return 'failed';
   }
@@ -213,6 +252,39 @@ export async function buyHints(offer: HintOffer): Promise<BuyResult> {
     const before = loadLedger().credited.length;
     payHintPacks({ nonSubscriptionTransactions: [...(customerInfo.nonSubscriptionTransactions ?? []), ...(transaction ? [transaction] : [])] });
     return loadLedger().credited.length > before ? 'bought' : 'failed';
+  } catch (err) {
+    return (err as { userCancelled?: boolean | null })?.userCancelled ? 'cancelled' : 'failed';
+  }
+}
+
+export interface PackOffer {
+  id: PackId;
+  /** The store's localized price, for example "$2.99". */
+  price: string;
+  product: PurchasesStoreProduct;
+}
+
+/** A city pack with its store price, or null if the store can't be reached. */
+export async function getPackOffer(id: PackId): Promise<PackOffer | null> {
+  const pack = packById(id);
+  if (!pack || !(await initPurchases()) || !ready) return null;
+  try {
+    const rc = await ready;
+    const { products } = await rc.Purchases.getProducts({ productIdentifiers: [pack.product], type: rc.PRODUCT_CATEGORY.NON_SUBSCRIPTION });
+    const product = products.find((x) => x.identifier === pack.product);
+    return product ? { id, price: product.priceString, product } : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Buys a city pack. Bought means the store now reports the pack's entitlement as active. */
+export async function buyPack(offer: PackOffer): Promise<BuyResult> {
+  if (!ready) return 'failed';
+  try {
+    const rc = await ready;
+    const { customerInfo } = await rc.Purchases.purchaseStoreProduct({ product: offer.product });
+    return syncPacks(customerInfo).includes(offer.id) ? 'bought' : 'failed';
   } catch (err) {
     return (err as { userCancelled?: boolean | null })?.userCancelled ? 'cancelled' : 'failed';
   }

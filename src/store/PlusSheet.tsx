@@ -48,10 +48,11 @@ export function PlusSheet({ onClose }: { onClose(): void }) {
     setBusy(true);
     const r = await restorePurchases();
     setBusy(false);
-    if (r === 'restored') {
+    // Restore can find only a city pack, so Plus is owned only if the store said so.
+    if (r === 'restored' && hasPlus()) {
       setOwned(true);
       setNote(t('Restored. Welcome back!'));
-    } else if (r === 'nothing') setNote(t('No LoopBot Plus purchase was found for this store account.'));
+    } else if (r === 'restored' || r === 'nothing') setNote(t('No LoopBot Plus purchase was found for this store account.'));
     else setNote(t("Couldn't reach the store. Check your connection and try again."));
   };
 

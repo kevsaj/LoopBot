@@ -13,9 +13,11 @@ import { DEMO } from './demo';
 import { DailyButton } from './daily/DailyButton';
 import type { DailyState } from './daily';
 import type { Tower } from './levels/towers';
-import { PLUS_VISIBLE, STORE_AVAILABLE, plusUnlocked } from './store/purchases';
+import { PLUS_VISIBLE, STORE_AVAILABLE, plusUnlocked, towerUnlocked } from './store/purchases';
 import { dailyUnlocked } from './daily';
 import { PlusSheet } from './store/PlusSheet';
+import { PackSheet } from './store/PackSheet';
+import type { PackId } from './store/packs';
 import './heatwave.css';
 import { msg, t, t as tr, tn } from './i18n';
 
@@ -62,16 +64,16 @@ const BAND_NAMES: Record<string, string> = {
 /** What lies under each tower, shown at the foot of its map. */
 const GROUND: Record<number, string> = { 1: msg('Sub-basement'), 2: msg('Ice cellar'), 3: msg('Old cistern') };
 
-/** The towers row: the one you're in, and the others to switch to. Plus towers show a lock until owned. */
+/** The towers row: the one you're in, and the others to switch to. Plus and city pack towers show a lock until owned. */
 function TowerSwitch({ tower, towers, onPick, onLocked }: { tower: number; towers: Tower[]; onPick(n: number): void; onLocked(t: Tower): void }) {
   // A Plus tower only shows once Plus is on sale, or while previewing it.
   const shown = towers.filter((t) => !t.plus || PLUS_VISIBLE || plusUnlocked());
-  // (A preview tower is only in the list at all in dev and preview builds: see levels/towers.ts.)
+  // (A city pack tower is only in the list at all in preview builds and store builds: see levels/towers.ts.)
   if (shown.length < 2) return null;
   return (
     <nav className="tower-switch" aria-label={t('Towers')}>
       {shown.map((t) => {
-        const locked = t.plus && !plusUnlocked();
+        const locked = !towerUnlocked(t);
         return (
           <button
             key={t.n}
@@ -85,11 +87,12 @@ function TowerSwitch({ tower, towers, onPick, onLocked }: { tower: number; tower
               onPick(t.n);
             }}
           >
-            <span className="tt-num">{tr('Tower {n}', { n: t.n })}</span>
-            <span className="tt-name">
-              {tr(t.name)}
-              {locked && ' 🔒'}
+            {/* The lock sits by the number: with three towers on a phone the name gets cut short. */}
+            <span className="tt-num">
+              {tr('Tower {n}', { n: t.n })}
+              {locked && <span aria-label={tr('Locked')}> 🔒</span>}
             </span>
+            <span className="tt-name">{tr(t.name)}</span>
           </button>
         );
       })}
@@ -172,10 +175,11 @@ export function TowerMap({ levels, tower, towers, onTowerPick, progress, current
   }, []);
 
   const [plusSheet, setPlusSheet] = useState(false);
+  const [packSheet, setPackSheet] = useState<PackId | null>(null);
   const lockedTower = (t: Tower) => {
     fx.denied();
-    if (PLUS_VISIBLE && STORE_AVAILABLE) return setPlusSheet(true);
-    setNote(tr('{city} comes with LoopBot Plus.', { city: t.city }));
+    if (PLUS_VISIBLE && STORE_AVAILABLE) return t.pack ? setPackSheet(t.pack) : setPlusSheet(true);
+    setNote(t.pack ? tr('{city} is a city pack. It opens when the store does.', { city: t.city }) : tr('{city} comes with LoopBot Plus.', { city: t.city }));
     window.clearTimeout(noteTimer.current);
     noteTimer.current = window.setTimeout(() => setNote(null), 2200);
   };
@@ -315,6 +319,7 @@ export function TowerMap({ levels, tower, towers, onTowerPick, progress, current
         )}
       </div>
       {plusSheet && <PlusSheet onClose={() => setPlusSheet(false)} />}
+      {packSheet && <PackSheet pack={packSheet} onClose={() => setPackSheet(null)} />}
     </div>
   );
 }

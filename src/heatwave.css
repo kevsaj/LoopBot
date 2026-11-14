@@ -87,3 +87,24 @@
 .band-crown .tower-band {
   color: #ffd66b;
 }
+
+/* The Heatwave city pack's store screen: the Plus sheet's layout in desert colours. */
+.pack-word {
+  color: #ffb466;
+  font-size: 0.7em;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.pack-heatwave .plus-perks li {
+  border-color: rgba(255, 180, 102, 0.28);
+  background: linear-gradient(135deg, rgba(255, 160, 80, 0.1), rgba(255, 200, 120, 0.03));
+}
+.pack-sheet.pack-heatwave .pill.plus-buy {
+  background: linear-gradient(180deg, #ffc861, #f08a3c);
+  border-color: #f5a04a;
+  color: #3a1d0c;
+}
+.pack-heatwave .plus-owned {
+  color: #ffc861;
+}

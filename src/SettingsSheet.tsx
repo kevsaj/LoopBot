@@ -7,8 +7,12 @@ import type { Progress } from './progress';
 import { fx, hapticsOn, isMuted, setHapticsOn, setMuted } from './audio/feedback';
 import { musicOn, setMusicOn } from './audio/music';
 import { SHOP_OPEN, hasPlus, restorePurchases } from './store/purchases';
+import { ownsPack } from './store/packs';
+import type { PackId } from './store/packs';
 import { HintShop } from './store/HintShop';
 import { PlusSheet } from './store/PlusSheet';
+import { PackSheet } from './store/PackSheet';
+import { TOWERS } from './levels/towers';
 import { bigTextOn, setBigText } from './textSize';
 import { version } from '../package.json';
 import { FeedbackSheet } from './FeedbackSheet';
@@ -207,11 +211,17 @@ export function SettingsSheet({ progress, setProgress, onClose, floor, floorTitl
   );
 }
 
-/** Settings > Subscriptions & Purchases: LoopBot Plus and Restore (Kevin, Nov 7: Almanac style). */
+/** The city packs this build sells: the ones whose tower is in it. */
+const SOLD_PACKS = TOWERS.flatMap((tw) => (tw.pack ? [{ id: tw.pack, city: tw.city, tower: tw.name }] : []));
+
+/** Settings > Subscriptions & Purchases: LoopBot Plus, city packs, hints and Restore (Kevin, Nov 7: Almanac style). */
 function PurchaseRows({ hints }: { hints: number }) {
   const [sheet, setSheet] = useState(false);
   const [shop, setShop] = useState(false);
+  const [pack, setPack] = useState<PackId | null>(null);
   const [owned, setOwned] = useState(hasPlus);
+  const [packs, setPacks] = useState(() => SOLD_PACKS.filter((p) => ownsPack(p.id)).map((p) => p.id));
+  const refreshPacks = () => setPacks(SOLD_PACKS.filter((p) => ownsPack(p.id)).map((p) => p.id));
   const [note, setNote] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const restore = async () => {
@@ -220,8 +230,9 @@ function PurchaseRows({ hints }: { hints: number }) {
     setBusy(true);
     const r = await restorePurchases();
     setBusy(false);
-    if (r === 'restored') setOwned(true);
-    setNote(r === 'restored' ? t('LoopBot Plus restored.') : r === 'nothing' ? t('No purchases found for this store account.') : t("Couldn't reach the store. Try again later."));
+    setOwned(hasPlus());
+    refreshPacks();
+    setNote(r === 'restored' ? t('Purchases restored.') : r === 'nothing' ? t('No purchases found for this store account.') : t("Couldn't reach the store. Try again later."));
   };
   return (
     <>
@@ -236,6 +247,18 @@ function PurchaseRows({ hints }: { hints: number }) {
         </button>
         <p className="set-caption">{t('Frostline, Plus looks, the daily archive, more streak freezes and 20 hints. One purchase, no subscription.')}</p>
       </div>
+      {SOLD_PACKS.map((p) => (
+        <div className="set-item" key={p.id}>
+          <button type="button" className="set-row set-link" onClick={() => (fx.tap(), setPack(p.id))}>
+            <span className="set-label">{t('{city} city pack', { city: t(p.city) })}</span>
+            <span className="set-value">{packs.includes(p.id) ? t('Owned ✓') : t('Get')}</span>
+            <span className="set-chevron" aria-hidden="true">
+              ›
+            </span>
+          </button>
+          <p className="set-caption">{t('{tower}: 50 floors in its own tower. Sold on its own, not part of Plus.', { tower: t(p.tower) })}</p>
+        </div>
+      ))}
       <div className="set-item">
         <button type="button" className="set-row set-link" onClick={() => (fx.tap(), setShop(true))}>
           <span className="set-label">{t('Hint packs')}</span>
@@ -249,9 +272,18 @@ function PurchaseRows({ hints }: { hints: number }) {
         <button type="button" className="set-row set-link" onClick={restore} disabled={busy}>
           <span className="set-label">{t('Restore purchases')}</span>
         </button>
-        <p className="set-caption">{note ?? t('Bought Plus on another device or reinstalled? Restore it here.')}</p>
+        <p className="set-caption">{note ?? t('Bought Plus or a city pack on another device, or reinstalled? Restore them here.')}</p>
       </div>
       {shop && <HintShop hints={hints} onClose={() => setShop(false)} />}
+      {pack && (
+        <PackSheet
+          pack={pack}
+          onClose={() => {
+            setPack(null);
+            refreshPacks();
+          }}
+        />
+      )}
       {sheet && (
         <PlusSheet
           onClose={() => {
