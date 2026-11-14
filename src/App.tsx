@@ -30,6 +30,8 @@ import { MAX_FREEZES, PLUS_MAX_FREEZES, dailyHintReward } from './daily';
 import { MakerScreen, useMakerDraft } from './maker/MakerScreen';
 import { MAKER } from './maker/draft';
 import { hasPlus, initPurchases, onHintsGranted, plusUnlocked } from './store/purchases';
+import { t, useLang } from './i18n';
+import { localFloor } from './levels/localFloor';
 
 /** Each tower remembers its own floor: Tower 1 keeps the original key so old saves carry over. */
 const floorKey = (tower: number) => (tower === 1 ? 'loopbot.floor' : `loopbot.floor.t${tower}`);
@@ -57,7 +59,9 @@ export default function App() {
   const [progress, setProgressState] = useState<Progress>(loadProgress);
   const [tower, setTowerState] = useState(loadTower);
   const [index, setIndex] = useState(() => loadIndex(tower));
-  const levels = towerOf(tower).levels;
+  // Floor names, hints and story in the player's language (ids and designs never change).
+  const language = useLang();
+  const levels = useMemo(() => towerOf(tower).levels.map(localFloor), [tower, language]);
   /** Switch towers: each one opens on the floor you were on there. */
   const setTower = useCallback((n: number) => {
     setTowerState(n);
@@ -89,8 +93,9 @@ export default function App() {
   }, []);
   // The daily challenge: today's floor once it's loaded, and the screen to go back to.
   const [daily, setDailyState] = useState<DailyState>(loadDaily);
-  // Re-plan the week of daily reminders on launch and whenever the daily changes (a clear skips today's).
-  useEffect(() => void refreshReminders(daily), [daily]);
+  // Re-plan the week of daily reminders on launch and whenever the daily changes (a clear skips today's),
+  // (and when the language changes, so the notifications speak it too).
+  useEffect(() => void refreshReminders(daily), [daily, language]);
   // The daily archive sheet (LoopBot Plus), opened from the tower map.
   const [archive, setArchive] = useState(false);
   const [dailyFloor, setDailyFloor] = useState<{ date: string; level: LevelFile } | null>(null);
@@ -245,7 +250,7 @@ export default function App() {
       <>
         <TitleScreen
           levels={levels}
-          towerLabel={`Tower ${tower} · ${towerOf(tower).name}`}
+          towerLabel={t('Tower {n} · {name}', { n: tower, name: t(towerOf(tower).name) })}
           progress={progress}
           booted={booted}
           onBooted={onBooted}
@@ -286,7 +291,7 @@ export default function App() {
           onGo={() => setScreen('maker')}
           onTower={() => setScreen('maker')}
           custom={{
-            back: from === 'test' ? 'Floor maker · test' : 'Floor maker',
+            back: from === 'test' ? t('Floor maker · test') : t('Floor maker'),
             noPar: from === 'test' && !draft.solved,
             onClear: (commands, steps) => {
               if (from !== 'test') return;
@@ -295,7 +300,7 @@ export default function App() {
               const better = !best || commands < best.commands || (commands === best.commands && steps < best.steps);
               const par = better ? { commands, steps } : best;
               if (better) setDraft((d) => ({ ...d, solved: par }));
-              return `Par is ${par.commands} commands and ${par.steps} steps. Your floor is ready to share.`;
+              return t('Par is {commands} commands and {steps} steps. Your floor is ready to share.', { commands: par.commands, steps: par.steps });
             },
           }}
         />
@@ -335,7 +340,7 @@ export default function App() {
       <>
         <FloorScreen
           key={today.id}
-          level={today}
+          level={localFloor(today)}
           floorNumber={0}
           floorCount={levels.length}
           progress={progress}

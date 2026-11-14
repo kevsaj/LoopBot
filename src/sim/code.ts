@@ -15,6 +15,7 @@
 import { ACTIONS, FUNCTION_NAMES, SENSORS } from './types';
 import type { Action, Block, Colour, Condition, FunctionName, LevelFile, Program, Routine, Sensor } from './types';
 import { countBlocks, emptyProgram, loopHeight, MAX_DEPTH, MAX_TIMES, MIN_TIMES, newId } from './program';
+import { t } from '../i18n';
 
 export type ParseResult = { ok: true; program: Program } | { ok: false; line: number; error: string };
 
@@ -61,28 +62,28 @@ function parse(text: string, level?: LevelFile): Program {
 
   const condition = (src: string, no: number): Condition => {
     const m = src.match(/^(not\s+)?([a-z_]+)\s*(?:\(\s*(?:["']?([a-z]+)["']?)?\s*\))?$/);
-    if (!m) throw new CodeError(no, `can't read the condition "${src}"`);
+    if (!m) throw new CodeError(no, t('can\'t read the condition "{code}"', { code: src }));
     const [, not, sensor, arg] = m;
-    if (!(SENSORS as readonly string[]).includes(sensor)) throw new CodeError(no, `"${sensor}" isn't a sensor`);
-    if (!sensors.has(sensor)) throw new CodeError(no, `the ${sensor} sensor isn't on this floor`);
+    if (!(SENSORS as readonly string[]).includes(sensor)) throw new CodeError(no, t('"{name}" isn\'t a sensor', { name: sensor }));
+    if (!sensors.has(sensor)) throw new CodeError(no, t('the {name} sensor isn\'t on this floor', { name: sensor }));
     const cond: Condition = { sensor: sensor as Sensor };
     if (sensor === 'tile_is') {
       const colour = arg ? COLOURS[arg] : undefined;
-      if (!colour) throw new CodeError(no, 'tile_is needs a colour: tile_is("r")');
+      if (!colour) throw new CodeError(no, t('tile_is needs a colour: tile_is("r")'));
       cond.colour = colour;
-    } else if (arg) throw new CodeError(no, `${sensor}() takes nothing in its brackets`);
+    } else if (arg) throw new CodeError(no, t('{name}() takes nothing in its brackets', { name: sensor }));
     if (not) cond.not = true;
     return cond;
   };
 
   const need = (cmd: string, no: number) => {
-    if (!allowed.has(cmd)) throw new CodeError(no, `${cmd} isn't unlocked on this floor`);
+    if (!allowed.has(cmd)) throw new CodeError(no, t('{name} isn\'t unlocked on this floor', { name: cmd }));
   };
 
   /** The lines under a header: one level deeper than `indent`. */
   const body = (indent: number, header: Line): Block[] => {
     const next = lines[i];
-    if (!next || next.indent <= indent) throw new CodeError(header.no, `"${header.text}" needs an indented line under it (use pass for nothing)`);
+    if (!next || next.indent <= indent) throw new CodeError(header.no, t('"{code}" needs an indented line under it (use pass for nothing)', { code: header.text }));
     return list(next.indent);
   };
 
@@ -90,10 +91,10 @@ function parse(text: string, level?: LevelFile): Program {
     const out: Block[] = [];
     while (i < lines.length && lines[i].indent >= indent) {
       const l = lines[i];
-      if (l.indent > indent) throw new CodeError(l.no, 'unexpected indent');
+      if (l.indent > indent) throw new CodeError(l.no, t('unexpected indent'));
       if (/^def\b/.test(l.text)) {
         if (indent === 0) break;
-        throw new CodeError(l.no, 'def goes at the left edge');
+        throw new CodeError(l.no, t('def goes at the left edge'));
       }
       i++;
       let m: RegExpMatchArray | null;
@@ -101,7 +102,7 @@ function parse(text: string, level?: LevelFile): Program {
       if ((m = l.text.match(/^repeat\s*\(?\s*(\d+)\s*\)?\s*:$/))) {
         need('repeat', l.no);
         const times = Number(m[1]);
-        if (times < MIN_TIMES || times > MAX_TIMES) throw new CodeError(l.no, `repeat counts go from ${MIN_TIMES} to ${MAX_TIMES}`);
+        if (times < MIN_TIMES || times > MAX_TIMES) throw new CodeError(l.no, t('repeat counts go from {min} to {max}', { min: MIN_TIMES, max: MAX_TIMES }));
         out.push({ id: newId(), kind: 'repeat', times, body: body(indent, l) });
       } else if ((m = l.text.match(/^while\s+(.+):$/))) {
         need('while', l.no);
@@ -119,18 +120,18 @@ function parse(text: string, level?: LevelFile): Program {
         }
         out.push({ id: newId(), kind: 'if', cond, then, else: other });
       } else if (/^else\b/.test(l.text)) {
-        throw new CodeError(l.no, 'else needs an if just above it');
+        throw new CodeError(l.no, t('else needs an if just above it'));
       } else if ((m = l.text.match(/^([A-Za-z_]\w*)\s*(\(\s*\))?$/))) {
         const name = m[1];
         if ((ACTIONS as readonly string[]).includes(name)) {
           need(name, l.no);
           out.push({ id: newId(), kind: 'action', action: name as Action });
         } else if ((FUNCTION_NAMES as readonly string[]).includes(name)) {
-          if (!allowed.has(name) || slots(name as Routine) === 0) throw new CodeError(l.no, `${name} isn't unlocked on this floor`);
+          if (!allowed.has(name) || slots(name as Routine) === 0) throw new CodeError(l.no, t('{name} isn\'t unlocked on this floor', { name }));
           out.push({ id: newId(), kind: 'call', fn: name as FunctionName });
-        } else throw new CodeError(l.no, `"${name}" isn't a command`);
+        } else throw new CodeError(l.no, t('"{name}" isn\'t a command', { name }));
       } else {
-        throw new CodeError(l.no, `can't read "${l.text}"`);
+        throw new CodeError(l.no, t('can\'t read "{code}"', { code: l.text }));
       }
     }
     return out;
@@ -146,11 +147,11 @@ function parse(text: string, level?: LevelFile): Program {
   while (i < lines.length) {
     const l = lines[i++];
     const m = l.text.match(/^def\s+(\w+)\s*\(\s*\)\s*:$/);
-    if (!m) throw new CodeError(l.no, `can't read "${l.text}"`);
+    if (!m) throw new CodeError(l.no, t('can\'t read "{code}"', { code: l.text }));
     const name = m[1] as Routine;
-    if (name !== 'main' && !(FUNCTION_NAMES as readonly string[]).includes(name)) throw new CodeError(l.no, `routines are main, F1, F2 and F3, not ${name}`);
-    if (slots(name) === 0) throw new CodeError(l.no, `${name} isn't unlocked on this floor`);
-    if (seen.has(name)) throw new CodeError(l.no, `${name} is defined twice`);
+    if (name !== 'main' && !(FUNCTION_NAMES as readonly string[]).includes(name)) throw new CodeError(l.no, t('routines are main, F1, F2 and F3, not {name}', { name }));
+    if (slots(name) === 0) throw new CodeError(l.no, t('{name} isn\'t unlocked on this floor', { name }));
+    if (seen.has(name)) throw new CodeError(l.no, t('{name} is defined twice', { name }));
     seen.add(name);
     p[name] = body(0, l);
   }
@@ -158,8 +159,8 @@ function parse(text: string, level?: LevelFile): Program {
   // The same limits the block editor keeps.
   for (const r of ['main', ...FUNCTION_NAMES] as Routine[]) {
     const n = countBlocks(p[r]);
-    if (n > slots(r)) throw new CodeError(lineOf(lines, r), `${r} has ${n} commands but only ${slots(r)} slots`);
-    if (p[r].some((b) => loopHeight(b) > MAX_DEPTH)) throw new CodeError(lineOf(lines, r), `blocks nest at most ${MAX_DEPTH} deep`);
+    if (n > slots(r)) throw new CodeError(lineOf(lines, r), t('{name} has {n} commands but only {slots} slots', { name: r, n, slots: slots(r) }));
+    if (p[r].some((b) => loopHeight(b) > MAX_DEPTH)) throw new CodeError(lineOf(lines, r), t('blocks nest at most {n} deep', { n: MAX_DEPTH }));
   }
   return p;
 }

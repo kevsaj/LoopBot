@@ -10,6 +10,7 @@ import { EYES, PAINTS, TIPS, isPlusPart, isUnlocked, plusPartsShown, saveLook, u
 import { PLUS_VISIBLE, STORE_AVAILABLE } from '../store/purchases';
 import { PlusSheet } from '../store/PlusSheet';
 import { AntennaTip } from './AntennaTip';
+import { t, t as tr, tn } from '../i18n';
 
 interface Props {
   stats: Stats;
@@ -42,7 +43,7 @@ function Swatch({ label, unlock, unlocked, on, onPick, onPlus, children }: { lab
       type="button"
       className={`swatch${on ? ' on' : ''}${unlocked ? '' : ' locked'}${isPlusPart(unlock) ? ' plus' : ''}`}
       aria-pressed={on}
-      aria-label={unlocked ? label : `${label}, locked: ${unlockLabel(unlock)}`}
+      aria-label={unlocked ? t(label) : tr('{name}, locked: {unlock}', { name: t(label), unlock: unlockLabel(unlock) })}
       onClick={() => {
         if (!unlocked) {
           // a Plus look opens the Plus screen when it's on sale
@@ -54,7 +55,7 @@ function Swatch({ label, unlock, unlocked, on, onPick, onPlus, children }: { lab
       }}
     >
       <span className="swatch-art">{children}</span>
-      <span className="swatch-name">{label}</span>
+      <span className="swatch-name">{t(label)}</span>
       {!unlocked && <span className="swatch-lock">🔒 {unlockLabel(unlock)}</span>}
     </button>
   );
@@ -78,30 +79,30 @@ export function Locker({ stats, earned, look, onLook, onClose }: Props) {
 
   return (
     <div className="results-backdrop settings-screen" onClick={onClose}>
-      <div className="settings locker" role="dialog" aria-label="LoopBot's locker" onClick={(e) => e.stopPropagation()}>
+      <div className="settings locker" role="dialog" aria-label={tr("LoopBot's locker")} onClick={(e) => e.stopPropagation()}>
         <header className="settings-head">
-          <button type="button" className="settings-close" aria-label="Close the locker" onClick={() => (fx.tap(), onClose())}>
+          <button type="button" className="settings-close" aria-label={tr('Close the locker')} onClick={() => (fx.tap(), onClose())}>
             ✕
           </button>
-          <h2>Locker</h2>
+          <h2>{tr('Locker')}</h2>
         </header>
         <div className="settings-body">
           <div className="locker-preview">
             <LookBot top={paint.top} left={paint.left} eye={eye.color} tip={look.tip} size={110} />
-            <p className="locker-stars">★ {stars} stars · 🏆 {got} / {ACHIEVEMENTS.length}</p>
+            <p className="locker-stars">★ {tn(stars, '{n} star', '{n} stars')} · 🏆 {got} / {ACHIEVEMENTS.length}</p>
           </div>
           <div className="locker-tabs" role="tablist">
             <button type="button" role="tab" aria-selected={tab === 'looks'} className={tab === 'looks' ? 'on' : ''} onClick={() => (fx.tap(), setTab('looks'))}>
-              Looks
+              {tr('Looks')}
             </button>
             <button type="button" role="tab" aria-selected={tab === 'achievements'} className={tab === 'achievements' ? 'on' : ''} onClick={() => (fx.tap(), setTab('achievements'))}>
-              Achievements
+              {tr('Achievements')}
             </button>
           </div>
 
           {tab === 'looks' ? (
             <>
-              <h3 className="set-section">Paint</h3>
+              <h3 className="set-section">{tr('Paint')}</h3>
               <div className="swatches">
                 {shown(PAINTS).map((p) => (
                   <Swatch key={p.id} onPlus={onPlus} label={p.name} unlock={p.unlock} unlocked={isUnlocked(p.unlock, stats, earned)} on={p.id === look.paint} onPick={() => set({ ...look, paint: p.id })}>
@@ -109,7 +110,7 @@ export function Locker({ stats, earned, look, onLook, onClose }: Props) {
                   </Swatch>
                 ))}
               </div>
-              <h3 className="set-section">Eye</h3>
+              <h3 className="set-section">{tr('Eye')}</h3>
               <div className="swatches">
                 {shown(EYES).map((e) => (
                   <Swatch key={e.id} onPlus={onPlus} label={e.name} unlock={e.unlock} unlocked={isUnlocked(e.unlock, stats, earned)} on={e.id === look.eye} onPick={() => set({ ...look, eye: e.id })}>
@@ -117,7 +118,7 @@ export function Locker({ stats, earned, look, onLook, onClose }: Props) {
                   </Swatch>
                 ))}
               </div>
-              <h3 className="set-section">Antenna</h3>
+              <h3 className="set-section">{tr('Antenna')}</h3>
               <div className="swatches">
                 {shown(TIPS).map((t) => (
                   <Swatch key={t.id} onPlus={onPlus} label={t.name} unlock={t.unlock} unlocked={isUnlocked(t.unlock, stats, earned)} on={t.id === look.tip} onPick={() => set({ ...look, tip: t.id })}>
@@ -127,7 +128,11 @@ export function Locker({ stats, earned, look, onLook, onClose }: Props) {
                   </Swatch>
                 ))}
               </div>
-              <p className="set-caption">Earn stars on tower floors and achievements to unlock more{plusPartsShown() ? ', and LoopBot Plus adds Frostline looks' : ''}. Looks are just for fun.</p>
+              <p className="set-caption">
+                {plusPartsShown()
+                  ? tr('Earn stars on tower floors and achievements to unlock more, and LoopBot Plus adds Frostline looks. Looks are just for fun.')
+                  : tr('Earn stars on tower floors and achievements to unlock more. Looks are just for fun.')}
+              </p>
             </>
           ) : (
             <ul className="achievements">
@@ -140,15 +145,15 @@ export function Locker({ stats, earned, look, onLook, onClose }: Props) {
                       {a.icon}
                     </span>
                     <span className="ach-text">
-                      <span className="ach-title">{a.title}</span>
-                      <span className="ach-how">{a.how}</span>
+                      <span className="ach-title">{tr(a.title)}</span>
+                      <span className="ach-how">{tr(a.how)}</span>
                       {!done && p && p.need > 1 && (
-                        <span className="ach-bar" aria-label={`${p.have} of ${p.need}`}>
+                        <span className="ach-bar" aria-label={tr('{n} of {total}', { n: p.have, total: p.need })}>
                           <span style={{ width: `${(p.have / p.need) * 100}%` }} />
                         </span>
                       )}
                     </span>
-                    <span className="ach-state" aria-label={done ? 'earned' : 'not yet'}>
+                    <span className="ach-state" aria-label={done ? tr('earned') : tr('not yet')}>
                       {done ? '✓' : p && p.need > 1 ? `${p.have}/${p.need}` : ''}
                     </span>
                   </li>

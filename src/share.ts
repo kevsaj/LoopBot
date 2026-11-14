@@ -3,6 +3,7 @@
 
 import { Capacitor } from '@capacitor/core';
 import { Share } from '@capacitor/share';
+import { t } from './i18n';
 
 export type ShareResult = 'shared' | 'copied' | 'saved' | 'cancelled' | 'failed';
 
@@ -14,7 +15,7 @@ const cancelled = (err: unknown) => {
 export async function shareText(text: string): Promise<ShareResult> {
   try {
     if (Capacitor.isNativePlatform()) {
-      await Share.share({ text, dialogTitle: 'Share your LoopBot result' });
+      await Share.share({ text, dialogTitle: t('Share your LoopBot result') });
       return 'shared';
     }
     if (navigator.share) {
@@ -45,7 +46,7 @@ export async function shareImage(png: Blob, text: string, name = 'loopbot.png'):
       await Share.share({
         text,
         files: [uri],
-        dialogTitle: 'Share your LoopBot solution',
+        dialogTitle: t('Share your LoopBot solution'),
       });
       return 'shared';
     }

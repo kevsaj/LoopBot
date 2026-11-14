@@ -2,6 +2,7 @@
 // block count against par. Drawn on a canvas in the app, so it works offline and sends nothing to us.
 
 import type { CodeLine } from './sim/program';
+import { t, tn } from './i18n';
 
 export interface ShareCard {
   /** "Floor 12 · Long Duct" */
@@ -151,14 +152,14 @@ export function drawShareCard(c: ShareCard, canvas: HTMLCanvasElement = document
     g.textAlign = 'center';
     g.font = `800 64px ${SANS}`;
     g.fillStyle = '#f7f3ea';
-    g.fillText(`${c.commands} commands`, mid, cy + 250, bw - 72);
+    g.fillText(tn(c.commands, '{n} command', '{n} commands'), mid, cy + 250, bw - 72);
     g.font = `500 34px ${SANS}`;
     g.fillStyle = '#a7a9c4';
-    g.fillText(`par ${c.par.commands}`, mid, cy + 300, bw - 72);
+    g.fillText(t('par {n}', { n: c.par.commands }), mid, cy + 300, bw - 72);
     if (c.daily && c.daily.streak > 1) {
       g.font = `700 40px ${SANS}`;
       g.fillStyle = GOLD;
-      g.fillText(`🔥 ${c.daily.streak}-day streak`, mid, cy + ch - 40, bw - 72);
+      g.fillText(`🔥 ${tn(c.daily.streak, '{n}-day streak', '{n}-day streak')}`, mid, cy + ch - 40, bw - 72);
     }
     g.textAlign = 'left';
   }
@@ -167,12 +168,12 @@ export function drawShareCard(c: ShareCard, canvas: HTMLCanvasElement = document
   g.font = `700 36px ${SANS}`;
   g.fillStyle = '#f7f3ea';
   const score = c.daily
-    ? 'Same puzzle for everyone today. How did you do?'
-    : `${c.commands} commands (par ${c.par.commands}) · ${c.steps} steps (par ${c.par.steps})`;
+    ? t('Same puzzle for everyone today. How did you do?')
+    : `${tn(c.commands, '{n} command (par {par})', '{n} commands (par {par})', { par: c.par.commands })} · ${tn(c.steps, '{n} step (par {par})', '{n} steps (par {par})', { par: c.par.steps })}`;
   g.fillText(score, 60, H - 82, W - 120);
   g.font = `500 28px ${SANS}`;
   g.fillStyle = '#a7a9c4';
-  const invite = c.daily ? 'Play the LoopBot Daily: kisstudios.net/loopbot' : 'Can you do it in fewer? Play LoopBot: kisstudios.net/loopbot';
+  const invite = c.daily ? t('Play the LoopBot Daily: kisstudios.net/loopbot') : t('Can you do it in fewer? Play LoopBot: kisstudios.net/loopbot');
   g.fillText(invite, 60, H - 36, W - 120);
 
   return canvas;

@@ -8,6 +8,7 @@ import { fx } from '../audio/feedback';
 import { burst, reducedMotion, stop } from '../fx/confetti';
 import { DEMO } from '../demo';
 import { shortDate } from '../daily';
+import { msg, t, tn } from '../i18n';
 
 interface Props {
   floorNumber: number;
@@ -34,7 +35,7 @@ interface Props {
 }
 
 const STAR_MS = 420;
-const HEADLINE = ['', 'Floor cleared', 'Nice work!', 'Perfect run!'];
+const HEADLINE = ['', msg('Floor cleared'), msg('Nice work!'), msg('Perfect run!')];
 
 export function ResultsCard({ floorNumber, tower = 1, floorCount, earned, prevBest, commands, steps, par, outro, onClose, onRetry, onNext, onTower, daily, custom, onShareImage }: Props) {
   const calm = reducedMotion();
@@ -91,9 +92,9 @@ export function ResultsCard({ floorNumber, tower = 1, floorCount, earned, prevBe
     // The daily always has its text line to fall back on if the picture can't be made.
     if (daily && (r === 'failed' || !onShareImage)) r = await shareText(daily.share);
     setSharing(false);
-    if (r === 'copied') setShared('Copied! Paste it anywhere.');
-    else if (r === 'saved') setShared('Picture saved. Post it anywhere.');
-    else if (r === 'failed') setShared("Couldn't share from here.");
+    if (r === 'copied') setShared(t('Copied! Paste it anywhere.'));
+    else if (r === 'saved') setShared(t('Picture saved. Post it anywhere.'));
+    else if (r === 'failed') setShared(t("Couldn't share from here."));
   };
   // After the first daily clear, offer the reminder once (phones only).
   const [askReminder, setAskReminder] = useState(() => !!daily && remindersAvailable() && !loadReminder().asked);
@@ -103,22 +104,22 @@ export function ResultsCard({ floorNumber, tower = 1, floorCount, earned, prevBe
     setAskReminder(false);
     if (!yes) return declineReminder();
     const on = await setReminder(true);
-    setReminderNote(on ? `Reminder set for ${hourLabel(DEFAULT_HOUR)}. Change it in Settings.` : 'Notifications are off for LoopBot. You can allow them in your phone settings.');
+    setReminderNote(on ? t('Reminder set for {time}. Change it in Settings.', { time: hourLabel(DEFAULT_HOUR) }) : t('Notifications are off for LoopBot. You can allow them in your phone settings.'));
   };
-  const title = custom ? 'Your floor' : daily ? `Daily · ${shortDate(daily.date)}` : `Floor ${floorNumber}`;
+  const title = custom ? t('Your floor') : daily ? t('Daily · {date}', { date: shortDate(daily.date) }) : t('Floor {n}', { n: floorNumber });
   const tip =
     earned === 3
       ? null
       : commands > par.commands
-        ? `Solve it in ${par.commands} commands or fewer for 2 stars.`
-        : `Same length, fewer steps (${par.steps}) earns the 3rd star.`;
+        ? tn(par.commands, 'Solve it in {n} command or fewer for 2 stars.', 'Solve it in {n} commands or fewer for 2 stars.')
+        : t('Same length, fewer steps ({n}) earns the 3rd star.', { n: par.steps });
 
   return (
     <div className="results-backdrop" onClick={onClose}>
-      <div className={`results${shown >= 3 ? ` tier-${earned}` : ''}`} role="dialog" aria-label={`${title} cleared, ${earned} of 3 stars`} onClick={(e) => e.stopPropagation()}>
+      <div className={`results${shown >= 3 ? ` tier-${earned}` : ''}`} role="dialog" aria-label={t('{title} cleared, {n} of 3 stars', { title, n: earned })} onClick={(e) => e.stopPropagation()}>
         {earned === 3 && shown >= 3 && <div className="results-rays" aria-hidden="true" />}
         <p className="results-floor">{title}</p>
-        <h2 className={shown >= 3 ? 'in' : ''}>{shown >= 3 ? HEADLINE[earned] : 'Floor cleared'}</h2>
+        <h2 className={shown >= 3 ? 'in' : ''}>{t(shown >= 3 ? HEADLINE[earned] : HEADLINE[1])}</h2>
         <div className="stars" ref={starsRef} aria-hidden="true">
           {[1, 2, 3].map((i) => (
             <span key={i} className={`star${i <= shown ? (i <= earned ? ' on land' : ' miss') : ''}`}>
@@ -127,30 +128,30 @@ export function ResultsCard({ floorNumber, tower = 1, floorCount, earned, prevBe
           ))}
         </div>
         <div className={`badges${shown >= 3 ? ' in' : ''}`}>
-          {best && <span className="badge best">New best!</span>}
-          {prevBest === 0 && !custom && <span className="badge first">{daily ? 'Cleared today' : 'First clear'}</span>}
+          {best && <span className="badge best">{t('New best!')}</span>}
+          {prevBest === 0 && !custom && <span className="badge first">{daily ? t('Cleared today') : t('First clear')}</span>}
           {daily && daily.streak > 0 && (
             <span className="badge streak">
-              🔥 {daily.streak}-day streak
+              🔥 {tn(daily.streak, '{n}-day streak', '{n}-day streak')}
             </span>
           )}
-          {daily?.froze && <span className="badge freeze">🧊 A streak freeze saved your streak</span>}
+          {daily?.froze && <span className="badge freeze">🧊 {t('A streak freeze saved your streak')}</span>}
         </div>
         <table className="score">
           <tbody>
             <tr className={commands <= par.commands ? 'met' : ''}>
-              <td>Commands</td>
+              <td>{t('Commands')}</td>
               <td>{commands}</td>
-              <td className="par">{custom?.noPar ? '' : `par ${par.commands}`}</td>
-              <td className="tick" aria-label={commands <= par.commands ? 'par met' : 'over par'}>
+              <td className="par">{custom?.noPar ? '' : t('par {n}', { n: par.commands })}</td>
+              <td className="tick" aria-label={commands <= par.commands ? t('par met') : t('over par')}>
                 {commands <= par.commands && !custom?.noPar ? '✓' : ''}
               </td>
             </tr>
             <tr className={steps <= par.steps ? 'met' : ''}>
-              <td>Steps</td>
+              <td>{t('Steps')}</td>
               <td>{steps}</td>
-              <td className="par">{custom?.noPar ? '' : `par ${par.steps}`}</td>
-              <td className="tick" aria-label={steps <= par.steps ? 'par met' : 'over par'}>
+              <td className="par">{custom?.noPar ? '' : t('par {n}', { n: par.steps })}</td>
+              <td className="tick" aria-label={steps <= par.steps ? t('par met') : t('over par')}>
                 {steps <= par.steps && !custom?.noPar ? '✓' : ''}
               </td>
             </tr>
@@ -160,57 +161,57 @@ export function ResultsCard({ floorNumber, tower = 1, floorCount, earned, prevBe
         {outro && <p className="story">{outro}</p>}
         {!daily && shared && <p className="tip">{shared}</p>}
         {custom?.note && <p className="tip">{custom.note}</p>}
-        {daily && <p className="tip">{shared ?? reminderNote ?? 'Same puzzle for everyone today. A new one arrives at midnight.'}</p>}
+        {daily && <p className="tip">{shared ?? reminderNote ?? t('Same puzzle for everyone today. A new one arrives at midnight.')}</p>}
         {askReminder && shown >= 3 && (
           <div className="reminder-ask">
-            <p>Want a reminder when tomorrow's puzzle is ready?</p>
+            <p>{t("Want a reminder when tomorrow's puzzle is ready?")}</p>
             <div className="reminder-ask-actions">
               <button type="button" className="pill" onClick={() => void answerReminder(false)}>
-                No thanks
+                {t('No thanks')}
               </button>
               <button type="button" className="pill primary" onClick={() => void answerReminder(true)}>
-                Remind me at {hourLabel(DEFAULT_HOUR)}
+                {t('Remind me at {time}', { time: hourLabel(DEFAULT_HOUR) })}
               </button>
             </div>
           </div>
         )}
         {!daily && !custom && DEMO && floorNumber === floorCount && (
           <p className="demo-end">
-            <strong>You cleared the Lobby!</strong> That's the end of the free demo. LoopBot's climb continues in the full game: loops in the
-            Maintenance floors, functions in the Workshop, and all the way to the Rooftop.
+            <strong>{t('You cleared the Lobby!')}</strong>{' '}
+            {t("That's the end of the free demo. LoopBot's climb continues in the full game: loops in the Maintenance floors, functions in the Workshop, and all the way to the Rooftop.")}
           </p>
         )}
         {!daily && !custom && !DEMO && floorNumber === floorCount && tower === 3 && (
           <p className="demo-end">
-            <strong>Tower 3 cleared!</strong> The sun mirrors point at the sky again and the Sandglass is cooling. VANTA's signal is
-            twisting away east, and PATCH is tuning in.
+            <strong>{t('Tower 3 cleared!')}</strong>{' '}
+            {t("The sun mirrors point at the sky again and the Sandglass is cooling. VANTA's signal is twisting away east, and PATCH is tuning in.")}
           </p>
         )}
         {!daily && !custom && !DEMO && floorNumber === floorCount && tower === 2 && (
           <p className="demo-end">
-            <strong>Tower 2 cleared!</strong> The Northstar beacon is dark and Frostline is thawing out. VANTA's signal is fading south, and
-            PATCH is already listening for it.
+            <strong>{t('Tower 2 cleared!')}</strong>{' '}
+            {t("The Northstar beacon is dark and Frostline is thawing out. VANTA's signal is fading south, and PATCH is already listening for it.")}
           </p>
         )}
         {!daily && !custom && !DEMO && floorNumber === floorCount && tower === 1 && (
           <p className="demo-end">
-            <strong>Tower 1 cleared!</strong> Meridian Spire is back online and VANTA's drones are grounded. LoopBot rides the elevator
-            down to meet PATCH at last. More towers are on the way.
+            <strong>{t('Tower 1 cleared!')}</strong>{' '}
+            {t("Meridian Spire is back online and VANTA's drones are grounded. LoopBot rides the elevator down to meet PATCH at last. More towers are on the way.")}
           </p>
         )}
         <div className="results-actions">
           <button type="button" className="pill" onClick={() => (fx.tap(), onRetry())}>
-            Try again
+            {t('Try again')}
           </button>
           {custom ? (
             <button type="button" className={`pill primary${shown >= 3 ? ' nudge' : ''}`} onClick={() => (fx.tap(), onTower())}>
-              Done
+              {t('Done')}
             </button>
           ) : daily ? (
             <>
               <ShareButton busy={sharing} onClick={share} />
               <button type="button" className={`pill primary${shown >= 3 ? ' nudge' : ''}`} onClick={() => (fx.tap(), onTower())}>
-                Done
+                {t('Done')}
               </button>
             </>
           ) : (
@@ -218,11 +219,11 @@ export function ResultsCard({ floorNumber, tower = 1, floorCount, earned, prevBe
               {onShareImage && <ShareButton busy={sharing} onClick={share} />}
               {floorNumber === floorCount ? (
                 <button type="button" className="pill primary" onClick={() => (fx.tap(), onTower())}>
-                  Tower
+                  {t('Tower')}
                 </button>
               ) : (
                 <button type="button" className={`pill primary${shown >= 3 ? ' nudge' : ''}`} onClick={() => (fx.tap(), onNext())}>
-                  Next floor →
+                  {t('Next floor →')}
                 </button>
               )}
             </>
@@ -236,7 +237,7 @@ export function ResultsCard({ floorNumber, tower = 1, floorCount, earned, prevBe
 function ShareButton({ busy, onClick }: { busy: boolean; onClick(): void }) {
   return (
     <button type="button" className="pill" onClick={onClick} disabled={busy} aria-busy={busy}>
-      Share
+      {t('Share')}
     </button>
   );
 }

@@ -15,6 +15,14 @@ function shippedLevels(demo: boolean): Plugin {
     apply: 'build', // dev server and tests keep the references
     enforce: 'pre',
     transform(code, id) {
+      // Translated floor text follows the same rule: the demo only carries its own floors' words.
+      const tr = /i18n\/[a-z]+\/t(\d)\.json$/.exec(id.split('?')[0]);
+      if (tr) {
+        if (!demo) return null;
+        const floors = JSON.parse(code) as Record<string, unknown>;
+        const kept = Object.fromEntries(Object.entries(floors).filter(([fid]) => tr[1] === '1' && Number(fid.slice(4)) <= DEMO_FLOORS));
+        return { code: JSON.stringify(kept), map: null };
+      }
       const m = /t1-f(\d+)\.json$/.exec(id.split('?')[0]);
       if (!m) return null;
       const level = JSON.parse(code);

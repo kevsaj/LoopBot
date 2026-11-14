@@ -3,16 +3,17 @@
 
 import type { Action, Block, Program } from '../sim/types';
 import type { RunStatus } from '../sim/interpreter';
+import { msg, t } from '../i18n';
 
 export type TutorialStep = 'tap' | 'run' | 'more' | 'turn' | 'spin' | 'cancel';
 
 export const TUTORIAL_TEXT: Record<TutorialStep, string> = {
-  tap: 'Tap a command to add it to your program.',
-  run: 'Press Run to watch LoopBot follow your program.',
-  more: 'Not far enough. Add more commands and run again.',
-  turn: '↺ ↻ Turns spin LoopBot in place. Use them to go round corners.',
-  spin: '↻ A turn spins LoopBot in place without moving it. After it, ↑ forward goes the new way.',
-  cancel: '↻ then ↺ cancel out: LoopBot ends up facing the same way. Keep just one turn.',
+  tap: msg('Tap a command to add it to your program.'),
+  run: msg('Press Run to watch LoopBot follow your program.'),
+  more: msg('Not far enough. Add more commands and run again.'),
+  turn: msg('↺ ↻ Turns spin LoopBot in place. Use them to go round corners.'),
+  spin: msg('↻ A turn spins LoopBot in place without moving it. After it, ↑ forward goes the new way.'),
+  cancel: msg('↻ then ↺ cancel out: LoopBot ends up facing the same way. Keep just one turn.'),
 };
 
 /** Turn tips (spin, cancel) show on the Lobby floors, where turning is still new. */
@@ -81,17 +82,17 @@ export function tutorialStep(s: {
 }
 
 const STEP_LINE: Record<Action, string> = {
-  forward: '> ↑ forward: one tile ahead',
-  jump: '> ⤴ jump',
-  turn_left: '> ↺ turn left: spun in place, did not move',
-  turn_right: '> ↻ turn right: spun in place, did not move',
-  pick_up: '> ▲ pick up',
-  drop: '> ▼ drop',
-  activate: '> ◉ activate',
-  wait: '> ‖ wait: stayed put for one step',
+  forward: msg('> ↑ forward: one tile ahead'),
+  jump: msg('> ⤴ jump'),
+  turn_left: msg('> ↺ turn left: spun in place, did not move'),
+  turn_right: msg('> ↻ turn right: spun in place, did not move'),
+  pick_up: msg('> ▲ pick up'),
+  drop: msg('> ▼ drop'),
+  activate: msg('> ◉ activate'),
+  wait: msg('> ‖ wait: stayed put for one step'),
 };
 
 /** The terminal line for one step of a run. */
 export function stepLine(action: Action): string {
-  return STEP_LINE[action];
+  return t(STEP_LINE[action]);
 }

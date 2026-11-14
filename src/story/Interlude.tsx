@@ -6,6 +6,7 @@ import { fx } from '../audio/feedback';
 import { Portrait } from '../editor/Terminal';
 import { MiniBot } from '../TowerMap';
 import type { EndingScene, Interlude as Beat, Speaker } from './interludes';
+import { t } from '../i18n';
 
 const reduced = () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
 
@@ -31,7 +32,15 @@ function useTyped(text: string, speaker?: Speaker) {
   return { shown: Math.min(shown, text.length), done: shown >= text.length, finish: () => setShown(text.length) };
 }
 
-export function Interlude({ beat, onDone }: { beat: Beat; onDone(): void }) {
+/** The beat in the current language. */
+function localBeat(beat: Beat): Beat {
+  return beat.kind === 'radio'
+    ? { ...beat, heading: t(beat.heading), lines: beat.lines.map((l) => ({ ...l, text: t(l.text) })) }
+    : { ...beat, panels: beat.panels.map((p) => ({ ...p, text: t(p.text) })) };
+}
+
+export function Interlude({ beat: source, onDone }: { beat: Beat; onDone(): void }) {
+  const beat = localBeat(source);
   const count = beat.kind === 'radio' ? beat.lines.length : beat.panels.length;
   const [step, setStep] = useState(0);
   const current = beat.kind === 'radio' ? beat.lines[step] : beat.panels[step];
@@ -58,7 +67,7 @@ export function Interlude({ beat, onDone }: { beat: Beat; onDone(): void }) {
   });
 
   return (
-    <div className={`interlude interlude-${beat.kind}`} role="dialog" aria-label={beat.kind === 'radio' ? 'Radio call from PATCH' : 'Tower ending'} onClick={advance}>
+    <div className={`interlude interlude-${beat.kind}`} role="dialog" aria-label={beat.kind === 'radio' ? t('Radio call from PATCH') : t('Tower ending')} onClick={advance}>
       <button
         type="button"
         className="interlude-skip"
@@ -68,7 +77,7 @@ export function Interlude({ beat, onDone }: { beat: Beat; onDone(): void }) {
           onDone();
         }}
       >
-        Skip
+        {t('Skip')}
       </button>
 
       {beat.kind === 'radio' ? (
@@ -79,7 +88,7 @@ export function Interlude({ beat, onDone }: { beat: Beat; onDone(): void }) {
                 <i key={i} style={{ animationDelay: `${i * 0.12}s` }} className={typed.done ? 'still' : ''} />
               ))}
             </span>
-            <span>Incoming call</span>
+            <span>{t('Incoming call')}</span>
             <span className="radio-heading">{beat.heading}</span>
           </div>
           <ol className="radio-log" aria-live="polite">
@@ -109,7 +118,7 @@ export function Interlude({ beat, onDone }: { beat: Beat; onDone(): void }) {
       )}
 
       <p className="interlude-hint" aria-hidden="true">
-        {typed.done ? (last ? 'Tap to continue' : 'Tap for more') : ' '}
+        {typed.done ? (last ? t('Tap to continue') : t('Tap for more')) : ' '}
       </p>
       <div className="interlude-dots" aria-label={`${step + 1} of ${count}`}>
         {Array.from({ length: count }, (_, i) => (
@@ -185,7 +194,7 @@ function Scene({ scene, next = 'FROSTLINE' }: { scene: EndingScene; next?: strin
               {next}
             </text>
             <text x="166" y="78" textAnchor="middle" fill="#a7a9c4" fontSize="7">
-              coming soon
+              {t('coming soon')}
             </text>
           </g>
         )}

@@ -1,0 +1,367 @@
+{
+ "t3-f01": {
+  "title": "Pas brûlant",
+  "hints": [
+   "La bouche souffle un pas sur deux. Compte avant de marcher.",
+   "Laisse passer un jet, puis vas-y."
+  ],
+  "intro": "PATCH : « Heatwave. VANTA a mis la climatisation du Sablier à l'envers, et maintenant les bouches crachent du feu. Mais elles gardent le rythme. Surveille la lueur. »",
+  "outro": "PATCH : « Tu vois ? Attends un temps et la chaleur passe à côté de toi. »"
+ },
+ "t3-f02": {
+  "title": "Un pas sur deux",
+  "hints": [
+   "Les bouches à grille foncée soufflent aux pas impairs, les claires aux pas pairs.",
+   "Trouve le bon rythme une fois et tu ne perdras jamais le pas."
+  ]
+ },
+ "t3-f03": {
+  "title": "Tourner pour gagner du temps",
+  "hints": [
+   "Pivoter sur place prend un pas aussi.",
+   "Compte le virage quand tu calcules le moment de la bouche."
+  ]
+ },
+ "t3-f04": {
+  "title": "Jardin de bouches",
+  "hints": [
+   "Il y a plus d'un chemin vers le bas. Certains sont plus frais que d'autres.",
+   "Chaque virage et chaque attente décale ton rythme d'un pas."
+  ]
+ },
+ "t3-f05": {
+  "title": "Livraison brûlante",
+  "hints": [
+   "Une caisse posée sur une bouche la bouche. Plus aucun jet.",
+   "Déplace la caisse, puis traverse."
+  ]
+ },
+ "t3-f06": {
+  "title": "Pas régulier",
+  "hints": [
+   "Les bouches sont espacées pareil. Ton programme aussi.",
+   "Une boucle de deux avancer traverse beaucoup de désert."
+  ]
+ },
+ "t3-f07": {
+  "title": "Marches brûlantes",
+  "hints": [
+   "Trois marches à monter, et la première va souffler.",
+   "Attends une fois, puis laisse une boucle faire la montée."
+  ]
+ },
+ "t3-f08": {
+  "title": "Bouche-la",
+  "hints": [
+   "Deux bouches côte à côte : personne ne traverse ça à pied.",
+   "Une caisse sur une bouche la bouche. Ensuite, la caisse devient une pierre de gué."
+  ]
+ },
+ "t3-f09": {
+  "title": "Interrupteur au frais",
+  "hints": [
+   "L'interrupteur est entre deux bouches.",
+   "Va sur l'interrupteur seulement entre deux jets. Ce n'est pas une bouche, alors tu peux y rester un moment."
+  ]
+ },
+ "t3-f10": {
+  "title": "La Porte des dunes",
+  "hints": [
+   "Trouve l'interrupteur, ouvre la porte, et garde le rythme tout le long.",
+   "Planifie quelles bouches tu traverses aux pas impairs et lesquelles aux pas pairs."
+  ]
+ },
+ "t3-f11": {
+  "title": "Feu doux",
+  "hints": [
+   "Ici, les bouches prennent trois pas pour revenir. Trois sortes de grilles, trois temps.",
+   "Une bouche d'ici te donne deux temps sûrs d'affilée."
+  ],
+  "intro": "PATCH : « La Salle des fourneaux. Ces bouches sont plus lentes, trois temps par cycle. Ça veut dire que tu peux rester sur une un instant. Juste un. »"
+ },
+ "t3-f12": {
+  "title": "Pivoter sur la grille",
+  "hints": [
+   "Ici, tu peux pivoter sur une bouche, si tu le fais entre deux jets.",
+   "Compte chaque temps : les avancer, les virages et les attentes."
+  ]
+ },
+ "t3-f13": {
+  "title": "Rangée de fourneaux",
+  "hints": [
+   "Toute une rangée de bouches, chacune à son propre rythme.",
+   "Choisis la colonne dont le rythme tombe juste quand tu arrives."
+  ]
+ },
+ "t3-f14": {
+  "title": "Rythme brûlant",
+  "hints": [
+   "Pas, pas, repos. Pas, pas, repos.",
+   "Une boucle peut garder un rythme à trois temps."
+  ]
+ },
+ "t3-f15": {
+  "title": "Couvercle à caisse",
+  "hints": [
+   "Toutes les bouches de la rangée soufflent au même temps... sauf si quelque chose est posé dessus.",
+   "Bouche une bouche avec la caisse et marche par-dessus."
+  ]
+ },
+ "t3-f16": {
+  "title": "Soufflets",
+  "hints": [
+   "Une grille de bouches, toutes décalées les unes des autres.",
+   "Attendre sur une case ordinaire, c'est toujours sans danger."
+  ]
+ },
+ "t3-f17": {
+  "title": "Plaques froides",
+  "hints": [
+   "Deux caisses, deux plaques, et des bouches dans le chemin.",
+   "Transporte une caisse au-dessus d'une bouche de la même façon que tu la traverses toi-même."
+  ]
+ },
+ "t3-f18": {
+  "title": "Interrupteur au four",
+  "hints": [
+   "L'interrupteur est entre deux bouches.",
+   "Un interrupteur est une case ordinaire : tu peux y rester aussi longtemps que tu veux."
+  ]
+ },
+ "t3-f19": {
+  "title": "Spirale de chaleur",
+  "hints": [
+   "La spirale a un rythme, et le programme aussi.",
+   "Trouve la partie qui se répète."
+  ]
+ },
+ "t3-f20": {
+  "title": "Cœur du fourneau",
+  "hints": [
+   "Le cœur du fourneau : un interrupteur, une porte et une bouche à chaque coin.",
+   "Planifie tout le trajet et compte chaque temps."
+  ],
+  "intro": "VANTA : « Assez chaud pour toi, petit grille-pain ? Le fourneau marche à mon heure maintenant. »",
+  "outro": "PATCH : « Sorti du fourneau en un seul morceau ! VANTA file vers le Bazar céleste. »"
+ },
+ "t3-f21": {
+  "title": "Routine brûlante",
+  "hints": [
+   "Chaque côté de la tournée des étals est pareil : les mêmes pas, la même pause.",
+   "Écris un côté dans F1 et appelle-le trois fois."
+  ],
+  "intro": "PATCH : « Le Bazar céleste. Des étals, des auvents, et des bouches sous chaque tapis. Tu te souviens de F1 ? On écrit une routine une fois, puis on l'appelle par son nom. »"
+ },
+ "t3-f22": {
+  "title": "Chasse au bogue : à contretemps",
+  "hints": [
+   "Ce programme fait bien la tournée des étals... jusqu'à la deuxième bouche. Lance-le et regarde.",
+   "Il manque quelque chose dans la boucle. Un temps."
+  ],
+  "intro": "PATCH : « VANTA a brouillé le programme de ce robot livreur. Il est à contretemps. Lance-le, regarde où il brûle, et répare-le. »"
+ },
+ "t3-f23": {
+  "title": "Course aux épices",
+  "hints": [
+   "Trois allées d'épices, toutes pareilles.",
+   "Les virages entre elles vont dans le Principal."
+  ]
+ },
+ "t3-f24": {
+  "title": "Chasse au bogue : trop tôt",
+  "hints": [
+   "La routine est bonne, presque. Elle attend au mauvais moment.",
+   "Déplace l'attente, n'en ajoute pas."
+  ]
+ },
+ "t3-f25": {
+  "title": "Deux routines",
+  "hints": [
+   "Deux mouvements reviennent sans cesse : un sprint chronométré et un pas de côté.",
+   "Donne à chacun sa propre routine."
+  ]
+ },
+ "t3-f26": {
+  "title": "Chasse au bogue : mauvais virage",
+  "hints": [
+   "Le rythme est bon. Le trajet, non.",
+   "Un virage dans le Principal part du mauvais côté."
+  ]
+ },
+ "t3-f27": {
+  "title": "Lignes de tapis",
+  "hints": [
+   "Une routine peut appeler une autre routine.",
+   "F2 peut utiliser F1 deux fois, puis tourner."
+  ]
+ },
+ "t3-f28": {
+  "title": "Chasse au bogue : appel brûlé",
+  "hints": [
+   "Les routines sont bonnes. Le Principal les appelle dans le mauvais ordre.",
+   "Suis-le temps par temps : quel appel brûle ?"
+  ]
+ },
+ "t3-f29": {
+  "title": "Ruelle aux lanternes",
+  "hints": [
+   "Un trajet carré avec une pause à chaque tour.",
+   "Mets la pause dans la routine."
+  ]
+ },
+ "t3-f30": {
+  "title": "Porte du bazar",
+  "hints": [
+   "La dernière rue d'étals zigzague jusqu'à la porte.",
+   "Un zig et un zag, chacun un sprint chronométré. Deux routines."
+  ],
+  "intro": "VANTA : « J'ai reprogrammé tous les auvents du bazar. Répare-les si tu peux suivre. »",
+  "outro": "PATCH : « La porte est ouverte et le bazar refroidit. VANTA se dirige vers le Labo Mirage. »"
+ },
+ "t3-f31": {
+  "title": "Demande à la chaleur",
+  "hints": [
+   "Compter les temps, ça marche, mais tu peux aussi simplement demander : y a-t-il de la chaleur devant ?",
+   "Tant qu'il y a de la chaleur devant, attends. Puis avance."
+  ],
+  "intro": "PATCH : « Le Labo Mirage. Rien ici n'est là où ça en a l'air. Les robots de ce labo ne comptent pas les temps, ils demandent. Essaie le capteur chaleur devant. »"
+ },
+ "t3-f32": {
+  "title": "Salle du miroitement",
+  "hints": [
+   "Deux salles, des bouches à des rythmes différents.",
+   "Demande avant chaque pas, et tourne au bout de chaque salle."
+  ]
+ },
+ "t3-f33": {
+  "title": "Spirale mirage",
+  "hints": [
+   "Dans cette salle, une seule attente suffit toujours.",
+   "S'il y a de la chaleur devant, attends une fois."
+  ]
+ },
+ "t3-f34": {
+  "title": "Chasse au bogue : n'attend jamais",
+  "hints": [
+   "La boucle pose la bonne question, puis ignore la réponse. Lance-la.",
+   "Il faut attendre tant que la chaleur est là, pas après."
+  ]
+ },
+ "t3-f35": {
+  "title": "Brume de chaleur",
+  "hints": [
+   "Une spirale de salles, et les bouches ne demandent jamais plus d'un temps.",
+   "S'il y a de la chaleur devant, attends une fois. Puis avance."
+  ]
+ },
+ "t3-f36": {
+  "title": "Chasse au bogue : regarde d'abord",
+  "hints": [
+   "Ce robot avance d'abord et pose la question de la chaleur ensuite. Lance-le et vois comment ça finit.",
+   "Pose la question avant le pas, pas après."
+  ]
+ },
+ "t3-f37": {
+  "title": "Bouches peintes",
+  "hints": [
+   "Les coins rouges font tourner d'un côté, les coins jaunes de l'autre.",
+   "Parcours chaque salle prudemment, puis laisse la couleur du coin choisir le virage."
+  ]
+ },
+ "t3-f38": {
+  "title": "Chasse au bogue : mauvaise question",
+  "hints": [
+   "Ce programme demande s'il y a un mur alors qu'il devrait demander s'il y a de la chaleur. Lance-le et regarde.",
+   "Corrige la question dans la boucle."
+  ]
+ },
+ "t3-f39": {
+  "title": "Fourneau en lacets",
+  "hints": [
+   "La porte du coin ne s'ouvre qu'avec l'interrupteur.",
+   "La même marche prudente dans chaque salle, et active l'interrupteur si tu es dessus."
+  ]
+ },
+ "t3-f40": {
+  "title": "Cœur mirage",
+  "hints": [
+   "Le cœur s'enroule jusqu'à la sortie, et chaque bouche garde son propre rythme.",
+   "Demande avant chaque pas, et tourne à droite à chaque mur."
+  ],
+  "intro": "VANTA : « Le cœur mirage fait tourner tout ce labo. Fais un pas à contretemps et tu fondras comme les autres. »",
+  "outro": "PATCH : « Le cœur a refroidi et VANTA vient de filer vers la Couronne. Une dernière montée, LoopBot. »"
+ },
+ "t3-f41": {
+  "title": "Terrasse solaire",
+  "hints": [
+   "Enfin la Couronne. Tape-le si tu veux : tu peux maintenant modifier la vue Code.",
+   "répéter 3 : avancer, attendre, deux avancer, tourner à gauche."
+  ],
+  "intro": "PATCH : « La Couronne du Sablier. VANTA est tout en haut avec les miroirs solaires. À partir d'ici, tu peux taper tes programmes. Les blocs marchent encore aussi. »"
+ },
+ "t3-f42": {
+  "title": "Chasse au bogue : dans l'autre sens",
+  "hints": [
+   "Cette spirale tourne dans l'autre sens. Lance le programme et regarde le premier coin.",
+   "Un seul mot est faux."
+  ]
+ },
+ "t3-f43": {
+  "title": "Bouchons de miroirs",
+  "hints": [
+   "Quatre rangées de bouches, toutes au même temps. Personne ne traverse ça à pied.",
+   "Les caisses sont des pierres de gué, et une caisse posée sur une bouche la bouche."
+  ]
+ },
+ "t3-f44": {
+  "title": "Cour solaire",
+  "hints": [
+   "Le long détour. Chaque case compte et chaque temps compte.",
+   "Active l'interrupteur, puis faufile-toi entre les bouches jusqu'à la porte."
+  ]
+ },
+ "t3-f45": {
+  "title": "Chasse au bogue : trois bogues",
+  "hints": [
+   "Trois choses clochent dans ce programme : un nombre, une question et un virage.",
+   "Cinq salles. Attends tant qu'il y a de la chaleur. Ici, le rouge fait tourner à gauche."
+  ]
+ },
+ "t3-f46": {
+  "title": "Descente des relais",
+  "hints": [
+   "Un escalier qui descend la Couronne, et chaque volée est pareille.",
+   "Écris une volée dans F1 et mets-la en boucle."
+  ]
+ },
+ "t3-f47": {
+  "title": "Marche des miroirs",
+  "hints": [
+   "Trois côtés du champ de miroirs, chacun le même sprint chronométré.",
+   "Une routine pour le sprint, et une autre pour sprint-et-virage."
+  ]
+ },
+ "t3-f48": {
+  "title": "Chasse au bogue : dernière vérification",
+  "hints": [
+   "Le programme active l'interrupteur... parfois. Lance-le.",
+   "Vérifie ce sur quoi tu te tiens, pas ce qu'il y a devant."
+  ]
+ },
+ "t3-f49": {
+  "title": "Course dans la tempête",
+  "hints": [
+   "La plus longue spirale de la tour, et les bouches sont plus rapides ici.",
+   "S'il y a de la chaleur devant, attends. Tourne à gauche à chaque mur."
+  ]
+ },
+ "t3-f50": {
+  "title": "La Couronne solaire",
+  "hints": [
+   "Deux interrupteurs, deux portes, et des bouches à leur propre rythme jusqu'au cœur de la Couronne.",
+   "Parcours chaque salle prudemment, active un interrupteur quand tu es dessus, et tourne à droite à chaque mur."
+  ],
+  "intro": "VANTA : « Les miroirs solaires sont à moi. Un seul rayon de la Couronne et toutes les tours du désert m'obéiront. »",
+  "outro": "PATCH : « Miroirs éteints, Couronne éteinte, et VANTA s'enfuit vers l'est. Le Sablier refroidit. T'as réussi, LoopBot. »"
+ }
+}

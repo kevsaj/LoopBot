@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { LevelFile, Program, Routine } from '../sim/types';
 import { countCommands, toCode } from '../sim/program';
 import { parseCode } from '../sim/code';
+import { t } from '../i18n';
 
 interface Props {
   program: Program;
@@ -14,7 +15,7 @@ interface Props {
 export function CodeView({ program, routines, activeIds, crashId }: Props) {
   const lines = toCode(program, routines);
   return (
-    <pre className="code-view" aria-label="Program as code (read only)">
+    <pre className="code-view" aria-label={t('Program as code (read only)')}>
       {lines.map((l, i) => (
         <div
           key={i}
@@ -50,7 +51,7 @@ export function CodeEditor({ program, routines, level, onApply, onError, onClose
     const r = parseCode(text, level);
     if (!r.ok) {
       setError(r);
-      onError(`line ${r.line}: ${r.error}`);
+      onError(t('line {n}: {error}', { n: r.line, error: r.error }));
       return;
     }
     setError(null);
@@ -79,7 +80,7 @@ export function CodeEditor({ program, routines, level, onApply, onError, onClose
           autoComplete="off"
           wrap="off"
           rows={Math.max(6, lines)}
-          aria-label="Type your program as code"
+          aria-label={t('Type your program as code')}
           aria-invalid={!!error}
           // The phone keyboard covers the bottom half: keep the box in view above it.
           onFocus={(e) => {
@@ -116,15 +117,15 @@ export function CodeEditor({ program, routines, level, onApply, onError, onClose
       </div>
       {error && (
         <p className="code-error" role="alert">
-          Line {error.line}: {error.error}
+          {t('Line {n}: {error}', { n: error.line, error: error.error })}
         </p>
       )}
       <div className="code-actions">
         <button type="button" className="pill" onClick={onClose}>
-          Cancel
+          {t('Cancel')}
         </button>
         <button type="button" className="pill primary" onClick={apply}>
-          Use this code
+          {t('Use this code')}
         </button>
       </div>
     </div>

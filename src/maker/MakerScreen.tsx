@@ -29,6 +29,7 @@ import {
 } from './draft';
 import { TITLE_MAX, decodeFloor, encodeFloor } from './shareCode';
 import type { LevelFile } from '../sim/types';
+import { msg, t } from '../i18n';
 
 interface Props {
   onBack(): void;
@@ -40,52 +41,52 @@ interface Props {
 }
 
 const TOOLS: { tool: Tool; label: string }[] = [
-  { tool: '.', label: 'Floor' },
-  { tool: '#', label: 'Wall' },
-  { tool: '_', label: 'Gap' },
-  { tool: 'up', label: 'Raise' },
-  { tool: 'down', label: 'Lower' },
-  { tool: 'bot', label: 'LoopBot' },
-  { tool: 'e', label: 'Exit' },
-  { tool: 'box', label: 'Box' },
-  { tool: 'target', label: 'Target' },
-  { tool: 's', label: 'Switch' },
-  { tool: 'd', label: 'Door' },
-  { tool: 'i', label: 'Ice' },
-  { tool: 't', label: 'Thin ice' },
-  { tool: 'r', label: 'Red' },
-  { tool: 'g', label: 'Green' },
-  { tool: 'b', label: 'Blue' },
-  { tool: 'y', label: 'Yellow' },
+  { tool: '.', label: msg('Floor') },
+  { tool: '#', label: msg('Wall') },
+  { tool: '_', label: msg('Gap') },
+  { tool: 'up', label: msg('Raise') },
+  { tool: 'down', label: msg('Lower') },
+  { tool: 'bot', label: msg('LoopBot') },
+  { tool: 'e', label: msg('Exit') },
+  { tool: 'box', label: msg('Box') },
+  { tool: 'target', label: msg('Target') },
+  { tool: 's', label: msg('Switch') },
+  { tool: 'd', label: msg('Door') },
+  { tool: 'i', label: msg('Ice') },
+  { tool: 't', label: msg('Thin ice') },
+  { tool: 'r', label: msg('Red') },
+  { tool: 'g', label: msg('Green') },
+  { tool: 'b', label: msg('Blue') },
+  { tool: 'y', label: msg('Yellow') },
 ];
 
 const TOOL_TIPS: Partial<Record<Tool, string>> = {
-  up: 'Tap a tile to raise it. LoopBot jumps up one level at a time.',
-  down: 'Tap a tile to lower it.',
-  bot: 'Tap to place LoopBot. Tap LoopBot again to turn it.',
-  box: 'Tap to stack boxes: 1, 2, 3, then none.',
-  target: 'Tap to set how many boxes a target needs: 1, 2, 3, then none.',
-  s: 'Switches open and close every door. Activate one to flip it.',
-  d: 'Doors are walls until a switch opens them.',
-  i: 'LoopBot slides across ice until something stops it.',
-  t: 'Thin ice holds once, then cracks into a gap.',
-  r: 'Colour tiles are for "if tile is" questions.',
+  up: msg('Tap a tile to raise it. LoopBot jumps up one level at a time.'),
+  down: msg('Tap a tile to lower it.'),
+  bot: msg('Tap to place LoopBot. Tap LoopBot again to turn it.'),
+  box: msg('Tap to stack boxes: 1, 2, 3, then none.'),
+  target: msg('Tap to set how many boxes a target needs: 1, 2, 3, then none.'),
+  s: msg('Switches open and close every door. Activate one to flip it.'),
+  d: msg('Doors are walls until a switch opens them.'),
+  i: msg('LoopBot slides across ice until something stops it.'),
+  t: msg('Thin ice holds once, then cracks into a gap.'),
+  r: msg('Colour tiles are for "if tile is" questions.'),
 };
 
 const GOAL_LABEL: Record<Goal, string> = {
-  bot_on_exit: 'Reach the exit',
-  all_targets_filled: 'Fill the targets',
-  all_switches_on: 'Turn on every switch',
+  bot_on_exit: msg('Reach the exit'),
+  all_targets_filled: msg('Fill the targets'),
+  all_switches_on: msg('Turn on every switch'),
 };
 
 const SENSOR_LABEL: Record<Sensor, string> = {
-  wall_ahead: 'wall ahead',
-  box_ahead: 'box ahead',
-  carrying: 'carrying',
-  on_target: 'on target',
-  on_switch: 'on switch',
-  tile_is: 'tile is (colour)',
-  heat_ahead: 'heat ahead',
+  wall_ahead: msg('wall ahead'),
+  box_ahead: msg('box ahead'),
+  carrying: msg('carrying'),
+  on_target: msg('on target'),
+  on_switch: msg('on switch'),
+  tile_is: msg('tile is (colour)'),
+  heat_ahead: msg('heat ahead'),
 };
 
 const ARROW = { north: '▲', east: '▶', south: '▼', west: '◀' };
@@ -142,22 +143,22 @@ export function MakerScreen({ onBack, onPlay, draft, setDraft }: Props) {
       <header className="topbar">
         <div className="floor-title">
           <button type="button" className="back-btn" onClick={() => (fx.tap(), onBack())}>
-            ‹ Title
+            ‹ {t('Title')}
           </button>
-          <h1 className="floor-name">Floor maker</h1>
+          <h1 className="floor-name">{t('Floor maker')}</h1>
         </div>
         <button type="button" className="pill maker-small" onClick={() => (fx.tap(), setSheet('code'))}>
-          Play a code
+          {t('Play a code')}
         </button>
       </header>
 
       <div className="maker-body">
-        <section className="maker-canvas" aria-label="Your floor">
+        <section className="maker-canvas" aria-label={t('Your floor')}>
           <label className="maker-name">
-            <span className="sr-only">Floor name</span>
-            <input value={draft.title} maxLength={TITLE_MAX} onChange={(e) => setDraft((d) => ({ ...d, title: e.target.value }))} aria-label="Floor name" />
+            <span className="sr-only">{t('Floor name')}</span>
+            <input value={draft.title} maxLength={TITLE_MAX} onChange={(e) => setDraft((d) => ({ ...d, title: e.target.value }))} aria-label={t('Floor name')} />
           </label>
-          <div className="mk-views" role="tablist" aria-label="View">
+          <div className="mk-views" role="tablist" aria-label={t('View')}>
             <button
               type="button"
               role="tab"
@@ -165,10 +166,10 @@ export function MakerScreen({ onBack, onPlay, draft, setDraft }: Props) {
               className={`mk-chip${!preview ? ' on' : ''}`}
               onClick={() => (fx.tap(), setPreview(false))}
             >
-              ✎ Paint
+              ✎ {t('Paint')}
             </button>
             <button type="button" role="tab" aria-selected={preview} className={`mk-chip${preview ? ' on' : ''}`} onClick={() => (fx.tap(), setPreview(true))}>
-              ◇ 3D preview
+              ◇ {t('3D preview')}
             </button>
           </div>
           {preview ? (
@@ -177,7 +178,7 @@ export function MakerScreen({ onBack, onPlay, draft, setDraft }: Props) {
                 <Board update={{ world: createWorld(previewLevel), stepMs: 0 }} rotateSignal={0} band={draft.band} />
               </div>
             ) : (
-              <p className="maker-tip">LoopBot needs a floor tile to stand on before the preview can show.</p>
+              <p className="maker-tip">{t('LoopBot needs a floor tile to stand on before the preview can show.')}</p>
             )
           ) : (
             <div
@@ -189,7 +190,7 @@ export function MakerScreen({ onBack, onPlay, draft, setDraft }: Props) {
               role="grid"
             >
               {draft.tiles.map((row, y) =>
-                row.map((t, x) => {
+                row.map((tile, x) => {
                   const h = draft.heights[y][x];
                   const box = draft.boxes[`${x},${y}`];
                   const target = draft.targets[`${x},${y}`];
@@ -198,9 +199,9 @@ export function MakerScreen({ onBack, onPlay, draft, setDraft }: Props) {
                     <button
                       key={`${x},${y}`}
                       type="button"
-                      className={`mk-cell mk-${t === '.' ? 'floor' : t === '#' ? 'wall' : t === '_' ? 'gap' : t} mk-h${h}`}
+                      className={`mk-cell mk-${tile === '.' ? 'floor' : tile === '#' ? 'wall' : tile === '_' ? 'gap' : tile} mk-h${h}`}
                       onClick={() => tap(x, y)}
-                      aria-label={`Row ${y + 1}, column ${x + 1}`}
+                      aria-label={t('Row {row}, column {col}', { row: y + 1, col: x + 1 })}
                     >
                       {h > 0 && <span className="mk-height">{h}</span>}
                       {target && <span className="mk-target">◎{target > 1 ? target : ''}</span>}
@@ -213,42 +214,42 @@ export function MakerScreen({ onBack, onPlay, draft, setDraft }: Props) {
             </div>
           )}
           {!preview && (
-            <div className="maker-tools" role="toolbar" aria-label="Tools">
-              {TOOLS.map(({ tool: t, label }) => (
+            <div className="maker-tools" role="toolbar" aria-label={t('Tools')}>
+              {TOOLS.map(({ tool: tl, label }) => (
                 <button
-                  key={t}
+                  key={tl}
                   type="button"
-                  className={`mk-tool mk-tool-${t === '.' ? 'floor' : t === '#' ? 'wall' : t === '_' ? 'gap' : t}${tool === t ? ' on' : ''}`}
-                  aria-pressed={tool === t}
-                  onClick={() => (fx.tap(), setTool(t))}
+                  className={`mk-tool mk-tool-${tl === '.' ? 'floor' : tl === '#' ? 'wall' : tl === '_' ? 'gap' : tl}${tool === tl ? ' on' : ''}`}
+                  aria-pressed={tool === tl}
+                  onClick={() => (fx.tap(), setTool(tl))}
                 >
-                  {label}
+                  {t(label)}
                 </button>
               ))}
             </div>
           )}
-          {!preview && <p className="maker-tip">{TOOL_TIPS[tool] ?? (['g', 'b', 'y'].includes(tool) ? TOOL_TIPS.r : 'Tap tiles to paint them.')}</p>}
+          {!preview && <p className="maker-tip">{t(TOOL_TIPS[tool] ?? (['g', 'b', 'y'].includes(tool) ? TOOL_TIPS.r! : 'Tap tiles to paint them.'))}</p>}
         </section>
 
-        <section className="maker-rules" aria-label="Rules">
+        <section className="maker-rules" aria-label={t('Rules')}>
           <div className="mk-row">
-            <span>Size</span>
-            <Stepper label="Width" value={draft.w} onChange={(w) => setDraft((d) => resize(d, w, d.h))} min={1} max={MAX_SIZE} />
+            <span>{t('Size')}</span>
+            <Stepper label={t('Width')} value={draft.w} onChange={(w) => setDraft((d) => resize(d, w, d.h))} min={1} max={MAX_SIZE} />
             <span className="mk-x">×</span>
-            <Stepper label="Depth" value={draft.h} onChange={(h) => setDraft((d) => resize(d, d.w, h))} min={1} max={MAX_SIZE} />
+            <Stepper label={t('Depth')} value={draft.h} onChange={(h) => setDraft((d) => resize(d, d.w, h))} min={1} max={MAX_SIZE} />
           </div>
           <div className="mk-row">
-            <span>Look</span>
-            <select value={draft.band} onChange={(e) => setDraft((d) => ({ ...d, band: e.target.value }))} aria-label="Look">
+            <span>{t('Look')}</span>
+            <select value={draft.band} onChange={(e) => setDraft((d) => ({ ...d, band: e.target.value }))} aria-label={t('Look')}>
               {LOOKS.map((l) => (
                 <option key={l.band} value={l.band}>
-                  {l.label}
+                  {t(l.label)}
                 </option>
               ))}
             </select>
           </div>
           <div className="mk-group">
-            <span>Goal</span>
+            <span>{t('Goal')}</span>
             {goals.length ? (
               goals.map((g) => (
                 <button
@@ -264,15 +265,15 @@ export function MakerScreen({ onBack, onPlay, draft, setDraft }: Props) {
                     }))
                   }
                 >
-                  {GOAL_LABEL[g]}
+                  {t(GOAL_LABEL[g])}
                 </button>
               ))
             ) : (
-              <em>Add an exit, a target or a switch.</em>
+              <em>{t('Add an exit, a target or a switch.')}</em>
             )}
           </div>
           <div className="mk-group">
-            <span>Commands</span>
+            <span>{t('Commands')}</span>
             {ALL_COMMANDS.map((c) => (
               <button
                 key={c}
@@ -281,14 +282,14 @@ export function MakerScreen({ onBack, onPlay, draft, setDraft }: Props) {
                 aria-pressed={draft.commands.includes(c)}
                 onClick={() => toggleCommand(c)}
               >
-                {COMMAND_META[c].label}
+                {t(COMMAND_META[c].label)}
               </button>
             ))}
           </div>
           {usesIfs && (
             <div className="mk-group">
-              <span>Questions</span>
-              <span className="mk-chip on fixed">wall ahead</span>
+              <span>{t('Questions')}</span>
+              <span className="mk-chip on fixed">{t('wall ahead')}</span>
               {MAKER_SENSORS.map((s) => (
                 <button
                   key={s}
@@ -303,25 +304,25 @@ export function MakerScreen({ onBack, onPlay, draft, setDraft }: Props) {
                     }))
                   }
                 >
-                  {SENSOR_LABEL[s]}
+                  {t(SENSOR_LABEL[s])}
                 </button>
               ))}
             </div>
           )}
           <div className="mk-row">
-            <span>Main slots</span>
-            <Stepper label="Main slots" value={draft.slots.main} onChange={(v) => step('main', v - draft.slots.main)} min={1} max={40} />
+            <span>{t('Main slots')}</span>
+            <Stepper label={t('Main slots')} value={draft.slots.main} onChange={(v) => step('main', v - draft.slots.main)} min={1} max={40} />
           </div>
           {draft.commands.includes('F1') && (
             <div className="mk-row">
-              <span>F1 slots</span>
-              <Stepper label="F1 slots" value={draft.slots.F1} onChange={(v) => step('F1', v - draft.slots.F1)} min={1} max={12} />
+              <span>{t('{name} slots', { name: 'F1' })}</span>
+              <Stepper label={t('{name} slots', { name: 'F1' })} value={draft.slots.F1} onChange={(v) => step('F1', v - draft.slots.F1)} min={1} max={12} />
             </div>
           )}
           {draft.commands.includes('F2') && (
             <div className="mk-row">
-              <span>F2 slots</span>
-              <Stepper label="F2 slots" value={draft.slots.F2} onChange={(v) => step('F2', v - draft.slots.F2)} min={1} max={12} />
+              <span>{t('{name} slots', { name: 'F2' })}</span>
+              <Stepper label={t('{name} slots', { name: 'F2' })} value={draft.slots.F2} onChange={(v) => step('F2', v - draft.slots.F2)} min={1} max={12} />
             </div>
           )}
 
@@ -334,25 +335,25 @@ export function MakerScreen({ onBack, onPlay, draft, setDraft }: Props) {
           )}
           <p className="maker-status" role="status">
             {!ready
-              ? 'Fix the list above, then test-play your floor.'
+              ? t('Fix the list above, then test-play your floor.')
               : draft.solved
-                ? `Cleared! Par is ${draft.solved.commands} commands and ${draft.solved.steps} steps. Ready to share.`
-                : 'Clear it yourself once to share it. Your best run sets par.'}
+                ? t('Cleared! Par is {commands} commands and {steps} steps. Ready to share.', { commands: draft.solved.commands, steps: draft.solved.steps })
+                : t('Clear it yourself once to share it. Your best run sets par.')}
           </p>
           <div className="maker-actions">
             <button type="button" className="pill" onClick={() => (fx.tap(), setSheet('new'))}>
-              New
+              {t('New')}
             </button>
             <button type="button" className="pill" onClick={() => (fx.tap(), setSheet('mine'))}>
-              My floors
+              {t('My floors')}
             </button>
           </div>
           <div className="maker-actions">
             <button type="button" className="pill primary" disabled={!ready} onClick={() => (fx.tap(), onPlay(toLevel(draft), 'test'))}>
-              ▶ Test play
+              ▶ {t('Test play')}
             </button>
             <button type="button" className="pill" disabled={!ready || !draft.solved} onClick={() => (fx.tap(), setSheet('share'))}>
-              Share
+              {t('Share')}
             </button>
           </div>
         </section>
@@ -376,15 +377,15 @@ export function MakerScreen({ onBack, onPlay, draft, setDraft }: Props) {
       {sheet === 'code' && <CodeSheet onPlay={(l) => onPlay(l, 'code')} onClose={() => setSheet(null)} />}
       {sheet === 'new' && (
         <div className="results-backdrop" onClick={() => setSheet(null)}>
-          <div className="results sheet" role="dialog" aria-label="Start a new floor" onClick={(e) => e.stopPropagation()}>
-            <h2>Start a new floor?</h2>
-            <p>This clears the floor you're making now. Share it first if you want to keep it.</p>
+          <div className="results sheet" role="dialog" aria-label={t('Start a new floor')} onClick={(e) => e.stopPropagation()}>
+            <h2>{t('Start a new floor?')}</h2>
+            <p>{t("This clears the floor you're making now. Share it first if you want to keep it.")}</p>
             <div className="results-actions">
               <button type="button" className="pill" onClick={() => setSheet(null)}>
-                Keep it
+                {t('Keep it')}
               </button>
               <button type="button" className="pill primary" onClick={() => (fx.tap(), setDraft(() => newDraft()), setSheet(null))}>
-                Start over
+                {t('Start over')}
               </button>
             </div>
           </div>
@@ -397,11 +398,11 @@ export function MakerScreen({ onBack, onPlay, draft, setDraft }: Props) {
 function Stepper({ label, value, onChange, min, max }: { label: string; value: number; onChange(v: number): void; min: number; max: number }) {
   return (
     <span className="mk-stepper">
-      <button type="button" aria-label={`${label} down`} disabled={value <= min} onClick={() => (fx.tap(), onChange(value - 1))}>
+      <button type="button" aria-label={t('{name} down', { name: label })} disabled={value <= min} onClick={() => (fx.tap(), onChange(value - 1))}>
         −
       </button>
       <span aria-label={label}>{value}</span>
-      <button type="button" aria-label={`${label} up`} disabled={value >= max} onClick={() => (fx.tap(), onChange(value + 1))}>
+      <button type="button" aria-label={t('{name} up', { name: label })} disabled={value >= max} onClick={() => (fx.tap(), onChange(value + 1))}>
         +
       </button>
     </span>
@@ -414,25 +415,25 @@ function ShareSheet({ code, title, par, onClose }: { code: string; title: string
   useEffect(() => void saveMyFloor({ code, title, par }), [code, title, par]);
   const share = async () => {
     fx.tap();
-    const r = await shareText(`Can you solve my LoopBot floor "${title}"? Open the Floor maker, tap Play a code and enter:\n${code}`);
-    if (r === 'copied') setNote('Copied! Paste it anywhere.');
-    else if (r === 'failed') setNote("Couldn't share from here. Copy the code by hand.");
+    const r = await shareText(t('Can you solve my LoopBot floor "{title}"? Open the Floor maker, tap Play a code and enter:', { title }) + `\n${code}`);
+    if (r === 'copied') setNote(t('Copied! Paste it anywhere.'));
+    else if (r === 'failed') setNote(t("Couldn't share from here. Copy the code by hand."));
   };
   return (
     <div className="results-backdrop" onClick={onClose}>
-      <div className="results sheet" role="dialog" aria-label="Share your floor" onClick={(e) => e.stopPropagation()}>
-        <h2>Share your floor</h2>
-        <p>Anyone with LoopBot can play it: Floor maker, then Play a code.</p>
-        <p className="maker-code" aria-label="Floor code">
+      <div className="results sheet" role="dialog" aria-label={t('Share your floor')} onClick={(e) => e.stopPropagation()}>
+        <h2>{t('Share your floor')}</h2>
+        <p>{t('Anyone with LoopBot can play it: Floor maker, then Play a code.')}</p>
+        <p className="maker-code" aria-label={t('Floor code')}>
           {code}
         </p>
         {note && <p className="tip">{note}</p>}
         <div className="results-actions">
           <button type="button" className="pill" onClick={onClose}>
-            Close
+            {t('Close')}
           </button>
           <button type="button" className="pill primary" onClick={() => void share()}>
-            Share code
+            {t('Share code')}
           </button>
         </div>
       </div>
@@ -449,7 +450,7 @@ function CodeSheet({ onPlay, onClose }: { onPlay(l: LevelFile): void; onClose():
     const r = decodeFloor(found ? found[0] : text);
     if (!r.ok) {
       fx.denied();
-      setError(r.error);
+      setError(t(r.error));
       return;
     }
     fx.tap();
@@ -457,16 +458,16 @@ function CodeSheet({ onPlay, onClose }: { onPlay(l: LevelFile): void; onClose():
   };
   return (
     <div className="results-backdrop" onClick={onClose}>
-      <div className="results sheet" role="dialog" aria-label="Play a floor code" onClick={(e) => e.stopPropagation()}>
-        <h2>Play a floor code</h2>
-        <p>Paste or type a code a friend sent you. It starts with LBF1.</p>
+      <div className="results sheet" role="dialog" aria-label={t('Play a floor code')} onClick={(e) => e.stopPropagation()}>
+        <h2>{t('Play a floor code')}</h2>
+        <p>{t('Paste or type a code a friend sent you. It starts with LBF1.')}</p>
         <textarea
           className="maker-input"
           rows={3}
           value={text}
           onChange={(e) => (setText(e.target.value), setError(null))}
           placeholder="LBF1-..."
-          aria-label="Floor code"
+          aria-label={t('Floor code')}
           autoCapitalize="characters"
           spellCheck={false}
         />
@@ -477,10 +478,10 @@ function CodeSheet({ onPlay, onClose }: { onPlay(l: LevelFile): void; onClose():
         )}
         <div className="results-actions">
           <button type="button" className="pill" onClick={onClose}>
-            Cancel
+            {t('Cancel')}
           </button>
           <button type="button" className="pill primary" disabled={!text.trim()} onClick={play}>
-            Play
+            {t('Play')}
           </button>
         </div>
       </div>
@@ -494,10 +495,10 @@ function MyFloorsSheet({ onEdit, onPlay, onClose }: { onEdit(f: SavedFloor): voi
   const [note, setNote] = useState<string | null>(null);
   return (
     <div className="results-backdrop" onClick={onClose}>
-      <div className="results sheet mk-mine" role="dialog" aria-label="My floors" onClick={(e) => e.stopPropagation()}>
-        <h2>My floors</h2>
+      <div className="results sheet mk-mine" role="dialog" aria-label={t('My floors')} onClick={(e) => e.stopPropagation()}>
+        <h2>{t('My floors')}</h2>
         {list.length === 0 ? (
-          <p>Floors you share show up here, so you can play, edit or send them again.</p>
+          <p>{t('Floors you share show up here, so you can play, edit or send them again.')}</p>
         ) : (
           <ul className="mk-list">
             {list.map((f) => (
@@ -505,31 +506,31 @@ function MyFloorsSheet({ onEdit, onPlay, onClose }: { onEdit(f: SavedFloor): voi
                 <div className="mk-list-name">
                   <strong>{f.title}</strong>
                   <span>
-                    par {f.par.commands} commands · {f.par.steps} steps
+                    {t('par {commands} commands · {steps} steps', { commands: f.par.commands, steps: f.par.steps })}
                   </span>
                 </div>
                 <div className="mk-list-actions">
                   <button type="button" className="mk-chip on" onClick={() => (fx.tap(), onPlay(f))}>
-                    Play
+                    {t('Play')}
                   </button>
                   <button type="button" className="mk-chip on" onClick={() => (fx.tap(), onEdit(f))}>
-                    Edit
+                    {t('Edit')}
                   </button>
                   <button
                     type="button"
                     className="mk-chip on"
                     onClick={async () => {
                       fx.tap();
-                      const r = await shareText(`Can you solve my LoopBot floor "${f.title}"? Open the Floor maker, tap Play a code and enter:\n${f.code}`);
-                      setNote(r === 'copied' ? 'Copied! Paste it anywhere.' : r === 'failed' ? "Couldn't share from here." : null);
+                      const r = await shareText(t('Can you solve my LoopBot floor "{title}"? Open the Floor maker, tap Play a code and enter:', { title: f.title }) + `\n${f.code}`);
+                      setNote(r === 'copied' ? t('Copied! Paste it anywhere.') : r === 'failed' ? t("Couldn't share from here.") : null);
                     }}
                   >
-                    Share
+                    {t('Share')}
                   </button>
                   <button
                     type="button"
                     className={`mk-chip${confirm === f.code ? ' on danger' : ''}`}
-                    aria-label={confirm === f.code ? `Tap again to delete ${f.title}` : `Delete ${f.title}`}
+                    aria-label={confirm === f.code ? t('Tap again to delete {title}', { title: f.title }) : t('Delete {title}', { title: f.title })}
                     onClick={() => {
                       fx.tap();
                       if (confirm !== f.code) return setConfirm(f.code);
@@ -537,7 +538,7 @@ function MyFloorsSheet({ onEdit, onPlay, onClose }: { onEdit(f: SavedFloor): voi
                       setConfirm(null);
                     }}
                   >
-                    {confirm === f.code ? 'Delete?' : '✕'}
+                    {confirm === f.code ? t('Delete?') : '✕'}
                   </button>
                 </div>
               </li>
@@ -547,7 +548,7 @@ function MyFloorsSheet({ onEdit, onPlay, onClose }: { onEdit(f: SavedFloor): voi
         {note && <p className="tip">{note}</p>}
         <div className="results-actions">
           <button type="button" className="pill" onClick={onClose}>
-            Close
+            {t('Close')}
           </button>
         </div>
       </div>

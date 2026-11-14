@@ -17,6 +17,7 @@ import { PLUS_VISIBLE, STORE_AVAILABLE, plusUnlocked } from './store/purchases';
 import { dailyUnlocked } from './daily';
 import { PlusSheet } from './store/PlusSheet';
 import './heatwave.css';
+import { msg, t, t as tr, tn } from './i18n';
 
 interface Props {
   levels: LevelFile[];
@@ -41,25 +42,25 @@ const SEEN_KEY = 'loopbot.seenUnlocked';
 
 /** Display names for the bands of each tower (doc: Bands table). */
 const BAND_NAMES: Record<string, string> = {
-  lobby: 'The Lobby',
-  maintenance: 'Maintenance',
-  workshop: 'Workshop',
-  control: 'Control Room',
-  rooftop: 'Rooftop',
-  frostgate: 'The Frost Gate',
-  glacier: 'Glacier Yard',
-  signal: 'Signal Hut',
-  aurora: 'Aurora Lab',
-  summit: 'The Summit',
-  dunegate: 'The Dune Gate',
-  furnace: 'Furnace Hall',
-  bazaar: 'Sky Bazaar',
-  mirage: 'Mirage Lab',
-  crown: 'The Crown',
+  lobby: msg('The Lobby'),
+  maintenance: msg('Maintenance'),
+  workshop: msg('Workshop'),
+  control: msg('Control Room'),
+  rooftop: msg('Rooftop'),
+  frostgate: msg('The Frost Gate'),
+  glacier: msg('Glacier Yard'),
+  signal: msg('Signal Hut'),
+  aurora: msg('Aurora Lab'),
+  summit: msg('The Summit'),
+  dunegate: msg('The Dune Gate'),
+  furnace: msg('Furnace Hall'),
+  bazaar: msg('Sky Bazaar'),
+  mirage: msg('Mirage Lab'),
+  crown: msg('The Crown'),
 };
 
 /** What lies under each tower, shown at the foot of its map. */
-const GROUND: Record<number, string> = { 1: 'Sub-basement', 2: 'Ice cellar', 3: 'Old cistern' };
+const GROUND: Record<number, string> = { 1: msg('Sub-basement'), 2: msg('Ice cellar'), 3: msg('Old cistern') };
 
 /** The towers row: the one you're in, and the others to switch to. Plus towers show a lock until owned. */
 function TowerSwitch({ tower, towers, onPick, onLocked }: { tower: number; towers: Tower[]; onPick(n: number): void; onLocked(t: Tower): void }) {
@@ -68,7 +69,7 @@ function TowerSwitch({ tower, towers, onPick, onLocked }: { tower: number; tower
   // (A preview tower is only in the list at all in dev and preview builds: see levels/towers.ts.)
   if (shown.length < 2) return null;
   return (
-    <nav className="tower-switch" aria-label="Towers">
+    <nav className="tower-switch" aria-label={t('Towers')}>
       {shown.map((t) => {
         const locked = t.plus && !plusUnlocked();
         return (
@@ -84,9 +85,9 @@ function TowerSwitch({ tower, towers, onPick, onLocked }: { tower: number; tower
               onPick(t.n);
             }}
           >
-            <span className="tt-num">Tower {t.n}</span>
+            <span className="tt-num">{tr('Tower {n}', { n: t.n })}</span>
             <span className="tt-name">
-              {t.name}
+              {tr(t.name)}
               {locked && ' 🔒'}
             </span>
           </button>
@@ -174,17 +175,17 @@ export function TowerMap({ levels, tower, towers, onTowerPick, progress, current
   const lockedTower = (t: Tower) => {
     fx.denied();
     if (PLUS_VISIBLE && STORE_AVAILABLE) return setPlusSheet(true);
-    setNote(`${t.city} comes with LoopBot Plus.`);
+    setNote(tr('{city} comes with LoopBot Plus.', { city: t.city }));
     window.clearTimeout(noteTimer.current);
     noteTimer.current = window.setTimeout(() => setNote(null), 2200);
   };
-  const name = towers.find((t) => t.n === tower)?.name ?? 'Meridian Spire';
+  const name = t(towers.find((x) => x.n === tower)?.name ?? 'Meridian Spire');
 
   const lockedTap = (i: number) => {
     fx.denied();
     setShaking(i);
     window.setTimeout(() => setShaking((s) => (s === i ? null : s)), 420);
-    setNote(`Clear Floor ${i} to open Floor ${i + 1}.`);
+    setNote(t('Clear Floor {n} to open Floor {next}.', { n: i, next: i + 1 }));
     window.clearTimeout(noteTimer.current);
     noteTimer.current = window.setTimeout(() => setNote(null), 2200);
   };
@@ -193,47 +194,47 @@ export function TowerMap({ levels, tower, towers, onTowerPick, progress, current
     <div className={`tower tower-${tower}`} role="main">
       <header className="topbar">
         <div className="floor-title">
-          <button type="button" className="back-btn" onClick={() => (fx.tap(), onHome())} aria-label={`Tower ${tower}: back to the title screen`}>
-            ‹ Tower {tower}
+          <button type="button" className="back-btn" onClick={() => (fx.tap(), onHome())} aria-label={t('Tower {n}: back to the title screen', { n: tower })}>
+            ‹ {t('Tower {n}', { n: tower })}
           </button>
           <h1 className="floor-name">{name}</h1>
         </div>
-        <div className="tower-stars" aria-label={`${totalStars} of ${ids.length * 3} stars`}>
+        <div className="tower-stars" aria-label={t('{n} of {total} stars', { n: totalStars, total: ids.length * 3 })}>
           ★ {totalStars} / {ids.length * 3}
         </div>
-        <button type="button" className="icon-btn map-locker" aria-label={`Locker: looks and achievements${lockerNew ? ', something new' : ''}`} onClick={() => (fx.tap(), onLocker())}>
+        <button type="button" className="icon-btn map-locker" aria-label={lockerNew ? t('Locker: looks and achievements, something new') : t('Locker: looks and achievements')} onClick={() => (fx.tap(), onLocker())}>
           🏆{lockerNew && <span className="new-dot" aria-hidden="true" />}
         </button>
-        <button type="button" className="icon-btn" aria-label="Settings" onClick={() => (fx.tap(), onSettings())}>
+        <button type="button" className="icon-btn" aria-label={t('Settings')} onClick={() => (fx.tap(), onSettings())}>
           ⚙
         </button>
       </header>
-      <div className="tower-progress" aria-label={`${cleared} of ${ids.length} floors cleared`}>
+      <div className="tower-progress" aria-label={t('{n} of {total} floors cleared', { n: cleared, total: ids.length })}>
         <div className="tower-progress-bar">
           <span style={{ width: `${(cleared / ids.length) * 100}%` }} />
         </div>
         <span className="tower-progress-text">
-          {cleared} / {ids.length} floors
+          {t('{n} / {total} floors', { n: cleared, total: ids.length })}
         </span>
       </div>
       <TowerSwitch tower={tower} towers={towers} onPick={onTowerPick} onLocked={lockedTower} />
       {!DEMO && <DailyButton className="tower-daily" progress={progress} daily={daily} onOpen={onDaily} />}
       {!DEMO && dailyUnlocked(progress) && (PLUS_VISIBLE || plusUnlocked()) && (
         <button type="button" className="link-btn daily-archive-link" onClick={() => (fx.tap(), onArchive())}>
-          📅 Daily archive: replay missed days
+          📅 {t('Daily archive: replay missed days')}
         </button>
       )}
       <div className="tower-scroll">
         <div className="tower-roof" aria-hidden="true">
           <span className="beacon" />
         </div>
-        {DEMO && <div className="tower-band demo-more">Floors 11 to 50 · in the full game</div>}
+        {DEMO && <div className="tower-band demo-more">{t('Floors 11 to 50 · in the full game')}</div>}
         {bandsOf(levels)
           .reverse()
           .map((band) => (
             <section key={band.key} className={`tower-section band-${band.key}`}>
               <div className="tower-band">
-                {BAND_NAMES[band.key] ?? band.key} · Floors {band.first + 1} to {band.last + 1}
+                {t(BAND_NAMES[band.key] ?? band.key)} · {t('Floors {first} to {last}', { first: band.first + 1, last: band.last + 1 })}
               </div>
               <ol className="tower-floors" reversed>
                 {band.floors
@@ -268,11 +269,17 @@ export function TowerMap({ levels, tower, towers, onTowerPick, progress, current
                             fx.tap();
                             onPick(i);
                           }}
-                          aria-label={open ? `Floor ${i + 1}, ${l.title}, ${stars} stars${here ? ', you are here' : ''}` : `Floor ${i + 1}, locked`}
+                          aria-label={
+                            open
+                              ? here
+                                ? tn(stars, 'Floor {floor}, {title}, {n} star, you are here', 'Floor {floor}, {title}, {n} stars, you are here', { floor: i + 1, title: l.title })
+                                : tn(stars, 'Floor {floor}, {title}, {n} star', 'Floor {floor}, {title}, {n} stars', { floor: i + 1, title: l.title })
+                              : t('Floor {n}, locked', { n: i + 1 })
+                          }
                         >
                           <span className="tf-num">{i + 1}</span>
                           {here && <MiniBot />}
-                          <span className="tf-title">{open ? l.title : 'Locked'}</span>
+                          <span className="tf-title">{open ? l.title : t('Locked')}</span>
                           {open ? (
                             <span className="tf-stars" aria-hidden="true">
                               {[1, 2, 3].map((s) => (
@@ -294,7 +301,7 @@ export function TowerMap({ levels, tower, towers, onTowerPick, progress, current
               </ol>
             </section>
           ))}
-        <div className="tower-ground">{GROUND[tower] ?? 'Sub-basement'}</div>
+        <div className="tower-ground">{t(GROUND[tower] ?? GROUND[1])}</div>
       </div>
       <div className="tower-footer">
         {note ? (
@@ -303,7 +310,7 @@ export function TowerMap({ levels, tower, towers, onTowerPick, progress, current
           </p>
         ) : (
           <button type="button" className="pill primary continue" onClick={() => (fx.tap(), onPick(target))}>
-            ▶ {progress.stars[ids[target]] ? 'Replay' : 'Play'} Floor {target + 1}
+            ▶ {progress.stars[ids[target]] ? t('Replay Floor {n}', { n: target + 1 }) : t('Play Floor {n}', { n: target + 1 })}
           </button>
         )}
       </div>

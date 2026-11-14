@@ -1,0 +1,404 @@
+{
+ "t1-f01": {
+  "title": "Séquence de démarrage",
+  "hints": [],
+  "intro": "> bonjour, le monde ?",
+  "outro": "LoopBot s'allume au sous-sol."
+ },
+ "t1-f02": {
+  "title": "Chaufferie",
+  "hints": [
+   "Les virages font pivoter LoopBot sur place. Ils ne le déplacent jamais. Marche d'abord jusqu'au coin.",
+   "Il te faut 5 commandes : deux pas, un virage, deux pas."
+  ],
+  "intro": "PATCH : « Y a quelqu'un en bas ? »"
+ },
+ "t1-f03": {
+  "title": "Première livraison",
+  "hints": [
+   "On ramasse une caisse sur la case juste devant soi.",
+   "Il te faut 4 commandes : ramasser, deux pas, déposer."
+  ],
+  "intro": "PATCH : Cette caisse contient une pile. Apporte-la sur la plaque."
+ },
+ "t1-f04": {
+  "title": "Une marche",
+  "hints": [
+   "avancer ne marche que sur un sol plat. Utilise sauter pour monter ou descendre une marche.",
+   "4 commandes : marcher, sauter en haut, sauter en bas, marcher."
+  ],
+  "intro": "PATCH : « T'entends ce bourdonnement en haut ? Des drones de saisie. Continue. »"
+ },
+ "t1-f05": {
+  "title": "Deux caisses",
+  "hints": [
+   "Livre d'abord la caisse du haut. Une caisse sur une plaque bloque le passage, alors planifie ton trajet.",
+   "12 commandes : livrer une caisse (4), passer par le milieu (4), livrer l'autre (4)."
+  ],
+  "intro": "PATCH : « L'immeuble est verrouillé. Personne n'entre ni ne sort. Sauf toi, apparemment. »"
+ },
+ "t1-f06": {
+  "title": "Empile-les",
+  "hints": [
+   "La plaque demande deux caisses, l'une sur l'autre. Tu peux déposer une caisse sur une autre caisse.",
+   "8 commandes. Pas besoin de marcher : tourne-toi vers chaque caisse, puis vers la plaque."
+  ],
+  "intro": "PATCH : « Empile deux piles sur cette plaque et les lumières du hall reviennent. »",
+  "outro": "Les lumières du hall se rallument en clignotant."
+ },
+ "t1-f07": {
+  "title": "Escalier de caisses",
+  "hints": [
+   "Le rebord fait 2 de haut, trop haut pour sauter. Une caisse fait 1 de haut.",
+   "7 commandes : prends la caisse, dépose-la au pied du rebord, puis grimpe dessus comme sur une marche."
+  ],
+  "intro": "PATCH : « Ce rebord mène au hall. Trouve un moyen de monter. »",
+  "outro": "Tout là-haut, la musique d'un gala résonne dans la cage d'escalier."
+ },
+ "t1-f08": {
+  "title": "Attention au trou",
+  "hints": [
+   "On ne peut pas traverser un trou. Contourne-le, et saute en bas de la plateforme.",
+   "9 commandes, dont un saut vers le bas."
+  ],
+  "intro": "Derrière la vitre, un drone de saisie balaie le hall de sa lumière. Il ne voit pas LoopBot. Pas encore."
+ },
+ "t1-f09": {
+  "title": "Porte de service",
+  "hints": [
+   "Mets-toi sur l'interrupteur et active-le pour ouvrir la porte.",
+   "6 commandes : un pas, activer, puis marcher jusqu'à la sortie."
+  ],
+  "intro": "PATCH : « De vieilles portes de sécurité. Appuie sur l'interrupteur au sol et ça devrait ouvrir. »"
+ },
+ "t1-f10": {
+  "title": "Alarme incendie",
+  "hints": [
+   "L'interrupteur de l'alarme est sur un rebord de 2 de haut, dans la pièce d'à côté. Ouvre d'abord la porte, et apporte une caisse.",
+   "18 commandes : ouvrir la porte (5), aller chercher la caisse (4), la transporter (4), grimper et déclencher l'alarme (5)."
+  ],
+  "intro": "PATCH : « Déclenche cette alarme et toutes les portes de la Flèche se déverrouillent. Même celles qu'ils veulent garder fermées. »",
+  "outro": "L'alarme hurle. VANTA, dans les haut-parleurs : « Quelqu'un se promène dans mon immeuble. »"
+ },
+ "t1-f11": {
+  "title": "Le long conduit",
+  "hints": [
+   "Sept pas, mais seulement trois cases. Un seul bloc peut faire la même chose plusieurs fois.",
+   "Mets un avancer dans un répéter, et règle le répéter à 7."
+  ],
+  "intro": "PATCH : « Les conduits de service. Longs, droits, et les drones de VANTA n'y entrent pas. Continue. »",
+  "outro": "PATCH : « Bien. Travaille plus intelligemment, pas plus longtemps. »"
+ },
+ "t1-f12": {
+  "title": "Escalier de ventilation",
+  "hints": [
+   "La montée se répète : un pas en avant, un pas vers le haut.",
+   "Mets avancer et sauter ensemble dans une boucle, trois fois."
+  ],
+  "intro": "PATCH : « Les conduits montent en marches. Le même geste, encore et encore. Tu sais quoi faire. »"
+ },
+ "t1-f13": {
+  "title": "Puits en zigzag",
+  "hints": [
+   "Le puits zigzague de la même façon jusqu'en bas.",
+   "Un zig et un zag, ça fait quatre commandes. Répète-les."
+  ],
+  "intro": "PATCH : « Le puits est tordu, mais tordu de la même façon chaque fois. »"
+ },
+ "t1-f14": {
+  "title": "Relais de piles",
+  "hints": [
+   "Chaque pile avance d'une case, puis tu sautes par-dessus pour aller à la suivante.",
+   "Ramasser, un pas, déposer, puis sauter sur la pile et redescendre de l'autre côté. Deux fois."
+  ],
+  "intro": "PATCH : « Deux piles, deux plaques. Fais-les avancer. »"
+ },
+ "t1-f15": {
+  "title": "Au pas",
+  "hints": [
+   "Chaque interrupteur ouvre la porte juste après lui.",
+   "Active, puis passe la porte jusqu'à l'interrupteur suivant. Trois fois."
+  ],
+  "intro": "VANTA : « Verrouillage de sécurité. Chaque porte de cet étage obéit à son propre interrupteur. Amuse-toi bien. »"
+ },
+ "t1-f16": {
+  "title": "Long trajet",
+  "hints": [
+   "Seule la marche du milieu se répète.",
+   "Ramasser, mettre la marche en boucle, puis déposer."
+  ],
+  "intro": "PATCH : « La pile est à ce bout-ci, la prise est tout au bout. Longue marche. »"
+ },
+ "t1-f17": {
+  "title": "Carré de tuyaux",
+  "hints": [
+   "Trois côtés droits, de la même longueur, qui finissent chacun par un virage.",
+   "Un côté, c'est une boucle d'avancer. Mets les côtés en boucle aussi."
+  ],
+  "intro": "PATCH : « Des boucles dans des boucles. Un côté est une boucle, et le carré est une boucle de côtés. »"
+ },
+ "t1-f18": {
+  "title": "Salle des ventilateurs",
+  "hints": [
+   "Trois interrupteurs de ventilateur, un dans chaque coin du fond, et tous les côtés de la salle sont pareils.",
+   "Marche un côté, active l'interrupteur, tourne. Mets la marche dans une boucle de côtés."
+  ],
+  "intro": "VANTA : « Ces ventilateurs gardent mes drones au frais. Touche-les et je le saurai. »"
+ },
+ "t1-f19": {
+  "title": "Double trajet",
+  "hints": [
+   "Les deux piles parcourent la même distance, puis tu tournes au coin.",
+   "Pour en porter une : ramasser, trois pas, déposer, tourner. Puis recommence."
+  ],
+  "intro": "PATCH : « Deux piles, un coin. Le même trajet deux fois. »"
+ },
+ "t1-f20": {
+  "title": "Salle des machines",
+  "hints": [
+   "La salle monte en spirale. Chaque côté est pareil : marcher, grimper, activer l'interrupteur, tourner.",
+   "Mets la marche dans une boucle de côtés. La dernière montée arrive sur la sortie."
+  ],
+  "intro": "VANTA : « La salle des machines. Chaque interrupteur que tu actives ici, je le désactive. Bonne chance. »",
+  "outro": "PATCH : « La salle des machines est à nous. L'ascenseur repart. Prochain arrêt : l'Atelier. »"
+ },
+ "t1-f21": {
+  "title": "Râtelier à outils",
+  "hints": [
+   "Trois interrupteurs, et le même trajet jusqu'à chacun. Le Principal n'a que trois cases.",
+   "Construis le trajet une fois dans F1 : avancer, avancer, activer. Puis appelle F1 depuis le Principal."
+  ],
+  "intro": "PATCH : « L'Atelier. Ici, les robots apprennent des routines : on en apprend une une fois, puis on l'appelle par son nom. Essaie l'onglet F1. »",
+  "outro": "PATCH : « Tu vois ? On l'écrit une fois, on s'en sert partout. »"
+ },
+ "t1-f22": {
+  "title": "Établi",
+  "hints": [
+   "Deux rangées d'interrupteurs reliées à un bout. Chaque interrupteur est à deux pas du précédent.",
+   "Mets le trajet et l'interrupteur dans F1. Une boucle autour de F1 F1, virage, F1, virage couvre tout l'établi."
+  ],
+  "intro": "VANTA : « Des routines. Mignon. Les miennes font tourner tout l'immeuble. »"
+ },
+ "t1-f23": {
+  "title": "Rangée de caisses",
+  "hints": [
+   "Chaque caisse va tout droit de l'autre côté du couloir. Les caisses ne sont pas espacées pareil.",
+   "F1 déplace une caisse : se tourner vers elle, la ramasser, faire demi-tour, la déposer, se remettre dans le sens du couloir. Le Principal marche entre les caisses."
+  ],
+  "intro": "PATCH : « Des caisses de pièces du mauvais côté de la ligne. Le même geste pour chacune. »"
+ },
+ "t1-f24": {
+  "title": "Escalier roulant",
+  "hints": [
+   "Le convoyeur monte en trois volées, et chaque volée est pareille : deux pas et un saut vers le haut.",
+   "F1 monte une volée. Tourne entre les volées dans le Principal."
+  ],
+  "outro": "PATCH : « En haut et par-dessus. Tu commences à avoir le tour. »"
+ },
+ "t1-f25": {
+  "title": "Course aux rivets",
+  "hints": [
+   "Un interrupteur toutes les deux cases, avec une marche à monter en chemin.",
+   "F1 fait deux pas et active l'interrupteur. Le Principal s'occupe de la marche."
+  ],
+  "intro": "VANTA : « Chaque rivet que tu poses, je peux l'arracher. Occupe-toi, petit robot. »"
+ },
+ "t1-f26": {
+  "title": "Chaîne de montage",
+  "hints": [
+   "Chaque plateforme est pareille : un pas, un saut vers le haut ou le bas, puis l'interrupteur. Seuls les virages changent.",
+   "F1 fait pas, saut, interrupteur. Les deux premiers virages sont à droite, alors une boucle peut les faire."
+  ],
+  "outro": "PATCH : « La chaîne de montage ronronne. VANTA ne va pas aimer ça. »"
+ },
+ "t1-f27": {
+  "title": "Deuxième quart",
+  "hints": [
+   "Le Principal a trois cases, mais il y a six interrupteurs sur trois côtés. Une routine peut appeler une autre routine.",
+   "F1 fait deux pas et active. F2 fait tout un côté : F1, F1, virage. Le Principal appelle F2 trois fois."
+  ],
+  "intro": "PATCH : « Le deuxième quart commence. Les routines peuvent appeler des routines, alors un gros travail se découpe en petits. »"
+ },
+ "t1-f28": {
+  "title": "Train d'engrenages",
+  "hints": [
+   "Un grand anneau d'engrenages avec deux interrupteurs par côté, et le Principal n'a que deux cases.",
+   "F1 fait trois pas et active ; une boucle à l'intérieur économise une case. F2, c'est un côté : F1, F1, virage."
+  ]
+ },
+ "t1-f29": {
+  "title": "Quart de nuit",
+  "hints": [
+   "Les interrupteurs descendent comme un escalier. Deux marches font la même forme deux fois.",
+   "F1 fait deux pas et active. F2 est une paire de marches : F1, tourner à droite, F1, tourner à gauche."
+  ],
+  "intro": "VANTA : « Quart de nuit. Les lumières sont éteintes, et tes chances aussi. »"
+ },
+ "t1-f30": {
+  "title": "Le Contremaître",
+  "hints": [
+   "Monte l'anneau et redescends. Chaque plateforme, c'est un pas, un saut et un interrupteur.",
+   "F1 fait pas, saut, interrupteur. F2 est un côté : F1, F1, virage. Le Principal répète F2."
+  ],
+  "intro": "VANTA : « Le Contremaître dirige cet étage, et le Contremaître m'obéit. »",
+  "outro": "PATCH : « L'Atelier est à toi. VANTA s'est tu, et j'aime pas trop ça. Prochaine étape : la Salle de contrôle. »"
+ },
+ "t1-f31": {
+  "title": "Spirale aveugle",
+  "hints": [
+   "Le couloir s'enroule vers l'intérieur, et chaque côté a une longueur différente. Compter ne rentrera pas dans quatre cases.",
+   "Un bloc tant que continue tant que son capteur le dit. Avance tant qu'il n'y a pas de mur devant, puis tourne à droite."
+  ],
+  "intro": "PATCH : « La Salle de contrôle. Ici, les robots ne comptent pas leurs pas, ils vérifient. Essaie un bloc tant que : il répète jusqu'à ce qu'un capteur dise stop. »"
+ },
+ "t1-f32": {
+  "title": "Boîte de jonction",
+  "hints": [
+   "Marche jusqu'à chaque mur. Un sol rouge veut dire tourner à gauche ; partout ailleurs, tourner à droite.",
+   "Dans une boucle : tant que pas de mur devant, avancer. Puis un si : sur rouge, tourner à gauche, sinon tourner à droite."
+  ],
+  "intro": "PATCH : « Un bloc si pose la question une fois et choisit une branche. Touche son capteur pour changer la question. »"
+ },
+ "t1-f33": {
+  "title": "Tournée des interrupteurs",
+  "hints": [
+   "Les interrupteurs ne sont pas espacés pareil. Vérifie plutôt chaque case.",
+   "Avance d'un pas, puis si tu es sur un interrupteur, active-le. Fais-le six fois."
+  ],
+  "outro": "PATCH : « Vérifier, puis agir. Toute la Salle de contrôle en une ligne. »"
+ },
+ "t1-f34": {
+  "title": "Saute-caisses",
+  "hints": [
+   "Des caisses sont éparpillées sur le convoyeur. Saute les caisses, marche dans les espaces vides.",
+   "S'il y a une caisse devant, saute dessus et redescends. Sinon, avance. Mets ça en boucle."
+  ]
+ },
+ "t1-f35": {
+  "title": "Lacets",
+  "hints": [
+   "Une spirale avec des interrupteurs en chemin. Marche chaque côté en vérifiant chaque case.",
+   "Mets un si dans un tant que : avancer, puis activer si tu es sur un interrupteur. Tourne à droite à chaque mur."
+  ],
+  "intro": "VANTA : « Mignon. Tu sais voir un mur. Voyons si tu sais réfléchir. »"
+ },
+ "t1-f36": {
+  "title": "Feux de signalisation",
+  "hints": [
+   "Le rouge fait tourner à gauche, le bleu à droite, le sol nu va tout droit. Chaque case est un pas.",
+   "Un si peut aller dans le sinon d'un autre si : si rouge, tourner à gauche, sinon si bleu, tourner à droite. Puis avancer."
+  ],
+  "outro": "PATCH : « Des feux, des règles, et c'est réglé. VANTA déteste quand les robots lisent les panneaux. »"
+ },
+ "t1-f37": {
+  "title": "Libère le convoyeur",
+  "hints": [
+   "Des caisses bloquent le convoyeur. Chacune a une alcôve à sa gauche.",
+   "S'il y a une caisse devant : la ramasser, tourner à gauche, la déposer dans l'alcôve, se retourner. Puis avancer."
+  ]
+ },
+ "t1-f38": {
+  "title": "Ronde de nuit",
+  "hints": [
+   "Trois côtés, la même règle sur chacun : marcher jusqu'au mur en sautant les caisses.",
+   "Apprends un côté à F1 : tant que pas de mur devant, s'il y a une caisse devant, sauter deux fois, sinon avancer. Le Principal l'appelle et tourne."
+  ],
+  "outro": "PATCH : « Des routines qui regardent avant de sauter. Tu deviens dangereux. »"
+ },
+ "t1-f39": {
+  "title": "Salle des relais",
+  "hints": [
+   "Des cases de couleur marquent les virages. Des interrupteurs se trouvent entre elles.",
+   "À chaque pas : avancer, activer si sur un interrupteur, tourner à gauche sur rouge, tourner à droite sur bleu. Un si sans sinon, c'est correct."
+  ]
+ },
+ "t1-f40": {
+  "title": "Cœur de contrôle",
+  "hints": [
+   "Le cœur s'enroule vers l'intérieur : des caisses à sauter, des interrupteurs à activer, et rien n'est espacé pareil.",
+   "Marche chaque côté avec un tant que. Dedans : sauter une caisse ou avancer, puis activer si sur un interrupteur. Tourne à droite à chaque mur."
+  ],
+  "intro": "VANTA : « Le Cœur de contrôle. Chaque capteur de cette tour me fait rapport. Viens voir. »",
+  "outro": "PATCH : « La Salle de contrôle est à nous. Il ne reste que le toit. VANTA est là-haut, et la sortie aussi. »"
+ },
+ "t1-f41": {
+  "title": "Accès au toit",
+  "hints": [
+   "Les cases jaunes sont juste avant une marche à monter. Tout le reste est plat.",
+   "À chaque mouvement : si tu es sur le jaune, sauter, sinon avancer. Essaie de le taper : ouvre Code, puis Taper du code."
+  ],
+  "intro": "PATCH : « T'as atteint le toit ! Ici, tu peux taper ton programme, pas juste le construire. Ouvre Code et touche Taper du code. Les blocs marchent encore aussi. »"
+ },
+ "t1-f42": {
+  "title": "Course aux trappes",
+  "hints": [
+   "Chaque interrupteur ouvre la trappe juste après lui. Les espaces entre eux ne sont pas égaux.",
+   "Avance d'un pas, puis si tu es sur un interrupteur, active-le. Mets ça en boucle."
+  ],
+  "intro": "VANTA : « Les drones décollent à l'heure pile. Tu n'y arriveras pas. »"
+ },
+ "t1-f43": {
+  "title": "Montée de la gouttière",
+  "hints": [
+   "La gouttière monte en spirale. Le jaune veut dire une marche devant, et chaque côté a une longueur différente.",
+   "Marche chaque côté avec un tant que. Dedans : sur le jaune, sauter, sinon avancer. Tourne à droite au mur."
+  ],
+  "outro": "PATCH : « À mi-chemin. Je vois les lumières des drones d'ici. »"
+ },
+ "t1-f44": {
+  "title": "Tour de signal",
+  "hints": [
+   "Après chaque mouvement, lis la case : le rouge fait tourner à gauche, le bleu à droite, et on active un interrupteur.",
+   "Mets les trois vérifications dans F1. Le Principal bouge une fois (sauter sur le jaune, sinon avancer), puis appelle F1."
+  ]
+ },
+ "t1-f45": {
+  "title": "Monte-caisses",
+  "hints": [
+   "Chaque rebord fait deux de haut. Une caisse en fait deux marches.",
+   "F1 : tourner à gauche, ramasser la caisse, se retourner, la déposer devant, puis sauter deux fois. Le Principal répète F1."
+  ],
+  "outro": "PATCH : « Construire ton propre escalier. VANTA n'avait pas prévu ça. »"
+ },
+ "t1-f46": {
+  "title": "Chargement des drones",
+  "hints": [
+   "Les cases vertes marquent une alcôve à caisses. Déplace chaque caisse tout droit de l'autre côté du couloir.",
+   "Principal : avancer, et si sur le vert, appeler F1. F1 prend la caisse à gauche et la dépose à droite."
+  ],
+  "intro": "VANTA : « Charge les drones. Chaque caisse de cette tour m'appartient. »",
+  "outro": "PATCH : « Ces caisses n'iront nulle part. Bien joué. »"
+ },
+ "t1-f47": {
+  "title": "Spirale de trappes",
+  "hints": [
+   "Une spirale de trappes. Chaque interrupteur ouvre la trappe juste après lui, et une trappe fermée ressemble à un mur.",
+   "Marche chaque côté avec un tant que : avancer, puis activer si sur un interrupteur. Tourne à droite à chaque vrai mur."
+  ]
+ },
+ "t1-f48": {
+  "title": "Réseau d'antennes",
+  "hints": [
+   "Le vert marque une antenne. Chacune a une longueur différente, avec un interrupteur au bout.",
+   "F1 parcourt une antenne avec un tant que, active l'interrupteur, fait demi-tour et revient. Le Principal l'appelle sur le vert."
+  ],
+  "outro": "PATCH : « Les antennes sont brouillées. Les drones n'ont plus de signal. »"
+ },
+ "t1-f49": {
+  "title": "Paratonnerre",
+  "hints": [
+   "La dernière montée : sauter les caisses, sauter sur le jaune, marcher le reste, tourner aux murs.",
+   "Un tant que par côté. Dedans : s'il y a une caisse devant, sauter deux fois ; sinon, si sur le jaune, sauter ; sinon avancer."
+  ],
+  "intro": "VANTA : « Très bien. Monte me chercher. »"
+ },
+ "t1-f50": {
+  "title": "Redémarre l'ascenseur",
+  "hints": [
+   "Tous les trucs de la tour, sur une seule spirale : caisses, marches, interrupteurs et trappes.",
+   "F1 fait un mouvement (sauter une caisse, sauter sur le jaune, ou avancer). F2 marche un côté avec F1, active les interrupteurs, puis tourne à droite. Le Principal répète F2."
+  ],
+  "intro": "VANTA : « Le cœur fait tourner cette tour. Touche-le et tout s'éteint. »",
+  "outro": "PATCH : « Le cœur de VANTA dégringole dans la cage... et l'ascenseur est revenu ! Descends. Je veux te rencontrer en personne, LoopBot. »"
+ }
+}

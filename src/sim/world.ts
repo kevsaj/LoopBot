@@ -1,4 +1,5 @@
 import type { Action, Colour, Condition, Facing, LevelFile, Pos, Tile, TileType, World } from './types';
+import { msg } from '../i18n';
 
 const TILE_CHARS: Record<string, { type: TileType; colour?: Colour; phase?: number }> = {
   '.': { type: 'floor' },
@@ -170,7 +171,7 @@ export function applyAction(w: World, action: Action): ActionResult {
   const res = act(w, action);
   if (!res.ok) return res;
   w.clock++;
-  if (ventBlasting(w, w.bot)) return { ok: false, error: 'ERR: scorched by a vent' };
+  if (ventBlasting(w, w.bot)) return { ok: false, error: msg('ERR: scorched by a vent') };
   return res;
 }
 
@@ -189,7 +190,7 @@ function act(w: World, action: Action): ActionResult {
       return { ok: true };
     case 'forward': {
       if (!isWalkable(w, next) || surfaceHeight(w, next) !== surfaceHeight(w, here)) {
-        return { ok: false, error: 'ERR: blocked ahead' };
+        return { ok: false, error: msg('ERR: blocked ahead') };
       }
       leave(w, here);
       bot.x = next.x;
@@ -198,11 +199,11 @@ function act(w: World, action: Action): ActionResult {
       return { ok: true };
     }
     case 'jump': {
-      if (!isWalkable(w, next)) return { ok: false, error: 'ERR: blocked ahead' };
+      if (!isWalkable(w, next)) return { ok: false, error: msg('ERR: blocked ahead') };
       const diff = surfaceHeight(w, next) - surfaceHeight(w, here);
-      if (diff > 1) return { ok: false, error: 'ERR: too high to jump' };
+      if (diff > 1) return { ok: false, error: msg('ERR: too high to jump') };
       // CR table: a jump needs a step exactly 1 up, or any drop down. Level ground is for forward.
-      if (diff === 0) return { ok: false, error: 'ERR: nothing to jump, use forward' };
+      if (diff === 0) return { ok: false, error: msg('ERR: nothing to jump, use forward') };
       leave(w, here);
       bot.x = next.x;
       bot.y = next.y;
@@ -211,7 +212,7 @@ function act(w: World, action: Action): ActionResult {
     }
     case 'pick_up': {
       if (bot.carrying || !inBounds(w, next) || w.boxes[next.y][next.x] === 0) {
-        return { ok: false, error: 'ERR: nothing to pick up' };
+        return { ok: false, error: msg('ERR: nothing to pick up') };
       }
       w.boxes[next.y][next.x] -= 1;
       bot.carrying = true;
@@ -219,7 +220,7 @@ function act(w: World, action: Action): ActionResult {
     }
     case 'drop': {
       if (!bot.carrying || !isWalkable(w, next) || w.boxes[next.y][next.x] >= MAX_STACK) {
-        return { ok: false, error: "ERR: can't drop here" };
+        return { ok: false, error: msg("ERR: can't drop here") };
       }
       w.boxes[next.y][next.x] += 1;
       bot.carrying = false;
@@ -227,7 +228,7 @@ function act(w: World, action: Action): ActionResult {
     }
     case 'activate': {
       const k = key(bot.x, bot.y);
-      if (w.tiles[bot.y][bot.x].type !== 'switch') return { ok: false, error: 'ERR: no switch here' };
+      if (w.tiles[bot.y][bot.x].type !== 'switch') return { ok: false, error: msg('ERR: no switch here') };
       w.switches[k] = !w.switches[k];
       for (const link of w.links) {
         if (link.switch.x === bot.x && link.switch.y === bot.y) {

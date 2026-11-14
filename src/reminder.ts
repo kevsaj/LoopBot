@@ -8,6 +8,7 @@ import { Capacitor } from '@capacitor/core';
 import { LocalNotifications } from '@capacitor/local-notifications';
 import type { DailyState } from './daily';
 import { currentStreak, dateKey, loadDaily } from './daily';
+import { lang, msg, t } from './i18n';
 
 const KEY = 'loopbot.reminder';
 const IDS = [1001, 1002, 1003, 1004, 1005, 1006, 1007];
@@ -40,10 +41,10 @@ function saveReminder(p: ReminderPrefs) {
 }
 
 const LINES = [
-  "Today's puzzle is ready. Same one for every bot in the city.",
-  'PATCH found a new floor plan. Got a few minutes?',
-  'A fresh daily puzzle is waiting on the Spire.',
-  "VANTA scrambled another floor. Let's fix it.",
+  msg("Today's puzzle is ready. Same one for every bot in the city."),
+  msg('PATCH found a new floor plan. Got a few minutes?'),
+  msg('A fresh daily puzzle is waiting on the Spire.'),
+  msg("VANTA scrambled another floor. Let's fix it."),
 ];
 
 /** The reminders for the next 7 days, skipping today if it's done or the time has passed. Pure, for tests. */
@@ -59,8 +60,8 @@ export function planReminders(prefs: ReminderPrefs, daily: DailyState, now: Date
     out.push({
       id: IDS[out.length],
       at,
-      title: first && streak > 1 ? `🔥 Keep your ${streak}-day streak` : 'LoopBot daily challenge',
-      body: LINES[(at.getDate() + i) % LINES.length],
+      title: first && streak > 1 ? `🔥 ${t('Keep your {n}-day streak', { n: streak })}` : t('LoopBot daily challenge'),
+      body: t(LINES[(at.getDate() + i) % LINES.length]),
     });
   }
   return out;
@@ -111,4 +112,4 @@ export function declineReminder() {
 }
 
 /** "6 PM" */
-export const hourLabel = (h: number) => `${h % 12 || 12} ${h < 12 ? 'AM' : 'PM'}`;
+export const hourLabel = (h: number) => (lang() === 'fr' ? `${h} h` : `${h % 12 || 12} ${h < 12 ? 'AM' : 'PM'}`);

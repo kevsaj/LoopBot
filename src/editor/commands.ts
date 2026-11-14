@@ -1,18 +1,19 @@
 import type { Block, PaletteCommand } from '../sim/types';
+import { msg } from '../i18n';
 
 /** How each command looks in the palette and the program: a glyph plus a word, so colour is never the only signal (ED-16). */
 export const COMMAND_META: Record<PaletteCommand, { label: string; glyph: string; tone: string }> = {
-  forward: { label: 'forward', glyph: '↑', tone: 'move' },
-  turn_left: { label: 'turn left', glyph: '↺', tone: 'turn' },
-  turn_right: { label: 'turn right', glyph: '↻', tone: 'turn' },
-  jump: { label: 'jump', glyph: '⤴', tone: 'move' },
-  pick_up: { label: 'pick up', glyph: '▲', tone: 'hand' },
-  drop: { label: 'drop', glyph: '▼', tone: 'hand' },
-  activate: { label: 'activate', glyph: '◉', tone: 'act' },
-  wait: { label: 'wait', glyph: '‖', tone: 'turn' },
-  repeat: { label: 'repeat', glyph: '⟳', tone: 'flow' },
-  if: { label: 'if', glyph: '?', tone: 'flow' },
-  while: { label: 'while', glyph: '∞', tone: 'flow' },
+  forward: { label: msg('forward'), glyph: '↑', tone: 'move' },
+  turn_left: { label: msg('turn left'), glyph: '↺', tone: 'turn' },
+  turn_right: { label: msg('turn right'), glyph: '↻', tone: 'turn' },
+  jump: { label: msg('jump'), glyph: '⤴', tone: 'move' },
+  pick_up: { label: msg('pick up'), glyph: '▲', tone: 'hand' },
+  drop: { label: msg('drop'), glyph: '▼', tone: 'hand' },
+  activate: { label: msg('activate'), glyph: '◉', tone: 'act' },
+  wait: { label: msg('wait'), glyph: '‖', tone: 'turn' },
+  repeat: { label: msg('repeat'), glyph: '⟳', tone: 'flow' },
+  if: { label: msg('if'), glyph: '?', tone: 'flow' },
+  while: { label: msg('while'), glyph: '∞', tone: 'flow' },
   F1: { label: 'F1', glyph: 'ƒ', tone: 'fn' },
   F2: { label: 'F2', glyph: 'ƒ', tone: 'fn' },
   F3: { label: 'F3', glyph: 'ƒ', tone: 'fn' },
