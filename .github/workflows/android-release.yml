@@ -18,7 +18,7 @@ on:
         type: boolean
         default: false
       plus_store:
-        description: Show the Plus screen and Settings purchase rows (VITE_PLUS). Leave off until Plus is on sale.
+        description: Turn the store on (VITE_PLUS) - Plus, the Heatwave city pack and hint packs. Leave off until they are on sale.
         type: boolean
         default: false
 

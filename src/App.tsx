@@ -29,7 +29,7 @@ import type { DailyState } from './daily';
 import { MAX_FREEZES, PLUS_MAX_FREEZES, dailyHintReward } from './daily';
 import { MakerScreen, useMakerDraft } from './maker/MakerScreen';
 import { MAKER } from './maker/draft';
-import { hasPlus, initPurchases, onHintsGranted, plusUnlocked } from './store/purchases';
+import { hasPlus, initPurchases, onHintsGranted, towerUnlocked } from './store/purchases';
 import { t, useLang } from './i18n';
 import { localFloor } from './levels/localFloor';
 
@@ -45,11 +45,11 @@ function loadIndex(tower: number) {
   }
 }
 
-/** The tower being climbed. A Plus tower falls back to Tower 1 if Plus isn't unlocked here. */
+/** The tower being climbed. A Plus or city pack tower falls back to Tower 1 if it isn't unlocked here. */
 function loadTower() {
   try {
     const t = towerOf(Number(localStorage.getItem('loopbot.tower') ?? 1));
-    return t.plus && !plusUnlocked() ? 1 : t.n;
+    return towerUnlocked(t) ? t.n : 1;
   } catch {
     return 1;
   }
