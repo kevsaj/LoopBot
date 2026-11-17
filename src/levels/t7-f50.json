@@ -1,0 +1,68 @@
+{
+  "id": "t7-f50",
+  "title": "The Fernwork",
+  "band": "canopy",
+  "size": {
+    "w": 7,
+    "h": 7
+  },
+  "tiles": [
+    "m..r___",
+    "___._m_",
+    "___._._",
+    "_r.e.r_",
+    "_._.___",
+    "_._.___",
+    "_m_r.m_"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 3,
+    "y": 3,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit",
+    "all_lit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "F1",
+    "F2",
+    "while",
+    "if"
+  ],
+  "sensors": [
+    "tile_is"
+  ],
+  "slots": {
+    "main": 4,
+    "F1": 11,
+    "F2": 3
+  },
+  "par": {
+    "commands": 13,
+    "steps": 59
+  },
+  "reference": "repeat 4 { F1(9) turn_right } def F1 { if wall_ahead { turn_left turn_left } else { forward if tile_is r { turn_left } F1 if tile_is r { turn_right } forward } }",
+  "hints": [
+    "Light all four bent arms and finish back on the lift in the middle.",
+    "Main: repeat 4 of F1(9), turn right. F1 from Mirror Walk brings LoopBot home each time.",
+    "repeat 4 { F1(9) turn_right } def F1 { if wall_ahead { turn_left turn_left } else { forward if tile_is r { turn_left } F1 if tile_is r { turn_right } forward } }"
+  ],
+  "story": {
+    "intro": "PATCH: \"The top of the Fernwork. Four arms, one rule, and the lift home in the middle.\"",
+    "outro": "PATCH: \"Every mosaic lit, and you came back to where you started. That is recursion: go in, and find your way back out.\""
+  },
+  "typing": true,
+  "recursion": true
+}

@@ -1,0 +1,58 @@
+{
+  "id": "t7-f32",
+  "title": "Comb",
+  "band": "nautilus",
+  "size": {
+    "w": 7,
+    "h": 4
+  },
+  "tiles": [
+    "____m__",
+    "__m_.__",
+    "__._._m",
+    "......."
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 3,
+    "facing": "east"
+  },
+  "goals": [
+    "all_lit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "F1",
+    "while",
+    "if"
+  ],
+  "slots": {
+    "main": 7,
+    "F1": 7
+  },
+  "par": {
+    "commands": 12,
+    "steps": 26
+  },
+  "reference": "repeat 3 { forward forward turn_left F1(9) turn_left } def F1 { if wall_ahead { turn_left turn_left } else { forward F1 forward } }",
+  "hints": [
+    "Walk along the spine. At each tooth, turn in, let F1 go up and back, then turn on along the spine.",
+    "Main: repeat 3 of forward, forward, turn left, F1(9), turn left. F1 is the one from Four Arms.",
+    "repeat 3 { forward forward turn_left F1(9) turn_left } def F1 { if wall_ahead { turn_left turn_left } else { forward F1 forward } }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "recursion": true
+}

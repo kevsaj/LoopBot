@@ -8,7 +8,8 @@ export type Facing = 'north' | 'east' | 'south' | 'west';
 /** 'thin' (Frostline): thin ice holds LoopBot once, and cracks into a gap when LoopBot steps off. */
 /** 'vent' (Heatwave): a heat vent that blasts on a timer; LoopBot can't be on it when it fires (CR-VENT). */
 /** 'spinner' (Twist): a turntable that turns LoopBot a quarter turn as it arrives (CR-SPIN). */
-export type TileType = 'floor' | 'wall' | 'gap' | 'switch' | 'door' | 'exit' | 'ice' | 'thin' | 'vent' | 'spinner';
+/** 'mosaic' (Fractal): a dark mosaic tile that lights up for good once LoopBot stands on it (CR-MOSAIC). */
+export type TileType = 'floor' | 'wall' | 'gap' | 'switch' | 'door' | 'exit' | 'ice' | 'thin' | 'vent' | 'spinner' | 'mosaic';
 
 export type Colour = 'r' | 'g' | 'b' | 'y';
 
@@ -55,6 +56,14 @@ export const BY_TALLY = 0;
 export type FunctionName = 'F1' | 'F2' | 'F3';
 export const FUNCTION_NAMES: readonly FunctionName[] = ['F1', 'F2', 'F3'];
 
+/**
+ * Fractal (CR-RECUR): on a recursion floor every function has a depth n. Main sets it on each call
+ * (1 to MAX_CALL_DEPTH), and a call made inside a function goes one level down, to n - 1. A call
+ * that would reach depth 0 does nothing: that is the base case, `if n == 0: return`.
+ */
+export const MIN_CALL_DEPTH = 1;
+export const MAX_CALL_DEPTH = 9;
+
 /** heat_ahead (Heatwave): the tile ahead is a vent that will be blasting if LoopBot steps onto it now. */
 /** facing_north (Twist): LoopBot faces north, the way the compass on the board points. */
 export type Sensor = 'wall_ahead' | 'box_ahead' | 'carrying' | 'on_target' | 'on_switch' | 'tile_is' | 'heat_ahead' | 'facing_north';
@@ -72,7 +81,8 @@ export type Block =
   | { id: string; kind: 'action'; action: Action }
   /** times is 2 to 9, or BY_TALLY (0) for "repeat tally" (Dockyard). */
   | { id: string; kind: 'repeat'; times: number; body: Block[] }
-  | { id: string; kind: 'call'; fn: FunctionName }
+  /** depth: Fractal only (CR-RECUR), the n a call from main starts its function at (default 1). */
+  | { id: string; kind: 'call'; fn: FunctionName; depth?: number }
   | { id: string; kind: 'if'; cond: Condition; then: Block[]; else: Block[] }
   | { id: string; kind: 'while'; cond: Condition; body: Block[] };
 
@@ -80,7 +90,8 @@ export type Routine = 'main' | FunctionName;
 
 export type Program = Record<Routine, Block[]>;
 
-export type Goal = 'all_targets_filled' | 'bot_on_exit' | 'all_switches_on';
+/** all_lit (Fractal): every mosaic tile on the floor has been lit (CR-MOSAIC). */
+export type Goal = 'all_targets_filled' | 'bot_on_exit' | 'all_switches_on' | 'all_lit';
 
 /** A command the palette can offer: an action, a control block, or a function call. */
 /** 'repeat_tally' is a repeat block whose count is the tally (Dockyard). */
@@ -134,6 +145,11 @@ export interface LevelFile {
    * bot that reaches an exit parks there and stops. bot_on_exit then needs both bots parked.
    */
   twin?: Pos & { facing: Facing };
+  /**
+   * Fractal (CR-RECUR): functions may call themselves. Main gives each call a depth n, every call
+   * inside a function goes to n - 1, and a call at depth 0 does nothing. Mosaic tiles are 'm'.
+   */
+  recursion?: boolean;
 }
 
 export interface Bot {
@@ -166,5 +182,7 @@ export interface World {
   bot: Bot;
   /** Twin Spires: Echo, the second bot (CR-TWIN). Null on every other floor. */
   twin: Bot | null;
+  /** Fractal: mosaic tiles that have been lit, keyed "x,y" (CR-MOSAIC). Empty on other floors. */
+  lit: Record<string, boolean>;
   goals: Goal[];
 }

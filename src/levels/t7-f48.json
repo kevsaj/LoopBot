@@ -1,0 +1,65 @@
+{
+  "id": "t7-f48",
+  "title": "Bug Hunt: Turned the Wrong Way",
+  "band": "canopy",
+  "size": {
+    "w": 5,
+    "h": 4
+  },
+  "tiles": [
+    "m.r_m",
+    "__._.",
+    "r...r",
+    "m____"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 2,
+    "y": 2,
+    "facing": "west"
+  },
+  "goals": [
+    "all_lit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "F1",
+    "F2",
+    "while",
+    "if"
+  ],
+  "sensors": [
+    "tile_is"
+  ],
+  "slots": {
+    "main": 4,
+    "F1": 11,
+    "F2": 3
+  },
+  "par": {
+    "commands": 13,
+    "steps": 29
+  },
+  "reference": "repeat 3 { F1(9) turn_left } def F1 { if wall_ahead { turn_left turn_left } else { forward if tile_is r { turn_left } F1 if tile_is r { turn_right } forward } }",
+  "hints": [
+    "One arm never gets visited.",
+    "After each arm LoopBot faces back the way it came. Turn left to face the next arm.",
+    "repeat 3 { F1(9) turn_left } def F1 { if wall_ahead { turn_left turn_left } else { forward if tile_is r { turn_left } F1 if tile_is r { turn_right } forward } }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "typing": true,
+  "starter": "repeat 3 { F1(9) turn_right } def F1 { if wall_ahead { turn_left turn_left } else { forward if tile_is r { turn_left } F1 if tile_is r { turn_right } forward } }",
+  "recursion": true
+}

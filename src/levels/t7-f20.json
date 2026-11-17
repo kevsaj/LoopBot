@@ -1,0 +1,59 @@
+{
+  "id": "t7-f20",
+  "title": "The Long Fold",
+  "band": "fernhall",
+  "size": {
+    "w": 5,
+    "h": 7
+  },
+  "tiles": [
+    "....m",
+    "____.",
+    "____.",
+    "___mm",
+    "___._",
+    "m__._",
+    "m..m_"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "all_lit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "F1"
+  ],
+  "slots": {
+    "main": 2,
+    "F1": 5
+  },
+  "par": {
+    "commands": 5,
+    "steps": 40
+  },
+  "reference": "F1(4) def F1 { forward repeat 2 { F1 turn_left } }",
+  "hints": [
+    "Fold Back, one level deeper.",
+    "F1: forward, repeat 2 of F1, turn left. Call F1(4).",
+    "F1(4) def F1 { forward repeat 2 { F1 turn_left } }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": "PATCH: \"Four levels of folds from five blocks. Each copy is the whole pattern, only smaller.\""
+  },
+  "recursion": true
+}

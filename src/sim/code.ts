@@ -15,7 +15,7 @@
 //       else:
 //           pass
 
-import { ACTIONS, BY_TALLY, FUNCTION_NAMES, SENSORS } from './types';
+import { ACTIONS, BY_TALLY, FUNCTION_NAMES, MAX_CALL_DEPTH, MIN_CALL_DEPTH, SENSORS } from './types';
 import type { Action, Block, Colour, Condition, FunctionName, LevelFile, Program, Routine, Sensor } from './types';
 import { countBlocks, emptyProgram, loopHeight, MAX_DEPTH, MAX_TIMES, MIN_TIMES, newId } from './program';
 import { t } from '../i18n';
@@ -62,6 +62,9 @@ function parse(text: string, level?: LevelFile): Program {
   const sensors = new Set<string>(level ? ['wall_ahead', ...(level.sensors ?? [])] : SENSORS);
   const slots = (r: Routine) => (level ? (level.slots[r] ?? 0) : Infinity);
   let i = 0;
+  // Fractal (CR-RECUR): functions take a depth n; main gives it, F1(3), and functions pass F1(n - 1)
+  const recursion = !!level?.recursion;
+  let inMain = true;
 
   const condition = (src: string, no: number): Condition => {
     const m = src.match(/^(not\s+)?([a-z_]+)\s*(?:\(\s*(?:["']?([a-z]+)["']?)?\s*\))?$/);
@@ -102,6 +105,29 @@ function parse(text: string, level?: LevelFile): Program {
       i++;
       let m: RegExpMatchArray | null;
       if (l.text === 'pass') continue;
+      if (recursion && !inMain && /^if\s+n\s*==\s*0\s*:\s*return$/.test(l.text)) continue; // the base case the code view shows
+      if (recursion && !inMain && /^if\s+n\s*==\s*0\s*:$/.test(l.text) && lines[i]?.indent > l.indent && lines[i].text === 'return') {
+        i++;
+        continue;
+      }
+      if (/^return\b/.test(l.text) || /^if\s+n\b/.test(l.text)) {
+        throw new CodeError(l.no, recursion ? t('the base case is always "if n == 0: return", at the top of a function') : t('can\'t read "{code}"', { code: l.text }));
+      }
+      if ((m = l.text.match(/^(F[123])\s*\(\s*(n\s*-\s*1|\d+)?\s*\)$/)) && recursion) {
+        const name = m[1] as FunctionName;
+        if (!allowed.has(name) || slots(name) === 0) throw new CodeError(l.no, t('{name} isn\'t unlocked on this floor', { name }));
+        const arg = (m[2] ?? '').replace(/\s/g, '');
+        if (inMain) {
+          if (arg === 'n-1') throw new CodeError(l.no, t('main has no n: give the depth as a number, like {name}(3)', { name }));
+          const depth = arg ? Number(arg) : MIN_CALL_DEPTH;
+          if (depth < MIN_CALL_DEPTH || depth > MAX_CALL_DEPTH) throw new CodeError(l.no, t('depths go from {min} to {max}', { min: MIN_CALL_DEPTH, max: MAX_CALL_DEPTH }));
+          out.push({ id: newId(), kind: 'call', fn: name, depth });
+        } else {
+          if (arg !== 'n-1') throw new CodeError(l.no, t('inside a function, a call goes one level down: {name}(n - 1)', { name }));
+          out.push({ id: newId(), kind: 'call', fn: name });
+        }
+        continue;
+      }
       if ((m = l.text.match(/^tally\s*([+-])=\s*1$/))) {
         const action: Action = m[1] === '+' ? 'tally_up' : 'tally_down';
         need(action, l.no);
@@ -158,13 +184,15 @@ function parse(text: string, level?: LevelFile): Program {
   }
   while (i < lines.length) {
     const l = lines[i++];
-    const m = l.text.match(/^def\s+(\w+)\s*\(\s*\)\s*:$/);
+    const m = l.text.match(/^def\s+(\w+)\s*\(\s*(n)?\s*\)\s*:$/);
     if (!m) throw new CodeError(l.no, t('can\'t read "{code}"', { code: l.text }));
     const name = m[1] as Routine;
+    if (m[2] && (!recursion || name === 'main')) throw new CodeError(l.no, t('can\'t read "{code}"', { code: l.text }));
     if (name !== 'main' && !(FUNCTION_NAMES as readonly string[]).includes(name)) throw new CodeError(l.no, t('routines are main, F1, F2 and F3, not {name}', { name }));
     if (slots(name) === 0) throw new CodeError(l.no, t('{name} isn\'t unlocked on this floor', { name }));
     if (seen.has(name)) throw new CodeError(l.no, t('{name} is defined twice', { name }));
     seen.add(name);
+    inMain = name === 'main';
     p[name] = body(0, l);
   }
 

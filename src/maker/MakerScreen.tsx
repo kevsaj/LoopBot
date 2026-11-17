@@ -77,6 +77,7 @@ const GOAL_LABEL: Record<Goal, string> = {
   bot_on_exit: msg('Reach the exit'),
   all_targets_filled: msg('Fill the targets'),
   all_switches_on: msg('Turn on every switch'),
+  all_lit: msg('Light every mosaic'),
 };
 
 const SENSOR_LABEL: Record<Sensor, string> = {

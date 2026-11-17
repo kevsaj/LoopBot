@@ -1,0 +1,61 @@
+{
+  "id": "t7-f33",
+  "title": "Mirror Walk",
+  "band": "nautilus",
+  "size": {
+    "w": 6,
+    "h": 4
+  },
+  "tiles": [
+    "_____m",
+    "_____.",
+    "r....r",
+    "m_____"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 3,
+    "y": 2,
+    "facing": "east"
+  },
+  "goals": [
+    "all_lit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "F1",
+    "while",
+    "if"
+  ],
+  "sensors": [
+    "tile_is"
+  ],
+  "slots": {
+    "main": 3,
+    "F1": 11
+  },
+  "par": {
+    "commands": 12,
+    "steps": 17
+  },
+  "reference": "F1(9) F1(9) def F1 { if wall_ahead { turn_left turn_left } else { forward if tile_is r { turn_left } F1 if tile_is r { turn_right } forward } }",
+  "hints": [
+    "Going out, turn left on red. Coming back, the same red tile needs the mirror turn: right.",
+    "F1: if wall ahead, turn left twice, else forward, if red turn left, F1, if red turn right, forward. Main: F1(9), F1(9).",
+    "F1(9) F1(9) def F1 { if wall_ahead { turn_left turn_left } else { forward if tile_is r { turn_left } F1 if tile_is r { turn_right } forward } }"
+  ],
+  "story": {
+    "intro": "PATCH: \"On the way back everything happens in reverse. A left turn going out is a right turn coming home.\"",
+    "outro": null
+  },
+  "recursion": true
+}

@@ -1,0 +1,58 @@
+{
+  "id": "t7-f25",
+  "title": "Round the Court",
+  "band": "cloister",
+  "size": {
+    "w": 4,
+    "h": 4
+  },
+  "tiles": [
+    "_m.m",
+    "_._.",
+    "...m",
+    "_m__"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 2,
+    "facing": "east"
+  },
+  "goals": [
+    "all_lit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "F1",
+    "F2"
+  ],
+  "slots": {
+    "main": 2,
+    "F1": 3,
+    "F2": 5
+  },
+  "par": {
+    "commands": 7,
+    "steps": 13
+  },
+  "reference": "F1(5) def F1 { forward F2 } def F2 { F1 turn_left F1 forward }",
+  "hints": [
+    "Two Walks, one level deeper.",
+    "F1: forward, F2. F2: F1, turn left, F1, forward. Call F1(5).",
+    "F1(5) def F1 { forward F2 } def F2 { F1 turn_left F1 forward }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "recursion": true
+}

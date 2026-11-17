@@ -1,0 +1,162 @@
+/* Tower 7, Fractal (the Fernwork). Kept in its own file so it never collides with other work in styles.css. */
+
+.tower-tab-7.on {
+  border-color: #ff9a6a;
+  box-shadow: 0 0 0 1px rgba(255, 154, 106, 0.35), 0 0 14px rgba(255, 140, 90, 0.22);
+}
+.tower-7 .tower-roof .beacon {
+  background: #ffd9c4;
+  box-shadow: 0 0 18px #ff8a5a;
+}
+
+/* Tessera Plaza: a warm afternoon over a square of broken-tile benches and spires. */
+.board-wrap.band-tessera {
+  background:
+    radial-gradient(circle at 78% 20%, rgba(255, 244, 214, 0.95) 0 9px, rgba(255, 220, 170, 0.25) 10px, transparent 46px),
+    linear-gradient(180deg, #2a5a8a 0%, #5a8ab4 40%, #e8b07a 82%, #f8dcae 100%);
+}
+.board-wrap.band-tessera::after,
+.board-wrap.band-canopy::after {
+  height: 100%;
+  opacity: 0.5;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300' preserveAspectRatio='none'><g fill='%231e1a2c' fill-opacity='0.55'><path d='M150 300V150q6-40 12-60 6 20 12 60v150z'/><path d='M180 300V130q7-46 14-70 7 24 14 70v170z'/><path d='M214 300V130q7-46 14-70 7 24 14 70v170z'/><path d='M248 300V150q6-40 12-60 6 20 12 60v150z'/></g><g fill='%23ffd980' fill-opacity='0.45'><circle cx='162' cy='92' r='3'/><circle cx='194' cy='62' r='3.5'/><circle cx='228' cy='62' r='3.5'/><circle cx='260' cy='92' r='3'/></g><path fill='%231e1a2c' fill-opacity='0.35' d='M0 300v-26h50v-14h34v14h46v26zM290 300v-22h40v-18h30v18h40v22z'/></svg>") center / 100% 100% no-repeat;
+}
+/* Fern Hall: green light through stone branches. */
+.board-wrap.band-fernhall {
+  background:
+    radial-gradient(ellipse 60% 30% at 50% 0%, rgba(220, 255, 200, 0.3), transparent 70%),
+    linear-gradient(180deg, #12301e 0%, #2a5a3a 45%, #7aa868 82%, #d8ecb8 100%);
+}
+.board-wrap.band-fernhall::after {
+  height: 100%;
+  opacity: 0.4;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300' preserveAspectRatio='none'><g fill='none' stroke='%23d8ecb8' stroke-opacity='0.45' stroke-width='3' stroke-linecap='round'><path d='M60 300V180l-30-40M60 180l30-40M30 140l-14-24M30 140l14-24M90 140l-14-24M90 140l14-24'/><path d='M340 300V180l-30-40M340 180l30-40M310 140l-14-24M310 140l14-24M370 140l-14-24M370 140l14-24'/></g></svg>") center / 100% 100% no-repeat;
+}
+/* The Cloister: lavender evening, arches around a quiet court. */
+.board-wrap.band-cloister {
+  background:
+    radial-gradient(circle at 20% 18%, rgba(255, 250, 230, 0.85) 0 6px, transparent 30px),
+    linear-gradient(180deg, #241830 0%, #4a3460 45%, #b48aa8 82%, #f2d8c8 100%);
+}
+.board-wrap.band-cloister::after {
+  height: 100%;
+  opacity: 0.35;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300' preserveAspectRatio='none'><g fill='none' stroke='%23f2d8c8' stroke-opacity='0.5' stroke-width='3'><path d='M0 300V240q25-40 50 0v60M50 300V240q25-40 50 0v60M300 300V240q25-40 50 0v60M350 300V240q25-40 50 0v60'/></g></svg>") center / 100% 100% no-repeat;
+}
+/* Nautilus Stair: deep sea teal with a faint spiral. */
+.board-wrap.band-nautilus {
+  background:
+    radial-gradient(circle at 50% 40%, rgba(90, 208, 200, 0.12), transparent 60%),
+    linear-gradient(180deg, #071a22 0%, #12384a 50%, #2a6a78 85%, #5a9a9a 100%);
+}
+.board-wrap.band-nautilus::after {
+  height: 100%;
+  opacity: 0.3;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300' preserveAspectRatio='none'><path fill='none' stroke='%23b8f0ea' stroke-opacity='0.5' stroke-width='2' d='M200 150a8 8 0 0 1 8 8 16 16 0 0 1-16 16 26 26 0 0 1-26-26 42 42 0 0 1 42-42 68 68 0 0 1 68 68 110 110 0 0 1-110 110'/></svg>") center / 100% 100% no-repeat;
+}
+/* The Canopy: sunset behind a forest of spires. */
+.board-wrap.band-canopy {
+  background:
+    radial-gradient(circle at 18% 70%, rgba(255, 200, 120, 0.8) 0 14px, rgba(255, 160, 90, 0.25) 15px, transparent 70px),
+    linear-gradient(180deg, #1c1030 0%, #4a2a5a 40%, #c8604a 80%, #ffb46a 100%);
+}
+
+/* The tower map's bands in Fractal. */
+.band-tessera .tower-floors {
+  background: linear-gradient(#2a2018, #1e1712);
+  border-color: #e8a46a;
+}
+.band-tessera .tower-band {
+  color: #ffe0b8;
+}
+.band-fernhall .tower-floors {
+  background: linear-gradient(#142418, #0e1a10);
+  border-color: #8cc46a;
+}
+.band-fernhall .tower-band {
+  color: #d8f2b8;
+}
+.band-cloister .tower-floors {
+  background: linear-gradient(#22182a, #18101e);
+  border-color: #c48ab4;
+}
+.band-cloister .tower-band {
+  color: #f2d8ec;
+}
+.band-nautilus .tower-floors {
+  background: linear-gradient(#0e1e24, #0a161a);
+  border-color: #5ad0c8;
+}
+.band-nautilus .tower-band {
+  color: #c8f4f0;
+}
+.band-canopy .tower-floors {
+  background: linear-gradient(#1e1224, #140c18);
+  border-color: #ff9a4a;
+}
+.band-canopy .tower-band {
+  color: #ffd8b0;
+}
+
+/* The Fractal city pack's store screen: the Plus sheet's layout in mosaic coral. */
+.pack-fractal .plus-perks li {
+  border-color: rgba(255, 154, 106, 0.28);
+  background: linear-gradient(135deg, rgba(255, 140, 90, 0.1), rgba(255, 220, 190, 0.03));
+}
+.pack-sheet.pack-fractal .pill.plus-buy {
+  background: linear-gradient(180deg, #ffd9c4, #f07a4a);
+  border-color: #ff9a6a;
+  color: #2a1008;
+}
+.pack-fractal .plus-owned {
+  color: #ffd9c4;
+}
+.pack-fractal .pack-word {
+  color: #ff9a6a;
+}
+
+/* Recursion (CR-RECUR): the depth on a call in main, and the "one level down" mark inside a function. */
+.times.depth {
+  background: #1f3a5a;
+}
+.times.depth button {
+  background: #2c5680;
+}
+.times.depth .times-n {
+  min-width: 38px;
+}
+.depth-down {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: rgba(44, 86, 128, 0.85);
+  color: #e6f2ff;
+  font-size: 13px;
+  font-weight: 800;
+  pointer-events: none;
+}
+
+/* The mosaic counter on Fractal floors: how many of the floor's mosaics are lit. */
+.board-mosaics {
+  position: absolute;
+  z-index: 2;
+  top: 58px;
+  right: 14px;
+  padding: 5px 10px;
+  border-radius: 10px;
+  border: 2px solid rgba(255, 154, 106, 0.85);
+  background: linear-gradient(180deg, rgba(40, 22, 18, 0.92), rgba(26, 14, 12, 0.88));
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  font-size: 12px;
+  font-weight: 800;
+  color: #fff2e6;
+  pointer-events: none;
+}
+.board-mosaics.done {
+  border-color: #ffd34a;
+  color: #ffe9a0;
+}

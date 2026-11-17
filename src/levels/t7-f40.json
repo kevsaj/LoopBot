@@ -1,0 +1,64 @@
+{
+  "id": "t7-f40",
+  "title": "The Nautilus",
+  "band": "nautilus",
+  "size": {
+    "w": 6,
+    "h": 7
+  },
+  "tiles": [
+    "_____m",
+    "m.r__.",
+    "__.__.",
+    "r....r",
+    "._.___",
+    "._r.m_",
+    "m_____"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 2,
+    "y": 3,
+    "facing": "east"
+  },
+  "goals": [
+    "all_lit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "F1",
+    "while",
+    "if"
+  ],
+  "sensors": [
+    "tile_is"
+  ],
+  "slots": {
+    "main": 4,
+    "F1": 11
+  },
+  "par": {
+    "commands": 13,
+    "steps": 50
+  },
+  "reference": "repeat 4 { F1(9) turn_right } def F1 { if wall_ahead { turn_left turn_left } else { forward if tile_is r { turn_left } F1 if tile_is r { turn_right } forward } }",
+  "hints": [
+    "Four Arms and Mirror Walk together.",
+    "Main: repeat 4 of F1(9), turn right. F1 from Mirror Walk.",
+    "repeat 4 { F1(9) turn_right } def F1 { if wall_ahead { turn_left turn_left } else { forward if tile_is r { turn_left } F1 if tile_is r { turn_right } forward } }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": "PATCH: \"Four bent arms, one rule. The shell grows the same way every turn.\""
+  },
+  "recursion": true
+}

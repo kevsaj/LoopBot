@@ -1,0 +1,61 @@
+{
+  "id": "t7-f37",
+  "title": "Bent Comb",
+  "band": "nautilus",
+  "size": {
+    "w": 5,
+    "h": 4
+  },
+  "tiles": [
+    "___mr",
+    "_mr_.",
+    "__._.",
+    "....."
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 3,
+    "facing": "east"
+  },
+  "goals": [
+    "all_lit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "F1",
+    "while",
+    "if"
+  ],
+  "sensors": [
+    "tile_is"
+  ],
+  "slots": {
+    "main": 7,
+    "F1": 11
+  },
+  "par": {
+    "commands": 16,
+    "steps": 22
+  },
+  "reference": "repeat 2 { forward forward turn_left F1(9) turn_left } def F1 { if wall_ahead { turn_left turn_left } else { forward if tile_is r { turn_left } F1 if tile_is r { turn_right } forward } }",
+  "hints": [
+    "Comb, but the teeth bend at red tiles.",
+    "Main from Comb (repeat 2), F1 from Mirror Walk.",
+    "repeat 2 { forward forward turn_left F1(9) turn_left } def F1 { if wall_ahead { turn_left turn_left } else { forward if tile_is r { turn_left } F1 if tile_is r { turn_right } forward } }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "recursion": true
+}

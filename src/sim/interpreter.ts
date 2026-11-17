@@ -53,6 +53,8 @@ function* runBlocks(
   callStack: string[],
   ticks: { n: number },
   twin = false,
+  /** Fractal (CR-RECUR): this routine's depth n on a recursion floor, else null. */
+  depth: number | null = null,
 ): Generator<Yielded, void, void> {
   // Echo's copy of the program acts and senses as Echo (CR-TWIN)
   const as = <T,>(fn: () => T): T => (twin ? asTwin(world, fn) : fn());
@@ -79,23 +81,28 @@ function* runBlocks(
         // "repeat tally" reads the tally once, as the loop starts (CR-TALLY)
         const times = block.times === BY_TALLY ? world.tally : block.times;
         for (let i = 0; i < times; i++) {
-          yield* runBlocks(program, world, block.body, routine, callStack, ticks, twin);
+          yield* runBlocks(program, world, block.body, routine, callStack, ticks, twin, depth);
         }
         break;
       }
       case 'if':
-        yield* runBlocks(program, world, as(() => sense(world, block.cond)) ? block.then : block.else, routine, callStack, ticks, twin);
+        yield* runBlocks(program, world, as(() => sense(world, block.cond)) ? block.then : block.else, routine, callStack, ticks, twin, depth);
         break;
       case 'while':
         while (as(() => sense(world, block.cond))) {
           if (++ticks.n > TICK_LIMIT) throw new Halt(msg('ERR: step limit, possible endless loop'), block.id);
-          yield* runBlocks(program, world, block.body, routine, callStack, ticks, twin);
+          yield* runBlocks(program, world, block.body, routine, callStack, ticks, twin, depth);
         }
         break;
-      case 'call':
+      case 'call': {
+        // Fractal (CR-RECUR): main sets the depth, a call inside a function goes one level down,
+        // and a call that reaches depth 0 returns at once (the base case).
+        const n = depth === null ? null : routine === 'main' ? (block.depth ?? 1) : depth - 1;
+        if (n !== null && n <= 0) break;
         if (callStack.length >= CALL_DEPTH_LIMIT) throw new Halt(msg('ERR: too many nested calls'), block.id);
-        yield* runBlocks(program, world, program[block.fn], block.fn, [...callStack, block.id], ticks, twin);
+        yield* runBlocks(program, world, program[block.fn], block.fn, [...callStack, block.id], ticks, twin, n);
         break;
+      }
     }
   }
 }
@@ -121,7 +128,9 @@ export class Runner {
     // and Safari 15.4, and an older WebView crashed here on Run (Nov 2026 playtest errors).
     // A Program is plain data (ids, strings, numbers, nested arrays), so JSON copies it exactly.
     const frozen = JSON.parse(JSON.stringify(program)) as Program;
-    this.gen = runBlocks(frozen, this.world, frozen.main, 'main', [], { n: 0 });
+    // Fractal (CR-RECUR): main has no depth of its own, but its calls give one (depth 0 marks the floor)
+    const depth = level.recursion ? 0 : null;
+    this.gen = runBlocks(frozen, this.world, frozen.main, 'main', [], { n: 0 }, false, depth);
     if (this.world.twin) this.twinGen = runBlocks(frozen, this.world, frozen.main, 'main', [], { n: 0 }, true);
   }
 

@@ -1,0 +1,55 @@
+{
+  "id": "t7-f10",
+  "title": "Up One Side, Down the Other",
+  "band": "tessera",
+  "size": {
+    "w": 7,
+    "h": 4
+  },
+  "tiles": [
+    "___mm__",
+    "__mmmm_",
+    "_mm__mm",
+    ".m____m"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 3,
+    "facing": "east"
+  },
+  "goals": [
+    "all_lit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "F1"
+  ],
+  "slots": {
+    "main": 2,
+    "F1": 10
+  },
+  "par": {
+    "commands": 10,
+    "steps": 23
+  },
+  "reference": "F1(3) def F1 { forward turn_left forward turn_right F1 forward turn_right forward turn_left }",
+  "hints": [
+    "The way up is stairs. The way down is the same stairs turned the other way, and it runs after the call.",
+    "F1: forward, turn left, forward, turn right, F1, forward, turn right, forward, turn left.",
+    "F1(3) def F1 { forward turn_left forward turn_right F1 forward turn_right forward turn_left }"
+  ],
+  "story": {
+    "intro": "PATCH: \"A peak in the plaza. One function can build both slopes: up before the call, down after it.\"",
+    "outro": "PATCH: \"Up three, down three. The calls kept count for you.\""
+  },
+  "recursion": true
+}

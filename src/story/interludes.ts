@@ -398,7 +398,67 @@ export const TWINSPIRES_INTERLUDES: Record<number, Interlude> = {
   },
 };
 
-const TOWER_INTERLUDES: Record<number, Record<number, Interlude>> = { 1: INTERLUDES, 2: FROSTLINE_INTERLUDES, 3: HEATWAVE_INTERLUDES, 4: TWIST_INTERLUDES, 5: DOCKYARD_INTERLUDES, 6: TWINSPIRES_INTERLUDES };
+/** Tower 7, the Fernwork in Fractal: a tower made of smaller towers, and patterns inside patterns. */
+export const FRACTAL_INTERLUDES: Record<number, Interlude> = {
+  10: {
+    kind: 'radio',
+    id: 't7-after-10',
+    heading: msg('Next: Fern Hall'),
+    lines: [
+      P(msg('Through the plaza. A function that calls itself, and a number that says how deep to go.')),
+      P(msg('Fern Hall is next. Its columns split in two, then in two again, like a fern.')),
+      V(msg('Every branch is a smaller copy of the tree. Follow them all and you will be here forever.')),
+      P(msg('Not forever. Every copy is one level smaller, and at zero it stops.')),
+    ],
+  },
+  20: {
+    kind: 'radio',
+    id: 't7-after-20',
+    heading: msg('Next: the Cloister'),
+    lines: [
+      P(msg('The Cloister is two walks round one courtyard. Each walk leads into the other.')),
+      P(msg('So F1 can call F2, and F2 can call F1. Each call is still one level down.')),
+      V(msg('A hall that leads to a hall that leads back to the first. I designed it myself.')),
+      P(msg('Echo says it is the neatest trap it has seen. Keep going.')),
+    ],
+  },
+  30: {
+    kind: 'radio',
+    id: 't7-after-30',
+    heading: msg('Next: the Nautilus Stair'),
+    lines: [
+      P(msg('There is a root crypt under the spires, with the same carved stones as under every tower. The Builders again.')),
+      P(msg('The stones show a shell, a spiral that grows by the same rule each turn.')),
+      P(msg('Next, the Nautilus Stair. Sensors are back, so a function can stop when it reaches a wall.')),
+      V(msg('A stair with no last step. Go on, keep calling.')),
+    ],
+  },
+  40: {
+    kind: 'radio',
+    id: 't7-after-40',
+    heading: msg('Next: the Canopy'),
+    lines: [
+      P(msg('Ten floors to go. Up top, every spire is a tiny tower, and VANTA hides in the smallest one.')),
+      P(msg('Typing is back on, if you want it. Write F1(n - 1) and you are writing real recursion.')),
+      V(msg('You will never find which spire. There are so many, and they all look the same.')),
+      P(msg('They look the same because one rule made them all. That is how we find it.')),
+    ],
+  },
+  50: {
+    kind: 'ending',
+    id: 't7-ending',
+    panels: [
+      { scene: 'lights', text: msg('The last mosaic lights, and the glow runs down every spire, big and small.') },
+      { scene: 'escape', who: 'VANTA', text: msg('Fine. Keep your pretty tiles. The precinct will not be so easy to read.') },
+      { scene: 'elevator', text: msg('LoopBot and Echo ride down through the Fernwork, past copies of copies of copies.') },
+      { scene: 'meet', who: 'PATCH', text: msg('Fifty floors of patterns inside patterns. One rule, any size. That is recursion.') },
+      { scene: 'next', text: msg('Tower 7 cleared. VANTA is heading for the precinct.') },
+    ],
+    next: 'PRECINCT 404',
+  },
+};
+
+const TOWER_INTERLUDES: Record<number, Record<number, Interlude>> = { 1: INTERLUDES, 2: FROSTLINE_INTERLUDES, 3: HEATWAVE_INTERLUDES, 4: TWIST_INTERLUDES, 5: DOCKYARD_INTERLUDES, 6: TWINSPIRES_INTERLUDES, 7: FRACTAL_INTERLUDES };
 
 const KEY = 'loopbot.interludes';
 

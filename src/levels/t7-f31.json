@@ -1,0 +1,61 @@
+{
+  "id": "t7-f31",
+  "title": "Four Arms",
+  "band": "nautilus",
+  "size": {
+    "w": 7,
+    "h": 7
+  },
+  "tiles": [
+    "_______",
+    "___m___",
+    "___.___",
+    "__m...m",
+    "___.___",
+    "___.___",
+    "___m___"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 3,
+    "y": 3,
+    "facing": "east"
+  },
+  "goals": [
+    "all_lit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "F1",
+    "while",
+    "if"
+  ],
+  "slots": {
+    "main": 4,
+    "F1": 7
+  },
+  "par": {
+    "commands": 9,
+    "steps": 24
+  },
+  "reference": "repeat 4 { F1(9) turn_right } def F1 { if wall_ahead { turn_left turn_left } else { forward F1 forward } }",
+  "hints": [
+    "F1 can stop itself: if there is a wall ahead, turn round. If not, step, call F1, and step again. The second step walks back.",
+    "F1: if wall ahead, turn left twice, else forward, F1, forward. Main: repeat 4 of F1(9), turn right.",
+    "repeat 4 { F1(9) turn_right } def F1 { if wall_ahead { turn_left turn_left } else { forward F1 forward } }"
+  ],
+  "story": {
+    "intro": "PATCH: \"The Nautilus Stair. Sensors are back, so F1 can stop at a wall instead of at depth zero. And every call remembers the way back.\"",
+    "outro": "PATCH: \"Each arm a different length, one function for all four. The calls counted the steps out, so they knew the steps back.\""
+  },
+  "recursion": true
+}

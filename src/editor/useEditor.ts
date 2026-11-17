@@ -73,7 +73,8 @@ export function reducer(s: EditorState, a: Act): EditorState {
     case 'times':
       return commit(
         s,
-        updateBlock(s.program, a.r, a.id, (b) => (b.kind === 'repeat' ? { ...b, times: a.times } : b)),
+        // a repeat's count, or (Fractal) the depth a call from main starts its function at
+        updateBlock(s.program, a.r, a.id, (b) => (b.kind === 'repeat' ? { ...b, times: a.times } : b.kind === 'call' ? { ...b, depth: a.times } : b)),
       );
     case 'cond':
       return commit(

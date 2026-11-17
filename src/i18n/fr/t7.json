@@ -1,0 +1,374 @@
+{
+ "t7-f01": {
+  "title": "Une tuile dans une tuile",
+  "hints": [
+   "F1 peut appeler F1. Mets F1 dans F1, après avancer.",
+   "Dans main, appelle F1 et règle son n sur 4 : il avance une fois par niveau."
+  ],
+  "intro": "PATCH : « Fractal, une tour faite de tours plus petites. Ici, une fonction peut s'appeler elle-même. Chaque appel descend d'un niveau, et n dit jusqu'où. »",
+  "outro": "PATCH : « F1(4) a avancé, puis F1(3), puis F1(2), puis F1(1). À zéro, il s'est arrêté. Cet arrêt, c'est le cas de base. »"
+ },
+ "t7-f02": {
+  "title": "Plus profond",
+  "hints": [
+   "Même fonction que la dernière fois. Seule la profondeur change.",
+   "Touche + sur le F1 de main jusqu'à n = 7."
+  ],
+  "intro": "PATCH : « La même règle va aussi loin que tu veux. Demande juste plus de niveaux. »"
+ },
+ "t7-f03": {
+  "title": "Deux profondeurs",
+  "hints": [
+   "Main peut appeler F1 plusieurs fois, avec un n différent à chaque fois.",
+   "F1(5), tourner à droite, F1(3). F1 reste avancer, F1."
+  ]
+ },
+ "t7-f04": {
+  "title": "Graine d'escalier",
+  "hints": [
+   "Une marche, c'est avancer, tourner à gauche, avancer, tourner à droite.",
+   "Mets la marche dans F1 et termine par F1. Puis appelle F1(4)."
+  ],
+  "intro": "PATCH : « Les mosaïques s'allument quand LoopBot marche dessus. Allume-les toutes pour finir l'étage. »"
+ },
+ "t7-f05": {
+  "title": "Trois côtés",
+  "hints": [
+   "Chaque côté, c'est trois pas, puis un virage.",
+   "F1 : avancer trois fois, tourner à gauche, F1. Trois côtés, donc n = 3."
+  ]
+ },
+ "t7-f06": {
+  "title": "Graine grimpante",
+  "hints": [
+   "Chaque niveau, c'est un saut vers le haut et un pas.",
+   "F1 : sauter, avancer, F1."
+  ]
+ },
+ "t7-f07": {
+  "title": "Au retour",
+  "hints": [
+   "Un bloc placé après l'appel à F1 s'exécute plus tard, quand les appels plus profonds sont finis.",
+   "F1 : avancer, F1, sauter. Tous les sauts arrivent à la fin, un par niveau."
+  ],
+  "intro": "PATCH : « Tout ce qui est après l'appel attend. Ça s'exécute au retour, une fois par niveau. »",
+  "outro": "PATCH : « Trois pas à l'aller, trois sauts au retour. L'appel le plus profond a fini en premier. »"
+ },
+ "t7-f08": {
+  "title": "Crochet",
+  "hints": [
+   "Deux pas et un virage à l'aller, un pas au retour.",
+   "F1 : avancer, avancer, tourner à gauche, F1, avancer."
+  ]
+ },
+ "t7-f09": {
+  "title": "Dérouler",
+  "hints": [
+   "À l'aller : avancer, tourner à gauche, avancer. Au retour : tourner à droite, deux fois avancer.",
+   "F1 : avancer, tourner à gauche, avancer, F1, tourner à droite, avancer, avancer."
+  ]
+ },
+ "t7-f10": {
+  "title": "Monter d'un côté, descendre de l'autre",
+  "hints": [
+   "La montée est un escalier. La descente, c'est le même escalier dans l'autre sens, et elle vient après l'appel.",
+   "F1 : avancer, tourner à gauche, avancer, tourner à droite, F1, avancer, tourner à droite, avancer, tourner à gauche."
+  ],
+  "intro": "PATCH : « Un sommet sur la place. Une seule fonction peut faire les deux pentes : la montée avant l'appel, la descente après. »",
+  "outro": "PATCH : « Trois en montant, trois en descendant. Les appels ont compté pour toi. »"
+ },
+ "t7-f11": {
+  "title": "Deux appels",
+  "hints": [
+   "F1 peut s'appeler deux fois. Chaque appel est une copie plus petite du motif entier.",
+   "F1 : avancer, F1, F1, tourner à gauche."
+  ],
+  "intro": "PATCH : « La salle des Fougères. Quand une fonction s'appelle deux fois, le motif se divise en deux, puis encore en deux. »"
+ },
+ "t7-f12": {
+  "title": "D'abord la branche",
+  "hints": [
+   "Cette fois, le premier appel vient avant le pas.",
+   "F1 : F1, avancer, F1, tourner à gauche."
+  ]
+ },
+ "t7-f13": {
+  "title": "Cour carrée",
+  "hints": [
+   "Une boucle répéter peut contenir un appel à F1.",
+   "F1 : tourner à gauche, puis répéter 4 fois avancer, F1. Appelle F1(2)."
+  ],
+  "intro": "PATCH : « Boucles et récursion vont ensemble. Une boucle dans F1 peut rappeler F1. »"
+ },
+ "t7-f14": {
+  "title": "Repli",
+  "hints": [
+   "Après le pas, fais deux fois la même chose : appeler F1, puis tourner.",
+   "F1 : avancer, répéter 2 fois F1, tourner à gauche."
+  ]
+ },
+ "t7-f15": {
+  "title": "Encore une division",
+  "hints": [
+   "C'est Deux appels, un niveau plus profond.",
+   "F1 : avancer, F1, F1, tourner à gauche. Appelle F1(4)."
+  ]
+ },
+ "t7-f16": {
+  "title": "Fronde",
+  "hints": [
+   "Un pas et un appel, deux fois, puis un virage.",
+   "F1 : répéter 2 fois avancer, F1, puis tourner à gauche."
+  ]
+ },
+ "t7-f17": {
+  "title": "Fronde de fougère",
+  "hints": [
+   "D'abord la branche, un niveau plus profond.",
+   "F1 : F1, avancer, F1, tourner à gauche. Appelle F1(4)."
+  ]
+ },
+ "t7-f18": {
+  "title": "Trois tours",
+  "hints": [
+   "Après chaque pas, le motif s'appelle trois fois, en tournant à droite après chaque appel.",
+   "F1 : avancer, répéter 3 fois F1, tourner à droite."
+  ]
+ },
+ "t7-f19": {
+  "title": "Tige de fougère",
+  "hints": [
+   "Deux pas le long de la tige, puis deux fois la même chose : tourner à gauche, appeler F1.",
+   "F1 : avancer, avancer, répéter 2 fois tourner à gauche, F1."
+  ]
+ },
+ "t7-f20": {
+  "title": "Le long repli",
+  "hints": [
+   "Repli, un niveau plus profond.",
+   "F1 : avancer, répéter 2 fois F1, tourner à gauche. Appelle F1(4)."
+  ],
+  "outro": "PATCH : « Quatre niveaux de replis avec cinq blocs. Chaque copie est le motif entier, en plus petit. »"
+ },
+ "t7-f21": {
+  "title": "Deux allées",
+  "hints": [
+   "F1 appelle F2 et F2 appelle F1. Chaque appel descend quand même d'un niveau.",
+   "F1 : avancer, F2. F2 : F1, tourner à gauche, F1, avancer. Appelle F1(4)."
+  ],
+  "intro": "PATCH : « Le Cloître : deux allées autour d'une cour, chacune mène à l'autre. F1 peut appeler F2, et F2 peut appeler F1. »"
+ },
+ "t7-f22": {
+  "title": "Chasse au bug : deux montées",
+  "hints": [
+   "Lance-le. LoopBot monte aussi en descendant.",
+   "Les virages après l'appel à F1 sont inversés : d'abord tourner à droite, puis tourner à gauche."
+  ],
+  "intro": "PATCH : « VANTA a trafiqué le programme du sommet. Trouve ce qui cloche au retour. »"
+ },
+ "t7-f23": {
+  "title": "Main dans la main",
+  "hints": [
+   "F2 appelle F1 deux fois, et F1 appelle F2 une fois.",
+   "F1 : avancer, F2, tourner à gauche. F2 : avancer, F1, F1. Appelle F1(5)."
+  ]
+ },
+ "t7-f24": {
+  "title": "Chasse au bug : pas assez profond",
+  "hints": [
+   "Le motif est bon. Compte les branches.",
+   "Un niveau de plus : appelle F1(4)."
+  ]
+ },
+ "t7-f25": {
+  "title": "Le tour de la cour",
+  "hints": [
+   "Deux allées, un niveau plus profond.",
+   "F1 : avancer, F2. F2 : F1, tourner à gauche, F1, avancer. Appelle F1(5)."
+  ]
+ },
+ "t7-f26": {
+  "title": "Chasse au bug : mauvais partenaire",
+  "hints": [
+   "Regarde les appels dans F2.",
+   "F2 doit appeler F1 deux fois : avancer, F1, F1."
+  ]
+ },
+ "t7-f27": {
+  "title": "Deux règles",
+  "hints": [
+   "Main peut lancer deux motifs différents, chacun avec sa profondeur.",
+   "F2 se divise : avancer, F2, F2, tourner à gauche. F1 est une ligne droite : avancer, F1. Main : F2(3), F1(3)."
+  ]
+ },
+ "t7-f28": {
+  "title": "Chasse au bug : jamais de branches",
+  "hints": [
+   "Le motif ne fait jamais de copies plus petites.",
+   "L'appel à F1 manque : répéter 2 fois avancer, F1."
+  ]
+ },
+ "t7-f29": {
+  "title": "Allées en écho",
+  "hints": [
+   "Deux allées, un niveau plus profond.",
+   "F1 : avancer, F2. F2 : F1, tourner à gauche, F1, avancer. Appelle F1(6)."
+  ]
+ },
+ "t7-f30": {
+  "title": "Dragon de papier",
+  "hints": [
+   "Plie une bande de papier en deux, encore et encore, puis déplie-la : c'est le chemin. F1 plie d'un côté, F2 de l'autre.",
+   "Main : avancer, F1(4). F1 : F1, tourner à droite, F2, avancer, tourner à droite. F2 : tourner à gauche, avancer, F1, tourner à gauche, F2."
+  ],
+  "intro": "PATCH : « La dernière allée du Cloître est célèbre : la courbe du dragon. Deux fonctions, et chacune appelle les deux. »",
+  "outro": "PATCH : « Douze blocs pour quarante-cinq pas. Des plis dans des plis. »"
+ },
+ "t7-f31": {
+  "title": "Quatre bras",
+  "hints": [
+   "F1 peut s'arrêter tout seul : si mur devant, demi-tour. Sinon, un pas, F1, et encore un pas. Le second pas revient en arrière.",
+   "F1 : si mur devant, tourner à gauche deux fois, sinon avancer, F1, avancer. Main : répéter 4 fois F1(9), tourner à droite."
+  ],
+  "intro": "PATCH : « L'Escalier du nautile. Les capteurs reviennent : F1 peut s'arrêter à un mur plutôt qu'à la profondeur zéro. Et chaque appel se souvient du chemin du retour. »",
+  "outro": "PATCH : « Chaque bras a sa longueur, une seule fonction pour les quatre. Les appels ont compté les pas à l'aller, alors ils connaissaient ceux du retour. »"
+ },
+ "t7-f32": {
+  "title": "Peigne",
+  "hints": [
+   "Longe la tige. À chaque dent, tourne, laisse F1 monter et revenir, puis repars le long de la tige.",
+   "Main : répéter 3 fois avancer, avancer, tourner à gauche, F1(9), tourner à gauche. F1 est celle de Quatre bras."
+  ]
+ },
+ "t7-f33": {
+  "title": "Marche miroir",
+  "hints": [
+   "À l'aller, tourne à gauche sur le rouge. Au retour, la même case rouge demande le virage miroir : à droite.",
+   "F1 : si mur devant, tourner à gauche deux fois, sinon avancer, si rouge tourner à gauche, F1, si rouge tourner à droite, avancer. Main : F1(9), F1(9)."
+  ],
+  "intro": "PATCH : « Au retour, tout se passe à l'envers. Un virage à gauche à l'aller devient un virage à droite au retour. »"
+ },
+ "t7-f34": {
+  "title": "Chasse au bug : pas de retour",
+  "hints": [
+   "LoopBot atteint le premier bout et ne revient jamais au centre.",
+   "F1 a besoin d'un avancer après l'appel à F1 : avancer, F1, avancer."
+  ]
+ },
+ "t7-f35": {
+  "title": "Retour à l'ascenseur",
+  "hints": [
+   "Allume la mosaïque, puis reviens jusqu'à l'ascenseur de départ.",
+   "La F1 de Marche miroir fait tout : l'aller, le demi-tour et le retour. Main, c'est juste F1(9)."
+  ]
+ },
+ "t7-f36": {
+  "title": "Chasse au bug : mauvais chemin du retour",
+  "hints": [
+   "L'aller marche. Regarde la première case rouge au retour.",
+   "Au retour, le rouge demande tourner à droite, le miroir du virage de l'aller."
+  ]
+ },
+ "t7-f37": {
+  "title": "Peigne tordu",
+  "hints": [
+   "Comme Peigne, mais les dents tournent sur les cases rouges.",
+   "Main de Peigne (répéter 2 fois), F1 de Marche miroir."
+  ]
+ },
+ "t7-f38": {
+  "title": "Chasse au bug : perdu sur la tige",
+  "hints": [
+   "Après la première dent, LoopBot part du mauvais côté de la tige.",
+   "En revenant d'une dent, LoopBot fait face à la tige. Tourne à gauche, pas à droite, pour continuer."
+  ]
+ },
+ "t7-f39": {
+  "title": "Le bleu tourne à droite",
+  "hints": [
+   "Ces bras tournent à droite sur le bleu. Le miroir d'un virage à droite, c'est un virage à gauche.",
+   "F1 : si mur devant, tourner à gauche deux fois, sinon avancer, si bleu tourner à droite, F1, si bleu tourner à gauche, avancer. Main : répéter 3 fois F1(9), tourner à droite."
+  ]
+ },
+ "t7-f40": {
+  "title": "Le Nautile",
+  "hints": [
+   "Quatre bras et Marche miroir ensemble.",
+   "Main : répéter 4 fois F1(9), tourner à droite. F1 de Marche miroir."
+  ],
+  "outro": "PATCH : « Quatre bras tordus, une seule règle. La coquille grandit de la même façon à chaque tour. »"
+ },
+ "t7-f41": {
+  "title": "Marches de la Canopée",
+  "hints": [
+   "Tourner, un pas, deux copies plus petites, un pas.",
+   "def F1(n): turn_left(), forward(), F1(n - 1), F1(n - 1), forward(). Main : F1(4)."
+  ],
+  "intro": "PATCH : « La Canopée. On peut de nouveau taper le code. En code, F1(n - 1) est l'appel un niveau plus bas, et if n == 0: return est le cas de base. »"
+ },
+ "t7-f42": {
+  "title": "Chasse au bug : mauvais virage",
+  "hints": [
+   "La tige monte, puis les branches partent du mauvais côté.",
+   "Dans la boucle répéter, tourne à gauche, pas à droite."
+  ]
+ },
+ "t7-f43": {
+  "title": "Arbre en H",
+  "hints": [
+   "Le long de la tige, un arbre plus petit à gauche, un autre à droite, puis redescends la tige face au chemin d'arrivée.",
+   "F1 : avancer, avancer, tourner à gauche, F1, tourner à droite, tourner à droite, F1, tourner à droite, avancer, avancer, tourner à droite, tourner à droite."
+  ]
+ },
+ "t7-f44": {
+  "title": "À gauche sur le rouge",
+  "hints": [
+   "Trois bras tordus. Après chacun, tourne à gauche pour faire face au suivant.",
+   "Main : répéter 3 fois F1(9), tourner à gauche. F1 de Marche miroir."
+  ]
+ },
+ "t7-f45": {
+  "title": "Chasse au bug : pli du dragon",
+  "hints": [
+   "F1 et F2 doivent plier dans des sens opposés. Compare leurs virages.",
+   "F2 tourne à gauche les deux fois : tourner à gauche, avancer, F1, tourner à gauche, F2."
+  ]
+ },
+ "t7-f46": {
+  "title": "Double fougère",
+  "hints": [
+   "Un pas, deux copies plus petites, un pas, un virage.",
+   "F1 : avancer, F1, F1, avancer, tourner à gauche. Main : F1(4)."
+  ]
+ },
+ "t7-f47": {
+  "title": "Pli sur pli",
+  "hints": [
+   "Copie, virage, copie, puis le pas et un virage pour revenir.",
+   "F1 : F1, tourner à gauche, F1, avancer, tourner à droite. Main : F1(4)."
+  ]
+ },
+ "t7-f48": {
+  "title": "Chasse au bug : tourné du mauvais côté",
+  "hints": [
+   "Un des bras n'est jamais visité.",
+   "Après chaque bras, LoopBot fait face au chemin d'où il vient. Tourne à gauche pour faire face au bras suivant."
+  ]
+ },
+ "t7-f49": {
+  "title": "Aile de dragon",
+  "hints": [
+   "Copie, virage, copie, pas, virage. Cinq niveaux de profondeur.",
+   "F1 : F1, tourner à gauche, F1, avancer, tourner à gauche. Main : F1(5)."
+  ]
+ },
+ "t7-f50": {
+  "title": "La Fougeraie",
+  "hints": [
+   "Allume les quatre bras tordus et termine sur l'ascenseur du milieu.",
+   "Main : répéter 4 fois F1(9), tourner à droite. La F1 de Marche miroir ramène LoopBot à chaque fois."
+  ],
+  "intro": "PATCH : « Le sommet de la Fougeraie. Quatre bras, une seule règle, et l'ascenseur au milieu pour rentrer. »",
+  "outro": "PATCH : « Toutes les mosaïques sont allumées, et tu es revenu au point de départ. C'est ça, la récursion : entrer, et retrouver le chemin pour ressortir. »"
+ }
+}

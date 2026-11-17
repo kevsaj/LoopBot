@@ -612,7 +612,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
             />
           ) : tab === 'code' ? (
             <>
-              <CodeView program={program} routines={routines} activeIds={activeIds} crashId={crashId} />
+              <CodeView program={program} routines={routines} activeIds={activeIds} crashId={crashId} recursion={!!level.recursion} />
               {level.typing && (
                 <button type="button" className="pill type-btn" onClick={() => (fx.tap(), reset(true), setTyping((n) => n + 1))}>
                   ✎ {t('Type code')}
@@ -645,6 +645,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
                 fx.tap();
                 editor.setCond(routine, id, c);
               }}
+              recursion={level.recursion ? (routine === 'main' ? 'main' : 'fn') : undefined}
             />
           )}
           {deleted && (
@@ -729,7 +730,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
                     stars: earned,
                     band: level.band,
                     board: await snapshotBoard(),
-                    code: daily ? undefined : toCode(program, routines),
+                    code: daily ? undefined : toCode(program, routines, !!level.recursion),
                     daily: daily && { streak: daily.streak },
                     commands: total,
                     steps: outcome.steps,

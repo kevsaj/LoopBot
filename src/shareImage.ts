@@ -65,6 +65,12 @@ const SKIES: Record<string, string[]> = {
   batik: ['#1e1838', '#3a3070', '#a8643a', '#f2c88a'],
   mirror: ['#0c0a1e', '#241c44', '#4e3e7a', '#c4b4ec'],
   twintops: ['#05070f', '#141a30', '#2c3458', '#e8c46a'],
+  // Tower 7, Fractal
+  tessera: ['#2a5a8a', '#5a8ab4', '#e8b07a', '#f8dcae'],
+  fernhall: ['#12301e', '#2a5a3a', '#7aa868', '#d8ecb8'],
+  cloister: ['#241830', '#4a3460', '#b48aa8', '#f2d8c8'],
+  nautilus: ['#071a22', '#12384a', '#2a6a78', '#5a9a9a'],
+  canopy: ['#1c1030', '#4a2a5a', '#c8604a', '#ffb46a'],
 };
 
 /** How many code lines fit; longer programs end with "…". */

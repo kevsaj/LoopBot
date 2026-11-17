@@ -1,0 +1,55 @@
+{
+  "id": "t7-f09",
+  "title": "Unwind",
+  "band": "tessera",
+  "size": {
+    "w": 5,
+    "h": 4
+  },
+  "tiles": [
+    "..m__",
+    "._...",
+    "..._.",
+    "___.."
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 3,
+    "y": 3,
+    "facing": "east"
+  },
+  "goals": [
+    "all_lit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "F1"
+  ],
+  "slots": {
+    "main": 2,
+    "F1": 8
+  },
+  "par": {
+    "commands": 8,
+    "steps": 18
+  },
+  "reference": "F1(3) def F1 { forward turn_left forward F1 turn_right forward forward }",
+  "hints": [
+    "Going in: forward, turn left, forward. Coming out: turn right, two forwards.",
+    "F1: forward, turn left, forward, F1, turn right, forward, forward.",
+    "F1(3) def F1 { forward turn_left forward F1 turn_right forward forward }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "recursion": true
+}

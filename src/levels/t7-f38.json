@@ -1,0 +1,59 @@
+{
+  "id": "t7-f38",
+  "title": "Bug Hunt: Lost on the Spine",
+  "band": "nautilus",
+  "size": {
+    "w": 7,
+    "h": 4
+  },
+  "tiles": [
+    "____m__",
+    "____._m",
+    "__m_._.",
+    "......."
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 3,
+    "facing": "east"
+  },
+  "goals": [
+    "all_lit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "F1",
+    "while",
+    "if"
+  ],
+  "slots": {
+    "main": 7,
+    "F1": 7
+  },
+  "par": {
+    "commands": 12,
+    "steps": 25
+  },
+  "reference": "repeat 3 { forward forward turn_left F1(9) turn_left } def F1 { if wall_ahead { turn_left turn_left } else { forward F1 forward } }",
+  "hints": [
+    "After the first tooth LoopBot heads the wrong way along the spine.",
+    "Back from a tooth LoopBot faces the spine. Turn left, not right, to carry on.",
+    "repeat 3 { forward forward turn_left F1(9) turn_left } def F1 { if wall_ahead { turn_left turn_left } else { forward F1 forward } }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "starter": "repeat 3 { forward forward turn_left F1(9) turn_right } def F1 { if wall_ahead { turn_left turn_left } else { forward F1 forward } }",
+  "recursion": true
+}

@@ -1,0 +1,60 @@
+{
+  "id": "t7-f34",
+  "title": "Bug Hunt: No Way Back",
+  "band": "nautilus",
+  "size": {
+    "w": 5,
+    "h": 5
+  },
+  "tiles": [
+    "__m__",
+    "__.__",
+    "__.__",
+    "m...m",
+    "__m__"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 2,
+    "y": 3,
+    "facing": "east"
+  },
+  "goals": [
+    "all_lit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "F1",
+    "while",
+    "if"
+  ],
+  "slots": {
+    "main": 4,
+    "F1": 7
+  },
+  "par": {
+    "commands": 9,
+    "steps": 24
+  },
+  "reference": "repeat 4 { F1(9) turn_right } def F1 { if wall_ahead { turn_left turn_left } else { forward F1 forward } }",
+  "hints": [
+    "LoopBot reaches the first tip and never comes back to the middle.",
+    "F1 needs a forward after the call to F1: forward, F1, forward.",
+    "repeat 4 { F1(9) turn_right } def F1 { if wall_ahead { turn_left turn_left } else { forward F1 forward } }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "starter": "repeat 4 { F1(9) turn_right } def F1 { if wall_ahead { turn_left turn_left } else { forward F1 } }",
+  "recursion": true
+}

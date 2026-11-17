@@ -50,6 +50,7 @@ export function countCommands(p: Program): number {
  * Function bodies come after main: "F1 turn_right F1 def F1 { forward jump }".
  * Conditions: "while not wall_ahead { forward }", "if tile_is r { turn_left } else { forward }".
  * Dockyard's tally: "tally_up repeat tally { forward }".
+ * Fractal's recursion: "F1(3) def F1 { forward F1 }" (a call from main carries its depth).
  */
 export function parseReference(ref: string): Program {
   const words = ref.replace(/[{}]/g, ' $& ').trim().split(/\s+/).filter(Boolean);
@@ -96,6 +97,9 @@ export function parseReference(ref: string): Program {
           if (words[i++] !== '}') throw new Error(`missing } in reference: ${ref}`);
         }
         out.push({ id: newId(), kind: 'if', cond, then, else: other });
+      } else if (/^F[123]\(\d\)$/.test(w)) {
+        // Fractal (CR-RECUR): a call from main with its depth, "F1(3)"
+        out.push({ id: newId(), kind: 'call', fn: w.slice(0, 2) as FunctionName, depth: Number(w[3]) });
       } else {
         out.push(makeBlock(w as PaletteCommand));
       }
@@ -133,7 +137,16 @@ export interface CodeLine {
   blockId: string | null;
 }
 
-function blocksToLines(blocks: Block[], indent: number, out: CodeLine[]) {
+/**
+ * A call as code. On a recursion floor (CR-RECUR) main passes the depth and a function passes
+ * one less than its own: F1(3) in main, F1(n - 1) inside a function.
+ */
+export function callCode(b: Extract<Block, { kind: 'call' }>, inMain: boolean, recursion: boolean): string {
+  if (!recursion) return `${b.fn}()`;
+  return inMain ? `${b.fn}(${b.depth ?? 1})` : `${b.fn}(n - 1)`;
+}
+
+function blocksToLines(blocks: Block[], indent: number, out: CodeLine[], ctx: { main: boolean; recursion: boolean } = { main: true, recursion: false }) {
   const pad = '    '.repeat(indent);
   if (blocks.length === 0) {
     out.push({ text: `${pad}pass`, blockId: null });
@@ -145,36 +158,41 @@ function blocksToLines(blocks: Block[], indent: number, out: CodeLine[]) {
         out.push({ text: `${pad}${actionCode(b.action)}`, blockId: b.id });
         break;
       case 'call':
-        out.push({ text: `${pad}${b.fn}()`, blockId: b.id });
+        out.push({ text: `${pad}${callCode(b, ctx.main, ctx.recursion)}`, blockId: b.id });
         break;
       case 'repeat':
         out.push({ text: `${pad}repeat ${b.times === BY_TALLY ? 'tally' : b.times}:`, blockId: b.id });
-        blocksToLines(b.body, indent + 1, out);
+        blocksToLines(b.body, indent + 1, out, ctx);
         break;
       case 'while':
         out.push({ text: `${pad}while ${condText(b.cond)}:`, blockId: b.id });
-        blocksToLines(b.body, indent + 1, out);
+        blocksToLines(b.body, indent + 1, out, ctx);
         break;
       case 'if':
         out.push({ text: `${pad}if ${condText(b.cond)}:`, blockId: b.id });
-        blocksToLines(b.then, indent + 1, out);
+        blocksToLines(b.then, indent + 1, out, ctx);
         if (b.else.length) {
           out.push({ text: `${pad}else:`, blockId: b.id });
-          blocksToLines(b.else, indent + 1, out);
+          blocksToLines(b.else, indent + 1, out, ctx);
         }
         break;
     }
   }
 }
 
-/** ED-9: the read-only Python-like code view. Functions are shown only when used or non-empty. */
-export function toCode(p: Program, routines: Routine[] = ['main', ...FUNCTION_NAMES]): CodeLine[] {
+/**
+ * ED-9: the read-only Python-like code view. Functions are shown only when used or non-empty.
+ * On a recursion floor (CR-RECUR) each function takes its depth n and starts with its base case.
+ */
+export function toCode(p: Program, routines: Routine[] = ['main', ...FUNCTION_NAMES], recursion = false): CodeLine[] {
   const out: CodeLine[] = [];
   for (const r of routines) {
     if (r !== 'main' && p[r].length === 0) continue;
     if (out.length) out.push({ text: '', blockId: null });
-    out.push({ text: `def ${r}():`, blockId: null });
-    blocksToLines(p[r], 1, out);
+    const fn = recursion && r !== 'main';
+    out.push({ text: `def ${r}(${fn ? 'n' : ''}):`, blockId: null });
+    if (fn) out.push({ text: '    if n == 0: return', blockId: null });
+    blocksToLines(p[r], 1, out, { main: r === 'main', recursion });
   }
   return out;
 }

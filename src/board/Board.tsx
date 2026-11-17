@@ -99,6 +99,7 @@ export function Board({ update, rotateSignal, band }: Props) {
       {COMPASS_BANDS.has(band) && <Compass deg={NORTH_DEG[rotateSignal % 4]} />}
       {TALLY_BANDS.has(band) && <TallyBoard n={update.world.tally} />}
       {update.world.twin && <TwinBadge world={update.world} />}
+      {update.world.goals.includes('all_lit') && <MosaicBadge world={update.world} />}
     </>
   );
 }
@@ -132,6 +133,17 @@ function TwinBadge({ world }: { world: World }) {
         <i style={{ background: '#c4b2ff' }} />
         {t('Echo')}
       </span>
+    </div>
+  );
+}
+
+/** Fractal (CR-MOSAIC): how many of the floor's mosaics LoopBot has lit so far. */
+function MosaicBadge({ world }: { world: World }) {
+  const all = Object.values(world.lit ?? {});
+  const lit = all.filter(Boolean).length;
+  return (
+    <div className={`board-mosaics${lit === all.length ? ' done' : ''}`} role="img" aria-label={t('Mosaics lit: {lit} of {n}', { lit, n: all.length })}>
+      ✦ {lit}/{all.length}
     </div>
   );
 }
