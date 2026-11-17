@@ -9,11 +9,13 @@ interface Props {
   routines: Routine[];
   activeIds: Set<string>;
   crashId: string | null;
+  /** Fractal (CR-RECUR): functions take a depth n. */
+  recursion?: boolean;
 }
 
 /** ED-9 to ED-11: the same program as read-only Python-like code, with the running line lit. */
-export function CodeView({ program, routines, activeIds, crashId }: Props) {
-  const lines = toCode(program, routines);
+export function CodeView({ program, routines, activeIds, crashId, recursion }: Props) {
+  const lines = toCode(program, routines, recursion);
   return (
     <pre className="code-view" aria-label={t('Program as code (read only)')}>
       {lines.map((l, i) => (
@@ -43,7 +45,7 @@ interface EditorProps {
  * same syntax the read-only view shows; a mistake names its line and leaves the blocks alone.
  */
 export function CodeEditor({ program, routines, level, onApply, onError, onClose }: EditorProps) {
-  const [text, setText] = useState(() => toCode(program, routines).map((l) => l.text).join('\n') + '\n');
+  const [text, setText] = useState(() => toCode(program, routines, !!level.recursion).map((l) => l.text).join('\n') + '\n');
   const [error, setError] = useState<{ line: number; error: string } | null>(null);
   const box = useRef<HTMLTextAreaElement>(null);
   useEffect(() => box.current?.focus(), []);

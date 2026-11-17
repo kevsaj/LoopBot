@@ -1,0 +1,65 @@
+{
+  "id": "t7-f44",
+  "title": "Left at Red",
+  "band": "canopy",
+  "size": {
+    "w": 6,
+    "h": 5
+  },
+  "tiles": [
+    "_____m",
+    "_____.",
+    "r....r",
+    ".__.__",
+    "m__r.m"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 3,
+    "y": 2,
+    "facing": "east"
+  },
+  "goals": [
+    "all_lit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "F1",
+    "F2",
+    "while",
+    "if"
+  ],
+  "sensors": [
+    "tile_is"
+  ],
+  "slots": {
+    "main": 4,
+    "F1": 11,
+    "F2": 3
+  },
+  "par": {
+    "commands": 13,
+    "steps": 32
+  },
+  "reference": "repeat 3 { F1(9) turn_left } def F1 { if wall_ahead { turn_left turn_left } else { forward if tile_is r { turn_left } F1 if tile_is r { turn_right } forward } }",
+  "hints": [
+    "Three bent arms. After each one, turn left to face the next.",
+    "Main: repeat 3 of F1(9), turn left. F1 from Mirror Walk.",
+    "repeat 3 { F1(9) turn_left } def F1 { if wall_ahead { turn_left turn_left } else { forward if tile_is r { turn_left } F1 if tile_is r { turn_right } forward } }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "typing": true,
+  "recursion": true
+}

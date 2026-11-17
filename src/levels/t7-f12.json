@@ -1,0 +1,55 @@
+{
+  "id": "t7-f12",
+  "title": "Branch First",
+  "band": "fernhall",
+  "size": {
+    "w": 4,
+    "h": 3
+  },
+  "tiles": [
+    "_m__",
+    "_.__",
+    "...m"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 2,
+    "facing": "east"
+  },
+  "goals": [
+    "all_lit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "F1"
+  ],
+  "slots": {
+    "main": 2,
+    "F1": 5
+  },
+  "par": {
+    "commands": 5,
+    "steps": 11
+  },
+  "reference": "F1(3) def F1 { F1 forward F1 turn_left }",
+  "hints": [
+    "This time the first call comes before the step.",
+    "F1: F1, forward, F1, turn left.",
+    "F1(3) def F1 { F1 forward F1 turn_left }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "recursion": true
+}

@@ -417,6 +417,71 @@ const BANDS: Record<string, Partial<typeof C>> = {
     edge: 0x0a0c14,
     void: 0x070910,
   },
+  // Tower 7, Fractal (the Fernwork). Tessera Plaza: warm sandstone, broken-tile walls.
+  tessera: {
+    floorTop: 0xf2dcb8,
+    floorL: 0xd0b48c,
+    floorR: 0xae946e,
+    floorEdge: 0xfff2dc,
+    wallTop: 0x3a7ea8,
+    wallL: 0x2e6688,
+    wallR: 0x24506c,
+    wallCap: 0xe8643c,
+    edge: 0x1e140c,
+    void: 0x1a1220,
+  },
+  // Fern Hall: green stone columns branching like trees.
+  fernhall: {
+    floorTop: 0xe4ead2,
+    floorL: 0xbcc6a6,
+    floorR: 0x98a486,
+    floorEdge: 0xf6fae8,
+    wallTop: 0x3e7a4a,
+    wallL: 0x30623a,
+    wallR: 0x244c2c,
+    wallCap: 0xa8d46a,
+    edge: 0x10180e,
+    void: 0x0e140e,
+  },
+  // The Cloister: pale arches around a courtyard, two walks that meet.
+  cloister: {
+    floorTop: 0xeee6d8,
+    floorL: 0xcac0ae,
+    floorR: 0xa89e8c,
+    floorEdge: 0xfffaf0,
+    wallTop: 0x8a5a8a,
+    wallL: 0x704870,
+    wallR: 0x583858,
+    wallCap: 0xf2c14e,
+    edge: 0x1a1218,
+    void: 0x140e16,
+  },
+  // Nautilus Stair: a shell-pink spiral, deep sea glass.
+  nautilus: {
+    floorTop: 0xf6dcd2,
+    floorL: 0xd4b4a8,
+    floorR: 0xb09086,
+    floorEdge: 0xfff0ea,
+    wallTop: 0x1e5a6e,
+    wallL: 0x184858,
+    wallR: 0x123844,
+    wallCap: 0x5ad0c8,
+    edge: 0x0c1418,
+    void: 0x081014,
+  },
+  // The Canopy: spires like a forest at sunset, every top a tiny tower.
+  canopy: {
+    floorTop: 0xf4e6c4,
+    floorL: 0xd2c09c,
+    floorR: 0xb09e7c,
+    floorEdge: 0xfffae6,
+    wallTop: 0x5a3a6e,
+    wallL: 0x482e58,
+    wallR: 0x382244,
+    wallCap: 0xff9a4a,
+    edge: 0x140c18,
+    void: 0x100a14,
+  },
   // Summit: wind-scoured snow and dark rock, the beacon glowing gold.
   summit: {
     floorTop: 0xf3f6fa,
@@ -469,9 +534,9 @@ function echoView(w: World): World {
 
 type Grid = { rx: number; ry: number };
 
-/** Everything drawStatic reads that can change during a run: crates, switches and doors. */
+/** Everything drawStatic reads that can change during a run: crates, switches, doors, cracks and lit mosaics. */
 function staticKey(w: World): string {
-  return `${w.boxes.map((r) => r.join('')).join('/')}|${Object.values(w.switches).join()}|${Object.values(w.doors).join()}|${Object.values(w.cracked ?? {}).join()}${w.ventCycle ? `|${w.clock % w.ventCycle}` : ''}`;
+  return `${w.boxes.map((r) => r.join('')).join('/')}|${Object.values(w.switches).join()}|${Object.values(w.doors).join()}|${Object.values(w.cracked ?? {}).join()}|${Object.values(w.lit ?? {}).join()}${w.ventCycle ? `|${w.clock % w.ventCycle}` : ''}`;
 }
 
 /** How LoopBot's eye looks right now. */
@@ -802,6 +867,50 @@ export class BoardScene extends Phaser.Scene {
     this.tweens.addCounter({ from: 0, to: Math.PI * 2, duration: 2600, repeat: -1, onUpdate: (tw) => place(dir * (tw.getValue() ?? 0)) });
   }
 
+  /**
+   * A Fractal mosaic (CR-MOSAIC): broken-tile pieces set into the floor around a star. Dark and
+   * dusty until LoopBot stands on it, then the pieces light up in warm colours and stay lit. The
+   * star is drawn either way, so a lit tile differs in shape as well as colour (ED-16).
+   */
+  private mosaic(g: Phaser.GameObjects.Graphics, sx: number, sy: number, x: number, y: number, lit: boolean, depth: number) {
+    const P = (u: number, v: number) => new Phaser.Math.Vector2(sx + (u - v) * TW * 0.5, sy + (u + v) * TH * 0.5);
+    g.fillStyle(lit ? 0xfff3d6 : 0x2c2638, 1);
+    g.fillPoints([P(-0.42, -0.42), P(0.42, -0.42), P(0.42, 0.42), P(-0.42, 0.42)], true);
+    // a ring of shards, each a quad in tile space, coloured from a small palette by position
+    const LIT = [0xe8643c, 0x2f9fd0, 0xf2c14e, 0x5cb85c, 0x9b6fd6, 0xe86fa0];
+    const DARK = [0x4a4258, 0x3e3850, 0x544a62];
+    const cells: Array<[number, number]> = [[-0.3, -0.3], [0, -0.32], [0.3, -0.3], [0.32, 0], [0.3, 0.3], [0, 0.32], [-0.3, 0.3], [-0.32, 0]];
+    cells.forEach(([u, v], i) => {
+      const k = (i + x * 3 + y * 5) % LIT.length;
+      const r = 0.11 + ((i * 7 + x + y) % 3) * 0.015;
+      g.fillStyle(lit ? LIT[k] : DARK[i % DARK.length], 1);
+      g.fillPoints([P(u - r, v - r * 0.7), P(u + r * 0.8, v - r), P(u + r, v + r * 0.8), P(u - r * 0.7, v + r)], true);
+    });
+    // the star in the middle: eight points, solid when lit, an outline when dark
+    const star: Phaser.Math.Vector2[] = [];
+    for (let i = 0; i < 16; i++) {
+      const th = (i / 16) * Math.PI * 2;
+      const rr = i % 2 ? 0.08 : 0.18;
+      star.push(P(Math.cos(th) * rr, Math.sin(th) * rr));
+    }
+    if (lit) {
+      g.fillStyle(0xffd34a, 1);
+      g.fillPoints(star, true);
+      g.lineStyle(1, 0xa8641c, 0.9);
+      g.strokePoints(star, true);
+      if (this.reduced) return;
+      const glow = this.add.graphics();
+      glow.setDepth(depth);
+      glow.fillStyle(0xffe38a, 0.35);
+      glow.fillPoints([P(-0.46, -0.46), P(0.46, -0.46), P(0.46, 0.46), P(-0.46, 0.46)], true);
+      this.layer.add(glow);
+      this.tweens.add({ targets: glow, alpha: 0.05, yoyo: true, repeat: -1, duration: 1300, ease: 'Sine.easeInOut' });
+    } else {
+      g.lineStyle(1.5, 0x8a80a0, 0.9);
+      g.strokePoints(star, true);
+    }
+  }
+
   private drawStatic(w: World) {
     for (const child of [...this.layer.list]) {
       if (child === this.bot || child === this.echo) continue;
@@ -874,6 +983,8 @@ export class BoardScene extends Phaser.Scene {
             this.vent(g, sx, sy, w, x, y, (grid.rx + grid.ry) * 10 + 6);
           } else if (t.type === 'spinner') {
             this.spinner(g, sx, sy, t.spin ?? 1, w.boxes[y][x] > 0, (grid.rx + grid.ry) * 10 + 1);
+          } else if (t.type === 'mosaic') {
+            this.mosaic(g, sx, sy, x, y, !!w.lit?.[key(x, y)], (grid.rx + grid.ry) * 10 + 1);
           } else if (t.type === 'exit') {
             // the service lift: a glowing pad with a soft beam that pulses
             this.diamond(g, sx, sy, C.exit, 0.8);

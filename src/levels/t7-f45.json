@@ -1,0 +1,62 @@
+{
+  "id": "t7-f45",
+  "title": "Bug Hunt: Dragon Fold",
+  "band": "canopy",
+  "size": {
+    "w": 6,
+    "h": 4
+  },
+  "tiles": [
+    "mm____",
+    "mmm_.m",
+    "_mmmmm",
+    "_mmmm_"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 4,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "all_lit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "F1",
+    "F2",
+    "while",
+    "if"
+  ],
+  "slots": {
+    "main": 3,
+    "F1": 6,
+    "F2": 6
+  },
+  "par": {
+    "commands": 12,
+    "steps": 45
+  },
+  "reference": "forward F1(4) def F1 { F1 turn_right F2 forward turn_right } def F2 { turn_left forward F1 turn_left F2 }",
+  "hints": [
+    "F1 and F2 should fold opposite ways. Compare their turns.",
+    "F2 turns left both times: turn left, forward, F1, turn left, F2.",
+    "forward F1(4) def F1 { F1 turn_right F2 forward turn_right } def F2 { turn_left forward F1 turn_left F2 }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "typing": true,
+  "starter": "forward F1(4) def F1 { F1 turn_right F2 forward turn_right } def F2 { turn_left forward F1 turn_right F2 }",
+  "recursion": true
+}

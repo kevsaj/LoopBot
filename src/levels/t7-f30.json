@@ -1,0 +1,58 @@
+{
+  "id": "t7-f30",
+  "title": "Paper Dragon",
+  "band": "cloister",
+  "size": {
+    "w": 6,
+    "h": 4
+  },
+  "tiles": [
+    "mm____",
+    "mmm_.m",
+    "_mmmmm",
+    "_mmmm_"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 4,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "all_lit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "F1",
+    "F2"
+  ],
+  "slots": {
+    "main": 3,
+    "F1": 6,
+    "F2": 6
+  },
+  "par": {
+    "commands": 12,
+    "steps": 45
+  },
+  "reference": "forward F1(4) def F1 { F1 turn_right F2 forward turn_right } def F2 { turn_left forward F1 turn_left F2 }",
+  "hints": [
+    "Fold a strip of paper in half again and again, then open it out: that is the path. F1 folds one way, F2 the other.",
+    "Main: forward, F1(4). F1: F1, turn right, F2, forward, turn right. F2: turn left, forward, F1, turn left, F2.",
+    "forward F1(4) def F1 { F1 turn_right F2 forward turn_right } def F2 { turn_left forward F1 turn_left F2 }"
+  ],
+  "story": {
+    "intro": "PATCH: \"The last walk of the Cloister is a famous one, the dragon curve. Two functions, and each one calls both.\"",
+    "outro": "PATCH: \"Twelve blocks for forty-five steps. Folds inside folds.\""
+  },
+  "recursion": true
+}

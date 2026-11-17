@@ -5,11 +5,11 @@ import { SENSORS } from '../sim/types';
 import { MAX_DEPTH, MAX_TIMES, MIN_TIMES, countBlocks, loopHeight, parseReference } from '../sim/program';
 import { FUNCTION_NAMES } from '../sim/types';
 
-const TILE_CHARS = new Set(['.', '#', '_', 's', 'd', 'e', 'r', 'g', 'b', 'y', 'i', 't', 'v', 'w', 'x', 'z', 'c', 'a']);
+const TILE_CHARS = new Set(['.', '#', '_', 's', 'd', 'e', 'r', 'g', 'b', 'y', 'i', 't', 'v', 'w', 'x', 'z', 'c', 'a', 'm']);
 /** Heatwave vent tiles and the phase each one blasts on (CR-VENT). */
 const VENT_PHASE: Record<string, number> = { v: 0, w: 1, x: 2, z: 3 };
 const FACINGS = ['north', 'east', 'south', 'west'];
-const GOALS = ['all_targets_filled', 'bot_on_exit', 'all_switches_on'];
+const GOALS = ['all_targets_filled', 'bot_on_exit', 'all_switches_on', 'all_lit'];
 
 /** custom: a player-made floor (from the floor maker or a share code). It has no tower id, no reference and no hints. */
 export function validateLevel(l: LevelFile, opts: { custom?: boolean } = {}): string[] {
@@ -57,6 +57,8 @@ export function validateLevel(l: LevelFile, opts: { custom?: boolean } = {}): st
   for (const g of l.goals) if (!GOALS.includes(g)) e(`unknown goal ${g}`);
   if (l.goals.includes('all_targets_filled') && !l.targets.length) e('all_targets_filled needs targets');
   if (l.goals.includes('bot_on_exit') && !l.tiles.some((r) => r.includes('e'))) e('bot_on_exit needs an exit tile');
+  if (l.goals.includes('all_lit') && !l.tiles.some((r) => r.includes('m'))) e('all_lit needs mosaic tiles');
+  if (l.tiles.some((r) => r.includes('m')) && !l.goals.includes('all_lit')) e('mosaic tiles only mean something with the all_lit goal');
   if (!l.slots.main || l.slots.main < 1) e('slots.main is required');
   if (!opts.custom || l.reference) checkProgram(l, 'reference', l.reference, e);
   if (l.starter !== undefined) {
@@ -93,6 +95,13 @@ function checkProgram(l: LevelFile, name: string, text: string, e: (m: string) =
       const n = Number(words[i + 1]);
       // The editor's repeat block only goes this far, so a par that needs more can't be reached.
       if (n < MIN_TIMES || n > MAX_TIMES) e(`${name} repeats ${n} times; the block goes from ${MIN_TIMES} to ${MAX_TIMES}`);
+    }
+    const deep = word.match(/^(F[123])\((\d)\)$/);
+    if (deep) {
+      // Fractal (CR-RECUR): only recursion floors give calls a depth, and only main's calls
+      if (!l.recursion) e(`${name} gives ${deep[1]} a depth, but this floor has no recursion`);
+      if (!l.commands.includes(deep[1] as never)) e(`${name} uses '${deep[1]}', which this floor does not allow`);
+      continue;
     }
     if (/^\d+$/.test(word) || word === 'def' || word === 'not' || word === 'else') continue; // a count, a function body, or part of a condition
     if (word === 'if' || word === 'while') {

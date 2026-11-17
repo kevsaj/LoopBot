@@ -1,0 +1,58 @@
+{
+  "id": "t7-f13",
+  "title": "Courtyard",
+  "band": "fernhall",
+  "size": {
+    "w": 6,
+    "h": 6
+  },
+  "tiles": [
+    "m....m",
+    ".____.",
+    ".____.",
+    ".____.",
+    ".____.",
+    "m....m"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 5,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "all_lit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "F1"
+  ],
+  "slots": {
+    "main": 2,
+    "F1": 5
+  },
+  "par": {
+    "commands": 5,
+    "steps": 20
+  },
+  "reference": "F1(2) def F1 { turn_left repeat 4 { forward F1 } }",
+  "hints": [
+    "A repeat can hold a call to F1.",
+    "F1: turn left, then repeat 4 of forward, F1. Call F1(2).",
+    "F1(2) def F1 { turn_left repeat 4 { forward F1 } }"
+  ],
+  "story": {
+    "intro": "PATCH: \"Loops and recursion work together. A loop inside F1 can call F1 again.\"",
+    "outro": null
+  },
+  "recursion": true
+}

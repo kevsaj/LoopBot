@@ -19,7 +19,8 @@ export type Theme =
   | 'dunegate' | 'furnace' | 'bazaar' | 'mirage' | 'crown'
   | 'ferry' | 'garden' | 'loom' | 'lantern' | 'pinnacle'
   | 'quay' | 'crane' | 'ropewalk' | 'office' | 'crest'
-  | 'atrium' | 'skybridge' | 'batik' | 'mirror' | 'twintops';
+  | 'atrium' | 'skybridge' | 'batik' | 'mirror' | 'twintops'
+  | 'tessera' | 'fernhall' | 'cloister' | 'nautilus' | 'canopy';
 
 interface Recipe {
   bpm: number;
@@ -368,6 +369,57 @@ const RECIPES: Record<Theme, Recipe> = {
     kick: 'x.....x...x.....', snare: '....x.......x...', hat: 'x.xxx.xxx.xxx.xx',
     seed: 227,
   },
+  // Tower 7, Fractal (the Fernwork). Floors 1-10: Tessera Plaza, a sunny square, a guitar-like
+  // pluck that repeats a little figure inside a bigger one.
+  tessera: {
+    bpm: 100, root: 45, mode: MIXOLYDIAN, chords: [0, 6, 3, 0], sevenths: false,
+    pad: { wave: 'triangle', cutoff: 1600, gain: 0.035 },
+    bass: 'x..x..x.x..x..o.', bassWave: 'triangle',
+    arp: '0120012001200124', arpWave: 'triangle',
+    lead: { wave: 'triangle', density: 0.4, gain: 0.045 },
+    kick: 'x.....x.x.......', snare: '....x.......x...', hat: '..x...x...x..xx.',
+    seed: 229,
+  },
+  // Floors 11-20: Fern Hall, every phrase branching into two smaller ones.
+  fernhall: {
+    bpm: 92, root: 43, mode: DORIAN, chords: [0, 3, 4, 3], sevenths: true,
+    pad: { wave: 'sine', cutoff: 1500, gain: 0.045 },
+    bass: 'x.......x...o...', bassWave: 'sine',
+    arp: '0.2.4.2.0.2.4.2.', arpWave: 'sine',
+    lead: { wave: 'triangle', density: 0.32, gain: 0.045 },
+    kick: 'x.......x.......', snare: '....x.......x...', hat: '.x.x.x.x.x.x.x.x',
+    seed: 233,
+  },
+  // Floors 21-30: the Cloister, two walks calling back and forth.
+  cloister: {
+    bpm: 84, root: 41, mode: IONIAN, chords: [0, 4, 5, 3], sevenths: true,
+    pad: { wave: 'sine', cutoff: 1300, gain: 0.05 },
+    bass: 'x...x...o...x...', bassWave: 'sine',
+    arp: '04.204.204.20421', arpWave: 'triangle',
+    lead: { wave: 'sine', density: 0.3, gain: 0.05 },
+    kick: 'x.........x.....', snare: '........x.......', hat: '..x...x...x...x.',
+    seed: 239,
+  },
+  // Floors 31-40: the Nautilus Stair, a spiral that winds in and back out.
+  nautilus: {
+    bpm: 96, root: 40, mode: AEOLIAN, chords: [0, 5, 6, 4], sevenths: true,
+    pad: { wave: 'sine', cutoff: 1200, gain: 0.05 },
+    bass: 'x..x....x..x..o.', bassWave: 'triangle',
+    arp: '0123432101234321', arpWave: 'sine',
+    lead: { wave: 'triangle', density: 0.35, gain: 0.045 },
+    kick: 'x...x.....x.....', snare: '....x.......x...', hat: 'x.x.x.x.x.x.x.x.',
+    seed: 241,
+  },
+  // Floors 41-50: the Canopy, high spires at sunset, the motif at every size at once.
+  canopy: {
+    bpm: 124, root: 45, mode: LYDIAN, chords: [0, 1, 5, 4], sevenths: false,
+    pad: { wave: 'sawtooth', cutoff: 1800, gain: 0.03 },
+    bass: 'x..x..x.x.x..xo.', bassWave: 'triangle',
+    arp: '0241024102410241', arpWave: 'triangle',
+    lead: { wave: 'square', density: 0.45, gain: 0.025 },
+    kick: 'x.....x...x.....', snare: '....x.......x...', hat: 'x.xxx.xxx.xxx.xx',
+    seed: 251,
+  },
   // The daily challenge: cheerful and a little different every bar.
   daily: {
     bpm: 104, root: 46, mode: IONIAN, chords: [0, 3, 5, 4], sevenths: false,
@@ -387,6 +439,7 @@ export function themeForFloor(n: number, tower = 1): Theme {
   if (tower === 4) return (['ferry', 'garden', 'loom', 'lantern', 'pinnacle'] as const)[Math.min(4, Math.floor((n - 1) / 10))];
   if (tower === 5) return (['quay', 'crane', 'ropewalk', 'office', 'crest'] as const)[Math.min(4, Math.floor((n - 1) / 10))];
   if (tower === 6) return (['atrium', 'skybridge', 'batik', 'mirror', 'twintops'] as const)[Math.min(4, Math.floor((n - 1) / 10))];
+  if (tower === 7) return (['tessera', 'fernhall', 'cloister', 'nautilus', 'canopy'] as const)[Math.min(4, Math.floor((n - 1) / 10))];
   if (n <= 10) return 'lobby';
   if (n <= 20) return 'maintenance';
   if (n <= 30) return 'workshop';

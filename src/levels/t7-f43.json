@@ -1,0 +1,62 @@
+{
+  "id": "t7-f43",
+  "title": "H Tree",
+  "band": "canopy",
+  "size": {
+    "w": 5,
+    "h": 5
+  },
+  "tiles": [
+    "m...m",
+    "__.__",
+    "...__",
+    "__.__",
+    "m...m"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 2,
+    "facing": "east"
+  },
+  "goals": [
+    "all_lit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "F1",
+    "F2",
+    "while",
+    "if"
+  ],
+  "slots": {
+    "main": 2,
+    "F1": 13,
+    "F2": 3
+  },
+  "par": {
+    "commands": 13,
+    "steps": 52
+  },
+  "reference": "F1(3) def F1 { forward forward turn_left F1 turn_right turn_right F1 turn_right forward forward turn_right turn_right }",
+  "hints": [
+    "Out along the stem, a smaller tree to the left, a smaller tree to the right, then back down the stem facing the way you came.",
+    "F1: forward, forward, turn left, F1, turn right, turn right, F1, turn right, forward, forward, turn right, turn right.",
+    "F1(3) def F1 { forward forward turn_left F1 turn_right turn_right F1 turn_right forward forward turn_right turn_right }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "typing": true,
+  "recursion": true
+}

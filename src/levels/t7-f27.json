@@ -1,0 +1,60 @@
+{
+  "id": "t7-f27",
+  "title": "Two Rules",
+  "band": "cloister",
+  "size": {
+    "w": 5,
+    "h": 6
+  },
+  "tiles": [
+    "___m_",
+    "...m_",
+    "___mm",
+    "____.",
+    "____.",
+    "____m"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "all_lit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "F1",
+    "F2"
+  ],
+  "slots": {
+    "main": 3,
+    "F1": 3,
+    "F2": 5
+  },
+  "par": {
+    "commands": 8,
+    "steps": 17
+  },
+  "reference": "F2(3) F1(3) def F1 { forward F1 } def F2 { forward F2 F2 turn_left }",
+  "hints": [
+    "Main can start two different patterns, each with its own depth.",
+    "F2 branches: forward, F2, F2, turn left. F1 is a straight line: forward, F1. Main: F2(3), F1(3).",
+    "F2(3) F1(3) def F1 { forward F1 } def F2 { forward F2 F2 turn_left }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "recursion": true
+}

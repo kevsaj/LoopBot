@@ -51,6 +51,17 @@ export const PACK_INFO: Record<PackId, PackInfo> = {
       { icon: '📻', title: msg('The story goes on'), text: msg("PATCH's radio calls and the chase after VANTA, plus new music for the spires.") },
     ],
   },
+  fractal: {
+    title: msg('Fractal'),
+    tower: msg('The Fernwork'),
+    lede: msg('Tower 7 is a tower made of smaller towers. Write functions that call themselves, and light every mosaic.'),
+    perks: [
+      { icon: '🌿', title: msg('50 new floors'), text: msg('The Fernwork, from Tessera Plaza to the Canopy, with 3 stars to win on every floor.') },
+      { icon: '🔁', title: msg('Functions that call themselves'), text: msg('Recursion: a pattern made of smaller copies of itself, as deep as you choose.') },
+      { icon: '✦', title: msg('Light the mosaics'), text: msg('Broken-tile mosaics glow when LoopBot steps on them. Light them all to clear a floor.') },
+      { icon: '📻', title: msg('The story goes on'), text: msg("PATCH's radio calls and the chase after VANTA, plus new music for the spires.") },
+    ],
+  },
   dockyard: {
     title: msg('Dockyard'),
     tower: msg('The Wavehouse'),

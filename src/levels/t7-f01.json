@@ -1,0 +1,52 @@
+{
+  "id": "t7-f01",
+  "title": "A Tile Inside a Tile",
+  "band": "tessera",
+  "size": {
+    "w": 5,
+    "h": 1
+  },
+  "tiles": [
+    "....m"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "all_lit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "F1"
+  ],
+  "slots": {
+    "main": 2,
+    "F1": 3
+  },
+  "par": {
+    "commands": 3,
+    "steps": 4
+  },
+  "reference": "F1(4) def F1 { forward F1 }",
+  "hints": [
+    "F1 can call F1. Put F1 inside F1, after forward.",
+    "In main, call F1 and set its n to 4: it steps forward once for every level.",
+    "F1(4) def F1 { forward F1 }"
+  ],
+  "story": {
+    "intro": "PATCH: \"Fractal, a tower made of smaller towers. Here a function can call itself. Each call goes one level deeper, and n says how deep.\"",
+    "outro": "PATCH: \"F1(4) ran forward, then F1(3), then F1(2), then F1(1). At zero it stopped. That stop is the base case.\""
+  },
+  "recursion": true
+}

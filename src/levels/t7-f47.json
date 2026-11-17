@@ -1,0 +1,61 @@
+{
+  "id": "t7-f47",
+  "title": "Fold on Fold",
+  "band": "canopy",
+  "size": {
+    "w": 6,
+    "h": 4
+  },
+  "tiles": [
+    "_mmmm_",
+    "mmmmmm",
+    "mm___.",
+    "mm____"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 5,
+    "y": 2,
+    "facing": "east"
+  },
+  "goals": [
+    "all_lit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "F1",
+    "F2",
+    "while",
+    "if"
+  ],
+  "slots": {
+    "main": 2,
+    "F1": 6,
+    "F2": 3
+  },
+  "par": {
+    "commands": 6,
+    "steps": 42
+  },
+  "reference": "F1(4) def F1 { F1 turn_left F1 forward turn_right }",
+  "hints": [
+    "Copy, turn, copy, then the step and a turn back.",
+    "F1: F1, turn left, F1, forward, turn right. Main: F1(4).",
+    "F1(4) def F1 { F1 turn_left F1 forward turn_right }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "typing": true,
+  "recursion": true
+}

@@ -1,0 +1,55 @@
+{
+  "id": "t7-f08",
+  "title": "Hook",
+  "band": "tessera",
+  "size": {
+    "w": 3,
+    "h": 4
+  },
+  "tiles": [
+    "m.m",
+    "._.",
+    "..m",
+    "m__"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 2,
+    "facing": "east"
+  },
+  "goals": [
+    "all_lit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "F1"
+  ],
+  "slots": {
+    "main": 2,
+    "F1": 6
+  },
+  "par": {
+    "commands": 6,
+    "steps": 12
+  },
+  "reference": "F1(3) def F1 { forward forward turn_left F1 forward }",
+  "hints": [
+    "Two steps and a turn on the way in, one step on the way out.",
+    "F1: forward, forward, turn left, F1, forward.",
+    "F1(3) def F1 { forward forward turn_left F1 forward }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "recursion": true
+}

@@ -6,7 +6,7 @@
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import type { KeyboardEvent, PointerEvent, ReactNode } from 'react';
 import { useDraggable, useDroppable } from '@dnd-kit/core';
-import { BY_TALLY } from '../sim/types';
+import { BY_TALLY, MAX_CALL_DEPTH, MIN_CALL_DEPTH } from '../sim/types';
 import type { Block, Condition } from '../sim/types';
 import type { Spot } from '../sim/program';
 import { MAX_TIMES, MIN_TIMES, childLists, countBlocks, elseKey, findBlock, listAt } from '../sim/program';
@@ -33,6 +33,11 @@ interface Props {
   /** The conditions an if or while can ask on this floor, in the order a tap cycles them. */
   conditions: Condition[];
   onCond(id: string, cond: Condition): void;
+  /**
+   * Fractal (CR-RECUR): on a recursion floor, 'main' gives each call a depth stepper (onTimes sets
+   * it) and 'fn' marks each call inside a function as going one level down.
+   */
+  recursion?: 'main' | 'fn';
 }
 
 const SWIPE_DELETE_PX = 72;
@@ -201,6 +206,24 @@ function Times({ times, onChange }: { times: number; onChange(n: number): void }
   );
 }
 
+/** Fractal (CR-RECUR): n − 3 + on a call in main, the depth its function starts at. */
+function Depth({ depth, onChange }: { depth: number; onChange(n: number): void }) {
+  const stop = (e: PointerEvent) => e.stopPropagation();
+  return (
+    <span className="times depth" onPointerDown={stop} onPointerUp={stop}>
+      <button type="button" aria-label={t('Less deep')} disabled={depth <= MIN_CALL_DEPTH} onClick={() => onChange(depth - 1)}>
+        −
+      </button>
+      <span className="times-n" aria-live="polite">
+        n={depth}
+      </span>
+      <button type="button" aria-label={t('Deeper')} disabled={depth >= MAX_CALL_DEPTH} onClick={() => onChange(depth + 1)}>
+        +
+      </button>
+    </span>
+  );
+}
+
 const COLOUR_NAMES: Record<string, string> = { r: msg('red'), g: msg('green'), b: msg('blue'), y: msg('yellow') };
 /** The shape drawn on each coloured tile, shown with the colour name (colour is never the only signal). */
 export const COLOUR_GLYPH: Record<string, string> = { r: '●', g: '▲', b: '■', y: '✚' };
@@ -303,7 +326,7 @@ function EmptySlot({ n, onTap }: { n: number; onTap(): void }) {
   );
 }
 
-export function ProgramList({ blocks, limit, cursor, activeIds, crashId, cancelIds, onCursor, onDelete, onMove, onTimes, conditions, onCond }: Props) {
+export function ProgramList({ blocks, limit, cursor, activeIds, crashId, cancelIds, onCursor, onDelete, onMove, onTimes, conditions, onCond, recursion }: Props) {
   const { dragId, fromPalette, dropSpot } = useDragState();
   const { setNodeRef } = useDroppable({ id: LIST_ID });
   const rows = useMemo(() => flatten(blocks), [blocks]);
@@ -380,6 +403,12 @@ export function ProgramList({ blocks, limit, cursor, activeIds, crashId, cancelI
                   <Times times={block.times} onChange={(n) => onTimes(block.id, n)} />
                 ) : block.kind === 'if' || block.kind === 'while' ? (
                   <CondPicker cond={block.cond} options={conditions} onChange={(c) => onCond(block.id, c)} />
+                ) : block.kind === 'call' && recursion === 'main' ? (
+                  <Depth depth={block.depth ?? MIN_CALL_DEPTH} onChange={(n) => onTimes(block.id, n)} />
+                ) : block.kind === 'call' && recursion === 'fn' ? (
+                  <span className="depth-down" title={t('one level deeper')}>
+                    n−1
+                  </span>
                 ) : undefined
               }
             />

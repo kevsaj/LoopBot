@@ -21,6 +21,7 @@ const TILE_CHARS: Record<string, { type: TileType; colour?: Colour; phase?: numb
   z: { type: 'vent', phase: 3 },
   c: { type: 'spinner', spin: 1 },
   a: { type: 'spinner', spin: -1 },
+  m: { type: 'mosaic' },
 };
 
 /** Vent cycle when a floor doesn't set one: blast, rest, blast, rest. */
@@ -36,6 +37,7 @@ export function createWorld(level: LevelFile): World {
   const switches: Record<string, boolean> = {};
   const doors: Record<string, boolean> = {};
   const cracked: Record<string, boolean> = {};
+  const lit: Record<string, boolean> = {};
   let vents = false;
   for (let y = 0; y < h; y++) {
     const row: Tile[] = [];
@@ -50,6 +52,7 @@ export function createWorld(level: LevelFile): World {
       if (def.type === 'switch') switches[key(x, y)] = false;
       if (def.type === 'door') doors[key(x, y)] = false;
       if (def.type === 'thin') cracked[key(x, y)] = false;
+      if (def.type === 'mosaic') lit[key(x, y)] = false;
     }
     tiles.push(row);
   }
@@ -82,6 +85,8 @@ export function createWorld(level: LevelFile): World {
     tally: 0,
     bot: { x: level.bot.x, y: level.bot.y, facing: level.bot.facing, carrying: false },
     twin: level.twin ? { x: level.twin.x, y: level.twin.y, facing: level.twin.facing, carrying: false } : null,
+    // A mosaic under LoopBot's start is lit from the beginning (CR-MOSAIC)
+    lit: key(level.bot.x, level.bot.y) in lit ? { ...lit, [key(level.bot.x, level.bot.y)]: true } : lit,
     goals: [...level.goals],
   };
 }
@@ -96,6 +101,7 @@ export function cloneWorld(w: World): World {
     doors: { ...w.doors },
     links: w.links,
     cracked: { ...w.cracked },
+    lit: { ...w.lit },
     bot: { ...w.bot },
     twin: w.twin ? { ...w.twin } : null,
     goals: w.goals,
@@ -209,6 +215,12 @@ function spin(w: World) {
   bot.facing = t.spin === -1 ? LEFT[bot.facing] : RIGHT[bot.facing];
 }
 
+/** Mosaics (CR-MOSAIC): a mosaic tile lights up when LoopBot arrives on it, and stays lit. */
+function light(w: World) {
+  const k = key(w.bot.x, w.bot.y);
+  if (k in w.lit) w.lit[k] = true;
+}
+
 /** Thin ice (CR-THIN) cracks into a gap once LoopBot steps off it. */
 function leave(w: World, p: Pos) {
   if (w.tiles[p.y][p.x].type === 'thin') w.cracked[key(p.x, p.y)] = true;
@@ -274,6 +286,7 @@ function act(w: World, action: Action): ActionResult {
       bot.y = next.y;
       slide(w);
       spin(w);
+      light(w);
       return { ok: true };
     }
     case 'jump': {
@@ -287,6 +300,7 @@ function act(w: World, action: Action): ActionResult {
       bot.y = next.y;
       slide(w);
       spin(w);
+      light(w);
       return { ok: true };
     }
     case 'pick_up': {
@@ -369,6 +383,8 @@ export function goalsMet(w: World): boolean {
         return parked(w, w.bot) && (!w.twin || parked(w, w.twin));
       case 'all_switches_on':
         return Object.values(w.switches).every(Boolean);
+      case 'all_lit':
+        return Object.values(w.lit).every(Boolean);
     }
   });
 }
@@ -382,6 +398,8 @@ export function worldKey(w: World): string {
     .join('')}|${Object.values(w.doors)
     .map((s) => (s ? 1 : 0))
     .join('')}|${Object.values(w.cracked)
+    .map((s) => (s ? 1 : 0))
+    .join('')}|${Object.values(w.lit)
     .map((s) => (s ? 1 : 0))
     .join('')}${w.ventCycle ? `|${w.clock % w.ventCycle}` : ''}${w.tally ? `|t${w.tally}` : ''}`;
 }

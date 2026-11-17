@@ -1,0 +1,65 @@
+{
+  "id": "t7-f41",
+  "title": "Canopy Steps",
+  "band": "canopy",
+  "size": {
+    "w": 8,
+    "h": 8
+  },
+  "tiles": [
+    "_.._____",
+    "_.._..__",
+    "........",
+    "..._....",
+    "_____.__",
+    "_____.__",
+    "_____.__",
+    "_____m__"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 3,
+    "facing": "east"
+  },
+  "goals": [
+    "all_lit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "F1",
+    "F2",
+    "while",
+    "if"
+  ],
+  "slots": {
+    "main": 2,
+    "F1": 6,
+    "F2": 3
+  },
+  "par": {
+    "commands": 6,
+    "steps": 45
+  },
+  "reference": "F1(4) def F1 { turn_left forward F1 F1 forward }",
+  "hints": [
+    "Turn, step, two smaller copies, step.",
+    "def F1(n): turn_left(), forward(), F1(n - 1), F1(n - 1), forward(). Main: F1(4).",
+    "F1(4) def F1 { turn_left forward F1 F1 forward }"
+  ],
+  "story": {
+    "intro": "PATCH: \"The Canopy. Typing is back on. In code, F1(n - 1) is the call one level down, and if n == 0: return is the base case.\"",
+    "outro": null
+  },
+  "typing": true,
+  "recursion": true
+}
