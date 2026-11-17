@@ -1,0 +1,58 @@
+{
+  "id": "t5-f11",
+  "title": "Count Down",
+  "band": "crane",
+  "size": {
+    "w": 7,
+    "h": 6
+  },
+  "tiles": [
+    "_#_____",
+    "_....._",
+    "#____._",
+    "___e_.#",
+    "#__..._",
+    "____#_#"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "tally_up",
+    "tally_down",
+    "repeat",
+    "repeat_tally"
+  ],
+  "slots": {
+    "main": 9
+  },
+  "par": {
+    "commands": 7,
+    "steps": 13
+  },
+  "reference": "repeat 4 { tally_up } repeat 4 { repeat tally { forward } turn_right tally_down }",
+  "hints": [
+    "The crane arm gets shorter: 4, 3, 2, 1. Count up to 4 first.",
+    "Fill the tally to 4. Then walk it, turn right and take 1 off, four times.",
+    "repeat 4 { tally_up } repeat 4 { repeat tally { forward } turn_right tally_down }"
+  ],
+  "story": {
+    "intro": "PATCH: \"The Crane Yard. These crane arms get shorter as you climb. Fill the tally up first, then count it back down.\"",
+    "outro": null
+  }
+}

@@ -181,6 +181,12 @@ export function ResultsCard({ floorNumber, tower = 1, floorCount, earned, prevBe
             {t("That's the end of the free demo. LoopBot's climb continues in the full game: loops in the Maintenance floors, functions in the Workshop, and all the way to the Rooftop.")}
           </p>
         )}
+        {!daily && !custom && !DEMO && floorNumber === floorCount && tower === 5 && (
+          <p className="demo-end">
+            <strong>{t('Tower 5 cleared!')}</strong>{' '}
+            {t("The cranes are counting crates again and the Wavehouse's roof is lit. VANTA's signal is splitting in two, and PATCH is tracking both halves.")}
+          </p>
+        )}
         {!daily && !custom && !DEMO && floorNumber === floorCount && tower === 4 && (
           <p className="demo-end">
             <strong>{t('Tower 4 cleared!')}</strong>{' '}

@@ -1,0 +1,68 @@
+{
+  "id": "t5-f10",
+  "title": "The Container Quay",
+  "band": "quay",
+  "size": {
+    "w": 8,
+    "h": 8
+  },
+  "tiles": [
+    "##__###_",
+    "e.......",
+    "#__#___.",
+    "_##__#_.",
+    "__##___.",
+    "__#__#_.",
+    "__#_....",
+    "_#_##___"
+  ],
+  "heights": [
+    "00000000",
+    "32222222",
+    "00000001",
+    "00000001",
+    "00000001",
+    "00000001",
+    "00000001",
+    "00000000"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 4,
+    "y": 6,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "tally_up",
+    "repeat",
+    "repeat_tally"
+  ],
+  "slots": {
+    "main": 9
+  },
+  "par": {
+    "commands": 7,
+    "steps": 17
+  },
+  "reference": "repeat 3 { tally_up repeat tally { forward forward } jump turn_left }",
+  "hints": [
+    "Each stretch is two tiles longer, and ends with a jump.",
+    "Walk two tiles per tally, jump, turn left.",
+    "repeat 3 { tally_up repeat tally { forward forward } jump turn_left }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

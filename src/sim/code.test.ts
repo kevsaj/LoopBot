@@ -46,4 +46,12 @@ describe('typed code', () => {
     const f31 = LEVELS.find((l) => l.id === 't1-f31')!;
     expect(parseCode('while on_switch():\n  forward()', f31)).toMatchObject({ ok: false, error: "the on_switch sensor isn't on this floor" });
   });
+
+  it('reads the tally (Dockyard) as a real variable', () => {
+    const r = parseCode('tally += 1\nrepeat tally:\n    forward()\n    tally -= 1');
+    expect(r.ok).toBe(true);
+    if (r.ok) expect(toCode(r.program).map((l) => l.text.trim())).toEqual(['def main():', 'tally += 1', 'repeat tally:', 'forward()', 'tally -= 1']);
+    expect(parseCode('tally += 2')).toMatchObject({ ok: false, line: 1 });
+    expect(parseCode('tally_up()')).toMatchObject({ ok: false, line: 1 });
+  });
 });

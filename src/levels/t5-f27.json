@@ -1,0 +1,63 @@
+{
+  "id": "t5-f27",
+  "title": "Bowline",
+  "band": "ropewalk",
+  "size": {
+    "w": 7,
+    "h": 7
+  },
+  "tiles": [
+    "____#e#",
+    "_#___.#",
+    "##_##.#",
+    "#_#__._",
+    "__...._",
+    "_#.____",
+    "_..__#_"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 6,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "tally_up",
+    "tally_down",
+    "repeat",
+    "repeat_tally",
+    "F1",
+    "F2"
+  ],
+  "slots": {
+    "main": 3,
+    "F1": 4,
+    "F2": 5
+  },
+  "par": {
+    "commands": 9,
+    "steps": 13
+  },
+  "reference": "F2 F2 def F1 { tally_up repeat tally { forward } } def F2 { F1 turn_left F1 turn_right }",
+  "hints": [
+    "Stretches of 1, 2, 3 and 4, turning left, then right, then left.",
+    "F1 counts and walks. F2 calls F1, turns left, calls F1 again and turns right.",
+    "F2 F2 def F1 { tally_up repeat tally { forward } } def F2 { F1 turn_left F1 turn_right }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

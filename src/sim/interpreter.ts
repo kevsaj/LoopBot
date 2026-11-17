@@ -2,6 +2,7 @@
 // It walks the program one action at a time so the editor can pause, step and
 // highlight the running block. No eval, no rendering, fully deterministic.
 
+import { BY_TALLY, FREE_ACTIONS } from './types';
 import type { Action, Block, LevelFile, Program, Routine, World } from './types';
 import { applyAction, cloneWorld, createWorld, goalsMet, sense } from './world';
 import { msg } from '../i18n';
@@ -66,11 +67,14 @@ function* runBlocks(
         };
         break;
       }
-      case 'repeat':
-        for (let i = 0; i < block.times; i++) {
+      case 'repeat': {
+        // "repeat tally" reads the tally once, as the loop starts (CR-TALLY)
+        const times = block.times === BY_TALLY ? world.tally : block.times;
+        for (let i = 0; i < times; i++) {
           yield* runBlocks(program, world, block.body, routine, callStack, ticks);
         }
         break;
+      }
       case 'if':
         yield* runBlocks(program, world, sense(world, block.cond) ? block.then : block.else, routine, callStack, ticks);
         break;
@@ -112,7 +116,7 @@ export class Runner {
     return this.outcome !== null;
   }
 
-  /** Executes exactly one action (or finishes). Returns the step event, if one ran. */
+  /** Executes exactly one action (or finishes). Returns the step event, if one ran. Counting costs no step. */
   step(): StepEvent | null {
     if (this.outcome) return null;
     this.status = 'running';
@@ -131,7 +135,7 @@ export class Runner {
       return null;
     }
     const ev = r.value.event;
-    this.steps++;
+    if (!FREE_ACTIONS.has(ev.action)) this.steps++;
     if (!ev.ok) {
       this.finish({ status: 'crashed', steps: this.steps, error: `${ev.error} at step ${this.steps}`, blockId: ev.blockId });
     } else if (goalsMet(this.world)) {

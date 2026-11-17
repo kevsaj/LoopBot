@@ -1,13 +1,14 @@
 // LV-3: breadth-first search for the shortest action sequence that clears a floor.
 // Used by the level checks to confirm the step par is the true minimum.
 
-import { ACTIONS } from './types';
+import { ACTIONS, BY_TALLY, FREE_ACTIONS } from './types';
 import type { Action, LevelFile, World } from './types';
 import { applyAction, cloneWorld, createWorld, goalsMet, worldKey } from './world';
 import { STEP_LIMIT } from './interpreter';
 
 export function shortestActionPath(level: LevelFile, maxStates = 200_000): Action[] | null {
-  const allowed = ACTIONS.filter((a) => level.commands.includes(a));
+  // Counting never moves LoopBot or costs a step, so it is never part of a shortest path.
+  const allowed = ACTIONS.filter((a) => level.commands.includes(a) && !FREE_ACTIONS.has(a));
   const start = createWorld(level);
   if (goalsMet(start)) return [];
   const seen = new Set([worldKey(start)]);
@@ -52,11 +53,12 @@ function execList(w: World, list: SBlock[], steps: { n: number }, fns: Bodies): 
 function execBlock(w: World, b: SBlock, steps: { n: number }, fns: Bodies): Exec {
   if (b === 'F1' || b === 'F2') return execList(w, fns[b] ?? [], steps, fns);
   if (typeof b === 'string') {
-    if (++steps.n > STEP_LIMIT) return 'crash';
+    if (!FREE_ACTIONS.has(b as Action) && ++steps.n > STEP_LIMIT) return 'crash';
     if (!applyAction(w, b).ok) return 'crash';
     return goalsMet(w) ? 'clear' : 'ok';
   }
-  for (let i = 0; i < b.times; i++) {
+  const times = b.times === BY_TALLY ? w.tally : b.times;
+  for (let i = 0; i < times; i++) {
     const r = execList(w, b.body, steps, fns);
     if (r !== 'ok') return r;
   }
@@ -71,6 +73,10 @@ type Memo = Map<string, SBlock[][]>;
 /** Thrown when a search runs past its time budget (only the daily generator sets one). */
 export class SearchBudgetExceeded extends Error {}
 let deadline = Infinity;
+/** Whether repeat blocks may take the tally as their count (Dockyard), set per search. */
+let tallyLoops = false;
+/** Whether repeat blocks with a fixed count are allowed (a floor may offer only "repeat tally"). */
+let numberLoops = true;
 let ticks = 0;
 function tick() {
   if (deadline !== Infinity && (++ticks & 1023) === 0 && Date.now() > deadline) throw new SearchBudgetExceeded('search budget exceeded');
@@ -78,7 +84,7 @@ function tick() {
 
 /**
  * All block lists of exactly `size` blocks, loops nested at most `depth` deep.
- * Skips lists that a shorter list always matches (a loop of only turns, left right pairs),
+ * Skips lists that a shorter list always matches (a loop of only turns, left right pairs, a count up then down),
  * which never changes the minimum.
  */
 function lists(atoms: Atom[], size: number, depth: number, memo: Memo, cap = Infinity): SBlock[][] {
@@ -94,6 +100,8 @@ function lists(atoms: Atom[], size: number, depth: number, memo: Memo, cap = Inf
         for (const rest of lists(atoms, size - first, depth, memo, cap)) {
           const nx = rest[0];
           if ((b === 'turn_left' && nx === 'turn_right') || (b === 'turn_right' && nx === 'turn_left')) continue;
+          // counting up then straight back down (or the other way) changes nothing either
+          if ((b === 'tally_up' && nx === 'tally_down') || (b === 'tally_down' && nx === 'tally_up')) continue;
           out.push([b, ...rest]);
         }
       }
@@ -109,13 +117,14 @@ function blocks(atoms: Atom[], size: number, depth: number, memo: Memo, cap = In
   const out: SBlock[] = [];
   for (const body of lists(atoms, size - 1, depth - 1, memo, cap)) {
     if (onlyTurns(body)) continue;
-    for (let times = 2; times <= 9; times++) out.push({ times, body });
+    if (numberLoops) for (let times = 2; times <= 9; times++) out.push({ times, body });
+    if (tallyLoops) out.push({ times: BY_TALLY, body });
   }
   return out;
 }
 
 function toRef(list: SBlock[]): string {
-  return list.map((b) => (typeof b === 'string' ? b : `repeat ${b.times} { ${toRef(b.body)} }`)).join(' ');
+  return list.map((b) => (typeof b === 'string' ? b : `repeat ${b.times === BY_TALLY ? 'tally' : b.times} { ${toRef(b.body)} }`)).join(' ');
 }
 
 function withDefs(main: SBlock[], fns: Bodies): string {
@@ -148,6 +157,8 @@ function usefulActions(level: LevelFile): Action[] {
     drop: hasBoxes,
     activate: hasSwitch,
     wait: hasVents,
+    tally_up: true,
+    tally_down: true,
   };
   return ACTIONS.filter((a) => level.commands.includes(a) && can[a]);
 }
@@ -169,10 +180,14 @@ export function smallestProgram(
   limits: { loopBody?: number; fnBody?: number; budgetMs?: number } = {},
 ): string | null {
   deadline = limits.budgetMs ? Date.now() + limits.budgetMs : Infinity;
+  tallyLoops = level.commands.includes('repeat_tally');
+  numberLoops = level.commands.includes('repeat');
   try {
     return smallest(level, maxSize, maxDepth, limits);
   } finally {
     deadline = Infinity;
+    tallyLoops = false;
+    numberLoops = true;
   }
 }
 
@@ -183,7 +198,7 @@ function smallest(level: LevelFile, maxSize: number, maxDepth: number, limits: {
   const mainSlots = level.slots.main ?? Infinity;
   const f1Cap = Math.min(limits.fnBody ?? Infinity, level.slots.F1 ?? Infinity);
   const f2Cap = Math.min(limits.fnBody ?? Infinity, level.slots.F2 ?? Infinity);
-  const loops = level.commands.includes('repeat') ? maxDepth : 0;
+  const loops = level.commands.includes('repeat') || level.commands.includes('repeat_tally') ? maxDepth : 0;
   const hasF1 = level.commands.includes('F1');
   const hasF2 = hasF1 && level.commands.includes('F2');
   const start = createWorld(level);

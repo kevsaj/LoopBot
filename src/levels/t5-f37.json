@@ -1,0 +1,76 @@
+{
+  "id": "t5-f37",
+  "title": "Crate Markers",
+  "band": "office",
+  "size": {
+    "w": 7,
+    "h": 8
+  },
+  "tiles": [
+    "##_____",
+    ".....__",
+    "___.#_#",
+    "__#.__#",
+    "_#_....",
+    "_#_._._",
+    "_____e_",
+    "#______"
+  ],
+  "heights": null,
+  "boxes": [
+    {
+      "x": 4,
+      "y": 1,
+      "count": 2
+    },
+    {
+      "x": 6,
+      "y": 4,
+      "count": 2
+    }
+  ],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "tally_up",
+    "tally_down",
+    "repeat",
+    "repeat_tally",
+    "while",
+    "if"
+  ],
+  "slots": {
+    "main": 11
+  },
+  "par": {
+    "commands": 9,
+    "steps": 13
+  },
+  "reference": "repeat 2 { while not box_ahead { forward tally_up } turn_right repeat tally { forward tally_down } turn_left }",
+  "hints": [
+    "Here the quays end at crate stacks, not walls. Ask about the crate.",
+    "While there is no box ahead: step and count. Then copy the distance.",
+    "repeat 2 { while not box_ahead { forward tally_up } turn_right repeat tally { forward tally_down } turn_left }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "sensors": [
+    "box_ahead"
+  ]
+}

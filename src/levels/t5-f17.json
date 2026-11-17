@@ -1,0 +1,58 @@
+{
+  "id": "t5-f17",
+  "title": "Switch Countdown",
+  "band": "crane",
+  "size": {
+    "w": 7,
+    "h": 6
+  },
+  "tiles": [
+    "_______",
+    "_s...._",
+    "_#___._",
+    "__#e_d_",
+    "___..._",
+    "___#___"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "tally_up",
+    "tally_down",
+    "repeat",
+    "repeat_tally"
+  ],
+  "slots": {
+    "main": 10
+  },
+  "par": {
+    "commands": 8,
+    "steps": 14
+  },
+  "reference": "activate repeat 4 { tally_up } repeat 4 { repeat tally { forward } turn_right tally_down }",
+  "hints": [
+    "The door on the crane arm is shut. The switch is under your feet.",
+    "Activate first, then count down the arm: 4, 3, 2, 1.",
+    "activate repeat 4 { tally_up } repeat 4 { repeat tally { forward } turn_right tally_down }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

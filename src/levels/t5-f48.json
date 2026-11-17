@@ -1,0 +1,60 @@
+{
+  "id": "t5-f48",
+  "title": "Bug Hunt: Too Soon",
+  "band": "crest",
+  "size": {
+    "w": 7,
+    "h": 6
+  },
+  "tiles": [
+    "__#____",
+    "_....._",
+    "_#___._",
+    "___e#.#",
+    "___..._",
+    "__##___"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "tally_up",
+    "tally_down",
+    "repeat",
+    "repeat_tally"
+  ],
+  "slots": {
+    "main": 9
+  },
+  "par": {
+    "commands": 7,
+    "steps": 13
+  },
+  "reference": "repeat 4 { tally_up } repeat 4 { repeat tally { forward } turn_right tally_down }",
+  "hints": [
+    "The arm should go 4, 3, 2, 1. This one starts at 3.",
+    "Take 1 off after the stretch, not before.",
+    "repeat 4 { tally_up } repeat 4 { repeat tally { forward } turn_right tally_down }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "typing": true,
+  "starter": "repeat 4 { tally_up } repeat 4 { tally_down repeat tally { forward } turn_right }"
+}

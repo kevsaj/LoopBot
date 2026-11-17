@@ -1,0 +1,65 @@
+{
+  "id": "t5-f14",
+  "title": "Crate Step",
+  "band": "crane",
+  "size": {
+    "w": 8,
+    "h": 3
+  },
+  "tiles": [
+    "#__##___",
+    "#.....e#",
+    "#___#__#"
+  ],
+  "heights": [
+    "00000000",
+    "00000220",
+    "00000000"
+  ],
+  "boxes": [
+    {
+      "x": 2,
+      "y": 1,
+      "count": 1
+    }
+  ],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "tally_up",
+    "tally_down",
+    "repeat",
+    "repeat_tally"
+  ],
+  "slots": {
+    "main": 9
+  },
+  "par": {
+    "commands": 7,
+    "steps": 7
+  },
+  "reference": "pick_up forward forward drop jump jump forward",
+  "hints": [
+    "The platform is two containers high. You can only jump up one.",
+    "Carry the crate forward and drop it as a step.",
+    "pick_up forward forward drop jump jump forward"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

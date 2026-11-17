@@ -1,0 +1,62 @@
+{
+  "id": "t5-f31",
+  "title": "Measure Twice",
+  "band": "office",
+  "size": {
+    "w": 8,
+    "h": 8
+  },
+  "tiles": [
+    "#__#_#__",
+    "_....___",
+    "____._#_",
+    "____._#_",
+    "_#_#...#",
+    "____._.#",
+    "_#_##_e_",
+    "#___#_#_"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "tally_up",
+    "tally_down",
+    "repeat",
+    "repeat_tally",
+    "while",
+    "if"
+  ],
+  "slots": {
+    "main": 11
+  },
+  "par": {
+    "commands": 9,
+    "steps": 13
+  },
+  "reference": "repeat 2 { while not wall_ahead { forward tally_up } turn_right repeat tally { forward tally_down } turn_left }",
+  "hints": [
+    "Walk to the end of the quay and count every step. The next stretch is just as long.",
+    "While there is no wall: step and count. Turn, then walk the tally back to 0.",
+    "repeat 2 { while not wall_ahead { forward tally_up } turn_right repeat tally { forward tally_down } turn_left }"
+  ],
+  "story": {
+    "intro": "PATCH: \"The Tally House. Nobody tells you how long these quays are. Walk to the wall, count every step, then walk that far again.\"",
+    "outro": null
+  }
+}

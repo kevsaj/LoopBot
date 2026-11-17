@@ -1,0 +1,58 @@
+{
+  "id": "t5-f07",
+  "title": "Square Spiral",
+  "band": "quay",
+  "size": {
+    "w": 7,
+    "h": 7
+  },
+  "tiles": [
+    "_______",
+    "#e____#",
+    "_.__###",
+    "_._..._",
+    "_._#_._",
+    "_....._",
+    "_____#_"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 3,
+    "y": 3,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "tally_up",
+    "repeat",
+    "repeat_tally"
+  ],
+  "slots": {
+    "main": 9
+  },
+  "par": {
+    "commands": 7,
+    "steps": 15
+  },
+  "reference": "repeat 2 { tally_up repeat 2 { repeat tally { forward forward } turn_right } }",
+  "hints": [
+    "The spiral grows after every two sides: 2, 2, then 4, 4.",
+    "Count once, then walk two sides with the same tally.",
+    "repeat 2 { tally_up repeat 2 { repeat tally { forward forward } turn_right } }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

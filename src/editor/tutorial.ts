@@ -90,6 +90,8 @@ const STEP_LINE: Record<Action, string> = {
   drop: msg('> ▼ drop'),
   activate: msg('> ◉ activate'),
   wait: msg('> ‖ wait: stayed put for one step'),
+  tally_up: msg('> + tally + 1: counted, no step taken'),
+  tally_down: msg('> − tally − 1: counted, no step taken'),
 };
 
 /** The terminal line for one step of a run. */

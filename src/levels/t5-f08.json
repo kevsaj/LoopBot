@@ -1,0 +1,64 @@
+{
+  "id": "t5-f08",
+  "title": "Bollard Steps",
+  "band": "quay",
+  "size": {
+    "w": 7,
+    "h": 6
+  },
+  "tiles": [
+    "___#___",
+    "..##_#_",
+    "#...#__",
+    "___....",
+    "#_____e",
+    "______#"
+  ],
+  "heights": [
+    "0000000",
+    "0000000",
+    "0111000",
+    "0002222",
+    "0000003",
+    "0000000"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "tally_up",
+    "repeat",
+    "repeat_tally"
+  ],
+  "slots": {
+    "main": 9
+  },
+  "par": {
+    "commands": 7,
+    "steps": 14
+  },
+  "reference": "repeat 3 { tally_up repeat tally { forward } turn_right jump turn_left }",
+  "hints": [
+    "Walk the tally, then hop up one bollard to the side.",
+    "Count, walk, turn right, jump, turn left.",
+    "repeat 3 { tally_up repeat tally { forward } turn_right jump turn_left }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

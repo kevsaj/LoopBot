@@ -299,3 +299,40 @@ describe('turntables and the compass (Twist)', () => {
     expect(toCode(parseReference(ref)).map((x) => x.text.trim())).toContain('if facing_north():');
   });
 });
+
+describe('the tally (Dockyard)', () => {
+  const tally = (tiles: string[], over: Partial<LevelFile> = {}) =>
+    level({ size: { w: tiles[0].length, h: tiles.length }, tiles, commands: ['forward', 'turn_left', 'turn_right', 'tally_up', 'tally_down', 'repeat_tally', 'repeat'], ...over });
+
+  it('counting costs no step, and repeat tally repeats as many times as the tally says', () => {
+    const l = tally(['#######', '#....e#', '#######']);
+    expect(run(l, 'tally_up tally_up tally_up tally_up repeat tally { forward }')).toMatchObject({ status: 'cleared', steps: 4 });
+    expect(run(l, 'tally_up tally_up tally_up repeat tally { forward }')).toMatchObject({ status: 'ended', steps: 3 });
+    // a tally of 0 runs the body no times
+    expect(run(l, 'repeat tally { forward }')).toMatchObject({ status: 'ended', steps: 0 });
+  });
+
+  it('reads the tally once, when the loop starts, so counting down inside it is safe', () => {
+    // walk 2, then 1 more after counting down inside: 3 tiles in all
+    const l = tally(['######', '#...e#', '######']);
+    expect(run(l, 'tally_up tally_up repeat tally { forward tally_down } tally_up repeat tally { forward }')).toMatchObject({ status: 'cleared', steps: 3 });
+  });
+
+  it('a growing staircase: count up each time round', () => {
+    // east 1, north 1, east 2, north 1, east 3
+    const l = tally(['#########', '####...e#', '##...####', '#..######', '#.#######'], { bot: { x: 1, y: 4, facing: 'north' } });
+    const ref = 'repeat 3 { forward turn_right tally_up repeat tally { forward } turn_left }';
+    expect(run(l, ref)).toMatchObject({ status: 'cleared', steps: 14 });
+  });
+
+  it('the tally stops at 0 and 9', () => {
+    const l = tally(['######', '#...e#', '######']);
+    expect(run(l, 'tally_down').status).toBe('crashed');
+    expect(run(l, 'repeat 9 { tally_up } tally_up').status).toBe('crashed');
+  });
+
+  it('shows as a real variable in the code view', () => {
+    const lines = toCode(parseReference('tally_up repeat tally { forward tally_down }')).map((x) => x.text.trim());
+    expect(lines).toEqual(['def main():', 'tally += 1', 'repeat tally:', 'forward()', 'tally -= 1']);
+  });
+});

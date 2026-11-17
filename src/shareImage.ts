@@ -53,6 +53,12 @@ const SKIES: Record<string, string[]> = {
   loom: ['#2a1630', '#5a2a4e', '#a8435a', '#f0a07a'],
   lantern: ['#0a0d1e', '#161a36', '#3a2440', '#b8463a'],
   pinnacle: ['#0f2a4a', '#3a6aa0', '#8fbfe6', '#eaf4ff'],
+  // Tower 5, Dockyard
+  quay: ['#1a2c44', '#2f5577', '#e0875a', '#ffd9a0'],
+  crane: ['#14202e', '#30465e', '#7a9ab4', '#d6e2ea'],
+  ropewalk: ['#2a1a12', '#5a3a24', '#a8743e', '#f0cf96'],
+  office: ['#0c1424', '#1a2c4a', '#2f4f6f', '#e8b04a'],
+  crest: ['#0e3354', '#2a6b9a', '#8cc8e8', '#fff3dc'],
 };
 
 /** How many code lines fit; longer programs end with "…". */

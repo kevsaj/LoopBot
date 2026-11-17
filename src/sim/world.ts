@@ -1,3 +1,4 @@
+import { FREE_ACTIONS, MAX_TALLY } from './types';
 import type { Action, Colour, Condition, Facing, LevelFile, Pos, Tile, TileType, World } from './types';
 import { msg } from '../i18n';
 
@@ -78,6 +79,7 @@ export function createWorld(level: LevelFile): World {
     cracked,
     clock: 0,
     ventCycle: vents ? (level.ventCycle ?? DEFAULT_VENT_CYCLE) : 0,
+    tally: 0,
     bot: { x: level.bot.x, y: level.bot.y, facing: level.bot.facing, carrying: false },
     goals: [...level.goals],
   };
@@ -182,11 +184,25 @@ export function ventBlasting(w: World, p: Pos, clock = w.clock): boolean {
  * After the step the clock ticks; if LoopBot ends it on a blasting vent, the step fails.
  */
 export function applyAction(w: World, action: Action): ActionResult {
+  // Counting (CR-TALLY) is free: no step, so the clock doesn't tick either.
+  if (FREE_ACTIONS.has(action)) return count(w, action);
   const res = act(w, action);
   if (!res.ok) return res;
   w.clock++;
   if (ventBlasting(w, w.bot)) return { ok: false, error: msg('ERR: scorched by a vent') };
   return res;
+}
+
+/** The tally (CR-TALLY): one number, 0 to MAX_TALLY. Going past either end is an error. */
+function count(w: World, action: Action): ActionResult {
+  if (action === 'tally_up') {
+    if (w.tally >= MAX_TALLY) return { ok: false, error: msg('ERR: the tally only goes up to 9') };
+    w.tally++;
+  } else {
+    if (w.tally <= 0) return { ok: false, error: msg('ERR: the tally is already 0') };
+    w.tally--;
+  }
+  return { ok: true };
 }
 
 function act(w: World, action: Action): ActionResult {
@@ -242,6 +258,9 @@ function act(w: World, action: Action): ActionResult {
       bot.carrying = false;
       return { ok: true };
     }
+    case 'tally_up':
+    case 'tally_down':
+      return count(w, action);
     case 'activate': {
       const k = key(bot.x, bot.y);
       if (w.tiles[bot.y][bot.x].type !== 'switch') return { ok: false, error: msg('ERR: no switch here') };
@@ -316,5 +335,5 @@ export function worldKey(w: World): string {
     .map((s) => (s ? 1 : 0))
     .join('')}|${Object.values(w.cracked)
     .map((s) => (s ? 1 : 0))
-    .join('')}${w.ventCycle ? `|${w.clock % w.ventCycle}` : ''}`;
+    .join('')}${w.ventCycle ? `|${w.clock % w.ventCycle}` : ''}${w.tally ? `|t${w.tally}` : ''}`;
 }

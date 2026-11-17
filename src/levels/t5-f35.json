@@ -1,0 +1,62 @@
+{
+  "id": "t5-f35",
+  "title": "Copy Across",
+  "band": "office",
+  "size": {
+    "w": 8,
+    "h": 8
+  },
+  "tiles": [
+    "#_______",
+    "_.____#_",
+    "_._#___#",
+    "#.__##__",
+    "_.....#_",
+    "_#_#.___",
+    "____..e_",
+    "_______#"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "south"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "tally_up",
+    "tally_down",
+    "repeat",
+    "repeat_tally",
+    "while",
+    "if"
+  ],
+  "slots": {
+    "main": 11
+  },
+  "par": {
+    "commands": 9,
+    "steps": 13
+  },
+  "reference": "repeat 2 { while not wall_ahead { forward tally_up } turn_left repeat tally { forward tally_down } turn_right }",
+  "hints": [
+    "This time you measure going down, and copy going across.",
+    "Count to the wall, turn left, walk the tally.",
+    "repeat 2 { while not wall_ahead { forward tally_up } turn_left repeat tally { forward tally_down } turn_right }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

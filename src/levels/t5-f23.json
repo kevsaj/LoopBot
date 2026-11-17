@@ -1,0 +1,66 @@
+{
+  "id": "t5-f23",
+  "title": "Rope Ladder",
+  "band": "ropewalk",
+  "size": {
+    "w": 7,
+    "h": 6
+  },
+  "tiles": [
+    "__#_#_#",
+    "__#...#",
+    "_____.#",
+    "_#_#_._",
+    "_e....#",
+    "______#"
+  ],
+  "heights": [
+    "0000000",
+    "0000010",
+    "0000010",
+    "0000010",
+    "0322220",
+    "0000000"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 3,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "tally_up",
+    "tally_down",
+    "repeat_tally",
+    "F1"
+  ],
+  "slots": {
+    "main": 4,
+    "F1": 6
+  },
+  "par": {
+    "commands": 8,
+    "steps": 11
+  },
+  "reference": "F1 F1 F1 def F1 { tally_up repeat tally { forward } jump turn_right }",
+  "hints": [
+    "Each stretch ends with a jump up the rope ladder, and each is one tile longer.",
+    "One routine: count, walk the tally, jump, turn right. Call it three times.",
+    "F1 F1 F1 def F1 { tally_up repeat tally { forward } jump turn_right }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

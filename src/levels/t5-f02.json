@@ -1,0 +1,57 @@
+{
+  "id": "t5-f02",
+  "title": "Stacked Steps",
+  "band": "quay",
+  "size": {
+    "w": 7,
+    "h": 6
+  },
+  "tiles": [
+    "______#",
+    "____#_e",
+    "#__....",
+    "#...#__",
+    ".._#_#_",
+    "##_##__"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 4,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "tally_up",
+    "repeat",
+    "repeat_tally"
+  ],
+  "slots": {
+    "main": 9
+  },
+  "par": {
+    "commands": 7,
+    "steps": 14
+  },
+  "reference": "repeat 3 { tally_up repeat tally { forward } turn_left forward turn_right }",
+  "hints": [
+    "The steps get longer as you climb: 1, 2, 3.",
+    "Count up, walk the tally, then take one step up the side.",
+    "repeat 3 { tally_up repeat tally { forward } turn_left forward turn_right }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

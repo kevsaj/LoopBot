@@ -1,0 +1,67 @@
+{
+  "id": "t5-f16",
+  "title": "Lowering the Load",
+  "band": "crane",
+  "size": {
+    "w": 8,
+    "h": 7
+  },
+  "tiles": [
+    "______##",
+    "_......_",
+    "____#_._",
+    "#____#._",
+    "___e__._",
+    "##_...._",
+    "#____#_#"
+  ],
+  "heights": [
+    "00000000",
+    "03333320",
+    "00000020",
+    "00000020",
+    "00000020",
+    "00001110",
+    "00000000"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "repeat_tally",
+    "tally_up",
+    "tally_down"
+  ],
+  "slots": {
+    "main": 10
+  },
+  "par": {
+    "commands": 8,
+    "steps": 16
+  },
+  "reference": "repeat 5 { tally_up } repeat 4 { tally_down repeat tally { forward } jump turn_right }",
+  "hints": [
+    "Take 1 off before each stretch: 4, 3, 2, 1, each ending with a drop.",
+    "Start the tally at 5. Count down, walk the tally, jump down, turn right.",
+    "repeat 5 { tally_up } repeat 4 { tally_down repeat tally { forward } jump turn_right }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

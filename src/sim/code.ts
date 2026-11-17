@@ -7,12 +7,15 @@
 //       while not wall_ahead():
 //           F1()
 //   def F1():
+//       tally += 1            (Dockyard: the tally is LoopBot's one number)
+//       repeat tally:
+//           forward()
 //       if tile_is("r"):
 //           turn_left()
 //       else:
 //           pass
 
-import { ACTIONS, FUNCTION_NAMES, SENSORS } from './types';
+import { ACTIONS, BY_TALLY, FUNCTION_NAMES, SENSORS } from './types';
 import type { Action, Block, Colour, Condition, FunctionName, LevelFile, Program, Routine, Sensor } from './types';
 import { countBlocks, emptyProgram, loopHeight, MAX_DEPTH, MAX_TIMES, MIN_TIMES, newId } from './program';
 import { t } from '../i18n';
@@ -55,7 +58,7 @@ function parse(text: string, level?: LevelFile): Program {
     lines.push({ no: i + 1, indent: lead.length, text: noComment.trim() });
   });
 
-  const allowed = new Set<string>(level ? level.commands : [...ACTIONS, 'repeat', 'if', 'while', ...FUNCTION_NAMES]);
+  const allowed = new Set<string>(level ? level.commands : [...ACTIONS, 'repeat', 'repeat_tally', 'if', 'while', ...FUNCTION_NAMES]);
   const sensors = new Set<string>(level ? ['wall_ahead', ...(level.sensors ?? [])] : SENSORS);
   const slots = (r: Routine) => (level ? (level.slots[r] ?? 0) : Infinity);
   let i = 0;
@@ -99,7 +102,16 @@ function parse(text: string, level?: LevelFile): Program {
       i++;
       let m: RegExpMatchArray | null;
       if (l.text === 'pass') continue;
-      if ((m = l.text.match(/^repeat\s*\(?\s*(\d+)\s*\)?\s*:$/))) {
+      if ((m = l.text.match(/^tally\s*([+-])=\s*1$/))) {
+        const action: Action = m[1] === '+' ? 'tally_up' : 'tally_down';
+        need(action, l.no);
+        out.push({ id: newId(), kind: 'action', action });
+      } else if (/^tally\b/.test(l.text)) {
+        throw new CodeError(l.no, t('the tally only counts by one: tally += 1 or tally -= 1'));
+      } else if (/^repeat\s*\(?\s*tally\s*\)?\s*:$/.test(l.text)) {
+        need('repeat_tally', l.no);
+        out.push({ id: newId(), kind: 'repeat', times: BY_TALLY, body: body(indent, l) });
+      } else if ((m = l.text.match(/^repeat\s*\(?\s*(\d+)\s*\)?\s*:$/))) {
         need('repeat', l.no);
         const times = Number(m[1]);
         if (times < MIN_TIMES || times > MAX_TIMES) throw new CodeError(l.no, t('repeat counts go from {min} to {max}', { min: MIN_TIMES, max: MAX_TIMES }));
@@ -123,7 +135,7 @@ function parse(text: string, level?: LevelFile): Program {
         throw new CodeError(l.no, t('else needs an if just above it'));
       } else if ((m = l.text.match(/^([A-Za-z_]\w*)\s*(\(\s*\))?$/))) {
         const name = m[1];
-        if ((ACTIONS as readonly string[]).includes(name)) {
+        if ((ACTIONS as readonly string[]).includes(name) && !name.startsWith('tally_')) {
           need(name, l.no);
           out.push({ id: newId(), kind: 'action', action: name as Action });
         } else if ((FUNCTION_NAMES as readonly string[]).includes(name)) {

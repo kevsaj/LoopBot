@@ -1,0 +1,60 @@
+{
+  "id": "t5-f41",
+  "title": "Glass Deck",
+  "band": "crest",
+  "size": {
+    "w": 6,
+    "h": 7
+  },
+  "tiles": [
+    "______",
+    "_...._",
+    "_._#._",
+    "_._.._",
+    "#.#__#",
+    "_e_#__",
+    "__#__#"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 3,
+    "y": 3,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "tally_up",
+    "tally_down",
+    "repeat",
+    "repeat_tally"
+  ],
+  "slots": {
+    "main": 7
+  },
+  "par": {
+    "commands": 5,
+    "steps": 13
+  },
+  "reference": "repeat 4 { tally_up repeat tally { forward } turn_left }",
+  "hints": [
+    "Four stretches across the glass: 1, 2, 3, 4.",
+    "Count, walk the tally, turn left. Four times.",
+    "repeat 4 { tally_up repeat tally { forward } turn_left }"
+  ],
+  "story": {
+    "intro": "PATCH: \"The Crest, the Wavehouse's glass roof. Type your programs if you like. tally += 1 is the same block as tally + 1.\"",
+    "outro": null
+  },
+  "typing": true
+}

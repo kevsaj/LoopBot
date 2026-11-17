@@ -16,6 +16,7 @@ import FR_T1 from '../i18n/fr/t1.json';
 import FR_T2 from '../i18n/fr/t2.json';
 import FR_T3 from '../i18n/fr/t3.json';
 import FR_T4 from '../i18n/fr/t4.json';
+import FR_T5 from '../i18n/fr/t5.json';
 import FR_DAILY from '../i18n/fr/daily.json';
 import { frenchSpacing } from '../i18n/fr';
 
@@ -28,13 +29,13 @@ export interface FloorText {
 }
 
 /**
- * Same switches as levels/towers.ts: the city packs' words (Heatwave, Twist) only ship in the
+ * Same switches as levels/towers.ts: the city packs' words (Heatwave, Twist, Dockyard) only ship in the
  * builds that have those towers, which are preview builds and builds with the store turned on.
  */
 const PACKS_IN_BUILD = import.meta.env.DEV || import.meta.env.VITE_PLUS_PREVIEW === '1' || import.meta.env.VITE_PLUS === '1';
 
 export const FLOOR_TEXT: Record<Exclude<Lang, 'en'>, Record<string, FloorText>> = {
-  fr: spaced({ ...FR_T1, ...FR_T2, ...(PACKS_IN_BUILD ? { ...FR_T3, ...FR_T4 } : {}) }),
+  fr: spaced({ ...FR_T1, ...FR_T2, ...(PACKS_IN_BUILD ? { ...FR_T3, ...FR_T4, ...FR_T5 } : {}) }),
 };
 
 function spaced(floors: Record<string, FloorText>): Record<string, FloorText> {
@@ -63,6 +64,7 @@ export function blockWords(code: string): string {
     if (tok in COMMAND_META) {
       out.push(t(COMMAND_META[tok as PaletteCommand].label));
     } else if (tok === 'else') out.push(t('else'));
+    else if (tok === 'tally') out.push(t(msg('tally')));
     else if (tok === 'def') out.push(t(msg('define')));
     else if (tok === 'not') out.push(t('not'));
     else if (SENSORS.has(tok)) {

@@ -17,7 +17,8 @@ export type Theme =
   | 'title' | 'lobby' | 'maintenance' | 'workshop' | 'control' | 'rooftop' | 'daily'
   | 'frostgate' | 'glacier' | 'signal' | 'aurora' | 'summit'
   | 'dunegate' | 'furnace' | 'bazaar' | 'mirage' | 'crown'
-  | 'ferry' | 'garden' | 'loom' | 'lantern' | 'pinnacle';
+  | 'ferry' | 'garden' | 'loom' | 'lantern' | 'pinnacle'
+  | 'quay' | 'crane' | 'ropewalk' | 'office' | 'crest';
 
 interface Recipe {
   bpm: number;
@@ -266,6 +267,56 @@ const RECIPES: Record<Theme, Recipe> = {
     kick: 'x.....x...x.....', snare: '....x.......x...', hat: 'x.xxx.xxx.xxx.xx',
     seed: 167,
   },
+  // Tower 5, Dockyard (the Wavehouse). Floors 1-10: the Container Quay, a rolling walk in six.
+  quay: {
+    bpm: 100, root: 43, mode: MIXOLYDIAN, chords: [0, 3, 6, 0], sevenths: false,
+    pad: { wave: 'triangle', cutoff: 1600, gain: 0.04 },
+    bass: 'x.....x.....o...', bassWave: 'triangle',
+    arp: '0..2..4..2..1..2', arpWave: 'triangle',
+    lead: { wave: 'triangle', density: 0.4, gain: 0.045 },
+    kick: 'x.....x.....x...', snare: '...x.....x......', hat: '..x..x..x..x..x.',
+    seed: 173,
+  },
+  // Floors 11-20: the Crane Yard, heavy and slow, a winch turning over.
+  crane: {
+    bpm: 88, root: 40, mode: DORIAN, chords: [0, 3, 4, 3], sevenths: true,
+    pad: { wave: 'sawtooth', cutoff: 1200, gain: 0.03 },
+    bass: 'x.......x.o.....', bassWave: 'square',
+    arp: '0...1...2...1...', arpWave: 'triangle',
+    lead: { wave: 'triangle', density: 0.3, gain: 0.045 },
+    kick: 'x.......x.......', snare: '....x.......x...', hat: 'x...x...x...x...',
+    seed: 179,
+  },
+  // Floors 21-30: the Ropewalk, a long hall where rope is twisted, step after step.
+  ropewalk: {
+    bpm: 112, root: 45, mode: MIXOLYDIAN, chords: [0, 4, 3, 6], sevenths: false,
+    pad: { wave: 'triangle', cutoff: 1500, gain: 0.03 },
+    bass: 'x.x.o...x.x.o...', bassWave: 'triangle',
+    arp: '0123012301230123', arpWave: 'square',
+    lead: { wave: 'square', density: 0.45, gain: 0.025 },
+    kick: 'x...x...x...x...', snare: '....x.......x...', hat: 'xx.xxx.xxx.xxx.x',
+    seed: 181,
+  },
+  // Floors 31-40: the Tally House, clerks counting under lamps at night.
+  office: {
+    bpm: 84, root: 41, mode: DORIAN, chords: [0, 5, 3, 4], sevenths: true,
+    pad: { wave: 'sine', cutoff: 1500, gain: 0.045 },
+    bass: 'x.......o...x...', bassWave: 'sine',
+    arp: '0.2.4.2.0.2.4.2.', arpWave: 'sine',
+    lead: { wave: 'triangle', density: 0.3, gain: 0.045 },
+    kick: 'x.........x.....', snare: '........x.......', hat: '..x...x...x...x.',
+    seed: 191,
+  },
+  // Floors 41-50: the Crest, wind and gulls over the wave-shaped roof.
+  crest: {
+    bpm: 124, root: 43, mode: MIXOLYDIAN, chords: [0, 4, 6, 3], sevenths: false,
+    pad: { wave: 'sawtooth', cutoff: 1800, gain: 0.03 },
+    bass: 'x..x..x.x..x..o.', bassWave: 'triangle',
+    arp: '0124321001243210', arpWave: 'triangle',
+    lead: { wave: 'square', density: 0.45, gain: 0.025 },
+    kick: 'x.....x...x.....', snare: '....x.......x...', hat: 'x.xxx.xxx.xxx.xx',
+    seed: 193,
+  },
   // The daily challenge: cheerful and a little different every bar.
   daily: {
     bpm: 104, root: 46, mode: IONIAN, chords: [0, 3, 5, 4], sevenths: false,
@@ -283,6 +334,7 @@ export function themeForFloor(n: number, tower = 1): Theme {
   if (tower === 2) return (['frostgate', 'glacier', 'signal', 'aurora', 'summit'] as const)[Math.min(4, Math.floor((n - 1) / 10))];
   if (tower === 3) return (['dunegate', 'furnace', 'bazaar', 'mirage', 'crown'] as const)[Math.min(4, Math.floor((n - 1) / 10))];
   if (tower === 4) return (['ferry', 'garden', 'loom', 'lantern', 'pinnacle'] as const)[Math.min(4, Math.floor((n - 1) / 10))];
+  if (tower === 5) return (['quay', 'crane', 'ropewalk', 'office', 'crest'] as const)[Math.min(4, Math.floor((n - 1) / 10))];
   if (n <= 10) return 'lobby';
   if (n <= 20) return 'maintenance';
   if (n <= 30) return 'workshop';

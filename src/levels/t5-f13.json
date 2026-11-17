@@ -1,0 +1,67 @@
+{
+  "id": "t5-f13",
+  "title": "Rising Arm",
+  "band": "crane",
+  "size": {
+    "w": 8,
+    "h": 7
+  },
+  "tiles": [
+    "##_#____",
+    "_......#",
+    "____#_._",
+    "#_____._",
+    "___e__._",
+    "___...._",
+    "_#_#_#_#"
+  ],
+  "heights": [
+    "00000000",
+    "00000010",
+    "00000010",
+    "00000010",
+    "00030010",
+    "00032220",
+    "00000000"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "repeat_tally",
+    "tally_up",
+    "tally_down"
+  ],
+  "slots": {
+    "main": 10
+  },
+  "par": {
+    "commands": 8,
+    "steps": 16
+  },
+  "reference": "repeat 4 { tally_up } repeat 4 { repeat tally { forward } jump turn_right tally_down }",
+  "hints": [
+    "Each stretch is one shorter, and ends with a jump up.",
+    "Count up to 4. Then walk the tally, jump, turn right and take 1 off.",
+    "repeat 4 { tally_up } repeat 4 { repeat tally { forward } jump turn_right tally_down }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

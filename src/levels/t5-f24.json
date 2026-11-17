@@ -1,0 +1,61 @@
+{
+  "id": "t5-f24",
+  "title": "Bug Hunt: Wrong Way",
+  "band": "ropewalk",
+  "size": {
+    "w": 7,
+    "h": 7
+  },
+  "tiles": [
+    "#__#_#_",
+    "e......",
+    "___#__.",
+    "##____.",
+    "#_#___.",
+    "#_##...",
+    "#______"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 4,
+    "y": 5,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "tally_up",
+    "tally_down",
+    "repeat_tally",
+    "F1"
+  ],
+  "slots": {
+    "main": 4,
+    "F1": 6
+  },
+  "par": {
+    "commands": 8,
+    "steps": 14
+  },
+  "reference": "F1 F1 F1 def F1 { tally_up repeat tally { forward forward } turn_left }",
+  "hints": [
+    "Each stretch should be two tiles longer than the last.",
+    "Something in F1 is a little off. Fix one block.",
+    "F1 F1 F1 def F1 { tally_up repeat tally { forward forward } turn_left }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "starter": "F1 F1 F1 def F1 { tally_up repeat tally { forward forward } turn_right }"
+}

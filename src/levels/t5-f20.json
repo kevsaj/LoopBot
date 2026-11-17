@@ -1,0 +1,59 @@
+{
+  "id": "t5-f20",
+  "title": "The Crane Yard",
+  "band": "crane",
+  "size": {
+    "w": 7,
+    "h": 7
+  },
+  "tiles": [
+    "_#.....",
+    "__.#_#.",
+    "#_._e_.",
+    "__.#.#.",
+    "__..._.",
+    "#_____.",
+    "......."
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 6,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "repeat_tally",
+    "tally_up",
+    "tally_down"
+  ],
+  "slots": {
+    "main": 11
+  },
+  "par": {
+    "commands": 9,
+    "steps": 29
+  },
+  "reference": "repeat 3 { tally_up } repeat 3 { repeat 2 { repeat tally { forward forward } turn_left } tally_down }",
+  "hints": [
+    "Two sides at every length: 6, 6, 4, 4, 2, 2.",
+    "Start the tally at 3. Walk two sides, two tiles per tally, then take 1 off.",
+    "repeat 3 { tally_up } repeat 3 { repeat 2 { repeat tally { forward forward } turn_left } tally_down }"
+  ],
+  "story": {
+    "intro": "PATCH: \"The tallest crane in the yard. Two sides at every length, and a little shorter each time round.\"",
+    "outro": null
+  }
+}

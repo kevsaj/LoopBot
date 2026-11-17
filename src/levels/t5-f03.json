@@ -1,0 +1,64 @@
+{
+  "id": "t5-f03",
+  "title": "Container Climb",
+  "band": "quay",
+  "size": {
+    "w": 7,
+    "h": 6
+  },
+  "tiles": [
+    "_#_#__#",
+    "_e....#",
+    "_##__.#",
+    "#____._",
+    "#__...#",
+    "#__#___"
+  ],
+  "heights": [
+    "0000000",
+    "0322220",
+    "0000010",
+    "0000010",
+    "0000010",
+    "0000000"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 3,
+    "y": 4,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "tally_up",
+    "repeat",
+    "repeat_tally"
+  ],
+  "slots": {
+    "main": 8
+  },
+  "par": {
+    "commands": 6,
+    "steps": 11
+  },
+  "reference": "repeat 3 { tally_up repeat tally { forward } jump turn_left }",
+  "hints": [
+    "Every stretch ends with a jump up a container.",
+    "Count up, walk the tally, jump, turn left.",
+    "repeat 3 { tally_up repeat tally { forward } jump turn_left }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "id": "t5-f46",
+  "title": "Skylight Routine",
+  "band": "crest",
+  "size": {
+    "w": 7,
+    "h": 7
+  },
+  "tiles": [
+    "_####__",
+    "e......",
+    "_____#.",
+    "______.",
+    "_##__#.",
+    "____...",
+    "_______"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 4,
+    "y": 5,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "tally_up",
+    "tally_down",
+    "repeat_tally",
+    "F1"
+  ],
+  "slots": {
+    "main": 4,
+    "F1": 6
+  },
+  "par": {
+    "commands": 8,
+    "steps": 14
+  },
+  "reference": "F1 F1 F1 def F1 { tally_up repeat tally { forward forward } turn_left }",
+  "hints": [
+    "Stretches of 2, 4 and 6 across the skylights.",
+    "F1: count, walk two tiles per tally, turn left.",
+    "F1 F1 F1 def F1 { tally_up repeat tally { forward forward } turn_left }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "typing": true
+}

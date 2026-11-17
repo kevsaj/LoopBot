@@ -614,6 +614,10 @@ select:focus-visible {
 .tone-fn {
   --tone: var(--fn);
 }
+/* Dockyard's tally blocks borrow the function colour family's neighbour: a warm signal amber. */
+.tone-count {
+  --tone: #e8a33a;
+}
 
 .undo-toast {
   position: sticky;

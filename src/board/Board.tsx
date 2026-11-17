@@ -11,6 +11,8 @@ const COMPASS_BANDS = new Set(['ferry', 'garden', 'loom', 'lantern', 'pinnacle']
  * straight up. North runs along the board's isometric diagonal, so the angles aren't 90 apart.
  */
 const NORTH_DEG = [63.4, 116.6, 243.4, 296.6];
+/** Dockyard's bands: their floors show the tally board, LoopBot's one number (CR-TALLY). */
+const TALLY_BANDS = new Set(['quay', 'crane', 'ropewalk', 'office', 'crest']);
 
 /**
  * Phaser is most of the app's code, so it loads on its own: the tower map opens without it, and
@@ -94,6 +96,7 @@ export function Board({ update, rotateSignal, band }: Props) {
     <>
       <div className="board-canvas" ref={host} aria-hidden="true" onPointerDown={poke} />
       {COMPASS_BANDS.has(band) && <Compass deg={NORTH_DEG[rotateSignal % 4]} />}
+      {TALLY_BANDS.has(band) && <TallyBoard n={update.world.tally} />}
     </>
   );
 }
@@ -107,6 +110,18 @@ function Compass({ deg }: { deg: number }) {
           {t('N')}
         </span>
       </div>
+    </div>
+  );
+}
+
+/** Dockyard's tally board: a dockside flip sign with LoopBot's one number. The digit flips when it changes. */
+function TallyBoard({ n }: { n: number }) {
+  return (
+    <div className="board-tally" role="img" aria-label={t('Tally: {n}', { n })}>
+      <span className="board-tally-label">{t('tally')}</span>
+      <span className="board-tally-n" key={n}>
+        {n}
+      </span>
     </div>
   );
 }

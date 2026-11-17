@@ -1,0 +1,59 @@
+{
+  "id": "t5-f43",
+  "title": "Sky Count",
+  "band": "crest",
+  "size": {
+    "w": 7,
+    "h": 6
+  },
+  "tiles": [
+    "_#__#__",
+    "__#...#",
+    "#__e_._",
+    "_____.#",
+    "#....._",
+    "___#__#"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 4,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "tally_up",
+    "tally_down",
+    "repeat",
+    "repeat_tally"
+  ],
+  "slots": {
+    "main": 9
+  },
+  "par": {
+    "commands": 7,
+    "steps": 13
+  },
+  "reference": "repeat 4 { tally_up } repeat 4 { repeat tally { forward } turn_left tally_down }",
+  "hints": [
+    "Shorter and shorter: 4, 3, 2, 1.",
+    "Fill the tally to 4. Walk it, turn left, take 1 off.",
+    "repeat 4 { tally_up } repeat 4 { repeat tally { forward } turn_left tally_down }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "typing": true
+}

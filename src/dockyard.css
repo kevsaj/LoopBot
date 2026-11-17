@@ -1,0 +1,164 @@
+/* Tower 5, Dockyard (the Wavehouse). Kept in its own file so it never collides with other work in styles.css. */
+
+.tower-tab-5.on {
+  border-color: #ffcf6e;
+  box-shadow: 0 0 0 1px rgba(255, 207, 110, 0.35), 0 0 14px rgba(255, 190, 90, 0.22);
+}
+.tower-5 .tower-roof .beacon {
+  background: #ffe3a0;
+  box-shadow: 0 0 18px #ffb64a;
+}
+
+/* Container Quay: a warm harbour evening, container stacks and a wave-roofed hall on the far side. */
+.board-wrap.band-quay {
+  background:
+    radial-gradient(circle at 78% 24%, rgba(255, 236, 200, 0.9) 0 9px, rgba(255, 210, 150, 0.25) 10px, transparent 46px),
+    linear-gradient(180deg, #1a2c44 0%, #2f5577 42%, #e0875a 78%, #ffd9a0 100%);
+}
+.board-wrap.band-quay::after,
+.board-wrap.band-crest::after {
+  height: 100%;
+  opacity: 0.5;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300' preserveAspectRatio='none'><path fill='%23142233' fill-opacity='0.55' d='M250 300V214h110v86z'/><path fill='%23142233' fill-opacity='0.6' d='M244 216q20-34 40-18q20-30 40-12q20-26 44-6v36z'/><path fill='%23142233' fill-opacity='0.45' d='M0 300V262h24v-14h40v14h30v-24h36v24h48v-12h30v50z'/><path fill='%23142233' fill-opacity='0.5' d='M40 248V170h4v78zM44 172h60v4H44zM100 176v18h-2v-18z'/><path fill='%23ffffff' fill-opacity='0.12' d='M0 288q100-8 200 0t200 0v12H0z'/></svg>") center / 100% 100% no-repeat;
+}
+/* Crane Yard: grey morning sea fog, yellow cranes standing in it. */
+.board-wrap.band-crane {
+  background:
+    radial-gradient(ellipse 70% 30% at 50% 70%, rgba(220, 230, 236, 0.25), transparent 70%),
+    linear-gradient(180deg, #14202e 0%, #30465e 45%, #7a9ab4 80%, #d6e2ea 100%);
+}
+.board-wrap.band-crane::after {
+  height: 100%;
+  opacity: 0.45;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300' preserveAspectRatio='none'><g fill='%23e0b23a' fill-opacity='0.55'><path d='M40 300V150h6v150zM46 152h90v5H46zM130 157v26h-2v-26z'/><path d='M330 300V170h6v130zM250 172h86v5h-86zM256 177v22h-2v-22z'/></g><path fill='%23101820' fill-opacity='0.4' d='M0 300v-20h400v20z'/></svg>") center / 100% 100% no-repeat;
+}
+/* Ropewalk: lamp-lit timber hall, ropes strung along it. */
+.board-wrap.band-ropewalk {
+  background:
+    radial-gradient(ellipse 60% 30% at 50% 0%, rgba(255, 210, 150, 0.22), transparent 70%),
+    linear-gradient(180deg, #2a1a12 0%, #5a3a24 45%, #a8743e 80%, #f0cf96 100%);
+}
+.board-wrap.band-ropewalk::after {
+  height: 100%;
+  opacity: 0.5;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300' preserveAspectRatio='none'><g fill='none' stroke='%23f0cf96' stroke-opacity='0.35' stroke-width='2'><path d='M0 24Q200 44 400 24'/><path d='M0 40Q200 62 400 40'/></g><g fill='none' stroke='%23201208' stroke-opacity='0.45' stroke-width='5'><circle cx='40' cy='272' r='16'/><circle cx='40' cy='272' r='8'/><circle cx='360' cy='276' r='14'/></g></svg>") center / 100% 100% no-repeat;
+}
+/* Tally House: night, a row of lamps over the counting tables. */
+.board-wrap.band-office {
+  background:
+    radial-gradient(ellipse 70% 30% at 50% 100%, rgba(232, 176, 74, 0.22), transparent 70%),
+    linear-gradient(180deg, #0c1424 0%, #1a2c4a 50%, #2f4f6f 85%, #4a5a6a 100%);
+}
+.board-wrap.band-office::after {
+  height: 100%;
+  opacity: 0.45;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300' preserveAspectRatio='none'><g stroke='%23060a14' stroke-width='1.5'><path d='M60 0v30M160 0v24M260 0v28M350 0v22'/></g><g fill='%23e8b04a'><path d='M50 30h20l-4 8h-12z'/><path d='M150 24h20l-4 8h-12z'/><path d='M250 28h20l-4 8h-12z'/><path d='M340 22h20l-4 8h-12z'/></g></svg>") center / 100% 100% no-repeat;
+}
+/* The Crest: bright sky over the wave roof. */
+.board-wrap.band-crest {
+  background:
+    radial-gradient(circle at 18% 14%, rgba(255, 255, 240, 0.95) 0 10px, rgba(255, 250, 220, 0.3) 11px, transparent 50px),
+    linear-gradient(180deg, #0e3354 0%, #2a6b9a 38%, #8cc8e8 74%, #fff3dc 100%);
+}
+
+/* The tally board on Dockyard floors: a dockside flip sign with LoopBot's one number. */
+.board-tally {
+  position: absolute;
+  z-index: 2;
+  top: 58px;
+  right: 14px;
+  min-width: 50px;
+  padding: 4px 8px 6px;
+  border-radius: 10px;
+  border: 2px solid rgba(255, 207, 110, 0.9);
+  background: linear-gradient(180deg, rgba(24, 30, 44, 0.92), rgba(16, 20, 32, 0.88));
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  text-align: center;
+  pointer-events: none;
+}
+.board-tally-label {
+  display: block;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #ffcf6e;
+}
+.board-tally-n {
+  display: block;
+  font-size: 26px;
+  line-height: 1;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: #fff6e0;
+  animation: tally-flip 0.32s ease-out;
+}
+@keyframes tally-flip {
+  0% {
+    transform: perspective(80px) rotateX(-80deg);
+    opacity: 0.2;
+  }
+  100% {
+    transform: none;
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .board-tally-n {
+    animation: none;
+  }
+}
+
+/* The tower map's bands in Dockyard. */
+.band-quay .tower-floors {
+  background: linear-gradient(#2a1c18, #1f1512);
+  border-color: #c0573a;
+}
+.band-quay .tower-band {
+  color: #ffb08a;
+}
+.band-crane .tower-floors {
+  background: linear-gradient(#1c222a, #141a20);
+  border-color: #e0b23a;
+}
+.band-crane .tower-band {
+  color: #ffd76a;
+}
+.band-ropewalk .tower-floors {
+  background: linear-gradient(#2a1c12, #20150d);
+  border-color: #a8784a;
+}
+.band-ropewalk .tower-band {
+  color: #f0cf96;
+}
+.band-office .tower-floors {
+  background: linear-gradient(#121a2c, #0c1220);
+  border-color: #2f5a8a;
+}
+.band-office .tower-band {
+  color: #e8b04a;
+}
+.band-crest .tower-floors {
+  background: linear-gradient(#10283e, #0c1f30);
+  border-color: #3f86b8;
+}
+.band-crest .tower-band {
+  color: #cfeaff;
+}
+
+/* The Dockyard city pack's store screen: the Plus sheet's layout in harbour colours. */
+.pack-dockyard .plus-perks li {
+  border-color: rgba(255, 207, 110, 0.28);
+  background: linear-gradient(135deg, rgba(255, 190, 90, 0.1), rgba(255, 220, 160, 0.03));
+}
+.pack-sheet.pack-dockyard .pill.plus-buy {
+  background: linear-gradient(180deg, #ffe3a0, #e8a33a);
+  border-color: #f0b85a;
+  color: #2a1a06;
+}
+.pack-dockyard .plus-owned {
+  color: #ffe3a0;
+}
+.pack-dockyard .pack-word {
+  color: #ffcf6e;
+}

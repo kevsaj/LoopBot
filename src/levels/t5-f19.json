@@ -1,0 +1,67 @@
+{
+  "id": "t5-f19",
+  "title": "Low Tide",
+  "band": "crane",
+  "size": {
+    "w": 8,
+    "h": 7
+  },
+  "tiles": [
+    "__#____#",
+    "###...._",
+    "___e_#._",
+    "#_##__._",
+    "__###_._",
+    "_......#",
+    "__##____"
+  ],
+  "heights": [
+    "00000000",
+    "00032220",
+    "00030010",
+    "00000010",
+    "00000010",
+    "00000010",
+    "00000000"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 5,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "tally_up",
+    "tally_down",
+    "repeat",
+    "repeat_tally"
+  ],
+  "slots": {
+    "main": 10
+  },
+  "par": {
+    "commands": 8,
+    "steps": 16
+  },
+  "reference": "repeat 5 { tally_up } repeat 4 { tally_down repeat tally { forward } jump turn_left }",
+  "hints": [
+    "Count down before each stretch, not after.",
+    "Start the tally at 5. Each time round: take 1 off, walk, jump, turn left.",
+    "repeat 5 { tally_up } repeat 4 { tally_down repeat tally { forward } jump turn_left }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

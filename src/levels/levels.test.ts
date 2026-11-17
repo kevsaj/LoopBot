@@ -3,12 +3,13 @@ import { LEVELS } from './index';
 import { FROSTLINE } from './frostline';
 import { HEATWAVE } from './heatwave';
 import { TWIST } from './twist';
+import { DOCKYARD } from './dockyard';
 import { validateLevel } from './validate';
 import { Runner } from '../sim/interpreter';
 import { countBlocks, countCommands, parseReference } from '../sim/program';
 import { shortestActionPath, smallestProgram } from '../sim/solver';
 
-describe.each([...LEVELS, ...FROSTLINE, ...HEATWAVE, ...TWIST].map((l) => [l.id, l] as const))('floor %s', (_id, level) => {
+describe.each([...LEVELS, ...FROSTLINE, ...HEATWAVE, ...TWIST, ...DOCKYARD].map((l) => [l.id, l] as const))('floor %s', (_id, level) => {
   it('LV-1: matches the floor format', () => {
     expect(validateLevel(level)).toEqual([]);
   });
@@ -32,16 +33,18 @@ describe.each([...LEVELS, ...FROSTLINE, ...HEATWAVE, ...TWIST].map((l) => [l.id,
   // checked against every shorter program that fits the slots using loops and F1, with loop bodies
   // up to 2 blocks and function bodies up to 3. Earlier floors get the full search. Control Room
   // floors (if and while) are searched without sensors, with loop bodies up to 3: no shorter
-  // sensor-free program should reach the par.
+  // sensor-free program should reach the par. Dockyard floors with the tally get the full search
+  // up to a par of 8; past that it takes minutes, so those few use the Control Room bounds too.
   const sensors = level.commands.includes('if') || level.commands.includes('while');
-  const bounded = sensors || level.commands.includes('F1');
+  const big = level.commands.includes('repeat_tally') && level.par.commands >= 9;
+  const bounded = sensors || level.commands.includes('F1') || big;
   it(
     bounded ? 'LV-4: no shorter program with loops and F1 (small bodies)' : 'LV-4: the command par is the true minimum, loops included',
     () => {
       const searched = bounded ? { ...level, commands: level.commands.filter((c) => c !== 'F2') } : level;
-      expect(smallestProgram(searched, level.par.commands - 1, 2, sensors ? { loopBody: 3, fnBody: 3 } : bounded ? { loopBody: 2, fnBody: 3 } : {})).toBeNull();
+      expect(smallestProgram(searched, level.par.commands - 1, 2, sensors || big ? { loopBody: 3, fnBody: 3 } : bounded ? { loopBody: 2, fnBody: 3 } : {})).toBeNull();
     },
-    60_000,
+    120_000,
   );
 
   it('a bug hunt starter program does not clear the floor yet', () => {
