@@ -33,6 +33,15 @@ export function validateLevel(l: LevelFile, opts: { custom?: boolean } = {}): st
   const walkable = (x: number, y: number) => inside(x, y) && !'#_'.includes(l.tiles[y][x]);
   if (!FACINGS.includes(l.bot.facing)) e('bot.facing must be north, east, south or west');
   if (!walkable(l.bot.x, l.bot.y)) e('bot must start on a walkable tile');
+  if (l.twin) {
+    // Twin Spires (CR-TWIN): Echo needs its own tile and, to park, its own exit
+    if (!FACINGS.includes(l.twin.facing)) e('twin.facing must be north, east, south or west');
+    if (!walkable(l.twin.x, l.twin.y)) e('twin must start on a walkable tile');
+    if (l.twin.x === l.bot.x && l.twin.y === l.bot.y) e('twin and bot must start on different tiles');
+    if (l.goals.includes('bot_on_exit') && l.tiles.join('').split('e').length - 1 < 2) e('bot_on_exit with a twin needs two exit tiles');
+    if (l.tiles.some((r) => /[vwxz]/.test(r))) e('vents run on one clock per bot, so a floor with a twin has none');
+    if (l.tiles[l.bot.y]?.[l.bot.x] === 'e' || l.tiles[l.twin.y]?.[l.twin.x] === 'e') e('neither bot may start parked on an exit');
+  }
   const cycle = l.ventCycle ?? 2;
   if (l.ventCycle !== undefined && (!Number.isInteger(cycle) || cycle < 2 || cycle > 4)) e('ventCycle must be 2, 3 or 4');
   l.tiles.forEach((row, y) => {

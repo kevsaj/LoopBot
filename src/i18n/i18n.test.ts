@@ -10,12 +10,13 @@ import { FROSTLINE } from '../levels/frostline';
 import { HEATWAVE } from '../levels/heatwave';
 import { TWIST } from '../levels/twist';
 import { DOCKYARD } from '../levels/dockyard';
+import { TWINSPIRES } from '../levels/twinspires';
 import { INTERLUDES } from '../story/interludes';
 import bank from '../daily/bank.json';
 
 const keys = collectKeys(join(__dirname, '..'));
 const texts = [...new Set(keys.map((k) => k.text))];
-const ALL_FLOORS = [...LEVELS, ...FROSTLINE, ...HEATWAVE, ...TWIST, ...DOCKYARD];
+const ALL_FLOORS = [...LEVELS, ...FROSTLINE, ...HEATWAVE, ...TWIST, ...DOCKYARD, ...TWINSPIRES];
 
 afterEach(() => setLangForTest('en'));
 

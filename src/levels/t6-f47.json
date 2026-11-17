@@ -1,0 +1,67 @@
+{
+  "id": "t6-f47",
+  "title": "Relay Pattern",
+  "band": "twintops",
+  "size": {
+    "w": 7,
+    "h": 8
+  },
+  "tiles": [
+    "____#_#",
+    "_#...#_",
+    "____.__",
+    "_#.#...",
+    "__.#__.",
+    "..._#_e",
+    "e______",
+    "_#_#_##"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 2,
+    "y": 1,
+    "facing": "east"
+  },
+  "twin": {
+    "x": 2,
+    "y": 3,
+    "facing": "south"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "F1",
+    "while",
+    "if"
+  ],
+  "slots": {
+    "main": 6,
+    "F1": 3
+  },
+  "par": {
+    "commands": 7,
+    "steps": 11
+  },
+  "reference": "repeat 2 { F1 turn_right F1 turn_left } def F1 { forward forward }",
+  "hints": [
+    "Echo parks partway. A function inside a loop.",
+    "def F1: two forward. repeat 2: F1, right, F1, left.",
+    "repeat 2 { F1 turn_right F1 turn_left } def F1 { forward forward }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "typing": true
+}

@@ -21,6 +21,7 @@ import type { PackId } from './store/packs';
 import './heatwave.css';
 import './twist.css';
 import './dockyard.css';
+import './twinspires.css';
 import { msg, t, t as tr, tn } from './i18n';
 
 interface Props {
@@ -71,13 +72,18 @@ const BAND_NAMES: Record<string, string> = {
   ropewalk: msg('Ropewalk'),
   office: msg('Tally House'),
   crest: msg('The Crest'),
+  atrium: msg('Twin Atrium'),
+  skybridge: msg('Skybridge'),
+  batik: msg('Batik Gallery'),
+  mirror: msg('Mirror Hall'),
+  twintops: msg('The Twin Tops'),
 };
 
 /** What lies under each tower, shown at the foot of its map. */
-const GROUND: Record<number, string> = { 1: msg('Sub-basement'), 2: msg('Ice cellar'), 3: msg('Old cistern'), 4: msg('River vault'), 5: msg('Dry dock') };
+const GROUND: Record<number, string> = { 1: msg('Sub-basement'), 2: msg('Ice cellar'), 3: msg('Old cistern'), 4: msg('River vault'), 5: msg('Dry dock'), 6: msg('Twin vault') };
 
 /** Each tower's own light, used for its beacon and its row in the tower picker. */
-const TOWER_LIGHT: Record<number, string> = { 1: '#7cc4ff', 2: '#9fd8ff', 3: '#ffb466', 4: '#7fd6c8', 5: '#ffcf6e' };
+const TOWER_LIGHT: Record<number, string> = { 1: '#7cc4ff', 2: '#9fd8ff', 3: '#ffb466', 4: '#7fd6c8', 5: '#ffcf6e', 6: '#c9b8ff' };
 
 /** The towers the picker lists. A Plus tower only shows once Plus is on sale, or while previewing it. */
 function pickable(towers: Tower[]): Tower[] {

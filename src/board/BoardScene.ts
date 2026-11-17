@@ -352,6 +352,71 @@ const BANDS: Record<string, Partial<typeof C>> = {
     edge: 0x0e2a44,
     void: 0x0c2238,
   },
+  // Tower 6, Twin Spires (the Skybridge). Twin Atrium: cream marble under brushed steel.
+  atrium: {
+    floorTop: 0xf1ebe0,
+    floorL: 0xc9c0b0,
+    floorR: 0xa9a090,
+    floorEdge: 0xfffaf0,
+    wallTop: 0x9aa8bc,
+    wallL: 0x7a889c,
+    wallR: 0x606c80,
+    wallCap: 0xd6e0ee,
+    edge: 0x1c2232,
+    void: 0x141a28,
+  },
+  // Skybridge: pale glass walkway, steel girders, open sky below.
+  skybridge: {
+    floorTop: 0xdcecf6,
+    floorL: 0xaac4d6,
+    floorR: 0x8aa6ba,
+    floorEdge: 0xf6fcff,
+    wallTop: 0x6c7a8e,
+    wallL: 0x566276,
+    wallR: 0x444e60,
+    wallCap: 0xb4c4d8,
+    edge: 0x10202e,
+    void: 0x1a3450,
+  },
+  // Batik Gallery: warm ochre boards, indigo-dyed cloth panels.
+  batik: {
+    floorTop: 0xeed8b0,
+    floorL: 0xcaae84,
+    floorR: 0xa88e66,
+    floorEdge: 0xfff0d4,
+    wallTop: 0x3a4a8a,
+    wallL: 0x2e3c70,
+    wallR: 0x243058,
+    wallCap: 0xd89a4a,
+    edge: 0x1e1612,
+    void: 0x1a1426,
+  },
+  // Mirror Hall: silvered floor tiles, deep violet glass.
+  mirror: {
+    floorTop: 0xd6dae6,
+    floorL: 0xa8aec0,
+    floorR: 0x8890a4,
+    floorEdge: 0xf4f6fc,
+    wallTop: 0x4e3e7a,
+    wallL: 0x3e3064,
+    wallR: 0x30264e,
+    wallCap: 0xa894e0,
+    edge: 0x100c1e,
+    void: 0x0c0a18,
+  },
+  // Twin Tops: steel crowns at night, lit gold.
+  twintops: {
+    floorTop: 0xe6e8ee,
+    floorL: 0xb6bac6,
+    floorR: 0x969aa8,
+    floorEdge: 0xffffff,
+    wallTop: 0x2c3448,
+    wallL: 0x222838,
+    wallR: 0x1a1f2c,
+    wallCap: 0xe8c46a,
+    edge: 0x0a0c14,
+    void: 0x070910,
+  },
   // Summit: wind-scoured snow and dark rock, the beacon glowing gold.
   summit: {
     floorTop: 0xf3f6fa,
@@ -388,6 +453,18 @@ export interface BoardUpdate {
   stars?: number;
   /** Milliseconds per step at the current speed. */
   stepMs: number;
+  /** Twin Spires: which bot crashed, when the run crashed (LoopBot unless it says Echo). */
+  crashWho?: 'bot' | 'twin';
+  /** Twin Spires: what Echo did this step, so it can animate it. */
+  twinAction?: string;
+}
+
+/** Echo's paint (Twin Spires): lilac, so it never reads as LoopBot whatever look the player picks. */
+const ECHO = { body: 0xc4b2ff, l: 0x9a86e0, r: 0x7a68c0, visor: 0x2a2244, eye: 0xfff1a8 };
+
+/** The world seen from Echo: Echo in LoopBot's place, so the position and arrow helpers work for it. */
+function echoView(w: World): World {
+  return { ...w, bot: w.twin!, twin: w.bot };
 }
 
 type Grid = { rx: number; ry: number };
@@ -431,6 +508,11 @@ export class BoardScene extends Phaser.Scene {
   private turnRing!: Phaser.GameObjects.Graphics;
   private ready = false;
   private pending: BoardUpdate | null = null;
+  /** Twin Spires: Echo, the second bot (CR-TWIN). Hidden on every other floor. */
+  private echo!: Phaser.GameObjects.Container;
+  private echoBody!: Phaser.GameObjects.Graphics;
+  private echoArrow!: Phaser.GameObjects.Graphics;
+  private echoPose!: Phaser.GameObjects.Container;
   /** What the static layer was last drawn from; most steps (moves, turns) leave it unchanged. */
   private drawnKey = '';
   private drawnTiles: World['tiles'] | null = null;
@@ -455,6 +537,15 @@ export class BoardScene extends Phaser.Scene {
     // idle bob: LoopBot hovers gently, like a toy
     if (!this.reduced) this.tweens.add({ targets: this.botInner, y: -2.5, yoyo: true, repeat: -1, duration: 900, ease: 'Sine.easeInOut' });
     this.layer.add(this.bot);
+    this.echoBody = this.add.graphics();
+    this.echoArrow = this.add.graphics();
+    const echoInner = this.add.container(0, 0, [this.echoBody]);
+    this.echoPose = this.add.container(0, 0, [echoInner]);
+    this.echo = this.add.container(0, 0, [this.add.ellipse(0, 0, TW * 0.42, TH * 0.42, 0x2b2440, 0.28), this.echoArrow, this.echoPose]);
+    this.echo.setVisible(false);
+    // Echo bobs a little out of step with LoopBot, so the two never look like one sprite twice
+    if (!this.reduced) this.tweens.add({ targets: echoInner, y: -2.5, yoyo: true, repeat: -1, duration: 900, delay: 450, ease: 'Sine.easeInOut' });
+    this.layer.add(this.echo);
     this.idleLife();
     this.scale.on('resize', () => this.fit());
     this.ready = true;
@@ -493,7 +584,9 @@ export class BoardScene extends Phaser.Scene {
       this.drawnTiles = u.world.tiles;
     }
     this.fit();
-    this.moveBot(prev, u);
+    // Twin Spires: only the bot that crashed looks crashed
+    this.moveBot(prev, u.crashWho === 'twin' ? { ...u, crashed: false } : u);
+    this.moveEcho(prev, u);
   }
 
   // --- projection ---
@@ -711,7 +804,7 @@ export class BoardScene extends Phaser.Scene {
 
   private drawStatic(w: World) {
     for (const child of [...this.layer.list]) {
-      if (child === this.bot) continue;
+      if (child === this.bot || child === this.echo) continue;
       this.tweens.killTweensOf(child);
       child.destroy();
     }
@@ -897,8 +990,7 @@ export class BoardScene extends Phaser.Scene {
    * wall, crate or step. The one exception: facing away from the camera, the body would hide
    * it, so it sits just across the edge on the next tile, but only when that tile is clear floor.
    */
-  private drawArrow(w: World, crashed: boolean, angle: number = FACINGS.indexOf(w.bot.facing)) {
-    const g = this.botArrow;
+  private drawArrow(w: World, crashed: boolean, angle: number = FACINGS.indexOf(w.bot.facing), g = this.botArrow) {
     g.clear();
     const { fx, fy, sx, sy } = this.screenFacing(angle);
     const turning = Math.abs(angle - Math.round(angle)) > 0.001;
@@ -1248,6 +1340,99 @@ export class BoardScene extends Phaser.Scene {
       this.lightUp(w, dur);
     } else if (u.action === 'turn_left' || u.action === 'turn_right' || u.action === 'pick_up' || u.action === 'drop' || u.action === 'activate' || u.action === 'wait') {
       this.tweens.add({ targets: this.bot, scaleY: 0.88, yoyo: true, duration: Math.min(90, dur / 2 || 90) });
+    }
+  }
+
+  /**
+   * Echo (Twin Spires): LoopBot's shape in lilac with two short antennae, a visor and an eye on
+   * the side it faces, and its own facing arrow. `w` is the world as Echo sees it (echoView).
+   */
+  private drawEcho(w: World, crashed: boolean, angle: number) {
+    const g = this.echoBody;
+    g.clear();
+    const { fx, fy } = this.screenFacing(angle);
+    this.drawArrow(w, crashed, angle, this.echoArrow);
+    const body = crashed ? C.crash : ECHO.body;
+    this.prism(g, 0, -16, 12, body, ECHO.l, ECHO.r, 0.44);
+    g.fillStyle(0x9ff0ff, crashed ? 0.4 : 1);
+    g.fillCircle(5, -5, 1.6);
+    this.prism(g, 0, -30, 10, body, ECHO.l, ECHO.r, 0.36);
+    g.fillStyle(ECHO.visor, 1);
+    g.fillEllipse(fx * 0.34, -27 + fy * 0.34, 13.5, 8.5);
+    const ex = fx * 0.4;
+    const ey = -27 + fy * 0.4;
+    g.fillStyle(crashed ? C.crash : ECHO.eye, fy < 0 ? 0.35 : 1);
+    g.fillEllipse(ex, ey, 6.4, 4.4);
+    // two short antennae, where LoopBot has one
+    g.lineStyle(1.5, ECHO.r, 1);
+    g.lineBetween(-3.5, -36, -4.5, -42);
+    g.lineBetween(3.5, -36, 4.5, -42);
+    g.fillStyle(crashed ? C.crash : 0x9ff0ff, 1);
+    g.fillCircle(-4.6, -43, 1.9);
+    g.fillCircle(4.6, -43, 1.9);
+    if (w.bot.carrying) this.crate(g, 0, -56, 0.5);
+  }
+
+  /** Echo's step (Twin Spires): a glide or hop to its new tile, a swing for a turn, a shake for a crash. */
+  private moveEcho(prev: World | null, u: BoardUpdate) {
+    const w = u.world;
+    this.tweens.killTweensOf(this.echo);
+    this.tweens.killTweensOf(this.echoPose);
+    this.echoPose.setPosition(0, 0).setAngle(0);
+    this.echo.setScale(1);
+    if (!w.twin) {
+      this.echo.setVisible(false);
+      return;
+    }
+    this.echo.setVisible(true);
+    const view = echoView(w);
+    const crashed = !!u.crashed && u.crashWho === 'twin';
+    const to = this.botPos(view);
+    const before = prev?.twin ? echoView(prev) : null;
+    const fresh = !before || u.stepMs === 0;
+    const dur = Math.max(0, u.stepMs * 0.8);
+    const angle = FACINGS.indexOf(w.twin.facing);
+    this.drawEcho(view, crashed, angle);
+    if (!fresh && before!.bot.facing !== w.twin.facing && !this.reduced && dur > 0) {
+      const from = FACINGS.indexOf(before!.bot.facing);
+      const dir = (angle - from + 4) % 4 === 1 ? 1 : -1;
+      this.drawEcho(view, crashed, from);
+      this.tweens.addCounter({
+        from: 0,
+        to: 1,
+        duration: dur,
+        ease: 'Sine.easeInOut',
+        onUpdate: (tw) => this.world === w && this.drawEcho(view, crashed, from + dir * (tw.getValue() ?? 0)),
+        onComplete: () => this.world === w && this.drawEcho(view, crashed, angle),
+      });
+    }
+    const moved = before && (before.bot.x !== w.twin.x || before.bot.y !== w.twin.y);
+    if (fresh || !moved || dur === 0) {
+      this.echo.setPosition(to.sx, to.sy);
+    } else {
+      const from = this.botPos(before!);
+      this.echo.setPosition(from.sx, from.sy);
+      const lift = u.twinAction === 'jump' ? 22 : 4;
+      this.tweens.add({ targets: this.echo, x: to.sx, duration: dur, ease: 'Sine.easeInOut' });
+      this.tweens.addCounter({
+        from: 0,
+        to: 1,
+        duration: dur,
+        onUpdate: (tw) => {
+          const t = tw.getValue() ?? 0;
+          this.echo.y = from.sy + (to.sy - from.sy) * t - Math.sin(Math.PI * t) * lift;
+        },
+      });
+    }
+    this.echo.setDepth(Math.max(to.depth, before ? this.botPos(before).depth : 0));
+    this.layer.sort('depth');
+    if (crashed) {
+      this.cameras.main.shake(180, 0.006);
+      this.tweens.add({ targets: this.echo, x: to.sx + 3, yoyo: true, repeat: 3, duration: 40, delay: dur });
+      if (!this.reduced) this.tweens.chain({ targets: this.echoPose, tweens: [{ angle: 12, duration: 90, delay: dur + 120 }, { angle: -9, duration: 120 }, { angle: 0, duration: 140 }] });
+    } else if (u.cleared) {
+      this.tweens.add({ targets: this.echo, scale: 1.18, yoyo: true, duration: 180, delay: dur + 90, ease: 'Back.easeOut' });
+      if (!this.reduced && (u.stars ?? 1) >= 2) this.tweens.add({ targets: this.echoPose, y: -10, yoyo: true, duration: 150, delay: dur + 320, ease: 'Quad.easeOut' });
     }
   }
 

@@ -40,6 +40,17 @@ export const PACK_INFO: Record<PackId, PackInfo> = {
       { icon: '📻', title: msg('The story goes on'), text: msg("PATCH's radio calls and the chase after VANTA, plus new riverside music.") },
     ],
   },
+  twinspires: {
+    title: msg('Twin Spires'),
+    tower: msg('The Skybridge'),
+    lede: msg('Tower 6 is two towers joined by a skybridge. Meet Echo, a second bot that runs every program you write.'),
+    perks: [
+      { icon: '🌉', title: msg('50 new floors'), text: msg('The Skybridge, from the Twin Atrium to the Twin Tops, with 3 stars to win on every floor.') },
+      { icon: '🤖', title: msg('Meet Echo'), text: msg('Two bots, one program. Plan a path that works for both of them at once.') },
+      { icon: '🪞', title: msg('Same code, different data'), text: msg('Each bot reads its own walls, switches and painted tiles, so one program takes them different ways.') },
+      { icon: '📻', title: msg('The story goes on'), text: msg("PATCH's radio calls and the chase after VANTA, plus new music for the spires.") },
+    ],
+  },
   dockyard: {
     title: msg('Dockyard'),
     tower: msg('The Wavehouse'),

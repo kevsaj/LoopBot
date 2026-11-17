@@ -1,0 +1,68 @@
+{
+  "id": "t6-f06",
+  "title": "Climb Together",
+  "band": "atrium",
+  "size": {
+    "w": 7,
+    "h": 7
+  },
+  "tiles": [
+    "____#__",
+    ".#____e",
+    "._.....",
+    ".______",
+    ".__#___",
+    ".e___#_",
+    "__#____"
+  ],
+  "heights": [
+    "0000000",
+    "0000002",
+    "0000112",
+    "1000000",
+    "1000000",
+    "2200000",
+    "0000000"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 2,
+    "y": 2,
+    "facing": "east"
+  },
+  "twin": {
+    "x": 0,
+    "y": 1,
+    "facing": "south"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate"
+  ],
+  "slots": {
+    "main": 8
+  },
+  "par": {
+    "commands": 6,
+    "steps": 6
+  },
+  "reference": "forward jump forward jump turn_left forward",
+  "hints": [
+    "Both paths climb at the same moments.",
+    "Forward, jump, forward, jump, turn left, forward.",
+    "forward jump forward jump turn_left forward"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

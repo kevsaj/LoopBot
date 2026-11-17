@@ -1,0 +1,69 @@
+{
+  "id": "t6-f36",
+  "title": "Bug Hunt: Press Everything",
+  "band": "mirror",
+  "size": {
+    "w": 7,
+    "h": 8
+  },
+  "tiles": [
+    "#_#____",
+    "___.se_",
+    "___.#__",
+    "_e#s#__",
+    "#s_.__#",
+    "_.#_#_#",
+    "_.s..#_",
+    "____#__"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 3,
+    "y": 4,
+    "facing": "north"
+  },
+  "twin": {
+    "x": 4,
+    "y": 6,
+    "facing": "west"
+  },
+  "goals": [
+    "bot_on_exit",
+    "all_switches_on"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "while",
+    "if"
+  ],
+  "sensors": [
+    "on_switch"
+  ],
+  "slots": {
+    "main": 8
+  },
+  "par": {
+    "commands": 6,
+    "steps": 9
+  },
+  "reference": "repeat 2 { while not wall_ahead { forward if on_switch { activate } } turn_right }",
+  "hints": [
+    "Run it. Activate on a plain tile is an error.",
+    "Only activate when the bot is on a switch.",
+    "repeat 2 { while not wall_ahead { forward if on_switch { activate } } turn_right }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "starter": "repeat 2 { while not wall_ahead { forward activate } turn_right }"
+}

@@ -1,0 +1,61 @@
+{
+  "id": "t6-f14",
+  "title": "Early Bird",
+  "band": "skybridge",
+  "size": {
+    "w": 6,
+    "h": 7
+  },
+  "tiles": [
+    "#__##_",
+    "_...##",
+    "_.___#",
+    "_..e##",
+    "##__e_",
+    "__...#",
+    "#_#___"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 2,
+    "y": 5,
+    "facing": "east"
+  },
+  "twin": {
+    "x": 3,
+    "y": 1,
+    "facing": "west"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat"
+  ],
+  "slots": {
+    "main": 6
+  },
+  "par": {
+    "commands": 4,
+    "steps": 8
+  },
+  "reference": "repeat 3 { forward forward turn_left }",
+  "hints": [
+    "LoopBot parks partway through the second time round. The loop keeps going for Echo.",
+    "Two forward and a left turn, three times.",
+    "repeat 3 { forward forward turn_left }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": "PATCH: \"The loop didn't stop when LoopBot did. Echo used up the rest.\""
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "id": "t6-f38",
+  "title": "Bug Hunt: One Short",
+  "band": "mirror",
+  "size": {
+    "w": 7,
+    "h": 8
+  },
+  "tiles": [
+    "_____#_",
+    "__.e##_",
+    "__.##_#",
+    "__...._",
+    "_e___#_",
+    "#.__.#_",
+    "_....__",
+    "##_#_#_"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 5,
+    "y": 3,
+    "facing": "west"
+  },
+  "twin": {
+    "x": 4,
+    "y": 5,
+    "facing": "south"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "while",
+    "if"
+  ],
+  "slots": {
+    "main": 6
+  },
+  "par": {
+    "commands": 4,
+    "steps": 8
+  },
+  "reference": "repeat 3 { while not wall_ahead { forward } turn_right }",
+  "hints": [
+    "Run it. One of the bots stops short.",
+    "There are three halls, not two.",
+    "repeat 3 { while not wall_ahead { forward } turn_right }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "starter": "repeat 2 { while not wall_ahead { forward } turn_right }"
+}

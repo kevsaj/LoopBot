@@ -3,7 +3,7 @@
 
 import { ACTIONS, BY_TALLY, FREE_ACTIONS } from './types';
 import type { Action, LevelFile, World } from './types';
-import { applyAction, cloneWorld, createWorld, goalsMet, worldKey } from './world';
+import { applyAction, applyBoth, asTwin, cloneWorld, createWorld, goalsMet, parked, worldKey } from './world';
 import { STEP_LIMIT } from './interpreter';
 
 export function shortestActionPath(level: LevelFile, maxStates = 200_000): Action[] | null {
@@ -18,13 +18,49 @@ export function shortestActionPath(level: LevelFile, maxStates = 200_000): Actio
     for (const { world, path } of frontier) {
       for (const a of allowed) {
         const w = cloneWorld(world);
-        if (!applyAction(w, a).ok) continue; // a crash ends the run, so it's never on a solution path
+        // Twin Spires: both bots take the same action (see shortestTwinPath for the lower bound with if and while)
+        if (!applyBoth(w, a).ok) continue; // a crash ends the run, so it's never on a solution path
         const p = [...path, a];
         if (goalsMet(w)) return p;
         const k = worldKey(w);
         if (seen.has(k)) continue;
         seen.add(k);
         next.push({ world: w, path: p });
+      }
+    }
+    frontier = next;
+  }
+  return null;
+}
+
+/**
+ * Twin Spires with if and while (CR-TWIN): each bot runs its own copy of the program, so the two
+ * can take different actions in the same step. The fewest steps where each bot picks its own
+ * action (or stands still) is a lower bound for every program. Floors with sensors use it to check
+ * that their step par is fair; it isn't always reachable, because one program drives both bots.
+ */
+export function shortestTwinSteps(level: LevelFile, maxStates = 400_000): number | null {
+  const allowed: Array<Action | null> = [null, ...ACTIONS.filter((a) => level.commands.includes(a) && !FREE_ACTIONS.has(a))];
+  const start = createWorld(level);
+  if (!start.twin) return shortestActionPath(level, maxStates)?.length ?? null;
+  if (goalsMet(start)) return 0;
+  const seen = new Set([worldKey(start)]);
+  let frontier = [start];
+  for (let depth = 1; frontier.length && seen.size < maxStates; depth++) {
+    const next: World[] = [];
+    for (const world of frontier) {
+      for (const a of allowed) {
+        for (const b of allowed) {
+          if (a === null && b === null) continue;
+          const w = cloneWorld(world);
+          if (a && (parked(w, w.bot) || !applyAction(w, a).ok)) continue;
+          if (b && (parked(w, w.twin!) || !asTwin(w, () => applyAction(w, b)).ok)) continue;
+          if (goalsMet(w)) return depth;
+          const k = worldKey(w);
+          if (seen.has(k)) continue;
+          seen.add(k);
+          next.push(w);
+        }
       }
     }
     frontier = next;
@@ -54,7 +90,8 @@ function execBlock(w: World, b: SBlock, steps: { n: number }, fns: Bodies): Exec
   if (b === 'F1' || b === 'F2') return execList(w, fns[b] ?? [], steps, fns);
   if (typeof b === 'string') {
     if (!FREE_ACTIONS.has(b as Action) && ++steps.n > STEP_LIMIT) return 'crash';
-    if (!applyAction(w, b).ok) return 'crash';
+    // Twin Spires: with no if or while both bots run the same actions, so they move together
+    if (!applyBoth(w, b).ok) return 'crash';
     return goalsMet(w) ? 'clear' : 'ok';
   }
   const times = b.times === BY_TALLY ? w.tally : b.times;
@@ -254,7 +291,7 @@ function smallest(level: LevelFile, maxSize: number, maxDepth: number, limits: {
         reachable.push(w);
         for (const a of actions) {
           const n = cloneWorld(w);
-          if (!applyAction(n, a).ok) continue;
+          if (!applyBoth(n, a).ok) continue;
           const k = worldKey(n);
           if (seen.has(k)) continue;
           seen.add(k);

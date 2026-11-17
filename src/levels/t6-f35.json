@@ -1,0 +1,68 @@
+{
+  "id": "t6-f35",
+  "title": "Bridge Lamps",
+  "band": "mirror",
+  "size": {
+    "w": 8,
+    "h": 8
+  },
+  "tiles": [
+    "_..s..se",
+    ".__#____",
+    "s___#___",
+    ".##_###_",
+    "s____##_",
+    ".__#___#",
+    ".#_#_#__",
+    "e#______"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 0,
+    "facing": "east"
+  },
+  "twin": {
+    "x": 0,
+    "y": 1,
+    "facing": "south"
+  },
+  "goals": [
+    "bot_on_exit",
+    "all_switches_on"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "while",
+    "if"
+  ],
+  "sensors": [
+    "on_switch"
+  ],
+  "slots": {
+    "main": 6
+  },
+  "par": {
+    "commands": 4,
+    "steps": 8
+  },
+  "reference": "while not wall_ahead { forward if on_switch { activate } }",
+  "hints": [
+    "The lamp switches are in different places in each spire.",
+    "While no wall ahead: forward, and if on a switch, activate.",
+    "while not wall_ahead { forward if on_switch { activate } }"
+  ],
+  "story": {
+    "intro": "PATCH: \"The bridge lamps. The switches aren't in the same places in both spires, so ask before you press.\"",
+    "outro": null
+  }
+}

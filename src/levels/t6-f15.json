@@ -1,0 +1,62 @@
+{
+  "id": "t6-f15",
+  "title": "Light the Bridge",
+  "band": "skybridge",
+  "size": {
+    "w": 7,
+    "h": 7
+  },
+  "tiles": [
+    "___#___",
+    "__.sse_",
+    "#.#____",
+    "#s_#_#_",
+    "_s__##_",
+    "_e_____",
+    "#______"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 2,
+    "y": 1,
+    "facing": "east"
+  },
+  "twin": {
+    "x": 1,
+    "y": 2,
+    "facing": "south"
+  },
+  "goals": [
+    "bot_on_exit",
+    "all_switches_on"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat"
+  ],
+  "slots": {
+    "main": 5
+  },
+  "par": {
+    "commands": 3,
+    "steps": 5
+  },
+  "reference": "repeat 3 { forward activate }",
+  "hints": [
+    "A switch on every tile, in both spires.",
+    "Step and activate, three times.",
+    "repeat 3 { forward activate }"
+  ],
+  "story": {
+    "intro": "PATCH: \"Skybridge lights, a switch on every tile. Two bots, so two of everything.\"",
+    "outro": null
+  }
+}

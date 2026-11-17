@@ -1,0 +1,71 @@
+{
+  "id": "t6-f12",
+  "title": "Twin Stairs",
+  "band": "skybridge",
+  "size": {
+    "w": 8,
+    "h": 8
+  },
+  "tiles": [
+    "_......e",
+    ".____##_",
+    "._##_#_#",
+    "._#___##",
+    ".__#_#__",
+    "._#_#__#",
+    ".#___#__",
+    "e_##____"
+  ],
+  "heights": [
+    "00011223",
+    "00000000",
+    "00000000",
+    "10000000",
+    "10000000",
+    "20000000",
+    "20000000",
+    "30000000"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 0,
+    "facing": "east"
+  },
+  "twin": {
+    "x": 0,
+    "y": 1,
+    "facing": "south"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat"
+  ],
+  "slots": {
+    "main": 5
+  },
+  "par": {
+    "commands": 3,
+    "steps": 6
+  },
+  "reference": "repeat 3 { forward jump }",
+  "hints": [
+    "Both stairs have the same rhythm: a step, then a climb.",
+    "Repeat forward and jump three times.",
+    "repeat 3 { forward jump }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

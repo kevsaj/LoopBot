@@ -1,0 +1,62 @@
+{
+  "id": "t6-f32",
+  "title": "Left Hand Rule",
+  "band": "mirror",
+  "size": {
+    "w": 8,
+    "h": 6
+  },
+  "tiles": [
+    "________",
+    "___#e.._",
+    "_...#_._",
+    "#.#.__._",
+    "_e_._..#",
+    "_##_____"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 3,
+    "y": 4,
+    "facing": "north"
+  },
+  "twin": {
+    "x": 5,
+    "y": 4,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "while",
+    "if"
+  ],
+  "slots": {
+    "main": 6
+  },
+  "par": {
+    "commands": 4,
+    "steps": 8
+  },
+  "reference": "repeat 9 { if wall_ahead { turn_left } else { forward } }",
+  "hints": [
+    "Each step: if a wall is ahead, turn left. If not, walk.",
+    "Repeat 9: if wall ahead, turn left, else forward.",
+    "repeat 9 { if wall_ahead { turn_left } else { forward } }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

@@ -59,6 +59,12 @@ const SKIES: Record<string, string[]> = {
   ropewalk: ['#2a1a12', '#5a3a24', '#a8743e', '#f0cf96'],
   office: ['#0c1424', '#1a2c4a', '#2f4f6f', '#e8b04a'],
   crest: ['#0e3354', '#2a6b9a', '#8cc8e8', '#fff3dc'],
+  // Tower 6, Twin Spires
+  atrium: ['#1a1e34', '#3a4466', '#9a8ab4', '#f2dcc4'],
+  skybridge: ['#14365a', '#3a72a8', '#9ccaea', '#eef8ff'],
+  batik: ['#1e1838', '#3a3070', '#a8643a', '#f2c88a'],
+  mirror: ['#0c0a1e', '#241c44', '#4e3e7a', '#c4b4ec'],
+  twintops: ['#05070f', '#141a30', '#2c3458', '#e8c46a'],
 };
 
 /** How many code lines fit; longer programs end with "…". */

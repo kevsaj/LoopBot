@@ -1,0 +1,69 @@
+{
+  "id": "t6-f49",
+  "title": "Lamp Spiral",
+  "band": "twintops",
+  "size": {
+    "w": 5,
+    "h": 8
+  },
+  "tiles": [
+    "_.s._",
+    "#._._",
+    "_s#e_",
+    "_.___",
+    "#__#_",
+    "_..s#",
+    "__#._",
+    "_es._"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 3,
+    "facing": "north"
+  },
+  "twin": {
+    "x": 1,
+    "y": 5,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit",
+    "all_switches_on"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "while",
+    "if"
+  ],
+  "sensors": [
+    "on_switch"
+  ],
+  "slots": {
+    "main": 8
+  },
+  "par": {
+    "commands": 6,
+    "steps": 11
+  },
+  "reference": "repeat 3 { while not wall_ahead { forward if on_switch { activate } } turn_right }",
+  "hints": [
+    "Halls of different lengths, lamps in different places.",
+    "repeat 3: (while not wall_ahead: forward, if on_switch activate), turn_right.",
+    "repeat 3 { while not wall_ahead { forward if on_switch { activate } } turn_right }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "typing": true
+}

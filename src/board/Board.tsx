@@ -3,6 +3,7 @@ import type Phaser from 'phaser';
 import type { BoardScene, BoardUpdate } from './BoardScene';
 import { fx } from '../audio/feedback';
 import { t } from '../i18n';
+import type { World } from '../sim/types';
 
 /** Twist's bands: their floors show a compass, for the turntables and the facing north sensor. */
 const COMPASS_BANDS = new Set(['ferry', 'garden', 'loom', 'lantern', 'pinnacle']);
@@ -97,6 +98,7 @@ export function Board({ update, rotateSignal, band }: Props) {
       <div className="board-canvas" ref={host} aria-hidden="true" onPointerDown={poke} />
       {COMPASS_BANDS.has(band) && <Compass deg={NORTH_DEG[rotateSignal % 4]} />}
       {TALLY_BANDS.has(band) && <TallyBoard n={update.world.tally} />}
+      {update.world.twin && <TwinBadge world={update.world} />}
     </>
   );
 }
@@ -110,6 +112,26 @@ function Compass({ deg }: { deg: number }) {
           {t('N')}
         </span>
       </div>
+    </div>
+  );
+}
+
+/**
+ * Twin Spires (CR-TWIN): who is who on the board, ticked off as each bot parks at its lift.
+ * LoopBot's swatch uses the player's paint (the --bot-top variable), Echo's is always lilac.
+ */
+function TwinBadge({ world }: { world: World }) {
+  const parked = (b: { x: number; y: number }) => world.tiles[b.y][b.x].type === 'exit';
+  return (
+    <div className="board-twins" role="img" aria-label={t('LoopBot and Echo both run your program')}>
+      <span className={parked(world.bot) ? 'parked' : ''}>
+        <i style={{ background: 'var(--bot-top, #f7f3ea)' }} />
+        LoopBot
+      </span>
+      <span className={world.twin && parked(world.twin) ? 'parked' : ''}>
+        <i style={{ background: '#c4b2ff' }} />
+        {t('Echo')}
+      </span>
     </div>
   );
 }

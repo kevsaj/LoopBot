@@ -3,12 +3,13 @@
 //
 // Setup (once, in Kevin's accounts):
 //  - App Store Connect: non-consumable in-app purchases `loopbot_plus`, `loopbot_pack_heatwave`,
-//    `loopbot_pack_twist` and `loopbot_pack_dockyard`, and two consumables, `loopbot_hints_10` and
-//    `loopbot_hints_40`.
-//  - Play Console: one-time products with the same six ids.
+//    `loopbot_pack_twist`, `loopbot_pack_dockyard` and `loopbot_pack_twinspires`, and two
+//    consumables, `loopbot_hints_10` and `loopbot_hints_40`.
+//  - Play Console: one-time products with the same seven ids.
 //  - RevenueCat: entitlement `plus` with `loopbot_plus` attached, entitlement `heatwave` with
 //    `loopbot_pack_heatwave` attached, entitlement `twist` with `loopbot_pack_twist` attached,
-//    entitlement `dockyard` with `loopbot_pack_dockyard` attached (see store/packs.ts), and an
+//    entitlement `dockyard` with `loopbot_pack_dockyard` attached, entitlement `twinspires` with
+//    `loopbot_pack_twinspires` attached (see store/packs.ts), and an
 //    offering whose package holds
 //    Plus (the package with `loopbot_plus` is what the Plus sheet sells).
 //  - Public SDK keys in .env.local: VITE_REVENUECAT_IOS_KEY and VITE_REVENUECAT_ANDROID_KEY.

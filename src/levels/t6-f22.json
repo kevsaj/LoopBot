@@ -1,0 +1,71 @@
+{
+  "id": "t6-f22",
+  "title": "Bug Hunt: Wrong Turn",
+  "band": "batik",
+  "size": {
+    "w": 8,
+    "h": 7
+  },
+  "tiles": [
+    "#___#___",
+    "...e____",
+    "._#_....",
+    ".____#_.",
+    "....__#.",
+    "__#_e...",
+    "____#_#_"
+  ],
+  "heights": [
+    "00000000",
+    "22330000",
+    "20000011",
+    "10000001",
+    "11000002",
+    "00003322",
+    "00000000"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 4,
+    "y": 2,
+    "facing": "east"
+  },
+  "twin": {
+    "x": 3,
+    "y": 4,
+    "facing": "west"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "F1"
+  ],
+  "slots": {
+    "main": 6,
+    "F1": 4
+  },
+  "par": {
+    "commands": 8,
+    "steps": 11
+  },
+  "reference": "F1 turn_right F1 turn_right F1 def F1 { forward jump forward }",
+  "hints": [
+    "Run it and watch where the bots go after the first pattern.",
+    "The first turn goes the wrong way.",
+    "F1 turn_right F1 turn_right F1 def F1 { forward jump forward }"
+  ],
+  "story": {
+    "intro": "PATCH: \"VANTA got into this routine. It almost works. Run it, find the bad block, fix it.\"",
+    "outro": null
+  },
+  "starter": "F1 turn_left F1 turn_right F1 def F1 { forward jump forward }"
+}

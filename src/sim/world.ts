@@ -1,5 +1,5 @@
 import { FREE_ACTIONS, MAX_TALLY } from './types';
-import type { Action, Colour, Condition, Facing, LevelFile, Pos, Tile, TileType, World } from './types';
+import type { Action, Bot, Colour, Condition, Facing, LevelFile, Pos, Tile, TileType, World } from './types';
 import { msg } from '../i18n';
 
 const TILE_CHARS: Record<string, { type: TileType; colour?: Colour; phase?: number; spin?: 1 | -1 }> = {
@@ -81,6 +81,7 @@ export function createWorld(level: LevelFile): World {
     ventCycle: vents ? (level.ventCycle ?? DEFAULT_VENT_CYCLE) : 0,
     tally: 0,
     bot: { x: level.bot.x, y: level.bot.y, facing: level.bot.facing, carrying: false },
+    twin: level.twin ? { x: level.twin.x, y: level.twin.y, facing: level.twin.facing, carrying: false } : null,
     goals: [...level.goals],
   };
 }
@@ -96,8 +97,52 @@ export function cloneWorld(w: World): World {
     links: w.links,
     cracked: { ...w.cracked },
     bot: { ...w.bot },
+    twin: w.twin ? { ...w.twin } : null,
     goals: w.goals,
   };
+}
+
+/**
+ * Twin Spires (CR-TWIN): runs fn with Echo in LoopBot's place, so every rule and sensor reads
+ * Echo's tile and facing, and LoopBot becomes the other bot that Echo can't walk into. The swap
+ * is undone before returning, even when fn throws.
+ */
+export function asTwin<T>(w: World, fn: () => T): T {
+  if (!w.twin) return fn();
+  [w.bot, w.twin] = [w.twin, w.bot];
+  try {
+    return fn();
+  } finally {
+    [w.bot, w.twin] = [w.twin!, w.bot];
+  }
+}
+
+/** A bot on an exit has parked there for good (CR-TWIN). */
+export function parked(w: World, b: Bot): boolean {
+  return w.tiles[b.y][b.x].type === 'exit';
+}
+
+/**
+ * One step on a Twin Spires floor when both bots do the same thing (a program with no if or
+ * while): LoopBot acts, then Echo, and a parked bot sits it out. On any other floor it is just
+ * applyAction. The solver uses it; the interpreter runs each bot's own copy of the program.
+ */
+export function applyBoth(w: World, action: Action): ActionResult {
+  if (!w.twin) return applyAction(w, action);
+  if (!parked(w, w.bot)) {
+    const r = applyAction(w, action);
+    if (!r.ok) return r;
+  }
+  if (!parked(w, w.twin)) {
+    const r = asTwin(w, () => applyAction(w, action));
+    if (!r.ok) return { ok: false, error: twinError(r.error) };
+  }
+  return { ok: true };
+}
+
+/** An error that happened to Echo says so (the floor screen translates both parts). */
+export function twinError(error: string): string {
+  return `${msg('Echo:')} ${error}`;
 }
 
 const DELTA: Record<Facing, Pos> = {
@@ -121,6 +166,8 @@ function inBounds(w: World, p: Pos) {
 /** Can a bot stand on (or a box be placed on) this tile? Walls, gaps and closed doors: no. */
 export function isWalkable(w: World, p: Pos): boolean {
   if (!inBounds(w, p)) return false;
+  // Twin Spires: the other bot stands in the way like a wall (CR-TWIN)
+  if (w.twin && w.twin.x === p.x && w.twin.y === p.y) return false;
   const t = w.tiles[p.y][p.x];
   if (t.type === 'wall' || t.type === 'gap') return false;
   if (t.type === 'door' && !w.doors[key(p.x, p.y)]) return false;
@@ -319,7 +366,7 @@ export function goalsMet(w: World): boolean {
       case 'all_targets_filled':
         return w.targets.every((t) => w.boxes[t.y][t.x] >= t.count);
       case 'bot_on_exit':
-        return w.tiles[w.bot.y][w.bot.x].type === 'exit';
+        return parked(w, w.bot) && (!w.twin || parked(w, w.twin));
       case 'all_switches_on':
         return Object.values(w.switches).every(Boolean);
     }
@@ -329,7 +376,8 @@ export function goalsMet(w: World): boolean {
 /** A compact, stable string for a world state (used by the solver). */
 export function worldKey(w: World): string {
   const b = w.bot;
-  return `${b.x},${b.y},${b.facing},${b.carrying ? 1 : 0}|${w.boxes.map((r) => r.join('')).join('/')}|${Object.values(w.switches)
+  const e = w.twin;
+  return `${b.x},${b.y},${b.facing},${b.carrying ? 1 : 0}${e ? `;${e.x},${e.y},${e.facing},${e.carrying ? 1 : 0}` : ''}|${w.boxes.map((r) => r.join('')).join('/')}|${Object.values(w.switches)
     .map((s) => (s ? 1 : 0))
     .join('')}|${Object.values(w.doors)
     .map((s) => (s ? 1 : 0))

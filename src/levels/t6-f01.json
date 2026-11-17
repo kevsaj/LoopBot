@@ -1,0 +1,58 @@
+{
+  "id": "t6-f01",
+  "title": "Two Lobbies",
+  "band": "atrium",
+  "size": {
+    "w": 6,
+    "h": 5
+  },
+  "tiles": [
+    "__###_",
+    "_...e_",
+    "__#___",
+    "_...e#",
+    "____#_"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "twin": {
+    "x": 1,
+    "y": 3,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate"
+  ],
+  "slots": {
+    "main": 5
+  },
+  "par": {
+    "commands": 3,
+    "steps": 3
+  },
+  "reference": "forward forward forward",
+  "hints": [
+    "Echo runs every block you place, at the same time as LoopBot.",
+    "Both lifts are three tiles ahead.",
+    "forward forward forward"
+  ],
+  "story": {
+    "intro": "PATCH: \"Twin Spires, two towers joined by a skybridge. See the bot in the other lobby? It was built from your plans, and its radio copies yours. Call it Echo.\"",
+    "outro": "PATCH: \"One program, two bots. Echo did everything you told LoopBot to do.\""
+  }
+}

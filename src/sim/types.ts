@@ -128,6 +128,19 @@ export interface LevelFile {
    * clock (steps taken so far) at its phase, counted modulo the cycle.
    */
   ventCycle?: number;
+  /**
+   * Twin Spires (CR-TWIN): a second bot, Echo, that runs the same program as LoopBot, each with
+   * its own copy, so its sensors read its own surroundings. LoopBot acts first in every step. A
+   * bot that reaches an exit parks there and stops. bot_on_exit then needs both bots parked.
+   */
+  twin?: Pos & { facing: Facing };
+}
+
+export interface Bot {
+  x: number;
+  y: number;
+  facing: Facing;
+  carrying: boolean;
 }
 
 export interface World {
@@ -150,6 +163,8 @@ export interface World {
   ventCycle: number;
   /** Dockyard's tally: LoopBot's one number, 0 to MAX_TALLY. Starts at 0. */
   tally: number;
-  bot: { x: number; y: number; facing: Facing; carrying: boolean };
+  bot: Bot;
+  /** Twin Spires: Echo, the second bot (CR-TWIN). Null on every other floor. */
+  twin: Bot | null;
   goals: Goal[];
 }

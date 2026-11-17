@@ -4,7 +4,7 @@
 
 import { BY_TALLY, FREE_ACTIONS } from './types';
 import type { Action, Block, LevelFile, Program, Routine, World } from './types';
-import { applyAction, cloneWorld, createWorld, goalsMet, sense } from './world';
+import { applyAction, asTwin, cloneWorld, createWorld, goalsMet, parked, sense, twinError } from './world';
 import { msg } from '../i18n';
 
 export const STEP_LIMIT = 500; // CR-9
@@ -23,6 +23,10 @@ export interface StepEvent {
   action: Action;
   ok: boolean;
   error?: string;
+  /** Twin Spires: set on a step Echo took (CR-TWIN). */
+  who?: 'twin';
+  /** Twin Spires: what Echo did in the same step as LoopBot's event. */
+  twin?: StepEvent;
 }
 
 export type Outcome =
@@ -48,12 +52,15 @@ function* runBlocks(
   routine: Routine,
   callStack: string[],
   ticks: { n: number },
+  twin = false,
 ): Generator<Yielded, void, void> {
+  // Echo's copy of the program acts and senses as Echo (CR-TWIN)
+  const as = <T,>(fn: () => T): T => (twin ? asTwin(world, fn) : fn());
   for (const block of blocks) {
     if (++ticks.n > TICK_LIMIT) throw new Halt(msg('ERR: step limit, possible endless loop'), block.id);
     switch (block.kind) {
       case 'action': {
-        const res = applyAction(world, block.action);
+        const res = as(() => applyAction(world, block.action));
         yield {
           type: 'step',
           event: {
@@ -63,6 +70,7 @@ function* runBlocks(
             action: block.action,
             ok: res.ok,
             ...(res.ok ? {} : { error: res.error }),
+            ...(twin ? { who: 'twin' as const } : {}),
           },
         };
         break;
@@ -71,22 +79,22 @@ function* runBlocks(
         // "repeat tally" reads the tally once, as the loop starts (CR-TALLY)
         const times = block.times === BY_TALLY ? world.tally : block.times;
         for (let i = 0; i < times; i++) {
-          yield* runBlocks(program, world, block.body, routine, callStack, ticks);
+          yield* runBlocks(program, world, block.body, routine, callStack, ticks, twin);
         }
         break;
       }
       case 'if':
-        yield* runBlocks(program, world, sense(world, block.cond) ? block.then : block.else, routine, callStack, ticks);
+        yield* runBlocks(program, world, as(() => sense(world, block.cond)) ? block.then : block.else, routine, callStack, ticks, twin);
         break;
       case 'while':
-        while (sense(world, block.cond)) {
+        while (as(() => sense(world, block.cond))) {
           if (++ticks.n > TICK_LIMIT) throw new Halt(msg('ERR: step limit, possible endless loop'), block.id);
-          yield* runBlocks(program, world, block.body, routine, callStack, ticks);
+          yield* runBlocks(program, world, block.body, routine, callStack, ticks, twin);
         }
         break;
       case 'call':
         if (callStack.length >= CALL_DEPTH_LIMIT) throw new Halt(msg('ERR: too many nested calls'), block.id);
-        yield* runBlocks(program, world, program[block.fn], block.fn, [...callStack, block.id], ticks);
+        yield* runBlocks(program, world, program[block.fn], block.fn, [...callStack, block.id], ticks, twin);
         break;
     }
   }
@@ -102,6 +110,10 @@ export class Runner {
   status: RunStatus = 'ready';
   outcome: Outcome | null = null;
   private gen: Generator<Yielded, void, void>;
+  /** Twin Spires: Echo's own run of the same program (CR-TWIN). */
+  private twinGen: Generator<Yielded, void, void> | null = null;
+  private mainDone = false;
+  private twinDone = false;
 
   constructor(program: Program, level: LevelFile) {
     this.world = createWorld(level);
@@ -110,6 +122,7 @@ export class Runner {
     // A Program is plain data (ids, strings, numbers, nested arrays), so JSON copies it exactly.
     const frozen = JSON.parse(JSON.stringify(program)) as Program;
     this.gen = runBlocks(frozen, this.world, frozen.main, 'main', [], { n: 0 });
+    if (this.world.twin) this.twinGen = runBlocks(frozen, this.world, frozen.main, 'main', [], { n: 0 }, true);
   }
 
   get done() {
@@ -120,6 +133,7 @@ export class Runner {
   step(): StepEvent | null {
     if (this.outcome) return null;
     this.status = 'running';
+    if (this.twinGen) return this.stepTwins();
     let r: IteratorResult<Yielded, void>;
     try {
       r = this.gen.next();
@@ -147,6 +161,55 @@ export class Runner {
         error: msg('ERR: step limit, possible endless loop'),
         blockId: ev.blockId,
       });
+    }
+    return ev;
+  }
+
+  /**
+   * One step on a Twin Spires floor (CR-TWIN): LoopBot takes its next action, then Echo takes its
+   * own. A bot parked on an exit, or whose program has ended, sits the step out. Returns
+   * LoopBot's event with Echo's alongside, or Echo's alone once LoopBot has stopped.
+   */
+  private stepTwins(): StepEvent | null {
+    const w = this.world;
+    let main: StepEvent | null = null;
+    let twin: StepEvent | null = null;
+    try {
+      if (!this.mainDone && parked(w, w.bot)) this.mainDone = true;
+      if (!this.mainDone) {
+        const r = this.gen.next();
+        if (r.done) this.mainDone = true;
+        else main = r.value.event;
+      }
+      if (!main || main.ok) {
+        if (!this.twinDone && parked(w, w.twin!)) this.twinDone = true;
+        if (!this.twinDone) {
+          const r = this.twinGen!.next();
+          if (r.done) this.twinDone = true;
+          else twin = r.value.event;
+        }
+      }
+    } catch (e) {
+      if (e instanceof Halt) {
+        this.finish({ status: 'crashed', steps: this.steps, error: e.reason, blockId: e.blockId });
+        return null;
+      }
+      throw e;
+    }
+    if (!main && !twin) {
+      this.finish(goalsMet(w) ? { status: 'cleared', steps: this.steps } : { status: 'ended', steps: this.steps });
+      return null;
+    }
+    if ((main && !FREE_ACTIONS.has(main.action)) || (twin && !FREE_ACTIONS.has(twin.action))) this.steps++;
+    const ev: StepEvent = main ? (twin ? { ...main, twin } : main) : twin!;
+    if (main && !main.ok) {
+      this.finish({ status: 'crashed', steps: this.steps, error: `${main.error} at step ${this.steps}`, blockId: main.blockId });
+    } else if (twin && !twin.ok) {
+      this.finish({ status: 'crashed', steps: this.steps, error: `${twinError(twin.error ?? '')} at step ${this.steps}`, blockId: twin.blockId });
+    } else if (goalsMet(w)) {
+      this.finish({ status: 'cleared', steps: this.steps });
+    } else if (this.steps >= STEP_LIMIT) {
+      this.finish({ status: 'crashed', steps: this.steps, error: msg('ERR: step limit, possible endless loop'), blockId: ev.blockId });
     }
     return ev;
   }

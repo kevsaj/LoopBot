@@ -18,7 +18,8 @@ export type Theme =
   | 'frostgate' | 'glacier' | 'signal' | 'aurora' | 'summit'
   | 'dunegate' | 'furnace' | 'bazaar' | 'mirage' | 'crown'
   | 'ferry' | 'garden' | 'loom' | 'lantern' | 'pinnacle'
-  | 'quay' | 'crane' | 'ropewalk' | 'office' | 'crest';
+  | 'quay' | 'crane' | 'ropewalk' | 'office' | 'crest'
+  | 'atrium' | 'skybridge' | 'batik' | 'mirror' | 'twintops';
 
 interface Recipe {
   bpm: number;
@@ -317,6 +318,56 @@ const RECIPES: Record<Theme, Recipe> = {
     kick: 'x.....x...x.....', snare: '....x.......x...', hat: 'x.xxx.xxx.xxx.xx',
     seed: 193,
   },
+  // Tower 6, Twin Spires (the Skybridge). Floors 1-10: the Twin Atrium, two voices answering each other.
+  atrium: {
+    bpm: 104, root: 45, mode: IONIAN, chords: [0, 5, 3, 4], sevenths: true,
+    pad: { wave: 'sine', cutoff: 1700, gain: 0.04 },
+    bass: 'x...o...x...o...', bassWave: 'triangle',
+    arp: '0.2.0.2.1.3.1.3.', arpWave: 'triangle',
+    lead: { wave: 'triangle', density: 0.35, gain: 0.045 },
+    kick: 'x.......x.......', snare: '....x.......x...', hat: '..x...x...x...x.',
+    seed: 197,
+  },
+  // Floors 11-20: the Skybridge, wind across the glass walkway, a steady stride.
+  skybridge: {
+    bpm: 118, root: 43, mode: LYDIAN, chords: [0, 1, 4, 0], sevenths: false,
+    pad: { wave: 'triangle', cutoff: 2000, gain: 0.035 },
+    bass: 'x.x...x.x.x...o.', bassWave: 'triangle',
+    arp: '0243024302430243', arpWave: 'square',
+    lead: { wave: 'triangle', density: 0.4, gain: 0.04 },
+    kick: 'x...x...x...x...', snare: '....x.......x...', hat: 'x.x.x.x.x.x.x.x.',
+    seed: 199,
+  },
+  // Floors 21-30: the Batik Gallery, a pattern that comes round again and again.
+  batik: {
+    bpm: 96, root: 44, mode: DORIAN, chords: [0, 3, 0, 4], sevenths: true,
+    pad: { wave: 'sine', cutoff: 1400, gain: 0.04 },
+    bass: 'x..x..x...x..o..', bassWave: 'sine',
+    arp: '0.12.0.12.0.32.1', arpWave: 'triangle',
+    lead: { wave: 'triangle', density: 0.35, gain: 0.045 },
+    kick: 'x..x....x..x....', snare: '....x.......x...', hat: '.xx..xx..xx..xx.',
+    seed: 211,
+  },
+  // Floors 31-40: the Mirror Hall, quiet and glassy, every phrase answered a little differently.
+  mirror: {
+    bpm: 86, root: 40, mode: AEOLIAN, chords: [0, 5, 2, 6], sevenths: true,
+    pad: { wave: 'sine', cutoff: 1300, gain: 0.05 },
+    bass: 'x.......o.......', bassWave: 'sine',
+    arp: '0.4.2.4.0.4.2.4.', arpWave: 'sine',
+    lead: { wave: 'sine', density: 0.3, gain: 0.05 },
+    kick: 'x.........x.....', snare: '........x.......', hat: '..x...x...x...x.',
+    seed: 223,
+  },
+  // Floors 41-50: the Twin Tops, high and bright, two lines racing to the top.
+  twintops: {
+    bpm: 128, root: 45, mode: LYDIAN, chords: [0, 4, 5, 1], sevenths: false,
+    pad: { wave: 'sawtooth', cutoff: 1900, gain: 0.03 },
+    bass: 'x..x..x.x..x..o.', bassWave: 'triangle',
+    arp: '0124421001244210', arpWave: 'triangle',
+    lead: { wave: 'square', density: 0.45, gain: 0.025 },
+    kick: 'x.....x...x.....', snare: '....x.......x...', hat: 'x.xxx.xxx.xxx.xx',
+    seed: 227,
+  },
   // The daily challenge: cheerful and a little different every bar.
   daily: {
     bpm: 104, root: 46, mode: IONIAN, chords: [0, 3, 5, 4], sevenths: false,
@@ -335,6 +386,7 @@ export function themeForFloor(n: number, tower = 1): Theme {
   if (tower === 3) return (['dunegate', 'furnace', 'bazaar', 'mirage', 'crown'] as const)[Math.min(4, Math.floor((n - 1) / 10))];
   if (tower === 4) return (['ferry', 'garden', 'loom', 'lantern', 'pinnacle'] as const)[Math.min(4, Math.floor((n - 1) / 10))];
   if (tower === 5) return (['quay', 'crane', 'ropewalk', 'office', 'crest'] as const)[Math.min(4, Math.floor((n - 1) / 10))];
+  if (tower === 6) return (['atrium', 'skybridge', 'batik', 'mirror', 'twintops'] as const)[Math.min(4, Math.floor((n - 1) / 10))];
   if (n <= 10) return 'lobby';
   if (n <= 20) return 'maintenance';
   if (n <= 30) return 'workshop';

@@ -2,7 +2,7 @@
 // Overlays only on the first floors; they never block a tap, and Settings can turn them off.
 
 import type { Action, Block, Program, World } from '../sim/types';
-import type { RunStatus } from '../sim/interpreter';
+import type { RunStatus, StepEvent } from '../sim/interpreter';
 import { msg, t } from '../i18n';
 
 export type TutorialStep = 'tap' | 'run' | 'more' | 'turn' | 'spin' | 'cancel';
@@ -93,6 +93,22 @@ const STEP_LINE: Record<Action, string> = {
   tally_up: msg('> + tally + 1: counted, no step taken'),
   tally_down: msg('> − tally − 1: counted, no step taken'),
 };
+
+/**
+ * Twin Spires (CR-TWIN): the words added to a step's line when a bot just parked at its lift.
+ * Starts with " · " when there is something to say, so it can go straight after the step line.
+ */
+export function twinNote(ev: StepEvent, w: World): string {
+  if (!w.twin) return '';
+  const atExit = (b: { x: number; y: number }) => w.tiles[b.y][b.x].type === 'exit';
+  const moved = (e: StepEvent | undefined) => !!e && e.ok && (e.action === 'forward' || e.action === 'jump');
+  const botStep = ev.who === 'twin' ? undefined : ev;
+  const twinStep = ev.who === 'twin' ? ev : ev.twin;
+  const notes: string[] = [];
+  if (moved(botStep) && atExit(w.bot) && !atExit(w.twin)) notes.push(t('LoopBot parked at its lift and waits for Echo'));
+  if (moved(twinStep) && atExit(w.twin) && !atExit(w.bot)) notes.push(t('Echo parked at its lift and waits for LoopBot'));
+  return notes.length ? ` · ${notes.join(' · ')}` : '';
+}
 
 /** The terminal line for one step of a run. */
 export function stepLine(action: Action): string {

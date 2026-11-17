@@ -1,0 +1,66 @@
+{
+  "id": "t6-f33",
+  "title": "Painted Arrows",
+  "band": "mirror",
+  "size": {
+    "w": 8,
+    "h": 7
+  },
+  "tiles": [
+    "_#_#__#_",
+    "___#..r#",
+    "_e..__._",
+    "_#_.#_._",
+    "___.__e#",
+    "_#_.____",
+    "___#_#_#"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 4,
+    "y": 1,
+    "facing": "east"
+  },
+  "twin": {
+    "x": 3,
+    "y": 5,
+    "facing": "north"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "while",
+    "if"
+  ],
+  "sensors": [
+    "tile_is"
+  ],
+  "slots": {
+    "main": 8
+  },
+  "par": {
+    "commands": 6,
+    "steps": 6
+  },
+  "reference": "repeat 2 { while not wall_ahead { forward } if tile_is r { turn_right } else { turn_left } }",
+  "hints": [
+    "At the end of each hall the floor says which way: red means right.",
+    "Repeat 2: walk to the wall, then if the tile is red turn right, else turn left.",
+    "repeat 2 { while not wall_ahead { forward } if tile_is r { turn_right } else { turn_left } }"
+  ],
+  "story": {
+    "intro": "PATCH: \"Someone painted the floors. Red tiles point right. Each bot reads its own floor.\"",
+    "outro": null
+  }
+}

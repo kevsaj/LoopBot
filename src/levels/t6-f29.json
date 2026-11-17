@@ -1,0 +1,74 @@
+{
+  "id": "t6-f29",
+  "title": "Loom Ladder",
+  "band": "batik",
+  "size": {
+    "w": 8,
+    "h": 8
+  },
+  "tiles": [
+    "e..#_#__",
+    "__._____",
+    "__...#__",
+    "__##.#_e",
+    "____.__.",
+    "##__#...",
+    "##__#._#",
+    "___...__"
+  ],
+  "heights": [
+    "01100000",
+    "00200000",
+    "00211000",
+    "00000000",
+    "00000001",
+    "00000221",
+    "00000100",
+    "00000100"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 3,
+    "y": 7,
+    "facing": "east"
+  },
+  "twin": {
+    "x": 4,
+    "y": 4,
+    "facing": "north"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "F1",
+    "F2"
+  ],
+  "slots": {
+    "main": 3,
+    "F1": 3,
+    "F2": 5
+  },
+  "par": {
+    "commands": 8,
+    "steps": 11
+  },
+  "reference": "F2 F2 def F1 { forward jump } def F2 { F1 turn_left F1 turn_right }",
+  "hints": [
+    "A climbing zigzag made of one small step.",
+    "F1: forward, jump. F2: F1, left, F1, right.",
+    "F2 F2 def F1 { forward jump } def F2 { F1 turn_left F1 turn_right }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

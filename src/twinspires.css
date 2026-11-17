@@ -1,0 +1,150 @@
+/* Tower 6, Twin Spires (the Skybridge). Kept in its own file so it never collides with other work in styles.css. */
+
+.tower-tab-6.on {
+  border-color: #c9b8ff;
+  box-shadow: 0 0 0 1px rgba(201, 184, 255, 0.35), 0 0 14px rgba(170, 150, 255, 0.22);
+}
+.tower-6 .tower-roof .beacon {
+  background: #e6dcff;
+  box-shadow: 0 0 18px #a894ff;
+}
+
+/* Twin Atrium: dusk behind two tall steel towers joined by a bridge. */
+.board-wrap.band-atrium {
+  background:
+    radial-gradient(circle at 80% 22%, rgba(255, 240, 220, 0.9) 0 8px, rgba(255, 220, 190, 0.25) 9px, transparent 44px),
+    linear-gradient(180deg, #1a1e34 0%, #3a4466 45%, #9a8ab4 80%, #f2dcc4 100%);
+}
+.board-wrap.band-atrium::after,
+.board-wrap.band-twintops::after {
+  height: 100%;
+  opacity: 0.5;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300' preserveAspectRatio='none'><g fill='%23101426' fill-opacity='0.6'><path d='M150 300V120l8-14 8 14v180z'/><path d='M234 300V120l8-14 8 14v180z'/><path d='M154 106l4-40 4 40z'/><path d='M238 106l4-40 4 40z'/><path d='M166 190h68v8h-68z'/></g><g fill='%23ffe9b0' fill-opacity='0.35'><path d='M156 140h4v4h-4zM156 160h4v4h-4zM240 150h4v4h-4zM240 230h4v4h-4zM156 250h4v4h-4z'/></g><path fill='%23101426' fill-opacity='0.4' d='M0 300v-30h40v-16h30v16h50v30zM300 300v-24h36v-20h28v20h36v24z'/></svg>") center / 100% 100% no-repeat;
+}
+/* Skybridge: daylight, clouds drifting under the glass walkway. */
+.board-wrap.band-skybridge {
+  background:
+    radial-gradient(ellipse 50% 14% at 30% 78%, rgba(255, 255, 255, 0.45), transparent 70%),
+    radial-gradient(ellipse 40% 10% at 76% 88%, rgba(255, 255, 255, 0.35), transparent 70%),
+    linear-gradient(180deg, #14365a 0%, #3a72a8 45%, #9ccaea 80%, #eef8ff 100%);
+}
+.board-wrap.band-skybridge::after {
+  height: 100%;
+  opacity: 0.4;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300' preserveAspectRatio='none'><g fill='none' stroke='%230c1e30' stroke-opacity='0.5' stroke-width='3'><path d='M0 60h400M0 76h400'/><path d='M20 60l20 16 20-16 20 16 20-16 20 16 20-16 20 16 20-16 20 16 20-16 20 16 20-16 20 16 20-16 20 16 20-16 20 16 20-16 20 16'/></g></svg>") center / 100% 100% no-repeat;
+}
+/* Batik Gallery: lamp-lit indigo cloth with ochre dots. */
+.board-wrap.band-batik {
+  background:
+    radial-gradient(ellipse 60% 30% at 50% 0%, rgba(255, 200, 130, 0.22), transparent 70%),
+    linear-gradient(180deg, #1e1838 0%, #3a3070 45%, #a8643a 82%, #f2c88a 100%);
+}
+.board-wrap.band-batik::after {
+  height: 100%;
+  opacity: 0.4;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300' preserveAspectRatio='none'><g fill='none' stroke='%23f2c88a' stroke-opacity='0.4' stroke-width='2'><path d='M0 20q25-14 50 0t50 0 50 0 50 0 50 0 50 0 50 0 50 0'/><path d='M0 36q25 14 50 0t50 0 50 0 50 0 50 0 50 0 50 0 50 0'/></g><g fill='%23f2c88a' fill-opacity='0.35'><circle cx='25' cy='28' r='3'/><circle cx='75' cy='28' r='3'/><circle cx='125' cy='28' r='3'/><circle cx='175' cy='28' r='3'/><circle cx='225' cy='28' r='3'/><circle cx='275' cy='28' r='3'/><circle cx='325' cy='28' r='3'/><circle cx='375' cy='28' r='3'/></g></svg>") center / 100% 100% no-repeat;
+}
+/* Mirror Hall: deep violet glass with faint reflections. */
+.board-wrap.band-mirror {
+  background:
+    linear-gradient(115deg, transparent 0 30%, rgba(255, 255, 255, 0.06) 30% 34%, transparent 34% 62%, rgba(255, 255, 255, 0.05) 62% 64%, transparent 64%),
+    linear-gradient(180deg, #0c0a1e 0%, #241c44 50%, #4e3e7a 85%, #6e5c9e 100%);
+}
+/* The Twin Tops: night, both crowns lit gold. */
+.board-wrap.band-twintops {
+  background:
+    radial-gradient(circle at 16% 14%, rgba(255, 250, 230, 0.9) 0 7px, rgba(255, 240, 200, 0.2) 8px, transparent 40px),
+    linear-gradient(180deg, #05070f 0%, #141a30 45%, #2c3458 82%, #5a5470 100%);
+}
+
+/* The tower map's bands in Twin Spires. */
+.band-atrium .tower-floors {
+  background: linear-gradient(#1c1e2c, #151722);
+  border-color: #9aa8bc;
+}
+.band-atrium .tower-band {
+  color: #e6dccc;
+}
+.band-skybridge .tower-floors {
+  background: linear-gradient(#142438, #0f1c2c);
+  border-color: #6ca0d0;
+}
+.band-skybridge .tower-band {
+  color: #cfe8ff;
+}
+.band-batik .tower-floors {
+  background: linear-gradient(#1e1a34, #161328);
+  border-color: #d89a4a;
+}
+.band-batik .tower-band {
+  color: #f2c88a;
+}
+.band-mirror .tower-floors {
+  background: linear-gradient(#18122c, #110d20);
+  border-color: #8a74c8;
+}
+.band-mirror .tower-band {
+  color: #d4c8ff;
+}
+.band-twintops .tower-floors {
+  background: linear-gradient(#10131e, #0a0c14);
+  border-color: #e8c46a;
+}
+.band-twintops .tower-band {
+  color: #ffe3a0;
+}
+
+/* The Twin Spires city pack's store screen: the Plus sheet's layout in twilight violet. */
+.pack-twinspires .plus-perks li {
+  border-color: rgba(201, 184, 255, 0.28);
+  background: linear-gradient(135deg, rgba(170, 150, 255, 0.1), rgba(220, 210, 255, 0.03));
+}
+.pack-sheet.pack-twinspires .pill.plus-buy {
+  background: linear-gradient(180deg, #e6dcff, #9a84e8);
+  border-color: #b4a0f0;
+  color: #1a1030;
+}
+.pack-twinspires .plus-owned {
+  color: #e6dcff;
+}
+.pack-twinspires .pack-word {
+  color: #c9b8ff;
+}
+
+/* The Echo badge on Twin Spires floors: who is who, and that both run the same program. */
+.board-twins {
+  position: absolute;
+  z-index: 2;
+  top: 58px;
+  right: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 5px 9px;
+  border-radius: 10px;
+  border: 2px solid rgba(201, 184, 255, 0.85);
+  background: linear-gradient(180deg, rgba(22, 20, 40, 0.92), rgba(14, 12, 28, 0.88));
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  font-size: 11px;
+  font-weight: 800;
+  color: #f2eeff;
+  pointer-events: none;
+}
+.board-twins span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.board-twins i {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  border: 1.5px solid rgba(0, 0, 0, 0.35);
+}
+.board-twins .parked {
+  opacity: 0.6;
+}
+.board-twins .parked::after {
+  content: '✓';
+  color: #9ff0c0;
+}

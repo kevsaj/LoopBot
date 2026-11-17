@@ -1,0 +1,376 @@
+{
+ "t6-f01": {
+  "title": "Deux halls",
+  "hints": [
+   "Écho exécute chaque bloc que tu places, en même temps que LoopBot.",
+   "Les deux ascenseurs sont à trois cases devant."
+  ],
+  "intro": "PATCH : « Twin Spires, deux tours reliées par une passerelle. Tu vois le robot dans l'autre hall ? Il a été construit d'après tes plans, et sa radio copie la tienne. Appelons-le Écho. »",
+  "outro": "PATCH : « Un programme, deux robots. Écho a fait tout ce que tu as demandé à LoopBot. »"
+ },
+ "t6-f02": {
+  "title": "Côte à côte",
+  "hints": [
+   "Les deux chemins ont la même forme.",
+   "Deux fois avancer, tourner à gauche, deux fois avancer."
+  ],
+  "intro": "PATCH : « Écho tourne quand tu tournes et marche quand tu marches. Même forme, même programme. »"
+ },
+ "t6-f03": {
+  "title": "Écho regarde au nord",
+  "hints": [
+   "Écho ne regarde pas dans le même sens, alors « avancer » l'envoie ailleurs.",
+   "Prévois le chemin de LoopBot. Puis vérifie qu'Écho finit aussi sur son ascenseur."
+  ],
+  "intro": "PATCH : « Attention. Écho regarde dans une autre direction. Avancer, c'est avancer pour chacun, où qu'il regarde. »",
+  "outro": "PATCH : « Même programme, autre départ, autre chemin. Garde ça en tête ici. »"
+ },
+ "t6-f04": {
+  "title": "Dos à dos",
+  "hints": [
+   "Ils regardent dans des sens opposés, donc leurs chemins sont complètement retournés.",
+   "Trois fois avancer, tourner à gauche, deux fois avancer."
+  ]
+ },
+ "t6-f05": {
+  "title": "Premier arrivé",
+  "hints": [
+   "Un robot qui atteint un ascenseur s'y gare et s'arrête. L'autre continue.",
+   "L'ascenseur de LoopBot est à deux cases. Celui d'Écho est plus loin."
+  ],
+  "intro": "PATCH : « Un ascenseur attrape celui qui monte dessus. LoopBot se gare, et le reste du programme est pour Écho. »",
+  "outro": "PATCH : « LoopBot a attendu à son ascenseur pendant qu'Écho finissait le trajet. Pratique. »"
+ },
+ "t6-f06": {
+  "title": "Grimper ensemble",
+  "hints": [
+   "Les deux chemins montent aux mêmes moments.",
+   "Avancer, sauter, avancer, sauter, tourner à gauche, avancer."
+  ]
+ },
+ "t6-f07": {
+  "title": "Interrupteurs jumeaux",
+  "hints": [
+   "Chaque robot doit se tenir sur son propre interrupteur et l'activer.",
+   "Deux fois avancer, activer, tourner à droite, deux fois avancer."
+  ],
+  "intro": "PATCH : « Les lumières de la passerelle marchent avec deux interrupteurs, un dans chaque flèche. Un seul activer appuie sur les deux. »"
+ },
+ "t6-f08": {
+  "title": "Chemins croisés",
+  "hints": [
+   "Cette fois, c'est l'ascenseur d'Écho qui arrive en premier.",
+   "Écho se gare après trois pas. LoopBot continue."
+  ]
+ },
+ "t6-f09": {
+  "title": "Le long détour",
+  "hints": [
+   "Un demi-tour avec une montée au milieu.",
+   "Deux fois avancer, tourner à droite, avancer, sauter, tourner à droite, deux fois avancer."
+  ]
+ },
+ "t6-f10": {
+  "title": "Portes de l'atrium",
+  "hints": [
+   "LoopBot se gare tôt. Écho a encore un interrupteur à presser.",
+   "Écho finit avec un interrupteur et un dernier pas."
+  ],
+  "outro": "PATCH : « L'atrium est traversé. Écho n'a pas raté un seul de tes blocs. »"
+ },
+ "t6-f11": {
+  "title": "Voies de la passerelle",
+  "hints": [
+   "Un bloc répéter répète pour les deux robots.",
+   "Répète avancer quatre fois."
+  ],
+  "intro": "PATCH : « Le niveau de la passerelle. Les boucles marchent pareil pour deux : Écho répète tout ce que LoopBot répète. »"
+ },
+ "t6-f12": {
+  "title": "Escaliers jumeaux",
+  "hints": [
+   "Les deux escaliers ont le même rythme : un pas, puis une montée.",
+   "Répète avancer et sauter trois fois."
+  ]
+ },
+ "t6-f13": {
+  "title": "Zigzag à deux",
+  "hints": [
+   "Les deux chemins font des zigzags. Le dernier virage n'arrive jamais : l'ascenseur attrape chaque robot avant.",
+   "Avancer, tourner à gauche, avancer, tourner à droite. Trois fois."
+  ]
+ },
+ "t6-f14": {
+  "title": "Lève-tôt",
+  "hints": [
+   "LoopBot se gare pendant le deuxième tour. La boucle continue pour Écho.",
+   "Deux fois avancer et tourner à gauche, trois fois."
+  ],
+  "outro": "PATCH : « La boucle ne s'est pas arrêtée en même temps que LoopBot. Écho a utilisé le reste. »"
+ },
+ "t6-f15": {
+  "title": "Allumer la passerelle",
+  "hints": [
+   "Un interrupteur sur chaque case, dans les deux flèches.",
+   "Avance et active, trois fois."
+  ],
+  "intro": "PATCH : « Les lumières de la passerelle, un interrupteur sur chaque case. Deux robots, donc deux de chaque. »"
+ },
+ "t6-f16": {
+  "title": "Descendre les marches",
+  "hints": [
+   "Sauter marche aussi vers le bas : n'importe quelle descente est permise.",
+   "Avancer puis sauter, trois fois."
+  ]
+ },
+ "t6-f17": {
+  "title": "Boucle dans une boucle",
+  "hints": [
+   "Deux lignes droites de trois cases, un virage à droite après chacune.",
+   "Répéter 2 : (répéter 3 : avancer), tourner à droite."
+  ]
+ },
+ "t6-f18": {
+  "title": "Haies",
+  "hints": [
+   "En haut, tout droit, en bas, tout droit, en haut, tout droit.",
+   "Sauter puis avancer, trois fois."
+  ]
+ },
+ "t6-f19": {
+  "title": "Laveurs de vitres",
+  "hints": [
+   "L'ascenseur d'Écho est plus près. Il se gare pendant le deuxième passage.",
+   "Deux fois avancer, gauche, avancer, droite. Trois fois."
+  ]
+ },
+ "t6-f20": {
+  "title": "Course sur la passerelle",
+  "hints": [
+   "Deux montées, un virage, un pas. Puis tout ça encore une fois.",
+   "Répéter 2 : (répéter 2 : avancer, sauter), tourner à gauche, avancer."
+  ],
+  "outro": "PATCH : « La passerelle est traversée. Le signal de VANTA rebondit entre les flèches, et on est juste en dessous. »"
+ },
+ "t6-f21": {
+  "title": "Motif de batik",
+  "hints": [
+   "Le même motif trois fois, avec des virages entre les deux.",
+   "Apprends à F1 : avancer et sauter. Appelle-la entre les virages."
+  ],
+  "intro": "PATCH : « La galerie de batik : des tissus peints, le même motif encore et encore. Une fonction, c'est un motif aussi, et les deux robots peuvent la partager. »"
+ },
+ "t6-f22": {
+  "title": "Chasse au bogue : mauvais virage",
+  "hints": [
+   "Lance-le et regarde où vont les robots après le premier motif.",
+   "Le premier virage part du mauvais côté."
+  ],
+  "intro": "PATCH : « VANTA s'est glissé dans cette routine. Elle marche presque. Lance-la, trouve le mauvais bloc, répare-le. »"
+ },
+ "t6-f23": {
+  "title": "Pas partagés",
+  "hints": [
+   "LoopBot se gare à la fin du deuxième motif.",
+   "F1, c'est avancer, sauter, avancer. Virage à droite, puis à gauche."
+  ]
+ },
+ "t6-f24": {
+  "title": "Chasse au bogue : pas manquant",
+  "hints": [
+   "Chaque interrupteur est à deux pas du précédent.",
+   "Il manque un avancer dans F1."
+  ]
+ },
+ "t6-f25": {
+  "title": "Motif dans un motif",
+  "hints": [
+   "F2 peut appeler F1.",
+   "F1 : deux fois avancer. F2 : F1, sauter, F1. Principal : F2, tourner à gauche, F2."
+  ],
+  "intro": "PATCH : « Les fonctions peuvent appeler des fonctions. Un petit motif dans un plus grand, comme sur le tissu. »"
+ },
+ "t6-f26": {
+  "title": "Chasse au bogue : à l'envers",
+  "hints": [
+   "Chaque montée vient après un pas, pas avant.",
+   "Les deux blocs de F1 sont dans le mauvais ordre."
+  ]
+ },
+ "t6-f27": {
+  "title": "Boucle de la galerie",
+  "hints": [
+   "Écho se gare en premier.",
+   "F1 : deux fois avancer, tourner à droite. F2 : F1, sauter, tourner à gauche."
+  ]
+ },
+ "t6-f28": {
+  "title": "Chasse au bogue : éteint",
+  "hints": [
+   "Presse chaque interrupteur après être monté dessus.",
+   "F1 active avant d'avancer."
+  ]
+ },
+ "t6-f29": {
+  "title": "Échelle du métier à tisser",
+  "hints": [
+   "Un zigzag qui monte, fait d'un seul petit pas.",
+   "F1 : avancer, sauter. F2 : F1, gauche, F1, droite."
+  ]
+ },
+ "t6-f30": {
+  "title": "Finale de la galerie",
+  "hints": [
+   "LoopBot se gare avant le dernier motif.",
+   "F1 : avancer, sauter. F2 : F1, activer, F1."
+  ],
+  "outro": "PATCH : « Chaque fonction que tu as écrite a tourné deux fois à la fois, une fois par robot. Ça, c'est partager. »"
+ },
+ "t6-f31": {
+  "title": "Salle des miroirs",
+  "hints": [
+   "Les couloirs n'ont pas la même longueur. Une boucle tant que pose la question à chaque robot sur son propre couloir.",
+   "Répéter 2 : (tant qu'il n'y a pas de mur devant : avancer), tourner à droite."
+  ],
+  "intro": "PATCH : « La Salle des miroirs. Les deux flèches se ressemblent, mais elles ne sont pas pareilles à l'intérieur. Les capteurs lisent ce qui entoure chaque robot. »",
+  "outro": "PATCH : « Même programme, et chaque robot a tourné à son propre mur. C'est le truc de cette salle. »"
+ },
+ "t6-f32": {
+  "title": "Main gauche au mur",
+  "hints": [
+   "À chaque pas : s'il y a un mur devant, tourne à gauche. Sinon, avance.",
+   "Répéter 9 : si mur devant, tourner à gauche, sinon avancer."
+  ]
+ },
+ "t6-f33": {
+  "title": "Flèches peintes",
+  "hints": [
+   "Au bout de chaque couloir, le sol dit de quel côté aller : rouge veut dire droite.",
+   "Répéter 2 : marche jusqu'au mur, puis si la case est rouge tourne à droite, sinon à gauche."
+  ],
+  "intro": "PATCH : « Quelqu'un a peint les sols. Les cases rouges indiquent la droite. Chaque robot lit son propre sol. »"
+ },
+ "t6-f34": {
+  "title": "Chasse au bogue : mauvais mur",
+  "hints": [
+   "Lance-le et regarde de quel côté les robots tournent au premier mur.",
+   "Chaque couloir tourne à gauche."
+  ]
+ },
+ "t6-f35": {
+  "title": "Lampes de la passerelle",
+  "hints": [
+   "Les interrupteurs des lampes ne sont pas aux mêmes endroits dans les deux flèches.",
+   "Tant qu'il n'y a pas de mur devant : avancer, et si tu es sur un interrupteur, activer."
+  ],
+  "intro": "PATCH : « Les lampes de la passerelle. Les interrupteurs ne sont pas aux mêmes endroits dans les deux flèches, alors demande avant d'appuyer. »"
+ },
+ "t6-f36": {
+  "title": "Chasse au bogue : tout presser",
+  "hints": [
+   "Lance-le. Activer sur une case ordinaire, c'est une erreur.",
+   "N'active que quand le robot est sur un interrupteur."
+  ]
+ },
+ "t6-f37": {
+  "title": "Deux escaliers",
+  "hints": [
+   "Chaque escalier a ses propres longueurs de marches.",
+   "Répéter 2 : marche jusqu'au mur, tourne à gauche, marche jusqu'au mur, tourne à droite."
+  ]
+ },
+ "t6-f38": {
+  "title": "Chasse au bogue : un de moins",
+  "hints": [
+   "Lance-le. Un des robots s'arrête trop tôt.",
+   "Il y a trois couloirs, pas deux."
+  ]
+ },
+ "t6-f39": {
+  "title": "Code couleur",
+  "hints": [
+   "Rouge tourne à droite, bleu tourne à gauche, puis un pas. Sur chaque case.",
+   "Répéter 7 : si rouge tourner à droite, si bleu tourner à gauche, avancer."
+  ]
+ },
+ "t6-f40": {
+  "title": "Finale des miroirs",
+  "hints": [
+   "Allume les lampes en chemin, puis lis le sol à chaque mur.",
+   "Répéter 2 : (tant que pas de mur : avancer, activer si sur un interrupteur), puis rouge à droite, sinon à gauche."
+  ],
+  "outro": "PATCH : « Les deux signaux de VANTA viennent tout en haut des flèches. Un programme, deux robots, jusqu'au bout. »"
+ },
+ "t6-f41": {
+  "title": "Les Deux Sommets",
+  "hints": [
+   "Tape-le si tu veux. Écho lit aussi le code tapé.",
+   "repeat 3: forward, jump, turn_left, forward, turn_right."
+  ],
+  "intro": "PATCH : « Le haut des flèches. Tu peux de nouveau taper ton code, si tu veux. Les deux robots exécutent tout ce que tu tapes. »"
+ },
+ "t6-f42": {
+  "title": "Chasse au bogue : un de trop peu",
+  "hints": [
+   "Lance-le. Les deux robots tournent trop tôt.",
+   "Chaque ligne droite fait trois cases."
+  ]
+ },
+ "t6-f43": {
+  "title": "Marches de l'antenne",
+  "hints": [
+   "Une routine de deux blocs, utilisée quatre fois.",
+   "def F1: forward, jump."
+  ]
+ },
+ "t6-f44": {
+  "title": "Couloirs inégaux",
+  "hints": [
+   "Les couloirs sont différents, alors laisse une boucle tant que les mesurer.",
+   "repeat 3: while not wall_ahead: forward, then turn_left."
+  ]
+ },
+ "t6-f45": {
+  "title": "Chasse au bogue : rouge, c'est droite",
+  "hints": [
+   "Lance-le et regarde la case rouge.",
+   "Les deux virages sont inversés."
+  ]
+ },
+ "t6-f46": {
+  "title": "Carte des signaux",
+  "hints": [
+   "Rouge à droite, bleu à gauche, puis un pas, sur chaque case.",
+   "repeat 8: if tile_is r turn_right, if tile_is b turn_left, forward."
+  ]
+ },
+ "t6-f47": {
+  "title": "Motif relais",
+  "hints": [
+   "Écho se gare en route. Une fonction dans une boucle.",
+   "def F1: two forward. repeat 2: F1, right, F1, left."
+  ]
+ },
+ "t6-f48": {
+  "title": "Chasse au bogue : lampes éteintes",
+  "hints": [
+   "Lance-le. Des lampes restent éteintes.",
+   "Cherche un interrupteur après chaque pas, pas seulement au mur."
+  ]
+ },
+ "t6-f49": {
+  "title": "Spirale de lampes",
+  "hints": [
+   "Des couloirs de longueurs différentes, des lampes à des endroits différents.",
+   "repeat 3: (while not wall_ahead: forward, if on_switch activate), turn_right."
+  ]
+ },
+ "t6-f50": {
+  "title": "Deux signaux",
+  "hints": [
+   "Tout à la fois : murs, lampes et cases peintes, différents dans chaque flèche.",
+   "repeat 3: (while not wall_ahead: forward, activate on a switch), then red right, else left."
+  ],
+  "outro": "PATCH : « Les deux signaux sont coupés ! Le faisceau de VANTA n'a plus nulle part où rebondir. Écho, LoopBot : belle escalade. »"
+ }
+}

@@ -1,0 +1,68 @@
+{
+  "id": "t6-f40",
+  "title": "Mirror Finale",
+  "band": "mirror",
+  "size": {
+    "w": 6,
+    "h": 7
+  },
+  "tiles": [
+    "_____#",
+    "#r.e##",
+    "_.#_e_",
+    "#s_#.#",
+    "_.__s_",
+    "##..._",
+    "#__#_#"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 4,
+    "facing": "north"
+  },
+  "twin": {
+    "x": 2,
+    "y": 5,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit",
+    "all_switches_on"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "while",
+    "if"
+  ],
+  "sensors": [
+    "tile_is",
+    "on_switch"
+  ],
+  "slots": {
+    "main": 10
+  },
+  "par": {
+    "commands": 8,
+    "steps": 7
+  },
+  "reference": "repeat 2 { while not wall_ahead { forward if on_switch { activate } } if tile_is r { turn_right } else { turn_left } }",
+  "hints": [
+    "Press the lamps on the way, then read the floor at each wall.",
+    "Repeat 2: (while no wall: forward, activate if on a switch), then red right, else left.",
+    "repeat 2 { while not wall_ahead { forward if on_switch { activate } } if tile_is r { turn_right } else { turn_left } }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": "PATCH: \"VANTA's two signals are coming from the very tops of the spires. One program, two bots, all the way up.\""
+  }
+}

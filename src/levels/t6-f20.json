@@ -1,0 +1,71 @@
+{
+  "id": "t6-f20",
+  "title": "Skybridge Run",
+  "band": "skybridge",
+  "size": {
+    "w": 7,
+    "h": 8
+  },
+  "tiles": [
+    "_......",
+    "_e____.",
+    "_#_e._.",
+    "___#.#.",
+    "___#.#.",
+    "__##.__",
+    "##__._#",
+    ".....__"
+  ],
+  "heights": [
+    "0011222",
+    "0000001",
+    "0000001",
+    "0000100",
+    "0000100",
+    "0000200",
+    "0000200",
+    "0011200"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 7,
+    "facing": "east"
+  },
+  "twin": {
+    "x": 6,
+    "y": 4,
+    "facing": "north"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat"
+  ],
+  "slots": {
+    "main": 8
+  },
+  "par": {
+    "commands": 6,
+    "steps": 12
+  },
+  "reference": "repeat 2 { repeat 2 { forward jump } turn_left forward }",
+  "hints": [
+    "Two climbs, a turn, a step. Then all of it again.",
+    "Repeat 2: (repeat 2: forward, jump), turn left, forward.",
+    "repeat 2 { repeat 2 { forward jump } turn_left forward }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": "PATCH: \"Across the skybridge. VANTA's signal is bouncing between the spires, and we're right under it.\""
+  }
+}

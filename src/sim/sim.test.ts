@@ -336,3 +336,44 @@ describe('the tally (Dockyard)', () => {
     expect(lines).toEqual(['def main():', 'tally += 1', 'repeat tally:', 'forward()', 'tally -= 1']);
   });
 });
+
+describe('Echo, the twin (Twin Spires)', () => {
+  const twins = (tiles: string[], over: Partial<LevelFile> = {}) =>
+    level({ size: { w: tiles[0].length, h: tiles.length }, tiles, commands: ['forward', 'turn_left', 'turn_right', 'activate', 'repeat', 'while', 'if'], ...over });
+
+  it('runs the same program as LoopBot, and the floor clears when both are parked', () => {
+    const l = twins(['######', '#...e#', '######', '#...e#', '######'], { twin: { x: 1, y: 3, facing: 'east' } });
+    expect(run(l, 'forward forward forward')).toMatchObject({ status: 'cleared', steps: 3 });
+    expect(run(l, 'forward forward')).toMatchObject({ status: 'ended', steps: 2 });
+  });
+
+  it('forward means forward for each bot, whichever way it faces', () => {
+    // LoopBot walks east along the top, Echo walks north up the left side
+    const l = twins(['#####', '#..e#', '#####', '#e###', '#.###', '#.###', '#####'], { twin: { x: 1, y: 5, facing: 'north' } });
+    expect(run(l, 'forward forward')).toMatchObject({ status: 'cleared', steps: 2 });
+  });
+
+  it('a bot that reaches a lift parks, and the rest of the program drives the other one', () => {
+    const l = twins(['######', '#.e###', '######', '#...e#', '######'], { twin: { x: 1, y: 3, facing: 'east' } });
+    expect(run(l, 'repeat 3 { forward }')).toMatchObject({ status: 'cleared', steps: 3 });
+  });
+
+  it('each bot senses its own surroundings, so one while loop measures two halls', () => {
+    const l = twins(['#######', '#..e###', '#######', '#....e#', '#######'], { twin: { x: 1, y: 3, facing: 'east' } });
+    expect(run(l, 'while not wall_ahead { forward }')).toMatchObject({ status: 'cleared', steps: 4 });
+  });
+
+  it('a bot is a wall to the other one, and an error says which bot hit it', () => {
+    // Echo stands right in front of LoopBot
+    const l = twins(['#######', '#....e#', '#######'], { tiles: ['#######', '#..e.e#', '#######'], twin: { x: 2, y: 1, facing: 'east' } });
+    const r = new Runner(parseReference('forward'), l);
+    const o = r.runToEnd();
+    expect(o.status).toBe('crashed');
+    // LoopBot moves first, into Echo's tile
+    expect(o.status === 'crashed' && o.error).toMatch(/^ERR: blocked ahead/);
+    // LoopBot is parked on its lift, and Echo walks into it
+    const l2 = twins(['#######', '#e...e#', '#######'], { twin: { x: 2, y: 1, facing: 'west' } });
+    const o2 = run(l2, 'forward');
+    expect(o2.status === 'crashed' && o2.error).toMatch(/^Echo: ERR: blocked ahead/);
+  });
+});

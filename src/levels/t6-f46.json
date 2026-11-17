@@ -1,0 +1,68 @@
+{
+  "id": "t6-f46",
+  "title": "Signal Map",
+  "band": "twintops",
+  "size": {
+    "w": 7,
+    "h": 8
+  },
+  "tiles": [
+    "_#_____",
+    "##r..e_",
+    "__.###_",
+    "_.b#_e#",
+    "___r.b_",
+    "__#.___",
+    "_##.__#",
+    "_##___#"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 3,
+    "facing": "east"
+  },
+  "twin": {
+    "x": 3,
+    "y": 6,
+    "facing": "north"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "while",
+    "if"
+  ],
+  "sensors": [
+    "tile_is"
+  ],
+  "slots": {
+    "main": 8
+  },
+  "par": {
+    "commands": 6,
+    "steps": 8
+  },
+  "reference": "repeat 8 { if tile_is r { turn_right } if tile_is b { turn_left } forward }",
+  "hints": [
+    "Red right, blue left, then a step, on every tile.",
+    "repeat 8: if tile_is r turn_right, if tile_is b turn_left, forward.",
+    "repeat 8 { if tile_is r { turn_right } if tile_is b { turn_left } forward }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "typing": true
+}

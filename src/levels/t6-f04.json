@@ -1,0 +1,59 @@
+{
+  "id": "t6-f04",
+  "title": "Back to Back",
+  "band": "atrium",
+  "size": {
+    "w": 7,
+    "h": 6
+  },
+  "tiles": [
+    "___#___",
+    "#...._#",
+    "_.___e_",
+    "_e__#._",
+    "__....#",
+    "#_#___#"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 2,
+    "y": 4,
+    "facing": "east"
+  },
+  "twin": {
+    "x": 4,
+    "y": 1,
+    "facing": "west"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate"
+  ],
+  "slots": {
+    "main": 8
+  },
+  "par": {
+    "commands": 6,
+    "steps": 6
+  },
+  "reference": "forward forward forward turn_left forward forward",
+  "hints": [
+    "They face opposite ways, so their paths are turned all the way round.",
+    "Three forward, turn left, two forward.",
+    "forward forward forward turn_left forward forward"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}
