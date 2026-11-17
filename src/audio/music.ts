@@ -11,7 +11,7 @@
 // through one music bus with a soft generated reverb, separate from the sound effects, and the
 // Music switch in Settings fades it in and out.
 
-import { sharedAudio } from './feedback';
+import { onAudioReset, sharedAudio, sleepAudio, wakeAudio } from './feedback';
 
 export type Theme =
   | 'title' | 'lobby' | 'maintenance' | 'workshop' | 'control' | 'rooftop' | 'daily'
@@ -767,9 +767,18 @@ export function initMusic() {
   document.addEventListener('keydown', unlock, true);
   document.addEventListener('visibilitychange', () => {
     if (!unlocked) return;
-    const a = sharedAudio();
-    if (!a) return;
-    if (document.visibilityState === 'hidden') void a.suspend();
-    else void a.resume();
+    if (document.visibilityState === 'hidden') sleepAudio();
+    else wakeAudio();
+  });
+  // A fresh AudioContext (after the old one got stuck) needs the music rebuilt on it.
+  onAudioReset(() => {
+    window.clearInterval(timer);
+    timer = undefined;
+    playing = null;
+    master = null;
+    noiseBuf = null;
+    if (!enabled || !unlocked) return;
+    startTheme(wanted);
+    fadeMaster(VOLUME);
   });
 }
