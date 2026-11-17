@@ -1,0 +1,71 @@
+{
+  "id": "t6-f16",
+  "title": "Down the Steps",
+  "band": "skybridge",
+  "size": {
+    "w": 8,
+    "h": 8
+  },
+  "tiles": [
+    "e#_#____",
+    "._____##",
+    ".___#__#",
+    "._#_#__#",
+    ".____##_",
+    "._#____#",
+    ".__#___#",
+    "#......e"
+  ],
+  "heights": [
+    "00000000",
+    "10000000",
+    "10000000",
+    "20000000",
+    "20000000",
+    "30000000",
+    "30000000",
+    "03322110"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 7,
+    "facing": "east"
+  },
+  "twin": {
+    "x": 0,
+    "y": 6,
+    "facing": "north"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat"
+  ],
+  "slots": {
+    "main": 5
+  },
+  "par": {
+    "commands": 3,
+    "steps": 6
+  },
+  "reference": "repeat 3 { forward jump }",
+  "hints": [
+    "Jump works downwards too: any drop is fine.",
+    "Forward then jump, three times.",
+    "repeat 3 { forward jump }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

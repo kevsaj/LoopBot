@@ -1,0 +1,58 @@
+{
+  "id": "t6-f03",
+  "title": "Echo Faces North",
+  "band": "atrium",
+  "size": {
+    "w": 7,
+    "h": 5
+  },
+  "tiles": [
+    "_#_____",
+    "_.e_#_#",
+    "#.#...#",
+    "_.__#e#",
+    "_#_#___"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 3,
+    "y": 2,
+    "facing": "east"
+  },
+  "twin": {
+    "x": 1,
+    "y": 3,
+    "facing": "north"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate"
+  ],
+  "slots": {
+    "main": 6
+  },
+  "par": {
+    "commands": 4,
+    "steps": 4
+  },
+  "reference": "forward forward turn_right forward",
+  "hints": [
+    "Echo starts facing a different way, so \"forward\" sends it somewhere else.",
+    "Plan for LoopBot. Then check that Echo ends on its lift too.",
+    "forward forward turn_right forward"
+  ],
+  "story": {
+    "intro": "PATCH: \"Careful. Echo is facing a different way. Forward means forward for each of them, wherever they face.\"",
+    "outro": "PATCH: \"Same program, different start, different path. Keep that in mind up here.\""
+  }
+}

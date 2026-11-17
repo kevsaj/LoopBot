@@ -1,0 +1,67 @@
+{
+  "id": "t6-f28",
+  "title": "Bug Hunt: Switched Off",
+  "band": "batik",
+  "size": {
+    "w": 8,
+    "h": 8
+  },
+  "tiles": [
+    "##__#___",
+    "___#_#e_",
+    "____#_s_",
+    "_.____s#",
+    "_s_.ss._",
+    "_s##____",
+    "#.sse___",
+    "______#_"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 3,
+    "y": 4,
+    "facing": "east"
+  },
+  "twin": {
+    "x": 1,
+    "y": 3,
+    "facing": "south"
+  },
+  "goals": [
+    "bot_on_exit",
+    "all_switches_on"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "F1",
+    "F2"
+  ],
+  "slots": {
+    "main": 4,
+    "F1": 3,
+    "F2": 4
+  },
+  "par": {
+    "commands": 8,
+    "steps": 11
+  },
+  "reference": "F2 turn_left F2 def F1 { forward activate } def F2 { F1 F1 forward }",
+  "hints": [
+    "Press each switch after stepping onto it.",
+    "F1 activates before it moves.",
+    "F2 turn_left F2 def F1 { forward activate } def F2 { F1 F1 forward }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "starter": "F2 turn_left F2 def F1 { activate forward } def F2 { F1 F1 forward }"
+}

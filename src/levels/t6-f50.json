@@ -1,0 +1,70 @@
+{
+  "id": "t6-f50",
+  "title": "Two Signals",
+  "band": "twintops",
+  "size": {
+    "w": 8,
+    "h": 7
+  },
+  "tiles": [
+    "_#_.s.__",
+    "_#_.___#",
+    "_esr#___",
+    "________",
+    "_.s.r___",
+    "____._#_",
+    "#___b.e_"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 4,
+    "facing": "east"
+  },
+  "twin": {
+    "x": 5,
+    "y": 0,
+    "facing": "west"
+  },
+  "goals": [
+    "bot_on_exit",
+    "all_switches_on"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "F1",
+    "while",
+    "if"
+  ],
+  "sensors": [
+    "tile_is",
+    "on_switch"
+  ],
+  "slots": {
+    "main": 10
+  },
+  "par": {
+    "commands": 8,
+    "steps": 10
+  },
+  "reference": "repeat 3 { while not wall_ahead { forward if on_switch { activate } } if tile_is r { turn_right } else { turn_left } }",
+  "hints": [
+    "Everything at once: walls, lamps and painted tiles, different in each spire.",
+    "repeat 3: (while not wall_ahead: forward, activate on a switch), then red right, else left.",
+    "repeat 3 { while not wall_ahead { forward if on_switch { activate } } if tile_is r { turn_right } else { turn_left } }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": "PATCH: \"Both signals are down! VANTA's beam has nowhere left to bounce. Echo, LoopBot: well climbed.\""
+  },
+  "typing": true
+}

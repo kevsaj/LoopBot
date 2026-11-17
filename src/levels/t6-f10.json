@@ -1,0 +1,69 @@
+{
+  "id": "t6-f10",
+  "title": "Atrium Gates",
+  "band": "atrium",
+  "size": {
+    "w": 8,
+    "h": 7
+  },
+  "tiles": [
+    "__#__##_",
+    "_e__#__#",
+    "_s..__#_",
+    "#_#.#_e_",
+    "___.__._",
+    "____..._",
+    "________"
+  ],
+  "heights": [
+    "00000000",
+    "01000000",
+    "01110000",
+    "00000010",
+    "00000010",
+    "00000010",
+    "00000000"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 4,
+    "y": 5,
+    "facing": "east"
+  },
+  "twin": {
+    "x": 3,
+    "y": 4,
+    "facing": "north"
+  },
+  "goals": [
+    "bot_on_exit",
+    "all_switches_on"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate"
+  ],
+  "slots": {
+    "main": 10
+  },
+  "par": {
+    "commands": 8,
+    "steps": 8
+  },
+  "reference": "forward jump turn_left forward forward activate turn_right forward",
+  "hints": [
+    "LoopBot parks early. Echo still has a switch to press.",
+    "Echo finishes with a switch and one more step.",
+    "forward jump turn_left forward forward activate turn_right forward"
+  ],
+  "story": {
+    "intro": null,
+    "outro": "PATCH: \"Through the atrium. Echo hasn't missed a single block of yours.\""
+  }
+}

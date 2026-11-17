@@ -1,0 +1,73 @@
+{
+  "id": "t6-f26",
+  "title": "Bug Hunt: Inside Out",
+  "band": "batik",
+  "size": {
+    "w": 7,
+    "h": 7
+  },
+  "tiles": [
+    "_......",
+    "e_____.",
+    ".___##.",
+    ".____#.",
+    ".__#_#.",
+    "._____e",
+    "......#"
+  ],
+  "heights": [
+    "0001122",
+    "0000002",
+    "0000001",
+    "1000001",
+    "1000000",
+    "2000000",
+    "2211000"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 0,
+    "facing": "east"
+  },
+  "twin": {
+    "x": 5,
+    "y": 6,
+    "facing": "west"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "F1",
+    "F2"
+  ],
+  "slots": {
+    "main": 4,
+    "F1": 3,
+    "F2": 4
+  },
+  "par": {
+    "commands": 8,
+    "steps": 11
+  },
+  "reference": "F2 turn_right F2 def F1 { forward jump } def F2 { F1 F1 forward }",
+  "hints": [
+    "Each climb comes after a step, not before.",
+    "F1 has its two blocks the wrong way round.",
+    "F2 turn_right F2 def F1 { forward jump } def F2 { F1 F1 forward }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "starter": "F2 turn_right F2 def F1 { jump forward } def F2 { F1 F1 forward }"
+}

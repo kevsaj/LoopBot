@@ -1,0 +1,63 @@
+{
+  "id": "t6-f31",
+  "title": "Hall of Mirrors",
+  "band": "mirror",
+  "size": {
+    "w": 8,
+    "h": 7
+  },
+  "tiles": [
+    "#_______",
+    "#......#",
+    "___#__e_",
+    "#....#__",
+    "#___._##",
+    "#___e___",
+    "_#_#____"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 3,
+    "facing": "east"
+  },
+  "twin": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "while",
+    "if"
+  ],
+  "slots": {
+    "main": 6
+  },
+  "par": {
+    "commands": 4,
+    "steps": 7
+  },
+  "reference": "repeat 2 { while not wall_ahead { forward } turn_right }",
+  "hints": [
+    "The halls are different lengths. A while loop asks each bot about its own hall.",
+    "Repeat 2: (while no wall ahead: forward), turn right.",
+    "repeat 2 { while not wall_ahead { forward } turn_right }"
+  ],
+  "story": {
+    "intro": "PATCH: \"The Mirror Hall. The two spires look alike, but they aren't the same inside. Sensors read each bot's own surroundings.\"",
+    "outro": "PATCH: \"Same program, and each bot turned at its own wall. That's the trick of this hall.\""
+  }
+}

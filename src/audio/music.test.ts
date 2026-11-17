@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { composeLead, themeForFloor } from './music';
 import type { Theme } from './music';
 
-const THEMES: Theme[] = ['title', 'lobby', 'maintenance', 'workshop', 'control', 'rooftop', 'daily', 'frostgate', 'glacier', 'signal', 'aurora', 'summit', 'dunegate', 'furnace', 'bazaar', 'mirage', 'crown', 'ferry', 'garden', 'loom', 'lantern', 'pinnacle', 'quay', 'crane', 'ropewalk', 'office', 'crest'];
+const THEMES: Theme[] = ['title', 'lobby', 'maintenance', 'workshop', 'control', 'rooftop', 'daily', 'frostgate', 'glacier', 'signal', 'aurora', 'summit', 'dunegate', 'furnace', 'bazaar', 'mirage', 'crown', 'ferry', 'garden', 'loom', 'lantern', 'pinnacle', 'quay', 'crane', 'ropewalk', 'office', 'crest', 'atrium', 'skybridge', 'batik', 'mirror', 'twintops'];
 
 describe('music', () => {
   it('gives each band of the tower its theme', () => {
@@ -25,6 +25,10 @@ describe('music', () => {
 
   it('gives each band of Dockyard its own theme', () => {
     expect([1, 10, 11, 21, 31, 41, 50].map((n) => themeForFloor(n, 5))).toEqual(['quay', 'quay', 'crane', 'ropewalk', 'office', 'crest', 'crest']);
+  });
+
+  it('gives each band of Twin Spires its own theme', () => {
+    expect([1, 10, 11, 21, 31, 41, 50].map((n) => themeForFloor(n, 6))).toEqual(['atrium', 'atrium', 'skybridge', 'batik', 'mirror', 'twintops', 'twintops']);
   });
 
   it.each(THEMES)('composes the same %s melody every time, in a singable range', (t) => {

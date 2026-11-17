@@ -27,11 +27,11 @@ import { recordClear, recordFail } from '../progress';
 import { maybeAskForReview } from '../review';
 import { HintSheet } from './HintSheet';
 import { ResultsCard } from './ResultsCard';
-import { cancellingTurns, spinNote, stepLine, tutorialStep, TUTORIAL_TEXT } from './tutorial';
+import { cancellingTurns, spinNote, stepLine, twinNote, tutorialStep, TUTORIAL_TEXT } from './tutorial';
 import { track } from '../telemetry';
 import { FeedbackSheet } from '../FeedbackSheet';
 import { DIFFICULTY_LABEL, difficultyOn, shareText, shortDate } from '../daily';
-import { t, tn } from '../i18n';
+import { msg, t, tn } from '../i18n';
 
 const SPEEDS = [
   { label: '1x', ms: 520 },
@@ -87,7 +87,13 @@ export interface DailyProps {
 /** A crash line in the current language: "ERR: blocked ahead at step 4". */
 function runError(error: string): string {
   const m = /^(.*) at step (\d+)$/.exec(error);
-  return m ? t('{error} at step {n}', { error: t(m[1]), n: m[2] }) : t(error);
+  return m ? t('{error} at step {n}', { error: echoError(m[1]), n: m[2] }) : echoError(error);
+}
+
+/** Twin Spires: an error that happened to Echo starts "Echo:" (CR-TWIN), and both parts translate. */
+const ECHO_PREFIX = msg('Echo:');
+function echoError(error: string): string {
+  return error.startsWith(`${ECHO_PREFIX} `) ? `${t(ECHO_PREFIX)} ${t(error.slice(ECHO_PREFIX.length + 1))}` : t(error);
 }
 
 /** A routine's tab name: Main, F1, F2, F3. */
@@ -224,7 +230,10 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
       // which new players often miss when they only watch the board.
       if (ev.ok && ev.action) {
         const spun = spinNote(ev.action, world);
-        setTerminal(spun ? `${stepLine(ev.action)} · ${spun}` : stepLine(ev.action));
+        const line = spun ? `${stepLine(ev.action)} · ${spun}` : stepLine(ev.action);
+        // Twin Spires: say when a bot parks, and whose step it was once LoopBot has parked
+        const note = twinNote(ev, world);
+        setTerminal(ev.who === 'twin' ? `${t('Echo:')} ${line}${note}` : `${line}${note}`);
       }
     }
     const o = r.outcome;
@@ -236,6 +245,13 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
       cleared,
       stars: cleared ? stars(level, countCommands(program), o.steps) : undefined,
       stepMs: SPEEDS[speed].ms,
+      ...(world.twin
+        ? {
+            action: ev?.who === 'twin' ? undefined : ev?.action,
+            twinAction: ev?.who === 'twin' ? ev.action : ev?.twin?.action,
+            crashWho: o?.status === 'crashed' && o.error.startsWith(`${ECHO_PREFIX} `) ? ('twin' as const) : ('bot' as const),
+          }
+        : {}),
     });
     if (o) {
       setPlaying(false);

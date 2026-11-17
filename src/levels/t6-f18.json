@@ -1,0 +1,71 @@
+{
+  "id": "t6-f18",
+  "title": "Hurdles",
+  "band": "skybridge",
+  "size": {
+    "w": 8,
+    "h": 8
+  },
+  "tiles": [
+    "___#___e",
+    "__#____.",
+    "#_#___#.",
+    "#_#_#_#.",
+    "#_____#.",
+    "_#___#_.",
+    "_______.",
+    "e......_"
+  ],
+  "heights": [
+    "00000001",
+    "00000001",
+    "00000000",
+    "00000000",
+    "00000001",
+    "00000001",
+    "00000000",
+    "11001100"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 7,
+    "y": 6,
+    "facing": "north"
+  },
+  "twin": {
+    "x": 6,
+    "y": 7,
+    "facing": "west"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat"
+  ],
+  "slots": {
+    "main": 5
+  },
+  "par": {
+    "commands": 3,
+    "steps": 6
+  },
+  "reference": "repeat 3 { jump forward }",
+  "hints": [
+    "Up, along, down, along, up, along.",
+    "Jump then forward, three times.",
+    "repeat 3 { jump forward }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

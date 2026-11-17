@@ -1,0 +1,61 @@
+{
+  "id": "t6-f07",
+  "title": "Twin Switches",
+  "band": "atrium",
+  "size": {
+    "w": 7,
+    "h": 7
+  },
+  "tiles": [
+    "_#_#_#_",
+    "_#_..s_",
+    "#____._",
+    "#..s#e_",
+    "#__.#__",
+    "__#e_#_",
+    "_______"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 3,
+    "y": 1,
+    "facing": "east"
+  },
+  "twin": {
+    "x": 1,
+    "y": 3,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit",
+    "all_switches_on"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate"
+  ],
+  "slots": {
+    "main": 8
+  },
+  "par": {
+    "commands": 6,
+    "steps": 6
+  },
+  "reference": "forward forward activate turn_right forward forward",
+  "hints": [
+    "Each bot needs to stand on its own switch and activate it.",
+    "Two forward, activate, turn right, two forward.",
+    "forward forward activate turn_right forward forward"
+  ],
+  "story": {
+    "intro": "PATCH: \"The skybridge lights run on two switches, one in each spire. One activate presses both.\"",
+    "outro": null
+  }
+}

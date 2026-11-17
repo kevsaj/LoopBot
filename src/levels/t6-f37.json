@@ -1,0 +1,63 @@
+{
+  "id": "t6-f37",
+  "title": "Two Staircases",
+  "band": "mirror",
+  "size": {
+    "w": 7,
+    "h": 7
+  },
+  "tiles": [
+    "e...___",
+    "___..._",
+    "__#__._",
+    "#_____e",
+    "______.",
+    "###....",
+    "_...___"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 6,
+    "facing": "east"
+  },
+  "twin": {
+    "x": 5,
+    "y": 2,
+    "facing": "north"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "while",
+    "if"
+  ],
+  "slots": {
+    "main": 9
+  },
+  "par": {
+    "commands": 7,
+    "steps": 11
+  },
+  "reference": "repeat 2 { while not wall_ahead { forward } turn_left while not wall_ahead { forward } turn_right }",
+  "hints": [
+    "Each staircase has its own step sizes.",
+    "Repeat 2: walk to the wall, turn left, walk to the wall, turn right.",
+    "repeat 2 { while not wall_ahead { forward } turn_left while not wall_ahead { forward } turn_right }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "id": "t6-f24",
+  "title": "Bug Hunt: Missing Step",
+  "band": "batik",
+  "size": {
+    "w": 7,
+    "h": 5
+  },
+  "tiles": [
+    "_#_#___",
+    "s.s#e.s",
+    "._._#_.",
+    "e_.#..s",
+    "_##__#_"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 4,
+    "y": 3,
+    "facing": "east"
+  },
+  "twin": {
+    "x": 2,
+    "y": 3,
+    "facing": "north"
+  },
+  "goals": [
+    "bot_on_exit",
+    "all_switches_on"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "F1"
+  ],
+  "slots": {
+    "main": 6,
+    "F1": 4
+  },
+  "par": {
+    "commands": 8,
+    "steps": 10
+  },
+  "reference": "F1 turn_left F1 turn_left F1 def F1 { forward forward activate }",
+  "hints": [
+    "Each switch is two steps from the last.",
+    "F1 is one forward short.",
+    "F1 turn_left F1 turn_left F1 def F1 { forward forward activate }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "starter": "F1 turn_left F1 turn_left F1 def F1 { forward activate }"
+}

@@ -1,0 +1,62 @@
+{
+  "id": "t6-f11",
+  "title": "Bridge Lanes",
+  "band": "skybridge",
+  "size": {
+    "w": 8,
+    "h": 8
+  },
+  "tiles": [
+    "##_#_#__",
+    "#e_##_#_",
+    "_._#_#__",
+    "_._#____",
+    "#._###__",
+    "_._###_#",
+    "_#....e_",
+    "___##___"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 2,
+    "y": 6,
+    "facing": "east"
+  },
+  "twin": {
+    "x": 1,
+    "y": 5,
+    "facing": "north"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat"
+  ],
+  "slots": {
+    "main": 4
+  },
+  "par": {
+    "commands": 2,
+    "steps": 4
+  },
+  "reference": "repeat 4 { forward }",
+  "hints": [
+    "A repeat block repeats for both bots.",
+    "Repeat forward four times.",
+    "repeat 4 { forward }"
+  ],
+  "story": {
+    "intro": "PATCH: \"The skybridge level. Loops work the same for two: Echo repeats whatever LoopBot repeats.\"",
+    "outro": null
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "id": "t6-f30",
+  "title": "Gallery Finale",
+  "band": "batik",
+  "size": {
+    "w": 7,
+    "h": 7
+  },
+  "tiles": [
+    "__..s..",
+    "#_##__.",
+    "e..___e",
+    "__.____",
+    "_#s###_",
+    "_#.##__",
+    "#_..s.."
+  ],
+  "heights": [
+    "0000112",
+    "0000002",
+    "1000001",
+    "0010000",
+    "0010000",
+    "0020000",
+    "0021100"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 2,
+    "y": 0,
+    "facing": "east"
+  },
+  "twin": {
+    "x": 6,
+    "y": 6,
+    "facing": "west"
+  },
+  "goals": [
+    "bot_on_exit",
+    "all_switches_on"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "F1",
+    "F2"
+  ],
+  "slots": {
+    "main": 6,
+    "F1": 3,
+    "F2": 4
+  },
+  "par": {
+    "commands": 10,
+    "steps": 14
+  },
+  "reference": "F2 turn_right F2 turn_left F1 def F1 { forward jump } def F2 { F1 activate F1 }",
+  "hints": [
+    "LoopBot parks before the last pattern.",
+    "F1: forward, jump. F2: F1, activate, F1.",
+    "F2 turn_right F2 turn_left F1 def F1 { forward jump } def F2 { F1 activate F1 }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": "PATCH: \"Every function you wrote ran twice at once, once per bot. That's sharing.\""
+  }
+}

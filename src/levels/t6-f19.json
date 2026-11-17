@@ -1,0 +1,61 @@
+{
+  "id": "t6-f19",
+  "title": "Window Washers",
+  "band": "skybridge",
+  "size": {
+    "w": 8,
+    "h": 7
+  },
+  "tiles": [
+    "._#__##_",
+    ".___#_#_",
+    ".._____#",
+    "_.#____e",
+    "_.e__...",
+    "___...#_",
+    "_..._#_#"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 6,
+    "facing": "east"
+  },
+  "twin": {
+    "x": 0,
+    "y": 0,
+    "facing": "south"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat"
+  ],
+  "slots": {
+    "main": 8
+  },
+  "par": {
+    "commands": 6,
+    "steps": 14
+  },
+  "reference": "repeat 3 { forward forward turn_left forward turn_right }",
+  "hints": [
+    "Echo's lift is closer. It parks on the second trip.",
+    "Two forward, left, forward, right. Three times.",
+    "repeat 3 { forward forward turn_left forward turn_right }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

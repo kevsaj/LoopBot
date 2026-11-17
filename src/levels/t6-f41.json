@@ -1,0 +1,70 @@
+{
+  "id": "t6-f41",
+  "title": "Twin Tops",
+  "band": "twintops",
+  "size": {
+    "w": 7,
+    "h": 7
+  },
+  "tiles": [
+    "_#_#_#e",
+    "__#_...",
+    "__...__",
+    "...#__e",
+    "____...",
+    "_#...#_",
+    "...__#_"
+  ],
+  "heights": [
+    "0000003",
+    "0000223",
+    "0011200",
+    "0010003",
+    "0000223",
+    "0011200",
+    "0010000"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 6,
+    "facing": "east"
+  },
+  "twin": {
+    "x": 0,
+    "y": 3,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat"
+  ],
+  "slots": {
+    "main": 8
+  },
+  "par": {
+    "commands": 6,
+    "steps": 14
+  },
+  "reference": "repeat 3 { forward jump turn_left forward turn_right }",
+  "hints": [
+    "Type it if you like. Echo reads typed code too.",
+    "repeat 3: forward, jump, turn_left, forward, turn_right.",
+    "repeat 3 { forward jump turn_left forward turn_right }"
+  ],
+  "story": {
+    "intro": "PATCH: \"The tops of the spires. Typing is back on, if you want it. Both bots run whatever you type.\"",
+    "outro": null
+  },
+  "typing": true
+}

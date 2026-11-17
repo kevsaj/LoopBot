@@ -1,0 +1,59 @@
+{
+  "id": "t6-f08",
+  "title": "Crossed Paths",
+  "band": "atrium",
+  "size": {
+    "w": 6,
+    "h": 6
+  },
+  "tiles": [
+    "#__#_#",
+    "#__e#_",
+    "#...#_",
+    "#._#._",
+    "___e._",
+    "____##"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 3,
+    "facing": "north"
+  },
+  "twin": {
+    "x": 4,
+    "y": 3,
+    "facing": "south"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate"
+  ],
+  "slots": {
+    "main": 8
+  },
+  "par": {
+    "commands": 6,
+    "steps": 6
+  },
+  "reference": "forward turn_right forward forward turn_left forward",
+  "hints": [
+    "Echo's lift comes first this time.",
+    "Echo parks after three steps. LoopBot walks on.",
+    "forward turn_right forward forward turn_left forward"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "id": "t6-f34",
+  "title": "Bug Hunt: Wrong Wall",
+  "band": "mirror",
+  "size": {
+    "w": 7,
+    "h": 7
+  },
+  "tiles": [
+    "__##_##",
+    "_#_e.._",
+    "#_...._",
+    "_.####_",
+    "_.##e__",
+    "_....##",
+    "####___"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 3,
+    "facing": "south"
+  },
+  "twin": {
+    "x": 2,
+    "y": 2,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "while",
+    "if"
+  ],
+  "slots": {
+    "main": 6
+  },
+  "par": {
+    "commands": 4,
+    "steps": 8
+  },
+  "reference": "repeat 3 { while not wall_ahead { forward } turn_left }",
+  "hints": [
+    "Run it and see which way the bots turn at the first wall.",
+    "Every hall bends left.",
+    "repeat 3 { while not wall_ahead { forward } turn_left }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "starter": "repeat 3 { while not wall_ahead { forward } turn_right }"
+}

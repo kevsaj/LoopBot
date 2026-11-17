@@ -338,7 +338,67 @@ export const DOCKYARD_INTERLUDES: Record<number, Interlude> = {
   },
 };
 
-const TOWER_INTERLUDES: Record<number, Record<number, Interlude>> = { 1: INTERLUDES, 2: FROSTLINE_INTERLUDES, 3: HEATWAVE_INTERLUDES, 4: TWIST_INTERLUDES, 5: DOCKYARD_INTERLUDES };
+/** Tower 6, the Skybridge in Twin Spires: two towers, two signals, and Echo climbing beside LoopBot. */
+export const TWINSPIRES_INTERLUDES: Record<number, Interlude> = {
+  10: {
+    kind: 'radio',
+    id: 't6-after-10',
+    heading: msg('Next: the Skybridge'),
+    lines: [
+      P(msg('Through the atrium, both of you. Echo copies every block, even the ones LoopBot never gets to.')),
+      P(msg('Up next, the skybridge level. Long runs, so loops will save you a lot of blocks.')),
+      V(msg('A copy of a copy. I built that bot to be my decoy, you know.')),
+      P(msg("Then it's the best thing VANTA ever built. Keep climbing.")),
+    ],
+  },
+  20: {
+    kind: 'radio',
+    id: 't6-after-20',
+    heading: msg('Next: the Batik Gallery'),
+    lines: [
+      P(msg('The Batik Gallery is next, a hall of painted cloth with the same patterns over and over.')),
+      P(msg('A function is a pattern too. Write it once and both bots share it.')),
+      V(msg('I hid a few mistakes in the patterns. Shared mistakes are twice the fun.')),
+      P(msg('Then we fix them once, for both.')),
+    ],
+  },
+  30: {
+    kind: 'radio',
+    id: 't6-after-30',
+    heading: msg('Next: the Mirror Hall'),
+    lines: [
+      P(msg('Under the spires is a twin vault, with carved stones like the ones under every tower. The Builders again.')),
+      P(msg("Next is the Mirror Hall. The spires look the same, but they aren't the same inside.")),
+      P(msg('Sensors read each bot\'s own walls and floors. One program can send them different ways.')),
+      V(msg('Two bots, two halls, one program. Let us see it hold together.')),
+    ],
+  },
+  40: {
+    kind: 'radio',
+    id: 't6-after-40',
+    heading: msg('Next: the Twin Tops'),
+    lines: [
+      P(msg("Ten floors to go. VANTA's signal comes from both tips at once, bouncing across the bridge.")),
+      P(msg('Shut down both and it has nowhere to go.')),
+      P(msg('Typing is back on, if you want it. Echo reads typed code too.')),
+      V(msg('Split a signal and you need two bots to catch it. How lucky that you have two.')),
+    ],
+  },
+  50: {
+    kind: 'ending',
+    id: 't6-ending',
+    panels: [
+      { scene: 'lights', text: msg('Both tips go dark at once, and the skybridge lights up between them.') },
+      { scene: 'escape', who: 'VANTA', text: msg('Keep the decoy. I have a tower that repeats itself all the way down.') },
+      { scene: 'elevator', text: msg('LoopBot and Echo ride down side by side, in the two lifts, floor for floor.') },
+      { scene: 'meet', who: 'PATCH', text: msg('Fifty floors, two bots, one program each time. Echo is staying with us now.') },
+      { scene: 'next', text: msg('Tower 6 cleared. VANTA is heading for a tower made of smaller towers.') },
+    ],
+    next: 'FRACTAL',
+  },
+};
+
+const TOWER_INTERLUDES: Record<number, Record<number, Interlude>> = { 1: INTERLUDES, 2: FROSTLINE_INTERLUDES, 3: HEATWAVE_INTERLUDES, 4: TWIST_INTERLUDES, 5: DOCKYARD_INTERLUDES, 6: TWINSPIRES_INTERLUDES };
 
 const KEY = 'loopbot.interludes';
 

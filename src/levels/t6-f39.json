@@ -1,0 +1,67 @@
+{
+  "id": "t6-f39",
+  "title": "Colour Code",
+  "band": "mirror",
+  "size": {
+    "w": 8,
+    "h": 8
+  },
+  "tiles": [
+    "#_______",
+    "_..r_##_",
+    "___b..e_",
+    "_.__#__#",
+    "_b.r___#",
+    "#__.___#",
+    "#__e_#_#",
+    "##_#____"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "twin": {
+    "x": 1,
+    "y": 3,
+    "facing": "south"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "while",
+    "if"
+  ],
+  "sensors": [
+    "tile_is"
+  ],
+  "slots": {
+    "main": 8
+  },
+  "par": {
+    "commands": 6,
+    "steps": 8
+  },
+  "reference": "repeat 7 { if tile_is r { turn_right } if tile_is b { turn_left } forward }",
+  "hints": [
+    "Red turns right, blue turns left, then step. Every tile.",
+    "Repeat 7: if red turn right, if blue turn left, forward.",
+    "repeat 7 { if tile_is r { turn_right } if tile_is b { turn_left } forward }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

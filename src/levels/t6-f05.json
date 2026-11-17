@@ -1,0 +1,59 @@
+{
+  "id": "t6-f05",
+  "title": "First One Home",
+  "band": "atrium",
+  "size": {
+    "w": 7,
+    "h": 6
+  },
+  "tiles": [
+    "#__#__#",
+    "#_#__e#",
+    "_..e_._",
+    "#__##._",
+    "##_..._",
+    "______#"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 2,
+    "facing": "east"
+  },
+  "twin": {
+    "x": 3,
+    "y": 4,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate"
+  ],
+  "slots": {
+    "main": 8
+  },
+  "par": {
+    "commands": 6,
+    "steps": 6
+  },
+  "reference": "forward forward turn_left forward forward forward",
+  "hints": [
+    "A bot that reaches a lift parks there and stops. The other one carries on.",
+    "LoopBot's lift is two tiles away. Echo's is further.",
+    "forward forward turn_left forward forward forward"
+  ],
+  "story": {
+    "intro": "PATCH: \"A lift catches whoever steps on it. LoopBot parks, and the rest of the program is all Echo's.\"",
+    "outro": "PATCH: \"LoopBot waited at its lift while Echo finished the walk. Handy.\""
+  }
+}

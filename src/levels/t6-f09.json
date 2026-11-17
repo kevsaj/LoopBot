@@ -1,0 +1,66 @@
+{
+  "id": "t6-f09",
+  "title": "Long Way Round",
+  "band": "atrium",
+  "size": {
+    "w": 8,
+    "h": 6
+  },
+  "tiles": [
+    "____#_#_",
+    "_..e#_#_",
+    "_._#...#",
+    "_...__._",
+    "___#e.._",
+    "#____#__"
+  ],
+  "heights": [
+    "00000000",
+    "01110000",
+    "00000000",
+    "00000000",
+    "00001110",
+    "00000000"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 4,
+    "y": 2,
+    "facing": "east"
+  },
+  "twin": {
+    "x": 3,
+    "y": 3,
+    "facing": "west"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate"
+  ],
+  "slots": {
+    "main": 10
+  },
+  "par": {
+    "commands": 8,
+    "steps": 8
+  },
+  "reference": "forward forward turn_right forward jump turn_right forward forward",
+  "hints": [
+    "A U-turn with a climb in the middle.",
+    "Two forward, turn right, forward, jump, turn right, two forward.",
+    "forward forward turn_right forward jump turn_right forward forward"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

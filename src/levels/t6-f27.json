@@ -1,0 +1,72 @@
+{
+  "id": "t6-f27",
+  "title": "Gallery Loop",
+  "band": "batik",
+  "size": {
+    "w": 7,
+    "h": 7
+  },
+  "tiles": [
+    "__e#___",
+    "#_.#_##",
+    "_..#___",
+    "_._____",
+    ".._##__",
+    "._..._#",
+    ".__#..e"
+  ],
+  "heights": [
+    "0020000",
+    "0020000",
+    "0120000",
+    "0100000",
+    "0100000",
+    "0000000",
+    "0000111"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 6,
+    "facing": "north"
+  },
+  "twin": {
+    "x": 2,
+    "y": 5,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "F1",
+    "F2"
+  ],
+  "slots": {
+    "main": 4,
+    "F1": 4,
+    "F2": 4
+  },
+  "par": {
+    "commands": 9,
+    "steps": 12
+  },
+  "reference": "F2 F2 F1 def F1 { forward forward turn_right } def F2 { F1 jump turn_left }",
+  "hints": [
+    "Echo parks first.",
+    "F1: two forward, turn right. F2: F1, jump, turn left.",
+    "F2 F2 F1 def F1 { forward forward turn_right } def F2 { F1 jump turn_left }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

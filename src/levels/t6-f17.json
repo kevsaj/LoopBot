@@ -1,0 +1,61 @@
+{
+  "id": "t6-f17",
+  "title": "Loop in a Loop",
+  "band": "skybridge",
+  "size": {
+    "w": 7,
+    "h": 7
+  },
+  "tiles": [
+    "____#_#",
+    "#_...._",
+    "_e__#._",
+    "#._#_.#",
+    "_.___e#",
+    "_....__",
+    "_______"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 2,
+    "y": 1,
+    "facing": "east"
+  },
+  "twin": {
+    "x": 4,
+    "y": 5,
+    "facing": "west"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat"
+  ],
+  "slots": {
+    "main": 6
+  },
+  "par": {
+    "commands": 4,
+    "steps": 7
+  },
+  "reference": "repeat 2 { repeat 3 { forward } turn_right }",
+  "hints": [
+    "Two straight runs of three, a right turn after each.",
+    "Repeat 2: (repeat 3: forward), turn right.",
+    "repeat 2 { repeat 3 { forward } turn_right }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

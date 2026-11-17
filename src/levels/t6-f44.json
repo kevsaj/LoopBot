@@ -1,0 +1,65 @@
+{
+  "id": "t6-f44",
+  "title": "Uneven Halls",
+  "band": "twintops",
+  "size": {
+    "w": 7,
+    "h": 8
+  },
+  "tiles": [
+    "____##_",
+    "_....__",
+    "_.__.__",
+    "_e_____",
+    "__e...#",
+    "##_#_._",
+    "_#...._",
+    "_#_#__#"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 2,
+    "y": 6,
+    "facing": "east"
+  },
+  "twin": {
+    "x": 4,
+    "y": 2,
+    "facing": "north"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "while",
+    "if"
+  ],
+  "slots": {
+    "main": 6
+  },
+  "par": {
+    "commands": 4,
+    "steps": 10
+  },
+  "reference": "repeat 3 { while not wall_ahead { forward } turn_left }",
+  "hints": [
+    "The halls differ, so let a while loop measure them.",
+    "repeat 3: while not wall_ahead: forward, then turn_left.",
+    "repeat 3 { while not wall_ahead { forward } turn_left }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "typing": true
+}

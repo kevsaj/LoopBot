@@ -4,12 +4,13 @@ import { FROSTLINE } from './frostline';
 import { HEATWAVE } from './heatwave';
 import { TWIST } from './twist';
 import { DOCKYARD } from './dockyard';
+import { TWINSPIRES } from './twinspires';
 import { validateLevel } from './validate';
 import { Runner } from '../sim/interpreter';
 import { countBlocks, countCommands, parseReference } from '../sim/program';
-import { shortestActionPath, smallestProgram } from '../sim/solver';
+import { shortestActionPath, shortestTwinSteps, smallestProgram } from '../sim/solver';
 
-describe.each([...LEVELS, ...FROSTLINE, ...HEATWAVE, ...TWIST, ...DOCKYARD].map((l) => [l.id, l] as const))('floor %s', (_id, level) => {
+describe.each([...LEVELS, ...FROSTLINE, ...HEATWAVE, ...TWIST, ...DOCKYARD, ...TWINSPIRES].map((l) => [l.id, l] as const))('floor %s', (_id, level) => {
   it('LV-1: matches the floor format', () => {
     expect(validateLevel(level)).toEqual([]);
   });
@@ -24,6 +25,12 @@ describe.each([...LEVELS, ...FROSTLINE, ...HEATWAVE, ...TWIST, ...DOCKYARD].map(
   });
 
   it('LV-3: the step par is the true minimum', () => {
+    // Twin Spires with if and while: each bot runs its own copy, so they can act differently in
+    // one step. The par is the reference's steps, and no pair of action sequences may beat it.
+    if (level.twin && (level.commands.includes('if') || level.commands.includes('while'))) {
+      expect(shortestTwinSteps(level)).toBe(level.par.steps);
+      return;
+    }
     const path = shortestActionPath(level);
     expect(path).not.toBeNull();
     expect(path!.length).toBe(level.par.steps);

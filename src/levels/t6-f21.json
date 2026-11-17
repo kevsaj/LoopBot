@@ -1,0 +1,70 @@
+{
+  "id": "t6-f21",
+  "title": "Batik Pattern",
+  "band": "batik",
+  "size": {
+    "w": 7,
+    "h": 7
+  },
+  "tiles": [
+    "e_###__",
+    ".___#__",
+    "...___#",
+    "_#.____",
+    "#_._..e",
+    "#_##.#_",
+    "#_...__"
+  ],
+  "heights": [
+    "3000000",
+    "2000000",
+    "2110000",
+    "0000000",
+    "0000223",
+    "0000100",
+    "0000100"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 2,
+    "y": 6,
+    "facing": "east"
+  },
+  "twin": {
+    "x": 2,
+    "y": 4,
+    "facing": "north"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "F1"
+  ],
+  "slots": {
+    "main": 6,
+    "F1": 3
+  },
+  "par": {
+    "commands": 7,
+    "steps": 8
+  },
+  "reference": "F1 turn_left F1 turn_right F1 def F1 { forward jump }",
+  "hints": [
+    "The same pattern three times, with turns between.",
+    "Teach F1: forward and a jump. Call it between the turns.",
+    "F1 turn_left F1 turn_right F1 def F1 { forward jump }"
+  ],
+  "story": {
+    "intro": "PATCH: \"The batik gallery: painted cloth, the same pattern over and over. A function is a pattern too, and both bots can share it.\"",
+    "outro": null
+  }
+}

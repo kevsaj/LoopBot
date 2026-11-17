@@ -1,0 +1,72 @@
+{
+  "id": "t6-f23",
+  "title": "Shared Steps",
+  "band": "batik",
+  "size": {
+    "w": 8,
+    "h": 8
+  },
+  "tiles": [
+    "...e____",
+    ".#______",
+    ".__#__#_",
+    ".__##_##",
+    "#....#__",
+    "_#__.__#",
+    "##__.___",
+    "##_#...e"
+  ],
+  "heights": [
+    "11220000",
+    "10000000",
+    "00000000",
+    "00000000",
+    "00011000",
+    "00001000",
+    "00002000",
+    "00002233"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 3,
+    "facing": "north"
+  },
+  "twin": {
+    "x": 1,
+    "y": 4,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "F1"
+  ],
+  "slots": {
+    "main": 6,
+    "F1": 4
+  },
+  "par": {
+    "commands": 8,
+    "steps": 11
+  },
+  "reference": "F1 turn_right F1 turn_left F1 def F1 { forward jump forward }",
+  "hints": [
+    "LoopBot parks at the end of the second pattern.",
+    "F1 is forward, jump, forward. Right turn, then left.",
+    "F1 turn_right F1 turn_left F1 def F1 { forward jump forward }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

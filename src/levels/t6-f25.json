@@ -1,0 +1,74 @@
+{
+  "id": "t6-f25",
+  "title": "Pattern in a Pattern",
+  "band": "batik",
+  "size": {
+    "w": 8,
+    "h": 8
+  },
+  "tiles": [
+    "#____#_e",
+    "__#____.",
+    ".#__#__.",
+    ".__##__.",
+    ".______.",
+    "._......",
+    "._#__##_",
+    ".....e__"
+  ],
+  "heights": [
+    "00000002",
+    "00000002",
+    "00000002",
+    "00000001",
+    "00000001",
+    "10000111",
+    "10000000",
+    "11122200"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 2,
+    "y": 5,
+    "facing": "east"
+  },
+  "twin": {
+    "x": 0,
+    "y": 2,
+    "facing": "south"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "F1",
+    "F2"
+  ],
+  "slots": {
+    "main": 4,
+    "F1": 3,
+    "F2": 4
+  },
+  "par": {
+    "commands": 8,
+    "steps": 11
+  },
+  "reference": "F2 turn_left F2 def F1 { forward forward } def F2 { F1 jump F1 }",
+  "hints": [
+    "F2 can call F1.",
+    "F1: two forward. F2: F1, jump, F1. Main: F2, turn left, F2.",
+    "F2 turn_left F2 def F1 { forward forward } def F2 { F1 jump F1 }"
+  ],
+  "story": {
+    "intro": "PATCH: \"Functions can call functions. A small pattern inside a bigger one, like the cloth.\"",
+    "outro": null
+  }
+}

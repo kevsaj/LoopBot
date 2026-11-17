@@ -1,0 +1,60 @@
+{
+  "id": "t6-f02",
+  "title": "Side by Side",
+  "band": "atrium",
+  "size": {
+    "w": 7,
+    "h": 7
+  },
+  "tiles": [
+    "__#_##_",
+    "___e___",
+    "#_#.##_",
+    "_..._e_",
+    "_____._",
+    "_#_..._",
+    "_____#_"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 3,
+    "y": 5,
+    "facing": "east"
+  },
+  "twin": {
+    "x": 1,
+    "y": 3,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate"
+  ],
+  "slots": {
+    "main": 7
+  },
+  "par": {
+    "commands": 5,
+    "steps": 5
+  },
+  "reference": "forward forward turn_left forward forward",
+  "hints": [
+    "Both paths have the same shape.",
+    "Two forward, turn left, two forward.",
+    "forward forward turn_left forward forward"
+  ],
+  "story": {
+    "intro": "PATCH: \"Echo turns when you turn and walks when you walk. Same shape, same program.\"",
+    "outro": null
+  }
+}
