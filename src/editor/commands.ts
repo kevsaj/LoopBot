@@ -1,3 +1,4 @@
+import { BY_TALLY } from '../sim/types';
 import type { Block, PaletteCommand } from '../sim/types';
 import { msg } from '../i18n';
 
@@ -11,7 +12,10 @@ export const COMMAND_META: Record<PaletteCommand, { label: string; glyph: string
   drop: { label: msg('drop'), glyph: '▼', tone: 'hand' },
   activate: { label: msg('activate'), glyph: '◉', tone: 'act' },
   wait: { label: msg('wait'), glyph: '‖', tone: 'turn' },
+  tally_up: { label: msg('tally + 1'), glyph: '+', tone: 'count' },
+  tally_down: { label: msg('tally − 1'), glyph: '−', tone: 'count' },
   repeat: { label: msg('repeat'), glyph: '⟳', tone: 'flow' },
+  repeat_tally: { label: msg('repeat tally'), glyph: '⟳#', tone: 'flow' },
   if: { label: msg('if'), glyph: '?', tone: 'flow' },
   while: { label: msg('while'), glyph: '∞', tone: 'flow' },
   F1: { label: 'F1', glyph: 'ƒ', tone: 'fn' },
@@ -22,11 +26,14 @@ export const COMMAND_META: Record<PaletteCommand, { label: string; glyph: string
 /** The Lobby palette, always shown so locked commands appear greyed out (ED-8). */
 export const PALETTE_ORDER: PaletteCommand[] = ['forward', 'turn_left', 'turn_right', 'jump', 'pick_up', 'drop', 'activate'];
 
-/** Heatwave's wait joins the palette only on floors that have it, so other towers never see it locked. */
-export const EXTRA_ORDER: PaletteCommand[] = ['wait'];
+/**
+ * Heatwave's wait and Dockyard's tally blocks join the palette only on floors that have them, so
+ * other towers never see them locked.
+ */
+export const EXTRA_ORDER: PaletteCommand[] = ['wait', 'tally_up', 'tally_down'];
 
-/** Control blocks join the palette on the floors that allow them (repeat from Floor 11). */
-export const CONTROL_ORDER: PaletteCommand[] = ['repeat', 'while', 'if'];
+/** Control blocks join the palette on the floors that allow them (repeat from Floor 11, repeat tally in Dockyard). */
+export const CONTROL_ORDER: PaletteCommand[] = ['repeat', 'repeat_tally', 'while', 'if'];
 
 export function blockCommand(b: Block): PaletteCommand {
   switch (b.kind) {
@@ -34,6 +41,8 @@ export function blockCommand(b: Block): PaletteCommand {
       return b.action;
     case 'call':
       return b.fn;
+    case 'repeat':
+      return b.times === BY_TALLY ? 'repeat_tally' : 'repeat';
     default:
       return b.kind;
   }

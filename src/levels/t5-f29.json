@@ -1,0 +1,70 @@
+{
+  "id": "t5-f29",
+  "title": "Tar Barrels",
+  "band": "ropewalk",
+  "size": {
+    "w": 8,
+    "h": 8
+  },
+  "tiles": [
+    "___#____",
+    "e.......",
+    "____#__.",
+    "__##___.",
+    "#______.",
+    "##_____.",
+    "____....",
+    "___#____"
+  ],
+  "heights": [
+    "00000000",
+    "01111111",
+    "00000002",
+    "00000002",
+    "00000002",
+    "00000002",
+    "00003332",
+    "00000000"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 4,
+    "y": 6,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "tally_up",
+    "tally_down",
+    "repeat",
+    "repeat_tally",
+    "F1"
+  ],
+  "slots": {
+    "main": 9
+  },
+  "par": {
+    "commands": 7,
+    "steps": 17
+  },
+  "reference": "repeat 3 { tally_up repeat tally { forward forward } jump turn_left }",
+  "hints": [
+    "Down the barrel stacks, two tiles further each time.",
+    "Count, walk two tiles per tally, jump down, turn left.",
+    "repeat 3 { tally_up repeat tally { forward forward } jump turn_left }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

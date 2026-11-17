@@ -6,6 +6,7 @@
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import type { KeyboardEvent, PointerEvent, ReactNode } from 'react';
 import { useDraggable, useDroppable } from '@dnd-kit/core';
+import { BY_TALLY } from '../sim/types';
 import type { Block, Condition } from '../sim/types';
 import type { Spot } from '../sim/program';
 import { MAX_TIMES, MIN_TIMES, childLists, countBlocks, elseKey, findBlock, listAt } from '../sim/program';
@@ -48,7 +49,7 @@ export function Tile({ block, line, lifted }: { block: Block; line?: number; lif
       <span className="line-label">{t(meta.label)}</span>
       {lifted && block.kind === 'repeat' && (
         <span className="line-arg">
-          × {block.times}
+          × {block.times === BY_TALLY ? t('tally') : block.times}
           {inside ? ` · ${t('{n} inside', { n: inside })}` : ''}
         </span>
       )}
@@ -144,7 +145,7 @@ function LineRow({
   const armed = dx < -SWIPE_DELETE_PX;
   const label =
     t(COMMAND_META[blockCommand(block)].label) +
-    (block.kind === 'repeat' ? ` ${tn(block.times, '{n} time', '{n} times')}` : block.kind === 'if' || block.kind === 'while' ? ` ${condLabel(block.cond)}` : '');
+    (block.kind === 'repeat' ? (block.times === BY_TALLY ? '' : ` ${tn(block.times, '{n} time', '{n} times')}`) : block.kind === 'if' || block.kind === 'while' ? ` ${condLabel(block.cond)}` : '');
   return (
     <li
       ref={(el) => {
@@ -375,7 +376,7 @@ export function ProgramList({ blocks, limit, cursor, activeIds, crashId, cancelI
               onDelete={() => onDelete(block.id)}
               onNudge={(dir) => nudge(row, dir)}
               extra={
-                block.kind === 'repeat' ? (
+                block.kind === 'repeat' && block.times === BY_TALLY ? undefined : block.kind === 'repeat' ? (
                   <Times times={block.times} onChange={(n) => onTimes(block.id, n)} />
                 ) : block.kind === 'if' || block.kind === 'while' ? (
                   <CondPicker cond={block.cond} options={conditions} onChange={(c) => onCond(block.id, c)} />

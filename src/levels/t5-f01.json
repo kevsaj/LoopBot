@@ -1,0 +1,56 @@
+{
+  "id": "t5-f01",
+  "title": "Count Up",
+  "band": "quay",
+  "size": {
+    "w": 6,
+    "h": 5
+  },
+  "tiles": [
+    "#____#",
+    "#e..._",
+    "_#__._",
+    "__#.._",
+    "____#_"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 3,
+    "y": 3,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "tally_up",
+    "repeat",
+    "repeat_tally"
+  ],
+  "slots": {
+    "main": 7
+  },
+  "par": {
+    "commands": 5,
+    "steps": 8
+  },
+  "reference": "repeat 3 { tally_up repeat tally { forward } turn_left }",
+  "hints": [
+    "Each stretch of quay is one tile longer than the last: 1, then 2, then 3.",
+    "Add 1 to the tally, walk tally tiles, turn left. Do that three times.",
+    "repeat 3 { tally_up repeat tally { forward } turn_left }"
+  ],
+  "story": {
+    "intro": "PATCH: \"Dockyard. VANTA got into the Wavehouse and scrambled every cargo manifest. See the tally board? It holds one number, and you can count it up.\"",
+    "outro": "PATCH: \"One, two, three. You never wrote a single number in your program. The tally did the counting.\""
+  }
+}

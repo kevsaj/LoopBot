@@ -1,0 +1,58 @@
+{
+  "id": "t5-f21",
+  "title": "Rope Routine",
+  "band": "ropewalk",
+  "size": {
+    "w": 6,
+    "h": 5
+  },
+  "tiles": [
+    "______",
+    "_e...#",
+    "#__#._",
+    "___.._",
+    "__#___"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 3,
+    "y": 3,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "tally_up",
+    "tally_down",
+    "repeat_tally",
+    "F1"
+  ],
+  "slots": {
+    "main": 4,
+    "F1": 5
+  },
+  "par": {
+    "commands": 7,
+    "steps": 8
+  },
+  "reference": "F1 F1 F1 def F1 { tally_up repeat tally { forward } turn_left }",
+  "hints": [
+    "Every stretch is the same routine. Only the tally changes.",
+    "Teach F1 to count, walk the tally and turn left. Call it three times.",
+    "F1 F1 F1 def F1 { tally_up repeat tally { forward } turn_left }"
+  ],
+  "story": {
+    "intro": "PATCH: \"The Ropewalk. The rope bots here run one routine all day. Teach it once. The tally changes how far it goes.\"",
+    "outro": null
+  }
+}

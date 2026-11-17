@@ -1,0 +1,63 @@
+{
+  "id": "t5-f50",
+  "title": "The Wavehouse Crest",
+  "band": "crest",
+  "size": {
+    "w": 8,
+    "h": 8
+  },
+  "tiles": [
+    ".___#___",
+    ".___##__",
+    "....#___",
+    "#_._##_#",
+    "_#.#__#_",
+    "#_.....#",
+    "__#__.__",
+    "_____..e"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "south"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "tally_up",
+    "tally_down",
+    "repeat",
+    "repeat_tally",
+    "while",
+    "if"
+  ],
+  "slots": {
+    "main": 11
+  },
+  "par": {
+    "commands": 9,
+    "steps": 19
+  },
+  "reference": "repeat 3 { while not wall_ahead { forward tally_up } turn_left repeat tally { forward tally_down } turn_right }",
+  "hints": [
+    "Down the crest, then across. Measure each drop.",
+    "Measure going down, turn left, copy across, count back to 0.",
+    "repeat 3 { while not wall_ahead { forward tally_up } turn_left repeat tally { forward tally_down } turn_right }"
+  ],
+  "story": {
+    "intro": "PATCH: \"The top of the Wavehouse. VANTA is sending orders to every crane in the harbour. Measure, count, and climb.\"",
+    "outro": null
+  },
+  "typing": true
+}

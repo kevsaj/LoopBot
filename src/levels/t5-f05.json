@@ -1,0 +1,58 @@
+{
+  "id": "t5-f05",
+  "title": "Two by Two",
+  "band": "quay",
+  "size": {
+    "w": 7,
+    "h": 7
+  },
+  "tiles": [
+    "____###",
+    "e......",
+    "#_#_#_.",
+    "___#_#.",
+    "______.",
+    "____...",
+    "______#"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 4,
+    "y": 5,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "tally_up",
+    "repeat",
+    "repeat_tally"
+  ],
+  "slots": {
+    "main": 8
+  },
+  "par": {
+    "commands": 6,
+    "steps": 14
+  },
+  "reference": "repeat 3 { tally_up repeat tally { forward forward } turn_left }",
+  "hints": [
+    "These stretches grow by 2 each time: 2, 4, 6.",
+    "Walk two tiles for every number on the tally.",
+    "repeat 3 { tally_up repeat tally { forward forward } turn_left }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

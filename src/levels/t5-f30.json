@@ -1,0 +1,73 @@
+{
+  "id": "t5-f30",
+  "title": "The Ropewalk",
+  "band": "ropewalk",
+  "size": {
+    "w": 7,
+    "h": 8
+  },
+  "tiles": [
+    "_#____e",
+    "______.",
+    "_#___#.",
+    "_#____.",
+    "__.....",
+    "#_.____",
+    "__._#__",
+    "...__#_"
+  ],
+  "heights": [
+    "0000003",
+    "0000003",
+    "0000003",
+    "0000003",
+    "0022223",
+    "0010000",
+    "0010000",
+    "0010000"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 7,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "tally_up",
+    "tally_down",
+    "repeat",
+    "repeat_tally",
+    "F1",
+    "F2"
+  ],
+  "slots": {
+    "main": 3,
+    "F1": 5,
+    "F2": 5
+  },
+  "par": {
+    "commands": 10,
+    "steps": 16
+  },
+  "reference": "F2 F2 def F1 { tally_up repeat tally { forward } jump } def F2 { F1 turn_left F1 turn_right }",
+  "hints": [
+    "Up the rope stacks: 1, 2, 3, 4, each ending with a jump, turning left, then right.",
+    "F1 counts, walks and jumps. F2 calls F1, turns left, calls F1, turns right.",
+    "F2 F2 def F1 { tally_up repeat tally { forward } jump } def F2 { F1 turn_left F1 turn_right }"
+  ],
+  "story": {
+    "intro": "PATCH: \"The top of the Ropewalk. Two routines, one tally, and a climb at the end of every stretch.\"",
+    "outro": null
+  }
+}

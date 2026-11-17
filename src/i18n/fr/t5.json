@@ -1,0 +1,363 @@
+{
+ "t5-f01": {
+  "title": "Compter jusqu'à trois",
+  "hints": [
+   "Chaque bout de quai est plus long d'une case que le précédent : 1, puis 2, puis 3.",
+   "Ajoute 1 au compteur, avance autant de cases que le compteur, tourne à gauche. Trois fois."
+  ],
+  "intro": "PATCH : « Dockyard. VANTA s'est infiltré dans l'Entrepôt des vagues et a brouillé tous les manifestes de cargaison. Tu vois le tableau du compteur ? Il garde un seul nombre, et tu peux le faire monter. »",
+  "outro": "PATCH : « Un, deux, trois. Tu n'as jamais écrit un seul nombre dans ton programme. C'est le compteur qui a compté. »"
+ },
+ "t5-f02": {
+  "title": "Marches empilées",
+  "hints": [
+   "Les marches s'allongent à mesure que tu montes : 1, 2, 3.",
+   "Compte, avance le compteur, puis fais un pas de côté pour monter."
+  ]
+ },
+ "t5-f03": {
+  "title": "Escalade de conteneurs",
+  "hints": [
+   "Chaque bout se termine par un saut sur un conteneur.",
+   "Compte, avance le compteur, saute, tourne à gauche."
+  ]
+ },
+ "t5-f04": {
+  "title": "Longueur d'avance",
+  "hints": [
+   "Le premier bout fait déjà 2 cases. Compte avant que la boucle commence.",
+   "Un compteur + 1 avant la boucle. Dedans : compte, avance, tourne à droite."
+  ]
+ },
+ "t5-f05": {
+  "title": "Deux par deux",
+  "hints": [
+   "Ces bouts grandissent de 2 chaque fois : 2, 4, 6.",
+   "Avance de deux cases pour chaque nombre du compteur."
+  ]
+ },
+ "t5-f06": {
+  "title": "En bas de la pile",
+  "hints": [
+   "Tu commences en haut de la pile. Chaque saut te fait descendre d'un conteneur.",
+   "Compte, avance, saute en bas, tourne à droite."
+  ]
+ },
+ "t5-f07": {
+  "title": "Spirale carrée",
+  "hints": [
+   "La spirale grandit tous les deux côtés : 2, 2, puis 4, 4.",
+   "Compte une fois, puis fais deux côtés avec le même compteur."
+  ]
+ },
+ "t5-f08": {
+  "title": "Marches de bittes",
+  "hints": [
+   "Avance le compteur, puis grimpe sur une bitte d'amarrage sur le côté.",
+   "Compte, avance, tourne à droite, saute, tourne à gauche."
+  ]
+ },
+ "t5-f09": {
+  "title": "Crochet de grue",
+  "hints": [
+   "Une forme de crochet, puis un dernier saut sur la grue.",
+   "La boucle dessine le crochet. Le saut vient après."
+  ]
+ },
+ "t5-f10": {
+  "title": "Le quai des conteneurs",
+  "hints": [
+   "Chaque bout est plus long de deux cases et finit par un saut.",
+   "Avance de deux cases par compteur, saute, tourne à gauche."
+  ]
+ },
+ "t5-f11": {
+  "title": "Compte à rebours",
+  "hints": [
+   "Le bras de la grue raccourcit : 4, 3, 2, 1. Compte d'abord jusqu'à 4.",
+   "Remplis le compteur jusqu'à 4. Puis avance-le, tourne à droite et enlève 1, quatre fois."
+  ],
+  "intro": "PATCH : « Le parc des grues. Ces bras de grue raccourcissent à mesure que tu montes. Remplis d'abord le compteur, puis fais-le redescendre. »"
+ },
+ "t5-f12": {
+  "title": "Spirale de flèche",
+  "hints": [
+   "Du haut de la flèche : 4 cases, saute en bas, puis 3, 2, 1.",
+   "Compte jusqu'à 4. Puis avance le compteur, saute, tourne à gauche et enlève 1."
+  ]
+ },
+ "t5-f13": {
+  "title": "Bras qui monte",
+  "hints": [
+   "Chaque bout est plus court d'une case et finit par un saut vers le haut.",
+   "Compte jusqu'à 4. Puis avance le compteur, saute, tourne à droite et enlève 1."
+  ]
+ },
+ "t5-f14": {
+  "title": "Marche de caisse",
+  "hints": [
+   "La plateforme fait deux conteneurs de haut. Tu ne peux sauter que d'un seul.",
+   "Porte la caisse en avant et pose-la comme une marche."
+  ]
+ },
+ "t5-f15": {
+  "title": "Tête baissée",
+  "hints": [
+   "Des bouts de 5, 4, 3 et 2. Commence le compteur haut.",
+   "Remplis le compteur jusqu'à 5. Avance-le, tourne à gauche, enlève 1. Quatre fois."
+  ]
+ },
+ "t5-f16": {
+  "title": "Descente de la charge",
+  "hints": [
+   "Enlève 1 avant chaque bout : 4, 3, 2, 1, chacun finit par une descente.",
+   "Commence le compteur à 5. Compte à rebours, avance le compteur, saute en bas, tourne à droite."
+  ]
+ },
+ "t5-f17": {
+  "title": "Compte à rebours à l'interrupteur",
+  "hints": [
+   "La porte sur le bras de la grue est fermée. L'interrupteur est sous tes pieds.",
+   "Active d'abord, puis compte à rebours le long du bras : 4, 3, 2, 1."
+  ]
+ },
+ "t5-f18": {
+  "title": "Escalier qui rétrécit",
+  "hints": [
+   "Les longues marches d'abord, puis les courtes : 3, 2, 1.",
+   "Compte jusqu'à 3, puis avance le compteur, monte d'un pas sur le côté et compte à rebours."
+  ]
+ },
+ "t5-f19": {
+  "title": "Marée basse",
+  "hints": [
+   "Compte à rebours avant chaque bout, pas après.",
+   "Commence le compteur à 5. À chaque tour : enlève 1, avance, saute, tourne à gauche."
+  ]
+ },
+ "t5-f20": {
+  "title": "Le parc des grues",
+  "hints": [
+   "Deux côtés à chaque longueur : 6, 6, 4, 4, 2, 2.",
+   "Commence le compteur à 3. Fais deux côtés, deux cases par compteur, puis enlève 1."
+  ],
+  "intro": "PATCH : « La plus haute grue du parc. Deux côtés à chaque longueur, et un peu plus court à chaque tour. »"
+ },
+ "t5-f21": {
+  "title": "Routine de corde",
+  "hints": [
+   "Chaque bout, c'est la même routine. Seul le compteur change.",
+   "Apprends à F1 à compter, avancer le compteur et tourner à gauche. Appelle-la trois fois."
+  ],
+  "intro": "PATCH : « La corderie. Les robots cordiers d'ici répètent une seule routine toute la journée. Apprends-la une fois. Le compteur change la distance. »"
+ },
+ "t5-f22": {
+  "title": "Chasse au bogue : compté trop tard",
+  "hints": [
+   "Lance-le. Le premier bout n'arrive jamais. Pourquoi ?",
+   "Compte avant d'avancer, pas après."
+  ],
+  "intro": "PATCH : « VANTA a laissé cette routine presque juste. Lance-la, regarde le tableau du compteur, puis répare-la. »"
+ },
+ "t5-f23": {
+  "title": "Échelle de corde",
+  "hints": [
+   "Chaque bout finit par un saut sur l'échelle de corde, et chacun est plus long d'une case.",
+   "Une routine : compte, avance le compteur, saute, tourne à droite. Appelle-la trois fois."
+  ]
+ },
+ "t5-f24": {
+  "title": "Chasse au bogue : mauvais côté",
+  "hints": [
+   "Chaque bout devrait être plus long de deux cases que le précédent.",
+   "Quelque chose cloche un peu dans F1. Corrige un seul bloc."
+  ]
+ },
+ "t5-f25": {
+  "title": "Escalier d'aussières",
+  "hints": [
+   "Les marches grandissent : 1, 2, 3. Chacune finit par un pas de côté pour monter.",
+   "Une routine dessine une marche. Appelle-la trois fois."
+  ]
+ },
+ "t5-f26": {
+  "title": "Chasse au bogue : compte à rebours",
+  "hints": [
+   "Le bras devrait raccourcir : 4, 3, 2, 1.",
+   "Regarde ce que F1 fait au compteur."
+  ]
+ },
+ "t5-f27": {
+  "title": "Nœud de chaise",
+  "hints": [
+   "Des bouts de 1, 2, 3 et 4, en tournant à gauche, puis à droite, puis à gauche.",
+   "F1 compte et avance. F2 appelle F1, tourne à gauche, rappelle F1 et tourne à droite."
+  ]
+ },
+ "t5-f28": {
+  "title": "Chasse au bogue : compté deux fois",
+  "hints": [
+   "Les marches devraient grandir 1, 2, 3. Celles-ci grandissent trop vite.",
+   "F1 compte deux fois. Une seule suffit."
+  ]
+ },
+ "t5-f29": {
+  "title": "Barils de goudron",
+  "hints": [
+   "Descends les piles de barils, deux cases plus loin chaque fois.",
+   "Compte, avance de deux cases par compteur, saute en bas, tourne à gauche."
+  ]
+ },
+ "t5-f30": {
+  "title": "La corderie",
+  "hints": [
+   "Monte les piles de cordes : 1, 2, 3, 4, chacun finit par un saut, en tournant à gauche puis à droite.",
+   "F1 compte, avance et saute. F2 appelle F1, tourne à gauche, appelle F1, tourne à droite."
+  ],
+  "intro": "PATCH : « Le haut de la corderie. Deux routines, un compteur, et une montée au bout de chaque bout. »"
+ },
+ "t5-f31": {
+  "title": "Mesurer deux fois",
+  "hints": [
+   "Marche jusqu'au bout du quai et compte chaque pas. Le bout suivant est tout aussi long.",
+   "Tant qu'il n'y a pas de mur : avance et compte. Tourne, puis avance le compteur jusqu'à 0."
+  ],
+  "intro": "PATCH : « Le bureau du pointage. Personne ne te dit la longueur de ces quais. Marche jusqu'au mur, compte chaque pas, puis refais la même distance. »"
+ },
+ "t5-f32": {
+  "title": "Copie de marche",
+  "hints": [
+   "Chaque marche monte exactement de la même longueur qu'elle avance.",
+   "Compte en marchant jusqu'au mur. Tourne à gauche et avance le compteur."
+  ]
+ },
+ "t5-f33": {
+  "title": "Trois quais",
+  "hints": [
+   "Trois marches, chacune d'une taille différente. Mesure chacune.",
+   "La même boucle qu'avant, trois fois. Ramène le compteur à 0 chaque fois."
+  ]
+ },
+ "t5-f34": {
+  "title": "Chasse au bogue : jamais remis à zéro",
+  "hints": [
+   "Lance-le. Le deuxième bout va trop loin. Qu'est-ce qui reste sur le compteur ?",
+   "Enlève 1 au compteur à chaque pas que tu dépenses."
+  ]
+ },
+ "t5-f35": {
+  "title": "Copie en travers",
+  "hints": [
+   "Cette fois, tu mesures en descendant, et tu copies en travers.",
+   "Compte jusqu'au mur, tourne à gauche, avance le compteur."
+  ]
+ },
+ "t5-f36": {
+  "title": "Chasse au bogue : compté une fois",
+  "hints": [
+   "Lance-le et regarde le tableau du compteur. Il ne monte qu'une fois.",
+   "Compte dans le tant que, à chaque pas."
+  ]
+ },
+ "t5-f37": {
+  "title": "Caisses repères",
+  "hints": [
+   "Ici, les quais finissent sur des piles de caisses, pas des murs. Demande s'il y a une caisse.",
+   "Tant qu'il n'y a pas de caisse devant : avance et compte. Puis copie la distance."
+  ]
+ },
+ "t5-f38": {
+  "title": "Chasse au bogue : mauvais virage",
+  "hints": [
+   "Les marches montent, elles ne descendent pas.",
+   "Inverse les deux virages."
+  ]
+ },
+ "t5-f39": {
+  "title": "Registre",
+  "hints": [
+   "Trois marches vers le haut, trois tailles différentes.",
+   "Mesure en avançant, copie en montant, dépense le compteur. Trois fois."
+  ]
+ },
+ "t5-f40": {
+  "title": "Le bureau du pointage",
+  "hints": [
+   "Les dernières marches du bureau du pointage, toutes différentes. Mesure chacune.",
+   "Une boucle : mesure avec tant que, copie avec répéter compteur, reviens à 0."
+  ],
+  "intro": "PATCH : « Dernier étage du bureau du pointage. Mesure, copie, et reviens à 0 avant la suivante. »"
+ },
+ "t5-f41": {
+  "title": "Pont de verre",
+  "hints": [
+   "Quatre bouts sur le verre : 1, 2, 3, 4.",
+   "Compte, avance le compteur, tourne à gauche. Quatre fois."
+  ],
+  "intro": "PATCH : « La Crête, le toit de verre de l'Entrepôt des vagues. Tape tes programmes si tu veux. tally += 1, c'est le même bloc que compteur + 1. »"
+ },
+ "t5-f42": {
+  "title": "Chasse au bogue : compté trop tard",
+  "hints": [
+   "Lance-le. Le premier bout manque.",
+   "Compte d'abord, puis avance."
+  ]
+ },
+ "t5-f43": {
+  "title": "Compte dans le ciel",
+  "hints": [
+   "De plus en plus court : 4, 3, 2, 1.",
+   "Remplis le compteur jusqu'à 4. Avance-le, tourne à gauche, enlève 1."
+  ]
+ },
+ "t5-f44": {
+  "title": "Aile de goéland",
+  "hints": [
+   "Trois marches de tailles différentes. Une seule routine peut mesurer n'importe laquelle.",
+   "Mets toute la mesure et la copie dans F1. Appelle-la trois fois."
+  ]
+ },
+ "t5-f45": {
+  "title": "Chasse au bogue : des restes",
+  "hints": [
+   "La deuxième marche descend trop loin.",
+   "Ramène le compteur à 0 pendant que tu copies."
+  ]
+ },
+ "t5-f46": {
+  "title": "Routine des verrières",
+  "hints": [
+   "Des bouts de 2, 4 et 6 sur les verrières.",
+   "F1 : compte, avance de deux cases par compteur, tourne à gauche."
+  ]
+ },
+ "t5-f47": {
+  "title": "Vague miroir",
+  "hints": [
+   "Des bouts de 1, 2, 3, 4, en tournant à droite, puis à gauche.",
+   "F1 compte et avance. F2 fait F1, droite, F1, gauche."
+  ]
+ },
+ "t5-f48": {
+  "title": "Chasse au bogue : trop tôt",
+  "hints": [
+   "Le bras devrait faire 4, 3, 2, 1. Celui-ci commence à 3.",
+   "Enlève 1 après le bout, pas avant."
+  ]
+ },
+ "t5-f49": {
+  "title": "Grande marée",
+  "hints": [
+   "Trois marches sur le toit, chacune d'une taille différente.",
+   "Mesure en avançant, copie en montant, reviens à 0."
+  ]
+ },
+ "t5-f50": {
+  "title": "La crête de l'Entrepôt",
+  "hints": [
+   "Descends la crête, puis traverse. Mesure chaque descente.",
+   "Mesure en descendant, tourne à gauche, copie en travers, reviens à 0."
+  ],
+  "intro": "PATCH : « Le sommet de l'Entrepôt des vagues. VANTA envoie des ordres à chaque grue du port. Mesure, compte et grimpe. »"
+ }
+}

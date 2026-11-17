@@ -1,0 +1,63 @@
+{
+  "id": "t5-f36",
+  "title": "Bug Hunt: Counted Once",
+  "band": "office",
+  "size": {
+    "w": 8,
+    "h": 8
+  },
+  "tiles": [
+    "#_##___#",
+    "_...##_#",
+    "___.__#_",
+    "__#....#",
+    "___.#_._",
+    "___##_._",
+    "_#__#_e_",
+    "__#___##"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "tally_up",
+    "tally_down",
+    "repeat",
+    "repeat_tally",
+    "while",
+    "if"
+  ],
+  "slots": {
+    "main": 11
+  },
+  "par": {
+    "commands": 9,
+    "steps": 13
+  },
+  "reference": "repeat 2 { while not wall_ahead { forward tally_up } turn_right repeat tally { forward tally_down } turn_left }",
+  "hints": [
+    "Run it and watch the tally board. It only goes up once.",
+    "Count inside the while, with every step.",
+    "repeat 2 { while not wall_ahead { forward tally_up } turn_right repeat tally { forward tally_down } turn_left }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "starter": "repeat 2 { tally_up while not wall_ahead { forward } turn_right repeat tally { forward tally_down } turn_left }"
+}

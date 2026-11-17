@@ -1,0 +1,59 @@
+{
+  "id": "t5-f15",
+  "title": "Head Down",
+  "band": "crane",
+  "size": {
+    "w": 8,
+    "h": 7
+  },
+  "tiles": [
+    "_______#",
+    "__#...._",
+    "_#_.__._",
+    "_#_e__._",
+    "_____#._",
+    "_......_",
+    "________"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 5,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "repeat_tally",
+    "tally_up",
+    "tally_down"
+  ],
+  "slots": {
+    "main": 9
+  },
+  "par": {
+    "commands": 7,
+    "steps": 17
+  },
+  "reference": "repeat 5 { tally_up } repeat 4 { repeat tally { forward } turn_left tally_down }",
+  "hints": [
+    "Stretches of 5, 4, 3 and 2. Start the tally high.",
+    "Fill the tally to 5. Walk it, turn left, take 1 off. Four times.",
+    "repeat 5 { tally_up } repeat 4 { repeat tally { forward } turn_left tally_down }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

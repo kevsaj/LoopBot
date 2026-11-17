@@ -1,0 +1,63 @@
+{
+  "id": "t5-f38",
+  "title": "Bug Hunt: Wrong Turn",
+  "band": "office",
+  "size": {
+    "w": 8,
+    "h": 8
+  },
+  "tiles": [
+    "____#___",
+    "______e_",
+    "_#_#._.#",
+    "____..._",
+    "#___.##_",
+    "____.__#",
+    "_....__#",
+    "#_______"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 6,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "tally_up",
+    "tally_down",
+    "repeat",
+    "repeat_tally",
+    "while",
+    "if"
+  ],
+  "slots": {
+    "main": 11
+  },
+  "par": {
+    "commands": 9,
+    "steps": 13
+  },
+  "reference": "repeat 2 { while not wall_ahead { forward tally_up } turn_left repeat tally { forward tally_down } turn_right }",
+  "hints": [
+    "The steps go up, not down.",
+    "Swap the two turns.",
+    "repeat 2 { while not wall_ahead { forward tally_up } turn_left repeat tally { forward tally_down } turn_right }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "starter": "repeat 2 { while not wall_ahead { forward tally_up } turn_right repeat tally { forward tally_down } turn_left }"
+}

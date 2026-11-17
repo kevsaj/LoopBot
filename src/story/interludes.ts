@@ -278,7 +278,67 @@ export const TWIST_INTERLUDES: Record<number, Interlude> = {
   },
 };
 
-const TOWER_INTERLUDES: Record<number, Record<number, Interlude>> = { 1: INTERLUDES, 2: FROSTLINE_INTERLUDES, 3: HEATWAVE_INTERLUDES, 4: TWIST_INTERLUDES };
+/** Tower 5, the Wavehouse in Dockyard: the beats again, among the cranes and containers. */
+export const DOCKYARD_INTERLUDES: Record<number, Interlude> = {
+  10: {
+    kind: 'radio',
+    id: 't5-after-10',
+    heading: msg('Next: the Crane Yard'),
+    lines: [
+      P(msg('The quay is clear and every stretch was one longer than the last. You counted them all.')),
+      P(msg('Up next, the Crane Yard. The crane arms there get shorter as you climb.')),
+      P(msg("Counting up was easy. Now you'll count down too.")),
+      V(msg('Count all you like, little bot. My manifest says you were never here.')),
+    ],
+  },
+  20: {
+    kind: 'radio',
+    id: 't5-after-20',
+    heading: msg('Next: the Ropewalk'),
+    lines: [
+      P(msg('The Ropewalk is next, a long hall where the dock bots twist rope, one pattern at a time.')),
+      P(msg('VANTA swapped their routines around. Some of them count the wrong way.')),
+      V(msg('A routine that counts is a routine I can miscount.')),
+      P(msg('Then we teach it once, and let the tally change what it does.')),
+    ],
+  },
+  30: {
+    kind: 'radio',
+    id: 't5-after-30',
+    heading: msg('Next: the Tally House'),
+    lines: [
+      P(msg('Under the Wavehouse is a dry dock, with carved stones like the ones under every tower. The Builders again.')),
+      P(msg('Next is the Tally House. The clerks there measure every quay before they ship anything.')),
+      P(msg('Walk to the wall and count as you go. Then you know exactly how far to walk back.')),
+      V(msg('Measure this: how far ahead of you I am.')),
+    ],
+  },
+  40: {
+    kind: 'radio',
+    id: 't5-after-40',
+    heading: msg('Next: the Crest'),
+    lines: [
+      P(msg("Ten floors to the top. VANTA is up on the Wavehouse's glass roof, loading the cranes with new orders.")),
+      P(msg('From up there it could send every ship in the harbour anywhere it likes.')),
+      P(msg('Type your programs if you like. Everything you learned in this tower, all at once.')),
+      V(msg('One more floor, one more floor. Keep counting, LoopBot.')),
+    ],
+  },
+  50: {
+    kind: 'ending',
+    id: 't5-ending',
+    panels: [
+      { scene: 'lights', text: msg("The cranes swing home and the Wavehouse's roof lights up like a wave at sunset.") },
+      { scene: 'escape', who: 'VANTA', text: msg('Keep your harbour. I was only ever half here anyway.') },
+      { scene: 'elevator', text: msg('LoopBot rides down past the warehouse floors, still counting under its breath.') },
+      { scene: 'meet', who: 'PATCH', text: msg('Fifty floors, and you never lost count once. Thank you, LoopBot.') },
+      { scene: 'next', text: msg("Tower 5 cleared. VANTA's signal just split in two. Two towers, two signals.") },
+    ],
+    next: 'TWIN SPIRES',
+  },
+};
+
+const TOWER_INTERLUDES: Record<number, Record<number, Interlude>> = { 1: INTERLUDES, 2: FROSTLINE_INTERLUDES, 3: HEATWAVE_INTERLUDES, 4: TWIST_INTERLUDES, 5: DOCKYARD_INTERLUDES };
 
 const KEY = 'loopbot.interludes';
 

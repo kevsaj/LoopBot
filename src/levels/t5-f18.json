@@ -1,0 +1,58 @@
+{
+  "id": "t5-f18",
+  "title": "Shrinking Stairs",
+  "band": "crane",
+  "size": {
+    "w": 7,
+    "h": 6
+  },
+  "tiles": [
+    "#______",
+    "_####_e",
+    "##___..",
+    "#__..._",
+    "....##_",
+    "#______"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 4,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "tally_up",
+    "tally_down",
+    "repeat",
+    "repeat_tally"
+  ],
+  "slots": {
+    "main": 11
+  },
+  "par": {
+    "commands": 9,
+    "steps": 14
+  },
+  "reference": "repeat 3 { tally_up } repeat 3 { repeat tally { forward } turn_left forward turn_right tally_down }",
+  "hints": [
+    "Long steps first, then shorter ones: 3, 2, 1.",
+    "Count up to 3, then walk the tally, step up the side, and count down.",
+    "repeat 3 { tally_up } repeat 3 { repeat tally { forward } turn_left forward turn_right tally_down }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

@@ -190,7 +190,8 @@ function Scene({ scene, next = 'FROSTLINE' }: { scene: EndingScene; next?: strin
         {scene === 'next' && (
           <g className="north">
             <path d="M150 40 L182 40 M172 30 L182 40 L172 50" stroke="#9fd2ff" strokeWidth="3" fill="none" strokeLinecap="round" />
-            <text x="166" y="66" textAnchor="middle" fill="#9fd2ff" fontSize="10" fontWeight="700">
+            {/* longer city names (TWIN SPIRES) get a smaller size so they stay inside the scene */}
+            <text x="166" y="66" textAnchor="middle" fill="#9fd2ff" fontSize={next.length > 9 ? 8 : 10} fontWeight="700">
               {next}
             </text>
             <text x="166" y="78" textAnchor="middle" fill="#a7a9c4" fontSize="7">

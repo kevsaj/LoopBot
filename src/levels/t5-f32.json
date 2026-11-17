@@ -1,0 +1,62 @@
+{
+  "id": "t5-f32",
+  "title": "Step Copy",
+  "band": "office",
+  "size": {
+    "w": 8,
+    "h": 8
+  },
+  "tiles": [
+    "#__##___",
+    "______e_",
+    "#_##__.#",
+    "___.__._",
+    "__#...._",
+    "#_#.____",
+    "_...____",
+    "__##_#__"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 6,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "tally_up",
+    "tally_down",
+    "repeat",
+    "repeat_tally",
+    "while",
+    "if"
+  ],
+  "slots": {
+    "main": 11
+  },
+  "par": {
+    "commands": 9,
+    "steps": 13
+  },
+  "reference": "repeat 2 { while not wall_ahead { forward tally_up } turn_left repeat tally { forward tally_down } turn_right }",
+  "hints": [
+    "Each step goes up exactly as far as it went along.",
+    "Count as you walk to the wall. Turn left and walk the tally.",
+    "repeat 2 { while not wall_ahead { forward tally_up } turn_left repeat tally { forward tally_down } turn_right }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

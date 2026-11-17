@@ -1,0 +1,64 @@
+{
+  "id": "t5-f06",
+  "title": "Down the Stack",
+  "band": "quay",
+  "size": {
+    "w": 7,
+    "h": 6
+  },
+  "tiles": [
+    "_______",
+    "##_..._",
+    "_____._",
+    "_#__#._",
+    "_e...._",
+    "#____#_"
+  ],
+  "heights": [
+    "0000000",
+    "0003320",
+    "0000020",
+    "0000020",
+    "0011110",
+    "0000000"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 3,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "tally_up",
+    "repeat",
+    "repeat_tally"
+  ],
+  "slots": {
+    "main": 8
+  },
+  "par": {
+    "commands": 6,
+    "steps": 11
+  },
+  "reference": "repeat 3 { tally_up repeat tally { forward } jump turn_right }",
+  "hints": [
+    "You start on top of the stack. Every jump takes you one container down.",
+    "Count, walk, jump down, turn right.",
+    "repeat 3 { tally_up repeat tally { forward } jump turn_right }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

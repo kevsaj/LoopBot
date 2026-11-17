@@ -1,4 +1,4 @@
-import { ACTIONS, FUNCTION_NAMES, SENSORS } from './types';
+import { ACTIONS, BY_TALLY, FUNCTION_NAMES, SENSORS } from './types';
 import type { Action, Block, Colour, Condition, FunctionName, PaletteCommand, Program, Routine, Sensor } from './types';
 
 let counter = 0;
@@ -19,6 +19,8 @@ export function makeBlock(cmd: PaletteCommand): Block {
   switch (cmd) {
     case 'repeat':
       return { id: newId(), kind: 'repeat', times: 2, body: [] };
+    case 'repeat_tally':
+      return { id: newId(), kind: 'repeat', times: BY_TALLY, body: [] };
     case 'if':
       return { id: newId(), kind: 'if', cond: { sensor: 'wall_ahead' }, then: [], else: [] };
     case 'while':
@@ -47,6 +49,7 @@ export function countCommands(p: Program): number {
  * "repeat 3 { forward turn_right } pick_up", and they can nest.
  * Function bodies come after main: "F1 turn_right F1 def F1 { forward jump }".
  * Conditions: "while not wall_ahead { forward }", "if tile_is r { turn_left } else { forward }".
+ * Dockyard's tally: "tally_up repeat tally { forward }".
  */
 export function parseReference(ref: string): Program {
   const words = ref.replace(/[{}]/g, ' $& ').trim().split(/\s+/).filter(Boolean);
@@ -72,7 +75,10 @@ export function parseReference(ref: string): Program {
     const out: Block[] = [];
     while (i < words.length && words[i] !== '}' && words[i] !== 'def') {
       const w = words[i++];
-      if (w === 'repeat') {
+      if (w === 'repeat' && words[i] === 'tally') {
+        i++;
+        out.push({ id: newId(), kind: 'repeat', times: BY_TALLY, body: braced() });
+      } else if (w === 'repeat') {
         const times = Number(words[i++]);
         if (!Number.isInteger(times)) throw new Error(`bad repeat in reference: ${ref}`);
         out.push({ id: newId(), kind: 'repeat', times, body: braced() });
@@ -115,6 +121,13 @@ function condText(c: Condition): string {
   return c.not ? `not ${s}` : s;
 }
 
+/** An action as a line of code. The tally is a real variable, so counting reads like one. */
+export function actionCode(a: Action): string {
+  if (a === 'tally_up') return 'tally += 1';
+  if (a === 'tally_down') return 'tally -= 1';
+  return `${a}()`;
+}
+
 export interface CodeLine {
   text: string;
   blockId: string | null;
@@ -129,13 +142,13 @@ function blocksToLines(blocks: Block[], indent: number, out: CodeLine[]) {
   for (const b of blocks) {
     switch (b.kind) {
       case 'action':
-        out.push({ text: `${pad}${b.action}()`, blockId: b.id });
+        out.push({ text: `${pad}${actionCode(b.action)}`, blockId: b.id });
         break;
       case 'call':
         out.push({ text: `${pad}${b.fn}()`, blockId: b.id });
         break;
       case 'repeat':
-        out.push({ text: `${pad}repeat ${b.times}:`, blockId: b.id });
+        out.push({ text: `${pad}repeat ${b.times === BY_TALLY ? 'tally' : b.times}:`, blockId: b.id });
         blocksToLines(b.body, indent + 1, out);
         break;
       case 'while':

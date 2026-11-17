@@ -1,0 +1,62 @@
+{
+  "id": "t5-f40",
+  "title": "The Tally House",
+  "band": "office",
+  "size": {
+    "w": 8,
+    "h": 8
+  },
+  "tiles": [
+    "..._____",
+    "__._####",
+    "#_...__#",
+    "__._.#__",
+    "##__....",
+    "__#_.#_.",
+    "____###.",
+    "#______e"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "tally_up",
+    "tally_down",
+    "repeat",
+    "repeat_tally",
+    "while",
+    "if"
+  ],
+  "slots": {
+    "main": 11
+  },
+  "par": {
+    "commands": 9,
+    "steps": 19
+  },
+  "reference": "repeat 3 { while not wall_ahead { forward tally_up } turn_right repeat tally { forward tally_down } turn_left }",
+  "hints": [
+    "The last steps of the Tally House, all different. Measure every one.",
+    "One loop: measure with while, copy with repeat tally, count back to 0.",
+    "repeat 3 { while not wall_ahead { forward tally_up } turn_right repeat tally { forward tally_down } turn_left }"
+  ],
+  "story": {
+    "intro": "PATCH: \"Last floor of the Tally House. Measure, copy, and count back to 0 before the next one.\"",
+    "outro": null
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "id": "t5-f49",
+  "title": "Spring Tide",
+  "band": "crest",
+  "size": {
+    "w": 8,
+    "h": 8
+  },
+  "tiles": [
+    "_______e",
+    "_____._.",
+    "_#___...",
+    "#____.__",
+    "__.#_.#_",
+    "_#....__",
+    "__.___#_",
+    "..._____"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 7,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "tally_up",
+    "tally_down",
+    "repeat",
+    "repeat_tally",
+    "while",
+    "if"
+  ],
+  "slots": {
+    "main": 11
+  },
+  "par": {
+    "commands": 9,
+    "steps": 19
+  },
+  "reference": "repeat 3 { while not wall_ahead { forward tally_up } turn_left repeat tally { forward tally_down } turn_right }",
+  "hints": [
+    "Three steps up the roof, every one a different size.",
+    "Measure along, copy up, count back to 0.",
+    "repeat 3 { while not wall_ahead { forward tally_up } turn_left repeat tally { forward tally_down } turn_right }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "typing": true
+}

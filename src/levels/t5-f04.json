@@ -1,0 +1,57 @@
+{
+  "id": "t5-f04",
+  "title": "Head Start",
+  "band": "quay",
+  "size": {
+    "w": 7,
+    "h": 6
+  },
+  "tiles": [
+    "______#",
+    "___...#",
+    "_#__#._",
+    "___##._",
+    "#e....#",
+    "##_____"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 3,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "tally_up",
+    "repeat",
+    "repeat_tally"
+  ],
+  "slots": {
+    "main": 8
+  },
+  "par": {
+    "commands": 6,
+    "steps": 11
+  },
+  "reference": "tally_up repeat 3 { tally_up repeat tally { forward } turn_right }",
+  "hints": [
+    "The first stretch is already 2 tiles long. Count before the loop starts.",
+    "One tally + 1 before the loop. Inside: count, walk, turn right.",
+    "tally_up repeat 3 { tally_up repeat tally { forward } turn_right }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

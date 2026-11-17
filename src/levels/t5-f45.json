@@ -1,0 +1,64 @@
+{
+  "id": "t5-f45",
+  "title": "Bug Hunt: Leftovers",
+  "band": "crest",
+  "size": {
+    "w": 8,
+    "h": 8
+  },
+  "tiles": [
+    "..._____",
+    "_#._____",
+    "##....__",
+    "__.__.#_",
+    "_#___.__",
+    "__#__...",
+    "___#_._.",
+    "#_#____e"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "tally_up",
+    "tally_down",
+    "repeat",
+    "repeat_tally",
+    "while",
+    "if"
+  ],
+  "slots": {
+    "main": 11
+  },
+  "par": {
+    "commands": 9,
+    "steps": 19
+  },
+  "reference": "repeat 3 { while not wall_ahead { forward tally_up } turn_right repeat tally { forward tally_down } turn_left }",
+  "hints": [
+    "The second step goes too far down.",
+    "Spend the tally back to 0 as you copy.",
+    "repeat 3 { while not wall_ahead { forward tally_up } turn_right repeat tally { forward tally_down } turn_left }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "typing": true,
+  "starter": "repeat 3 { while not wall_ahead { forward tally_up } turn_right repeat tally { forward } turn_left }"
+}

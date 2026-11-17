@@ -1,0 +1,63 @@
+{
+  "id": "t5-f34",
+  "title": "Bug Hunt: Never Reset",
+  "band": "office",
+  "size": {
+    "w": 8,
+    "h": 8
+  },
+  "tiles": [
+    "....#__#",
+    "___.____",
+    "#__.##_#",
+    "_#_...__",
+    "__#._.#_",
+    "_#___...",
+    "__#_#._.",
+    "_#__#__e"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "tally_up",
+    "tally_down",
+    "repeat",
+    "repeat_tally",
+    "while",
+    "if"
+  ],
+  "slots": {
+    "main": 11
+  },
+  "par": {
+    "commands": 9,
+    "steps": 19
+  },
+  "reference": "repeat 3 { while not wall_ahead { forward tally_up } turn_right repeat tally { forward tally_down } turn_left }",
+  "hints": [
+    "Run it. The second stretch goes too far. What is still on the tally?",
+    "Take 1 off the tally with each step you spend.",
+    "repeat 3 { while not wall_ahead { forward tally_up } turn_right repeat tally { forward tally_down } turn_left }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "starter": "repeat 3 { while not wall_ahead { forward tally_up } turn_right repeat tally { forward } turn_left }"
+}

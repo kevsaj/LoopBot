@@ -24,7 +24,11 @@ export interface Tile {
 }
 
 /** 'wait' (Heatwave): LoopBot stays put for one step, to let a vent blast pass. */
-export type Action = 'forward' | 'jump' | 'turn_left' | 'turn_right' | 'pick_up' | 'drop' | 'activate' | 'wait';
+/**
+ * 'tally_up' and 'tally_down' (Dockyard): add 1 to or take 1 from the tally, LoopBot's one number
+ * (CR-TALLY). Counting moves nothing, so like a sensor it costs no step.
+ */
+export type Action = 'forward' | 'jump' | 'turn_left' | 'turn_right' | 'pick_up' | 'drop' | 'activate' | 'wait' | 'tally_up' | 'tally_down';
 
 export const ACTIONS: readonly Action[] = [
   'forward',
@@ -35,7 +39,18 @@ export const ACTIONS: readonly Action[] = [
   'drop',
   'activate',
   'wait',
+  'tally_up',
+  'tally_down',
 ];
+
+/** Actions that cost no step and move nothing: they only change the tally (CR-TALLY). */
+export const FREE_ACTIONS: ReadonlySet<Action> = new Set<Action>(['tally_up', 'tally_down']);
+
+/** The tally goes from 0 to this. */
+export const MAX_TALLY = 9;
+
+/** A repeat block with this count repeats as many times as the tally says when it starts (CR-TALLY). */
+export const BY_TALLY = 0;
 
 export type FunctionName = 'F1' | 'F2' | 'F3';
 export const FUNCTION_NAMES: readonly FunctionName[] = ['F1', 'F2', 'F3'];
@@ -55,6 +70,7 @@ export interface Condition {
 /** A program is a tree of blocks (CR-4 to CR-7). Every block has a stable id for highlighting. */
 export type Block =
   | { id: string; kind: 'action'; action: Action }
+  /** times is 2 to 9, or BY_TALLY (0) for "repeat tally" (Dockyard). */
   | { id: string; kind: 'repeat'; times: number; body: Block[] }
   | { id: string; kind: 'call'; fn: FunctionName }
   | { id: string; kind: 'if'; cond: Condition; then: Block[]; else: Block[] }
@@ -67,7 +83,8 @@ export type Program = Record<Routine, Block[]>;
 export type Goal = 'all_targets_filled' | 'bot_on_exit' | 'all_switches_on';
 
 /** A command the palette can offer: an action, a control block, or a function call. */
-export type PaletteCommand = Action | 'repeat' | 'if' | 'while' | FunctionName;
+/** 'repeat_tally' is a repeat block whose count is the tally (Dockyard). */
+export type PaletteCommand = Action | 'repeat' | 'repeat_tally' | 'if' | 'while' | FunctionName;
 
 export interface Pos {
   x: number;
@@ -131,6 +148,8 @@ export interface World {
   clock: number;
   /** Steps in one vent cycle; 0 on a floor with no vents. */
   ventCycle: number;
+  /** Dockyard's tally: LoopBot's one number, 0 to MAX_TALLY. Starts at 0. */
+  tally: number;
   bot: { x: number; y: number; facing: Facing; carrying: boolean };
   goals: Goal[];
 }

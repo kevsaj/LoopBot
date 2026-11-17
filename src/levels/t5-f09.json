@@ -1,0 +1,62 @@
+{
+  "id": "t5-f09",
+  "title": "Crane Hook",
+  "band": "quay",
+  "size": {
+    "w": 6,
+    "h": 5
+  },
+  "tiles": [
+    "______",
+    "__#.._",
+    "#e__._",
+    "_...._",
+    "__#___"
+  ],
+  "heights": [
+    "000000",
+    "000000",
+    "010000",
+    "000000",
+    "000000"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 3,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "tally_up",
+    "repeat",
+    "repeat_tally"
+  ],
+  "slots": {
+    "main": 8
+  },
+  "par": {
+    "commands": 6,
+    "steps": 10
+  },
+  "reference": "repeat 3 { tally_up repeat tally { forward } turn_right } jump",
+  "hints": [
+    "A hook shape, then one last jump onto the crane.",
+    "The loop draws the hook. The jump comes after it.",
+    "repeat 3 { tally_up repeat tally { forward } turn_right } jump"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}

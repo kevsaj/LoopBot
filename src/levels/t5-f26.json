@@ -1,0 +1,61 @@
+{
+  "id": "t5-f26",
+  "title": "Bug Hunt: Count Down",
+  "band": "ropewalk",
+  "size": {
+    "w": 7,
+    "h": 6
+  },
+  "tiles": [
+    "_#____#",
+    "#....._",
+    "_#_##.#",
+    "___e_._",
+    "_#_..._",
+    "#______"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "tally_up",
+    "tally_down",
+    "repeat",
+    "repeat_tally",
+    "F1"
+  ],
+  "slots": {
+    "main": 7,
+    "F1": 3
+  },
+  "par": {
+    "commands": 8,
+    "steps": 13
+  },
+  "reference": "repeat 4 { tally_up } repeat 4 { repeat tally { forward } F1 } def F1 { turn_right tally_down }",
+  "hints": [
+    "The arm should get shorter: 4, 3, 2, 1.",
+    "Look at what F1 does to the tally.",
+    "repeat 4 { tally_up } repeat 4 { repeat tally { forward } F1 } def F1 { turn_right tally_down }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "starter": "repeat 4 { tally_up } repeat 4 { repeat tally { forward } F1 } def F1 { turn_right tally_up }"
+}

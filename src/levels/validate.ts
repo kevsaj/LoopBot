@@ -75,6 +75,11 @@ function checkProgram(l: LevelFile, name: string, text: string, e: (m: string) =
   for (const s of l.sensors ?? []) if (!(SENSORS as readonly string[]).includes(s)) e(`unknown sensor ${s}`);
   for (let i = 0; i < words.length; i++) {
     const word = words[i];
+    if (word === 'repeat' && words[i + 1] === 'tally') {
+      if (!l.commands.includes('repeat_tally')) e(`${name} uses 'repeat tally', which this floor does not allow`);
+      i++;
+      continue;
+    }
     if (word === 'repeat') {
       const n = Number(words[i + 1]);
       // The editor's repeat block only goes this far, so a par that needs more can't be reached.

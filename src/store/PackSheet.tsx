@@ -40,6 +40,17 @@ export const PACK_INFO: Record<PackId, PackInfo> = {
       { icon: '📻', title: msg('The story goes on'), text: msg("PATCH's radio calls and the chase after VANTA, plus new riverside music.") },
     ],
   },
+  dockyard: {
+    title: msg('Dockyard'),
+    tower: msg('The Wavehouse'),
+    lede: msg('Tower 5 rises over the harbour. Meet the tally, your first variable: count, then let the number do the walking.'),
+    perks: [
+      { icon: '⚓', title: msg('50 new floors'), text: msg('The Wavehouse, from the Container Quay to the Crest, with 3 stars to win on every floor.') },
+      { icon: '🔢', title: msg('The tally'), text: msg('Count up, count down, and repeat as many times as the tally says.') },
+      { icon: '📏', title: msg('Measure and reuse'), text: msg('Count your steps as you walk with while, then walk the same distance again.') },
+      { icon: '📻', title: msg('The story goes on'), text: msg("PATCH's radio calls and the chase after VANTA, plus new harbour music.") },
+    ],
+  },
 };
 
 export function PackSheet({ pack, onClose }: { pack: PackId; onClose(): void }) {

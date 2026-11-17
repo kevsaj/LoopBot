@@ -1,0 +1,67 @@
+{
+  "id": "t5-f12",
+  "title": "Jib Spiral",
+  "band": "crane",
+  "size": {
+    "w": 8,
+    "h": 7
+  },
+  "tiles": [
+    "__##__#_",
+    "___...._",
+    "___e__._",
+    "#_#_#_._",
+    "_##__#.#",
+    "_......_",
+    "_#______"
+  ],
+  "heights": [
+    "00000000",
+    "00001110",
+    "00000020",
+    "00000020",
+    "00000020",
+    "03333320",
+    "00000000"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 5,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "repeat",
+    "repeat_tally",
+    "tally_up",
+    "tally_down"
+  ],
+  "slots": {
+    "main": 10
+  },
+  "par": {
+    "commands": 8,
+    "steps": 16
+  },
+  "reference": "repeat 4 { tally_up } repeat 4 { repeat tally { forward } jump turn_left tally_down }",
+  "hints": [
+    "From the top of the jib: 4 tiles, jump down, then 3, 2, 1.",
+    "Count up to 4. Then walk the tally, jump, turn left and take 1 off.",
+    "repeat 4 { tally_up } repeat 4 { repeat tally { forward } jump turn_left tally_down }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  }
+}
