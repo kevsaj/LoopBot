@@ -47,14 +47,113 @@ export function setHapticsOn(on: boolean) {
   }
 }
 
+// Starting the audio device can fail, most often on iOS: right after the app comes back from the
+// background, during a phone call or Siri, or when another app holds the speaker. resume() then
+// rejects with "Failed to start the audio device". The game must keep working silently, so every
+// resume() is caught, and we try again on the player's next tap or when the app is shown again.
+// After a few failures in a row the context is thrown away and a fresh one is made, because a
+// WebKit context can get stuck after an interruption.
+const MAX_FAILS = 3;
+let resuming = false;
+let fails = 0;
+let resetListeners: Array<() => void> = [];
+let retryHooked = false;
+
+/** Calls `fn` when the shared AudioContext is replaced, so callers can drop nodes made on the old one. */
+export function onAudioReset(fn: () => void) {
+  resetListeners.push(fn);
+}
+
+function hidden() {
+  return typeof document !== 'undefined' && document.visibilityState === 'hidden';
+}
+
+function makeContext(): AudioContext | null {
+  const AC = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+  if (!AC) return null;
+  try {
+    return new AC();
+  } catch {
+    return null;
+  }
+}
+
+function replaceContext() {
+  const old = ctx;
+  ctx = null;
+  fails = 0;
+  if (old) old.close().catch(() => {});
+  for (const fn of resetListeners) {
+    try {
+      fn();
+    } catch {
+      /* a listener failing must not stop the others */
+    }
+  }
+}
+
+/** Asks the audio device to start, never throwing. Safe to call often: only one try runs at a time. */
+export function wakeAudio() {
+  const a = ctx;
+  if (!a || resuming || hidden()) return;
+  if (a.state === 'running') return;
+  if (a.state === 'closed') {
+    replaceContext();
+    return;
+  }
+  resuming = true;
+  let p: Promise<void>;
+  try {
+    p = a.resume();
+  } catch (e) {
+    p = Promise.reject(e);
+  }
+  p.then(
+    () => {
+      fails = 0;
+    },
+    () => {
+      if (ctx !== a) return;
+      fails++;
+      if (fails >= MAX_FAILS) replaceContext();
+    },
+  ).finally(() => {
+    resuming = false;
+  });
+}
+
+/** Pauses the audio device (app in the background), never throwing. */
+export function sleepAudio() {
+  const a = ctx;
+  if (!a || a.state !== 'running') return;
+  try {
+    a.suspend().catch(() => {});
+  } catch {
+    /* ignore */
+  }
+}
+
+/** Retries a failed start on the next tap or key, and when the app is shown again. */
+function hookRetries() {
+  if (retryHooked || typeof document === 'undefined') return;
+  retryHooked = true;
+  const retry = () => {
+    if (!ctx) sharedAudio();
+    else wakeAudio();
+  };
+  document.addEventListener('pointerdown', retry, true);
+  document.addEventListener('keydown', retry, true);
+}
+
 /** The one AudioContext the game uses, shared by sound effects and music (src/audio/music.ts). */
 export function sharedAudio(): AudioContext | null {
+  if (typeof window === 'undefined') return null;
+  hookRetries();
   if (!ctx) {
-    const AC = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-    if (!AC) return null;
-    ctx = new AC();
+    ctx = makeContext();
+    if (!ctx) return null;
   }
-  if (ctx.state === 'suspended') void ctx.resume();
+  if (ctx.state !== 'running') wakeAudio();
   return ctx;
 }
 
