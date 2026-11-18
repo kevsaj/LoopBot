@@ -3807,3 +3807,37 @@ textarea:focus-visible,
 .row.crashed .line-no {
   color: var(--ink);
 }
+
+/* --- mouse and keyboard (web, Chromebooks, Google Play Games on PC) ---
+   Only where the main pointer is a mouse or trackpad, so phones and tablets look exactly the same. */
+.key-hint {
+  display: none;
+}
+@media (hover: hover) and (pointer: fine) {
+  button:not(:disabled):not([aria-disabled='true']):hover {
+    filter: brightness(1.15);
+  }
+  .row-btn:not(:disabled):hover {
+    filter: none;
+    background: rgba(255, 255, 255, 0.05);
+  }
+  /* The number key that adds each palette command (1-9), in the chip's corner. */
+  .chip {
+    position: relative;
+  }
+  .key-hint {
+    display: block;
+    position: absolute;
+    top: 2px;
+    left: 4px;
+    font-size: 9px;
+    font-weight: 700;
+    line-height: 1;
+    opacity: 0.55;
+  }
+  /* Lists that scroll show a slim scrollbar, so mouse players can see there's more. */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--line) transparent;
+  }
+}
