@@ -193,6 +193,7 @@ export function PaletteChip({
   inactive,
   className,
   label,
+  shortcut,
   onClick,
   children,
 }: {
@@ -202,6 +203,8 @@ export function PaletteChip({
   inactive: boolean;
   className: string;
   label: string;
+  /** Number key that adds this command on a keyboard (1-9), shown in a corner where there's a mouse. */
+  shortcut?: string;
   onClick(): void;
   children: ReactNode;
 }) {
@@ -217,10 +220,16 @@ export function PaletteChip({
       className={`${className}${isDragging ? ' dragging' : ''}`}
       aria-disabled={inactive}
       aria-label={label}
+      aria-keyshortcuts={shortcut}
       onClick={onClick}
       {...listeners}
     >
       {children}
+      {shortcut && (
+        <span className="key-hint" aria-hidden="true">
+          {shortcut}
+        </span>
+      )}
     </button>
   );
 }
