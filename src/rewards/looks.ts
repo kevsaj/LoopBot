@@ -26,6 +26,11 @@ export interface EyeColor {
   name: string;
   color: string;
   unlock: Unlock | null;
+  /**
+   * Plus eyes glow: the colour sways to `to` and back. 'pulse' breathes like a warning lamp,
+   * 'shimmer' glints quickly like light on ice. Off with reduced motion.
+   */
+  glow?: { to: string; style: 'pulse' | 'shimmer' };
 }
 
 export type TipShape = 'ball' | 'star' | 'heart' | 'bolt' | 'crown' | 'ring' | 'snowflake' | 'gem';
@@ -44,11 +49,12 @@ export const PAINTS: Paint[] = [
   { id: 'rose', name: msg('Rose'), top: '#ffd6e2', left: '#eba9be', right: '#cc8ba0', unlock: { stars: 75 } },
   { id: 'graphite', name: msg('Graphite'), top: '#7d7a8c', left: '#5c5a6b', right: '#474555', unlock: { stars: 100 } },
   { id: 'gold', name: msg('Gold'), top: '#ffe28a', left: '#e5ba4f', right: '#c49a37', unlock: { achievement: 'perfectionist', label: msg('Perfectionist') } },
-  // LoopBot Plus looks, from Frostline
-  { id: 'frost', name: msg('Frost'), top: '#e6f6ff', left: '#b4daf3', right: '#8cb8d9', unlock: { plus: true } },
-  { id: 'aurora', name: msg('Aurora'), top: '#d4f8e8', left: '#94dfbf', right: '#9b88d9', unlock: { plus: true } },
-  { id: 'northstar', name: msg('Northstar'), top: '#46598f', left: '#33436f', right: '#263354', unlock: { plus: true } },
-  { id: 'ember', name: msg('Ember'), top: '#ffa587', left: '#e57256', right: '#bb5039', unlock: { plus: true } },
+  // LoopBot Plus looks, from Frostline. Deep, saturated or multi-tone, so none of them reads as
+  // a shade of a free pastel (ids stay put: saved looks keep working).
+  { id: 'frost', name: msg('Frost'), top: '#7fe6f2', left: '#35b4d8', right: '#2877bd', unlock: { plus: true } },
+  { id: 'aurora', name: msg('Aurora'), top: '#6ff2b8', left: '#4d9ff0', right: '#8f58e0', unlock: { plus: true } },
+  { id: 'northstar', name: msg('Northstar'), top: '#2f418a', left: '#223068', right: '#18224c', unlock: { plus: true } },
+  { id: 'ember', name: msg('Ember'), top: '#ff6650', left: '#d8343a', right: '#9e2232', unlock: { plus: true } },
 ];
 
 export const EYES: EyeColor[] = [
@@ -58,8 +64,9 @@ export const EYES: EyeColor[] = [
   { id: 'lime', name: msg('Lime'), color: '#b8f56a', unlock: { stars: 60 } },
   { id: 'violet', name: msg('Violet'), color: '#b9a2ff', unlock: { stars: 90 } },
   { id: 'white', name: msg('Snow'), color: '#f2fbff', unlock: { stars: 120 } },
-  { id: 'ice', name: msg('Ice'), color: '#8fdcff', unlock: { plus: true } },
-  { id: 'beacon', name: msg('Beacon'), color: '#ffd34d', unlock: { plus: true } },
+  // LoopBot Plus eyes: hues no free eye has (true blue, signal red), and they glow
+  { id: 'ice', name: msg('Glacier'), color: '#3f7bff', unlock: { plus: true }, glow: { to: '#a8ecff', style: 'shimmer' } },
+  { id: 'beacon', name: msg('Beacon'), color: '#ff2e4a', unlock: { plus: true }, glow: { to: '#ff6f6f', style: 'pulse' } },
 ];
 
 export const TIPS: Tip[] = [
@@ -139,13 +146,40 @@ export function saveLook(l: Look) {
 }
 
 const paintOf = (l: Look) => PAINTS.find((p) => p.id === l.paint) ?? PAINTS[0];
-const eyeOf = (l: Look) => EYES.find((e) => e.id === l.eye) ?? EYES[0];
+export const eyeOf = (l: Look) => EYES.find((e) => e.id === l.eye) ?? EYES[0];
 const hex = (c: string) => parseInt(c.slice(1), 16);
 
 /** Colours for the Phaser board, as numbers. */
 export function boardColors(l: Look = loadLook()) {
   const p = paintOf(l);
-  return { bot: hex(p.top), botL: hex(p.left), botR: hex(p.right), eye: hex(eyeOf(l).color), tip: l.tip };
+  const e = eyeOf(l);
+  return {
+    bot: hex(p.top),
+    botL: hex(p.left),
+    botR: hex(p.right),
+    eye: hex(e.color),
+    tip: l.tip,
+    glow: e.glow ? { to: hex(e.glow.to), style: e.glow.style } : null,
+  };
+}
+
+/** One step of a glow: the eye colour `t` (0..1) of the way from `a` to `b`, as numbers. */
+export function mixColor(a: number, b: number, t: number): number {
+  const ch = (shift: number) => Math.round(((a >> shift) & 255) + (((b >> shift) & 255) - ((a >> shift) & 255)) * t);
+  return (ch(16) << 16) | (ch(8) << 8) | ch(0);
+}
+
+let glowReady: boolean | null = null;
+function canGlow(): boolean {
+  if (glowReady !== null) return glowReady;
+  try {
+    CSS.registerProperty({ name: '--bot-eye', syntax: '<color>', inherits: true, initialValue: '#7ff2e0' });
+    glowReady = true;
+  } catch (err) {
+    // already registered counts as ready; no registerProperty at all does not
+    glowReady = err instanceof DOMException && err.name === 'InvalidModificationError';
+  }
+  return glowReady;
 }
 
 /** Sets the CSS variables the SVG bots (title screen, tower map, locker) are drawn with. */
@@ -156,7 +190,14 @@ export function applyLookCss(l: Look = loadLook()) {
   s.setProperty('--bot-top', p.top);
   s.setProperty('--bot-left', p.left);
   s.setProperty('--bot-right', p.right);
-  s.setProperty('--bot-eye', eyeOf(l).color);
+  const e = eyeOf(l);
+  s.setProperty('--bot-eye', e.color);
+  s.setProperty('--bot-eye-a', e.color);
+  s.setProperty('--bot-eye-b', e.glow?.to ?? e.color);
+  // styles.css animates --bot-eye between -a and -b for a glowing eye (all the SVG bots follow).
+  // That needs a registered colour property; older WebViews keep the steady colour.
+  if (e.glow && canGlow()) document.documentElement.dataset.eyeGlow = e.glow.style;
+  else delete document.documentElement.dataset.eyeGlow;
 }
 
 /**

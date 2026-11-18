@@ -21,18 +21,19 @@ interface Props {
 }
 
 /** A front view of LoopBot in an explicit look, for the preview and the swatches. */
-export function LookBot({ top, left, eye, tip, size = 120 }: { top: string; left: string; eye: string; tip: TipShape; size?: number }) {
+export function LookBot({ top, left, right = left, eye, tip, size = 120 }: { top: string; left: string; right?: string; eye: string; tip: TipShape; size?: number }) {
   return (
     <svg viewBox="-60 -70 120 140" width={size} height={(size * 140) / 120} aria-hidden="true">
       <rect x="-2.5" y="-58" width="5" height="18" rx="2.5" fill={left} />
       <AntennaTip cx={0} cy={-60} r={7} shape={tip} fill={eye} />
-      <rect x="-44" y="12" width="88" height="54" rx="12" fill={left} />
+      {/* the shaded side shows as the body's base, so a multi-tone paint like Aurora reads in the swatch */}
+      <rect x="-44" y="12" width="88" height="54" rx="12" fill={right} />
       <rect x="-44" y="12" width="88" height="46" rx="12" fill={top} opacity=".94" />
       <circle cx="-20" cy="38" r="5" fill="#f2a93b" />
       <rect x="-54" y="-42" width="108" height="60" rx="14" fill={left} />
       <rect x="-54" y="-42" width="108" height="53" rx="14" fill={top} />
       <rect x="-38" y="-30" width="76" height="30" rx="15" fill="#221f38" />
-      <ellipse cx="5" cy="-15" rx="16" ry="9.5" fill={eye} />
+      <ellipse cx="5" cy="-15" rx="16" ry="9.5" style={{ fill: eye }} />
     </svg>
   );
 }
@@ -69,6 +70,8 @@ export function Locker({ stats, earned, look, onLook, onClose }: Props) {
   const onPlus = PLUS_VISIBLE && STORE_AVAILABLE ? () => setPlusSheet(true) : undefined;
   const paint = PAINTS.find((p) => p.id === look.paint) ?? PAINTS[0];
   const eye = EYES.find((e) => e.id === look.eye) ?? EYES[0];
+  // the chosen eye through --bot-eye, so a glowing Plus eye glows here too (applyLookCss keeps it current)
+  const eyeFill = `var(--bot-eye, ${eye.color})`;
   const set = (l: Look) => {
     saveLook(l);
     applyLookCss(l);
@@ -88,7 +91,7 @@ export function Locker({ stats, earned, look, onLook, onClose }: Props) {
         </header>
         <div className="settings-body">
           <div className="locker-preview">
-            <LookBot top={paint.top} left={paint.left} eye={eye.color} tip={look.tip} size={110} />
+            <LookBot top={paint.top} left={paint.left} right={paint.right} eye={eyeFill} tip={look.tip} size={110} />
             <p className="locker-stars">★ {tn(stars, '{n} star', '{n} stars')} · 🏆 {got} / {ACHIEVEMENTS.length}</p>
           </div>
           <div className="locker-tabs" role="tablist">
@@ -106,7 +109,7 @@ export function Locker({ stats, earned, look, onLook, onClose }: Props) {
               <div className="swatches">
                 {shown(PAINTS).map((p) => (
                   <Swatch key={p.id} onPlus={onPlus} label={p.name} unlock={p.unlock} unlocked={isUnlocked(p.unlock, stats, earned)} on={p.id === look.paint} onPick={() => set({ ...look, paint: p.id })}>
-                    <LookBot top={p.top} left={p.left} eye={eye.color} tip={look.tip} size={44} />
+                    <LookBot top={p.top} left={p.left} right={p.right} eye={eyeFill} tip={look.tip} size={44} />
                   </Swatch>
                 ))}
               </div>
@@ -114,7 +117,10 @@ export function Locker({ stats, earned, look, onLook, onClose }: Props) {
               <div className="swatches">
                 {shown(EYES).map((e) => (
                   <Swatch key={e.id} onPlus={onPlus} label={e.name} unlock={e.unlock} unlocked={isUnlocked(e.unlock, stats, earned)} on={e.id === look.eye} onPick={() => set({ ...look, eye: e.id })}>
-                    <span className="eye-dot" style={{ background: e.color }} />
+                    <span
+                      className={`eye-dot${e.glow ? ` glow-${e.glow.style}` : ''}`}
+                      style={{ ...(e.glow ? {} : { background: e.color }), ['--eye-a' as string]: e.color, ['--eye-b' as string]: e.glow?.to ?? e.color }}
+                    />
                   </Swatch>
                 ))}
               </div>
@@ -123,7 +129,7 @@ export function Locker({ stats, earned, look, onLook, onClose }: Props) {
                 {shown(TIPS).map((t) => (
                   <Swatch key={t.id} onPlus={onPlus} label={t.name} unlock={t.unlock} unlocked={isUnlocked(t.unlock, stats, earned)} on={t.id === look.tip} onPick={() => set({ ...look, tip: t.id })}>
                     <svg viewBox="-12 -12 24 24" width="30" height="30" aria-hidden="true">
-                      <AntennaTip cx={0} cy={0} r={7} shape={t.id} fill={eye.color} />
+                      <AntennaTip cx={0} cy={0} r={7} shape={t.id} fill={eyeFill} />
                     </svg>
                   </Swatch>
                 ))}

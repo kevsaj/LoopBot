@@ -3,7 +3,7 @@
 // It only reads World snapshots from the simulation; it never changes them.
 
 import Phaser from 'phaser';
-import { boardColors, tipPoints } from '../rewards/looks';
+import { boardColors, mixColor, tipPoints } from '../rewards/looks';
 import type { TipShape } from '../rewards/looks';
 import type { Facing, World } from '../sim/types';
 import { ahead, isWalkable, surfaceHeight } from '../sim/world';
@@ -500,12 +500,15 @@ const BANDS: Record<string, Partial<typeof C>> = {
 /** Switches the board to a band's palette. Call before the board draws a floor. */
 /** The antenna tip LoopBot wears (src/rewards/looks.ts). */
 let tipShape: TipShape = 'ball';
+/** A LoopBot Plus eye glows between its colour and this one (null for a steady eye). */
+let eyeGlow: { from: number; to: number; style: 'pulse' | 'shimmer' } | null = null;
 
 export function setBand(band: string) {
   // the player's chosen paint and eye colour ride on top of the band's palette
   const look = boardColors();
   Object.assign(C, LOBBY, BANDS[band] ?? {}, { bot: look.bot, botL: look.botL, botR: look.botR, eye: look.eye });
   tipShape = look.tip;
+  eyeGlow = look.glow ? { from: look.eye, to: look.glow.to, style: look.glow.style } : null;
 }
 
 export interface BoardUpdate {
@@ -612,6 +615,7 @@ export class BoardScene extends Phaser.Scene {
     if (!this.reduced) this.tweens.add({ targets: echoInner, y: -2.5, yoyo: true, repeat: -1, duration: 900, delay: 450, ease: 'Sine.easeInOut' });
     this.layer.add(this.echo);
     this.idleLife();
+    if (!this.reduced) this.glowEye();
     this.scale.on('resize', () => this.fit());
     this.ready = true;
     if (this.pending) this.show(this.pending);
@@ -1209,6 +1213,31 @@ export class BoardScene extends Phaser.Scene {
       next();
     };
     next();
+  }
+
+  /**
+   * A LoopBot Plus eye glows: 'pulse' breathes slowly like a tower's warning lamp, 'shimmer' rests
+   * on its colour and glints now and then like light on ice. Steady eyes skip the redraws.
+   */
+  private glowEye() {
+    let t = 0;
+    this.time.addEvent({
+      delay: 50,
+      loop: true,
+      callback: () => {
+        if (!eyeGlow || this.mood === 'crash' || this.crashedNow) return;
+        t += 50;
+        let k: number;
+        if (eyeGlow.style === 'pulse') k = (1 - Math.cos((t / 2400) * Math.PI * 2)) / 2;
+        else {
+          const p = (t % 2600) / 2600;
+          k = p < 0.6 ? 0 : Math.sin(((p - 0.6) / 0.4) * Math.PI);
+        }
+        C.eye = mixColor(eyeGlow.from, eyeGlow.to, k);
+        this.drawEye();
+        this.drawAntenna();
+      },
+    });
   }
 
   private doBlink() {

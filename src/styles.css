@@ -2228,6 +2228,67 @@ button.set-row {
   border-radius: 50%;
   box-shadow: 0 0 0 6px #221f38;
 }
+/* LoopBot Plus eyes glow (src/rewards/looks.ts): the swatch sways between its two colours with a
+   soft halo, and the chosen eye does the same on every SVG bot through --bot-eye. */
+.eye-dot.glow-pulse,
+.eye-dot.glow-shimmer {
+  background: var(--eye-a);
+  box-shadow: 0 0 0 6px #221f38, 0 0 14px 5px color-mix(in srgb, var(--eye-a) 45%, transparent);
+  animation: eye-dot-glow 2.4s ease-in-out infinite;
+}
+.eye-dot.glow-shimmer {
+  background: linear-gradient(115deg, var(--eye-a) 35%, var(--eye-b) 50%, var(--eye-a) 65%);
+  background-size: 300% 100%;
+  animation: eye-dot-shimmer 2.6s ease-in-out infinite;
+}
+@keyframes eye-dot-glow {
+  50% {
+    background: var(--eye-b);
+    box-shadow: 0 0 0 6px #221f38, 0 0 20px 8px color-mix(in srgb, var(--eye-a) 70%, transparent);
+  }
+}
+@keyframes eye-dot-shimmer {
+  0%,
+  30% {
+    background-position: 100% 0;
+  }
+  70%,
+  100% {
+    background-position: 0 0;
+  }
+}
+:root[data-eye-glow='pulse'] {
+  animation: bot-eye-pulse 2.4s ease-in-out infinite;
+}
+:root[data-eye-glow='shimmer'] {
+  animation: bot-eye-shimmer 2.6s ease-in-out infinite;
+}
+@keyframes bot-eye-pulse {
+  0%,
+  100% {
+    --bot-eye: var(--bot-eye-a);
+  }
+  50% {
+    --bot-eye: var(--bot-eye-b);
+  }
+}
+@keyframes bot-eye-shimmer {
+  0%,
+  60%,
+  100% {
+    --bot-eye: var(--bot-eye-a);
+  }
+  75% {
+    --bot-eye: var(--bot-eye-b);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .eye-dot.glow-pulse,
+  .eye-dot.glow-shimmer,
+  :root[data-eye-glow] {
+    animation: none;
+  }
+}
 .achievements {
   list-style: none;
   margin: 12px 0 0;

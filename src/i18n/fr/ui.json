@@ -650,6 +650,7 @@
  "Sky": "Ciel",
  "Amber": "Ambre",
  "Beacon": "Balise",
+ "Glacier": "Glacier",
  "Par is {n} command. Find the stretch of path between two switches and loop it.": "Le par est de {n} commande. Trouve le bout de chemin entre deux interrupteurs et mets-le en boucle.",
  "Par is {n} commands. Find the stretch of path between two switches and loop it.": "Le par est de {n} commandes. Trouve le bout de chemin entre deux interrupteurs et mets-le en boucle.",
  "Par is {n} command.": "Le par est de {n} commande.",
