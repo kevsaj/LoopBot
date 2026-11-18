@@ -901,6 +901,9 @@ select:focus-visible {
 .badges {
   min-height: 24px;
   display: flex;
+  /* A daily run can show three badges (cleared, streak, freeze): wrap them onto a second row
+     instead of running off both sides of the card. */
+  flex-wrap: wrap;
   gap: 6px;
   justify-content: center;
   /* Keep each badge its own height: stretching it to the row left the word stuck at the top. */
@@ -918,12 +921,15 @@ select:focus-visible {
   align-items: center;
   justify-content: center;
   min-height: 24px;
-  padding: 0 10px;
-  border-radius: 999px;
+  max-width: 100%;
+  padding: 3px 10px;
+  border-radius: 12px;
   font-size: 12px;
   font-weight: 700;
-  line-height: 1;
-  white-space: nowrap;
+  /* Leading is split evenly above and below, so this stays centred; it only spaces the lines
+     when a long badge (French, big system font) has to wrap inside itself. */
+  line-height: 1.2;
+  text-align: center;
 }
 .badge.best {
   background: var(--warn);
