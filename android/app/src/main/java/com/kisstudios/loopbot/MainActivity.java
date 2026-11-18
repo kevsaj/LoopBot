@@ -11,6 +11,8 @@ public class MainActivity extends BridgeActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        // Local plugins register before the bridge starts.
+        registerPlugin(DisplayPlugin.class);
         super.onCreate(savedInstanceState);
         // Phones stay locked to portrait (set in AndroidManifest.xml). Tablets, Chromebooks and
         // Google Play Games on PC turn freely and resize: the web layout has a wide, side-by-side

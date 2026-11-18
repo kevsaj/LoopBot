@@ -136,6 +136,8 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
   const [showCode, setShowCode] = useState(false);
   // Rooftop pro mode: a non-zero number while the code is being typed (it also keys a fresh text box).
   const [typing, setTyping] = useState(0);
+  /** The tutorial tip the player tapped away (floor and step), so it stays hidden until the next tip. */
+  const [tipDismissed, setTipDismissed] = useState<string | null>(null);
   const tab: Routine | 'code' = showCode ? 'code' : routine;
 
   // --- run state ---
@@ -520,6 +522,8 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
     outcome: outcome?.status ?? null,
   });
   const cancelIds = useMemo(() => new Set(cancellingTurns(program)), [program]);
+  const tipKey = tut && `${level.id}:${tut}`;
+  const showTip = !!tut && tipKey !== tipDismissed;
   const pulse = (cmd: PaletteCommand) =>
     (tut === 'tap' && cmd === 'forward') || (tut === 'turn' && (cmd === 'turn_left' || cmd === 'turn_right'));
 
@@ -575,7 +579,21 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
         <button type="button" className="rotate-btn" onClick={() => (fx.tap(), setRotateSignal((n) => n + 1))} aria-label={t('Rotate view: turn the camera a quarter turn. LoopBot does not move.')}>
           ⟲ {t('Rotate view')}
         </button>
-        <Terminal text={terminal} status={status} />
+        {/* The tutorial tip floats over the foot of the board, above PATCH's line, so it never takes
+            room from the program (on short or zoomed-in phones that room is only a few lines). On those
+            short screens the tip stands in for PATCH's line until it is tapped away or done. */}
+        <div className={`board-foot${showTip ? ' with-tip' : ''}`}>
+          {showTip && tut && (
+            // A tap anywhere on the tip hides it; the × is the button for keyboards and screen readers.
+            <div className={`tutorial-bubble tut-${tut}`} role="status" onClick={() => (fx.tap(), setTipDismissed(tipKey))}>
+              <span>{t(TUTORIAL_TEXT[tut])}</span>
+              <button type="button" className="tip-x" aria-label={t('Hide this tip')}>
+                ×
+              </button>
+            </div>
+          )}
+          <Terminal text={terminal} status={status} />
+        </div>
       </section>
 
       <section className="editor">
@@ -620,11 +638,6 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
         </div>
 
         <div className="program-wrap">
-          {tut && (
-            <div className={`tutorial-bubble tut-${tut}`} role="status">
-              {t(TUTORIAL_TEXT[tut])}
-            </div>
-          )}
           {tab === 'code' && typing ? (
             <CodeEditor
               key={typing}

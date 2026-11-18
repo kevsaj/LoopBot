@@ -315,6 +315,7 @@
  "define": "définir",
  "Tap a command to add it to your program.": "Touche une commande pour l'ajouter à ton programme.",
  "Press Run to watch LoopBot follow your program.": "Appuie sur Lancer pour voir LoopBot suivre ton programme.",
+ "Hide this tip": "Cacher cette astuce",
  "Not far enough. Add more commands and run again.": "Pas assez loin. Ajoute des commandes et relance.",
  "↺ ↻ Turns spin LoopBot in place. Use them to go round corners.": "↺ ↻ Les virages font pivoter LoopBot sur place. Sers-t'en pour tourner aux coins.",
  "↻ A turn spins LoopBot in place without moving it. After it, ↑ forward goes the new way.": "↻ Un virage fait pivoter LoopBot sur place sans le déplacer. Ensuite, ↑ avancer va dans la nouvelle direction.",
