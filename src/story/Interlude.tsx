@@ -7,8 +7,9 @@ import { Portrait } from '../editor/Terminal';
 import { MiniBot } from '../TowerMap';
 import type { EndingScene, Interlude as Beat, Speaker } from './interludes';
 import { t } from '../i18n';
+import { reducedMotion } from '../a11y/motion';
 
-const reduced = () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+const reduced = reducedMotion;
 
 /** Types `text` out a letter at a time; `done` jumps to the end. */
 function useTyped(text: string, speaker?: Speaker) {

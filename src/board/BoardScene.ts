@@ -8,6 +8,7 @@ import type { TipShape } from '../rewards/looks';
 import type { Facing, World } from '../sim/types';
 import { ahead, isWalkable, surfaceHeight } from '../sim/world';
 import { webglRenderTargetsWork } from './webglProbe';
+import { onMotionChange, reducedMotion } from '../a11y/motion';
 
 const TW = 64; // tile width on screen
 const TH = 32; // tile height on screen
@@ -569,7 +570,10 @@ export class BoardScene extends Phaser.Scene {
   /** Facing drawn right now, in quarter turns from north (east = 1); differs from the world's while LoopBot turns or twirls. */
   private shownAngle = 0;
   private crashedNow = false;
-  private reduced = false;
+  /** Reduce motion (Settings or the device), read fresh each time: it can change mid-floor. */
+  private get reduced() {
+    return reducedMotion();
+  }
   /** The facing arrow on the floor, drawn under LoopBot inside its container. */
   private botArrow!: Phaser.GameObjects.Graphics;
   /** A curved arrow over LoopBot's head that sweeps round while it turns in place. Drawn above the board, so walls never hide it. */
@@ -601,9 +605,8 @@ export class BoardScene extends Phaser.Scene {
     this.botInner = this.add.container(0, 0, [this.botBody, this.botEye, this.antenna]);
     this.botPose = this.add.container(0, 0, [this.botInner]);
     this.bot = this.add.container(0, 0, [this.botShadow, this.botArrow, this.botPose]);
-    this.reduced = !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
     // idle bob: LoopBot hovers gently, like a toy
-    if (!this.reduced) this.tweens.add({ targets: this.botInner, y: -2.5, yoyo: true, repeat: -1, duration: 900, ease: 'Sine.easeInOut' });
+    this.bob(this.botInner, 0);
     this.layer.add(this.bot);
     this.echoBody = this.add.graphics();
     this.echoArrow = this.add.graphics();
@@ -612,10 +615,22 @@ export class BoardScene extends Phaser.Scene {
     this.echo = this.add.container(0, 0, [this.add.ellipse(0, 0, TW * 0.42, TH * 0.42, 0x2b2440, 0.28), this.echoArrow, this.echoPose]);
     this.echo.setVisible(false);
     // Echo bobs a little out of step with LoopBot, so the two never look like one sprite twice
-    if (!this.reduced) this.tweens.add({ targets: echoInner, y: -2.5, yoyo: true, repeat: -1, duration: 900, delay: 450, ease: 'Sine.easeInOut' });
+    this.bob(echoInner, 450);
     this.layer.add(this.echo);
     this.idleLife();
-    if (!this.reduced) this.glowEye();
+    this.glowEye();
+    // Reduce motion switched in Settings while the floor is open: stop or restart the bobbing.
+    const off = onMotionChange(() => {
+      this.bob(this.botInner, 0);
+      this.bob(echoInner, 450);
+      if (this.reduced && eyeGlow) {
+        C.eye = eyeGlow.from;
+        this.drawEye();
+        this.drawAntenna();
+      }
+    });
+    this.events.once('destroy', off);
+    this.sys.game.events.once('destroy', off);
     this.scale.on('resize', () => this.fit());
     this.ready = true;
     if (this.pending) this.show(this.pending);
@@ -1215,6 +1230,13 @@ export class BoardScene extends Phaser.Scene {
     next();
   }
 
+  /** The idle hover, off with reduce motion. Calling it again restarts or stops it. */
+  private bob(target: Phaser.GameObjects.Container, delay: number) {
+    this.tweens.killTweensOf(target);
+    target.y = 0;
+    if (!this.reduced) this.tweens.add({ targets: target, y: -2.5, yoyo: true, repeat: -1, duration: 900, delay, ease: 'Sine.easeInOut' });
+  }
+
   /**
    * A LoopBot Plus eye glows: 'pulse' breathes slowly like a tower's warning lamp, 'shimmer' rests
    * on its colour and glints now and then like light on ice. Steady eyes skip the redraws.
@@ -1225,7 +1247,7 @@ export class BoardScene extends Phaser.Scene {
       delay: 50,
       loop: true,
       callback: () => {
-        if (!eyeGlow || this.mood === 'crash' || this.crashedNow) return;
+        if (!eyeGlow || this.mood === 'crash' || this.crashedNow || this.reduced) return;
         t += 50;
         let k: number;
         if (eyeGlow.style === 'pulse') k = (1 - Math.cos((t / 2400) * Math.PI * 2)) / 2;
@@ -1578,7 +1600,7 @@ export class BoardScene extends Phaser.Scene {
 
   /** Clearing a floor transforms it: a wave of light runs out from the bot across every walkable tile. */
   private lightUp(w: World, delay: number) {
-    const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    const reduced = this.reduced;
     for (let y = 0; y < w.h; y++) {
       for (let x = 0; x < w.w; x++) {
         const t = w.tiles[y][x];

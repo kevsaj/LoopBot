@@ -31,9 +31,8 @@ export interface BurstOptions {
   sparkle?: boolean;
 }
 
-export function reducedMotion() {
-  return !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-}
+import { reducedMotion } from '../a11y/motion';
+export { reducedMotion };
 
 let canvas: HTMLCanvasElement | null = null;
 let pieces: Piece[] = [];

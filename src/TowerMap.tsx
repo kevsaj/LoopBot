@@ -330,7 +330,7 @@ export function TowerMap({ levels, tower, towers, onTowerPick, progress, current
 
   return (
     <div className={`tower tower-${tower}`} role="main">
-      <header className="topbar">
+      <div className="topbar">
         <div className="floor-title">
           <button type="button" className="back-btn" onClick={() => (fx.tap(), onHome())} aria-label={t('Tower {n}: back to the title screen', { n: tower })}>
             ‹ {t('Tower {n}', { n: tower })}
@@ -338,7 +338,7 @@ export function TowerMap({ levels, tower, towers, onTowerPick, progress, current
           {/* With the tower picker showing the name right below, the title stays for screen readers only. */}
           <h1 className={`floor-name${pickerShown ? ' sr-only' : ''}`}>{name}</h1>
         </div>
-        <div className="tower-stars" aria-label={t('{n} of {total} stars', { n: totalStars, total: ids.length * 3 })}>
+        <div className="tower-stars" role="img" aria-label={t('{n} of {total} stars', { n: totalStars, total: ids.length * 3 })}>
           ★ {totalStars} / {ids.length * 3}
         </div>
         <button type="button" className="icon-btn map-locker" aria-label={lockerNew ? t('Locker: looks and achievements, something new') : t('Locker: looks and achievements')} onClick={() => (fx.tap(), onLocker())}>
@@ -347,8 +347,8 @@ export function TowerMap({ levels, tower, towers, onTowerPick, progress, current
         <button type="button" className="icon-btn" aria-label={t('Settings')} onClick={() => (fx.tap(), onSettings())}>
           ⚙
         </button>
-      </header>
-      <div className="tower-progress" aria-label={t('{n} of {total} floors cleared', { n: cleared, total: ids.length })}>
+      </div>
+      <div className="tower-progress" role="progressbar" aria-valuemin={0} aria-valuemax={ids.length} aria-valuenow={cleared} aria-label={t('{n} of {total} floors cleared', { n: cleared, total: ids.length })}>
         <div className="tower-progress-bar">
           <span style={{ width: `${(cleared / ids.length) * 100}%` }} />
         </div>

@@ -4,6 +4,7 @@ import type { BoardScene, BoardUpdate } from './BoardScene';
 import { fx } from '../audio/feedback';
 import { t } from '../i18n';
 import type { World } from '../sim/types';
+import { describeBoard } from '../a11y/describe';
 
 /** Twist's bands: their floors show a compass, for the turntables and the facing north sensor. */
 const COMPASS_BANDS = new Set(['ferry', 'garden', 'loom', 'lantern', 'pinnacle']);
@@ -95,7 +96,9 @@ export function Board({ update, rotateSignal, band }: Props) {
 
   return (
     <>
-      <div className="board-canvas" ref={host} aria-hidden="true" onPointerDown={poke} />
+      {/* For screen readers the board is one picture, described in words from LoopBot's point of view.
+          It can take focus so keyboard players on the web reach it too. */}
+      <div className="board-canvas" ref={host} role="img" tabIndex={0} aria-roledescription={t('board')} aria-label={describeBoard(update.world)} onPointerDown={poke} />
       {COMPASS_BANDS.has(band) && <Compass deg={NORTH_DEG[rotateSignal % 4]} />}
       {TALLY_BANDS.has(band) && <TallyBoard n={update.world.tally} />}
       {update.world.twin && <TwinBadge world={update.world} />}

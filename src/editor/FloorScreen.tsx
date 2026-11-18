@@ -32,6 +32,8 @@ import { track } from '../telemetry';
 import { FeedbackSheet } from '../FeedbackSheet';
 import { DIFFICULTY_LABEL, difficultyOn, shareText, shortDate } from '../daily';
 import { msg, t, tn } from '../i18n';
+import { announce } from '../a11y/announce';
+import { describeBrief } from '../a11y/describe';
 
 const SPEEDS = [
   { label: '1x', ms: 520 },
@@ -262,6 +264,8 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
       if (o.status === 'crashed') {
         setCrashId(o.blockId);
         setTerminal(runError(o.error));
+        // Screen readers: the terminal reads the error; then where LoopBot ended up.
+        announce(describeBrief(world));
         fx.crash();
         fx.voice('uhoh', 0.35);
         fail();
@@ -296,6 +300,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
             ? tn(o.steps, '> program ended after {n} step. Two turns in your program cancel out, so LoopBot ends up facing the same way.', '> program ended after {n} steps. Two turns in your program cancel out, so LoopBot ends up facing the same way.')
             : tn(o.steps, '> program ended after {n} step. Not there yet: add more commands.', '> program ended after {n} steps. Not there yet: add more commands.'),
         );
+        announce(describeBrief(world));
         fx.denied();
         fail();
       }
@@ -386,11 +391,16 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
     if (!canAdd(cmd)) return;
     editor.insert(routine, cmd);
     fx.snap();
+    sayAdded(cmd);
   };
+  // Screen readers: say what went in, and how full the program is now.
+  const sayAdded = (cmd: PaletteCommand) =>
+    announce(t('{command} added. {used} of {slots} used in {routine}.', { command: t(COMMAND_META[cmd].label), used: countBlocks(list) + 1, slots: limit, routine: routineName(routine) }));
   // Dragged in from the palette: lands where it was dropped.
   const drop = (cmd: PaletteCommand, spot: Spot) => {
     editor.place(routine, spot, makeBlock(cmd));
     fx.snap();
+    sayAdded(cmd);
   };
 
   const del = (id: string) => {
@@ -658,7 +668,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
           )}
         </div>
 
-        <div className="palette" aria-label={t('Commands')}>
+        <div className="palette" role="group" aria-label={t('Commands')}>
           {palette.map((cmd) => {
             const meta = COMMAND_META[cmd];
             const allowed = level.commands.includes(cmd);
