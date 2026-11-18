@@ -1,7 +1,8 @@
 name: Android release
 # Builds the signed Google Play bundle (.aab) on a GitHub runner, so Kevin doesn't need Android
-# Studio to ship. Download it from the run's artifacts and upload it in Play Console.
-# Run it by hand: Actions tab > "Android release" > Run workflow.
+# Studio to ship. Run it by hand: Actions tab > "Android release" > Run workflow.
+# Pick "Upload to Play" to send it straight to a testing track (like the iOS TestFlight button),
+# or leave it on "Don't upload" and upload the .aab from the run's artifacts in Play Console.
 #
 # Repository secrets (Settings > Secrets and variables > Actions):
 #   ANDROID_KEYSTORE_BASE64       The upload keystore (.jks) as base64: base64 -w 0 loopbot-upload.jks
@@ -10,9 +11,30 @@ name: Android release
 #   ANDROID_KEY_PASSWORD          Key password (same as the store password if you used one)
 #   VITE_TELEMETRY_URL (optional) Playtest stats endpoint, same as for iOS
 #   VITE_REVENUECAT_ANDROID_KEY (optional) RevenueCat public Google SDK key (goog_...), needed for Plus purchases
+#   PLAY_SERVICE_ACCOUNT_JSON (needed only to upload) The Google Cloud service account key (.json file
+#                                 contents) that has release access in Play Console. See docs/android-play-upload.md.
 on:
   workflow_dispatch:
     inputs:
+      upload_to:
+        description: Upload to Google Play? "Closed testing" is the testers' track (API name alpha).
+        type: choice
+        default: Don't upload (just build)
+        options:
+          - Don't upload (just build)
+          - Closed testing
+          - Internal testing
+      release_status:
+        description: Roll out to testers now (completed), or save as a draft in Play Console to roll out yourself.
+        type: choice
+        default: completed
+        options:
+          - completed
+          - draft
+      notes:
+        description: What's new for testers (optional, English, under 500 characters)
+        type: string
+        default: ''
       plus_preview:
         description: Unlock Frostline and other Plus content without buying (VITE_PLUS_PREVIEW). Test builds only, never for a Play release.
         type: boolean
@@ -43,8 +65,11 @@ jobs:
           KS_PASS: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           KEY_PASS: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          PLAY_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          UPLOAD_TO: ${{ inputs.upload_to }}
         run: |
           missing=""
+          if [[ "$UPLOAD_TO" != Don* ]] && [ -z "$PLAY_JSON" ]; then missing="$missing PLAY_SERVICE_ACCOUNT_JSON"; fi
           [ -z "$KS" ] && missing="$missing ANDROID_KEYSTORE_BASE64"
           [ -z "$KS_PASS" ] && missing="$missing ANDROID_KEYSTORE_PASSWORD"
           [ -z "$ALIAS" ] && missing="$missing ANDROID_KEY_ALIAS"
@@ -69,6 +94,7 @@ jobs:
           ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           KEY_PASS: ${{ secrets.ANDROID_KEY_PASSWORD }}
           ANDROID_BUILD_NUMBER: ${{ github.run_number }}
+        id: bundle
         run: |
           echo "$KS" | base64 -d > "$RUNNER_TEMP/upload.jks"
           {
@@ -81,14 +107,19 @@ jobs:
           node scripts/gradle.mjs bundleRelease assembleRelease --no-daemon
           rm -f android/keystore.properties "$RUNNER_TEMP/upload.jks"
           VERSION=$(node -p "require('./package.json').version")
-          CODE=$((10#$(echo "$VERSION" | awk -F. '{printf "%d%02d%02d", $1, $2, $3}') * 1000 + ANDROID_BUILD_NUMBER % 1000))
+          # Same formula as android/app/build.gradle: 1.0.0 run 6 -> 10000006. The run number only goes up,
+          # so every run gets a higher version code than the last (Play rejects a code it has seen before).
+          CODE=$((10#$(echo "$VERSION" | awk -F. '{printf "%d%02d%02d", $1, $2, $3}') * 1000 + ANDROID_BUILD_NUMBER))
+          echo "aab=out/loopbot-$VERSION-$CODE.aab" >> "$GITHUB_OUTPUT"
+          echo "code=$CODE" >> "$GITHUB_OUTPUT"
           mkdir -p out
           cp android/app/build/outputs/bundle/release/app-release.aab "out/loopbot-$VERSION-$CODE.aab"
           cp android/app/build/outputs/apk/release/app-release.apk "out/loopbot-$VERSION-$CODE.apk"
           {
             echo "### LoopBot $VERSION (version code $CODE)"
             echo "Plus preview: ${{ inputs.plus_preview }}, Plus store: ${{ inputs.plus_store }}"
-            echo "Upload the .aab in Play Console. The .apk is the same build, to install on a phone first."
+            echo "Upload to Play: ${{ inputs.upload_to }}"
+            echo "The .apk is the same build, to install on a phone first."
             echo ""
             echo "Permissions in this build (Play Console's answers must match, e.g. no AD_ID means 'no advertising ID'):"
             M=$(find android/app/build/intermediates -name AndroidManifest.xml -path '*merged_manifest*' -path '*release*' | head -1 || true)
@@ -100,3 +131,35 @@ jobs:
           name: loopbot-play-release
           path: out/
           retention-days: 30
+
+      - name: Write what's new
+        if: ${{ !startsWith(inputs.upload_to, 'Don') && inputs.notes != '' }}
+        env:
+          NOTES: ${{ inputs.notes }}
+        run: |
+          mkdir -p whatsnew
+          printf '%s' "$NOTES" | head -c 500 > whatsnew/whatsnew-en-US
+
+      - name: Upload to Google Play
+        if: ${{ !startsWith(inputs.upload_to, 'Don') }}
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: com.kisstudios.loopbot
+          releaseFiles: ${{ steps.bundle.outputs.aab }}
+          track: ${{ inputs.upload_to == 'Internal testing' && 'internal' || 'alpha' }}
+          status: ${{ inputs.release_status }}
+          whatsNewDirectory: ${{ inputs.notes != '' && 'whatsnew' || '' }}
+
+      - name: Say where it went
+        if: ${{ !startsWith(inputs.upload_to, 'Don') }}
+        run: |
+          {
+            echo ""
+            echo "### Uploaded version code ${{ steps.bundle.outputs.code }} to Play: ${{ inputs.upload_to }} (${{ inputs.release_status }})"
+            if [ "${{ inputs.release_status }}" = "draft" ]; then
+              echo "It is saved as a draft. Open Play Console > Test and release > Testing to review and roll it out."
+            else
+              echo "Testers get it after Google's check, usually a few hours (Publishing overview shows the status)."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
