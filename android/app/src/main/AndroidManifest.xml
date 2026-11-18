@@ -31,6 +31,20 @@
         </provider>
     </application>
 
+    <!-- The activity is locked to portrait, which makes Google Play treat
+         android.hardware.screen.portrait as required and hide the app from devices that
+         don't report it (some tablets, Chromebooks, Play Games on PC, XR). The game still
+         runs in portrait on those devices, so mark the feature optional. -->
+    <uses-feature android:name="android.hardware.screen.portrait" android:required="false" />
+
+    <!-- Google Play Games on PC. With type.pc declared, the PC sends real mouse events (hover,
+         scroll wheel, click-and-drag) instead of turning each click into a single tap, which the
+         palette drag and the program list scrolling need. required="false" keeps phones and
+         tablets without a mouse eligible. PCs have no touchscreen, so touch is optional too
+         (the game is fully playable with a mouse or a keyboard). -->
+    <uses-feature android:name="android.hardware.type.pc" android:required="false" />
+    <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
+
     <!-- Permissions -->
 
     <uses-permission android:name="android.permission.INTERNET" />

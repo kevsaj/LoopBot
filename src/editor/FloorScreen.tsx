@@ -35,6 +35,11 @@ import { msg, t, tn } from '../i18n';
 import { announce } from '../a11y/announce';
 import { describeBrief } from '../a11y/describe';
 
+/** Keys typed into a text box (code editor, feedback, maker) are never play shortcuts. */
+function typingTarget(el: EventTarget | null): boolean {
+  return el instanceof HTMLElement && (el.isContentEditable || el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement || el instanceof HTMLSelectElement);
+}
+
 const SPEEDS = [
   { label: '1x', ms: 520 },
   { label: '2x', ms: 260 },
@@ -456,9 +461,12 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
     fx.undo();
   };
 
-  // Keyboard: Ctrl/Cmd+Z undo, Shift+Ctrl/Cmd+Z or Ctrl+Y redo (ED-16 full keyboard control on web)
-  const undoRef = useRef({ undo, redo });
-  undoRef.current = { undo, redo };
+  // Keyboard: Ctrl/Cmd+Z undo, Shift+Ctrl/Cmd+Z or Ctrl+Y redo (ED-16 full keyboard control on web).
+  // Plus play keys for desktops (web, Chromebooks, Google Play Games on PC): R runs or pauses,
+  // S steps, and 1-9 add the palette command in that spot.
+  const undoRef = useRef({ undo, redo, run: () => {}, step: () => {}, addNth: (_n: number) => {} });
+  undoRef.current.undo = undo;
+  undoRef.current.redo = redo;
   useEffect(() => {
     const onKey = (e: globalThis.KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -476,6 +484,13 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
       } else if (mod && e.key.toLowerCase() === 'y') {
         e.preventDefault();
         undoRef.current.redo();
+      } else if (!mod && !e.altKey && !e.repeat && !typingTarget(e.target) && !document.querySelector('[role="dialog"]')) {
+        const k = e.key.toLowerCase();
+        if (k === 'r') undoRef.current.run();
+        else if (k === 's') undoRef.current.step();
+        else if (/^[1-9]$/.test(e.key)) undoRef.current.addNth(Number(e.key) - 1);
+        else return;
+        e.preventDefault();
       }
     };
     window.addEventListener('keydown', onKey);
@@ -488,6 +503,13 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
     ...CONTROL_ORDER.filter((c) => level.commands.includes(c)),
     ...FUNCTION_NAMES.filter((f) => (level.slots[f] ?? 0) > 0),
   ];
+  undoRef.current.run = run;
+  undoRef.current.step = step;
+  undoRef.current.addNth = (n) => {
+    const cmd = palette[n];
+    if (!cmd || tab === 'code') return;
+    add(cmd);
+  };
   const status = outcome?.status ?? (playing ? 'running' : steps > 0 ? 'paused' : 'ready');
   const earned = outcome?.status === 'cleared' ? stars(level, total, outcome.steps) : 0;
   const tut = tutorialStep({
@@ -577,10 +599,10 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
       <section className="editor">
         <EditorDnd blocks={list} canAdd={canAdd} onDrop={drop} onMove={(id, to) => (editor.move(routine, id, to), fx.snap())}>
         <div className="run-controls">
-          <button type="button" className={`pill primary${playing ? ' on' : ''}${tut === 'run' ? ' pulse' : ''}`} onClick={run}>
+          <button type="button" className={`pill primary${playing ? ' on' : ''}${tut === 'run' ? ' pulse' : ''}`} onClick={run} aria-keyshortcuts="R" title={`${t('Run')} / ${t('Pause')} (R)`}>
             {playing ? `❚❚ ${t('Pause')}` : `▶ ${t('Run')}`}
           </button>
-          <button type="button" className="pill" onClick={step}>
+          <button type="button" className="pill" onClick={step} aria-keyshortcuts="S" title={`${t('Step')} (S)`}>
             ⏭ {t('Step')}
           </button>
           <button type="button" className="pill" onClick={() => (fx.tap(), reset())}>
@@ -682,7 +704,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
         </div>
 
         <div className="palette" role="group" aria-label={t('Commands')}>
-          {palette.map((cmd) => {
+          {palette.map((cmd, i) => {
             const meta = COMMAND_META[cmd];
             const allowed = level.commands.includes(cmd);
             return (
@@ -693,6 +715,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
                 inactive={!allowed || full}
                 className={`chip tone-${meta.tone}${allowed ? '' : ' locked'}${allowed && full ? ' full' : ''}${pulse(cmd) ? ' pulse' : ''}`}
                 label={allowed ? t('Add {command} (tap, or drag it into the program)', { command: t(meta.label) }) : t('{command}, locked on this floor', { command: t(meta.label) })}
+                shortcut={i < 9 ? String(i + 1) : undefined}
                 onClick={() => add(cmd)}
               >
                 <span className="glyph" aria-hidden="true">
