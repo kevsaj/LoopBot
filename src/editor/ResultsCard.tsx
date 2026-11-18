@@ -143,16 +143,18 @@ export function ResultsCard({ floorNumber, tower = 1, floorCount, earned, prevBe
               <td>{t('Commands')}</td>
               <td>{commands}</td>
               <td className="par">{custom?.noPar ? '' : t('par {n}', { n: par.commands })}</td>
-              <td className="tick" aria-label={commands <= par.commands ? t('par met') : t('over par')}>
+              <td className="tick">
                 {commands <= par.commands && !custom?.noPar ? '✓' : ''}
+                {!custom?.noPar && <span className="sr-only">{commands <= par.commands ? t('par met') : t('over par')}</span>}
               </td>
             </tr>
             <tr className={steps <= par.steps ? 'met' : ''}>
               <td>{t('Steps')}</td>
               <td>{steps}</td>
               <td className="par">{custom?.noPar ? '' : t('par {n}', { n: par.steps })}</td>
-              <td className="tick" aria-label={steps <= par.steps ? t('par met') : t('over par')}>
+              <td className="tick">
                 {steps <= par.steps && !custom?.noPar ? '✓' : ''}
+                {!custom?.noPar && <span className="sr-only">{steps <= par.steps ? t('par met') : t('over par')}</span>}
               </td>
             </tr>
           </tbody>

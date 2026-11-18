@@ -3,6 +3,7 @@
 
 import { useEffect, useState } from 'react';
 import { fx } from '../audio/feedback';
+import { reducedMotion } from '../a11y/motion';
 
 const SPEAKER = /^(PATCH|VANTA)\b\s*:?\s*/;
 
@@ -41,8 +42,7 @@ export function Terminal({ text, status }: { text: string; status: string }) {
       setShown(body.length);
       return;
     }
-    const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-    if (reduced) {
+    if (reducedMotion()) {
       setShown(body.length);
       return;
     }
@@ -59,9 +59,12 @@ export function Terminal({ text, status }: { text: string; status: string }) {
   }, [text, story, speaker, body.length]);
 
   return (
-    <div className={`terminal status-${status}${story ? ' story' : ''}`} role="status" aria-label={text}>
+    // The whole line sits in the live region as plain text, for TalkBack and VoiceOver to read when
+    // it changes (a label on the box isn't read out). The typed-out copy beside it is for the eyes.
+    <div className={`terminal status-${status}${story ? ' story' : ''}`} role="status">
+      <span className="sr-only">{text}</span>
       {speaker && (
-        <span className={`speaker speaker-${speaker.toLowerCase()}`}>
+        <span aria-hidden="true" className={`speaker speaker-${speaker.toLowerCase()}`}>
           <Portrait who={speaker} />
           {speaker}
         </span>

@@ -1,7 +1,7 @@
 // Settings: a full screen of grouped rows (General, Your progress, Privacy, About), each row a rounded card
 // with a short caption under it. Links open on the KIS Studios site, in the phone's browser on Android.
 
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import type { ReactNode } from 'react';
 import type { Progress } from './progress';
 import { fx, hapticsOn, isMuted, setHapticsOn, setMuted } from './audio/feedback';
@@ -14,6 +14,7 @@ import { PlusSheet } from './store/PlusSheet';
 import { PackSheet } from './store/PackSheet';
 import { TOWERS } from './levels/towers';
 import { bigTextOn, setBigText } from './textSize';
+import { deviceReducesMotion, reduceMotionPref, setReduceMotion } from './a11y/motion';
 import { version } from '../package.json';
 import { FeedbackSheet } from './FeedbackSheet';
 import { BackupRows } from './BackupRows';
@@ -32,14 +33,18 @@ interface Props extends FeedbackContext {
   onClose(): void;
 }
 
-function Toggle({ label, caption, on, onChange }: { label: string; caption: string; on: boolean; onChange(on: boolean): void }) {
+function Toggle({ label, caption, on, onChange, disabled }: { label: string; caption: string; on: boolean; onChange(on: boolean): void; disabled?: boolean }) {
+  // The caption is read after the switch's name by TalkBack and VoiceOver.
+  const id = useId();
   return (
     <div className="set-item">
       <label className="set-row">
         <span className="set-label">{label}</span>
-        <input type="checkbox" role="switch" className="set-switch" checked={on} onChange={(e) => onChange(e.target.checked)} />
+        <input type="checkbox" role="switch" className="set-switch" checked={on} disabled={disabled} aria-describedby={id} onChange={(e) => onChange(e.target.checked)} />
       </label>
-      <p className="set-caption">{caption}</p>
+      <p className="set-caption" id={id}>
+        {caption}
+      </p>
     </div>
   );
 }
@@ -92,6 +97,7 @@ export function SettingsSheet({ progress, setProgress, onClose, floor, floorTitl
   const [music, setMusic] = useState(musicOn());
   const [haptics, setHaptics] = useState(hapticsOn());
   const [bigText, setBigTextState] = useState(bigTextOn);
+  const [calm, setCalm] = useState(reduceMotionPref);
   const [stats, setStats] = useState(statsOn());
   const [feedback, setFeedback] = useState(false);
   if (feedback) return <FeedbackSheet floor={floor} floorTitle={floorTitle} onClose={() => setFeedback(false)} />;
@@ -146,6 +152,21 @@ export function SettingsSheet({ progress, setProgress, onClose, floor, floorTitl
             onChange={(on) => {
               setBigText(on);
               setBigTextState(on);
+              fx.tap();
+            }}
+          />
+          <Toggle
+            label={t('Reduce motion')}
+            caption={
+              deviceReducesMotion()
+                ? t('Your device already asks for less motion, so LoopBot keeps things calm.')
+                : t('Calmer celebrations: no confetti, bobbing, glowing eyes or typing text')
+            }
+            on={calm || deviceReducesMotion()}
+            disabled={deviceReducesMotion()}
+            onChange={(on) => {
+              setReduceMotion(on);
+              setCalm(on);
               fx.tap();
             }}
           />

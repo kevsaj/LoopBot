@@ -1009,11 +1009,10 @@ select:focus-visible {
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation: none !important;
-    transition: none !important;
-  }
+/* Reduce motion (the device setting or Settings > General): see src/a11y/motion.ts. */
+:root.reduce-motion * {
+  animation: none !important;
+  transition: none !important;
 }
 
 /* --- hints, settings, tutorial --- */
@@ -1414,7 +1413,7 @@ select:focus-visible {
 }
 .tf-stars {
   flex: none;
-  color: #3a3f5c;
+  color: #6b7196;
   letter-spacing: 2px;
 }
 @media (max-width: 359px) {
@@ -1899,6 +1898,11 @@ select:focus-visible {
   outline: 3px solid var(--accent);
   outline-offset: 2px;
 }
+/* Locked on (Reduce motion when the device already asks for it): shown on, but quieter. */
+.set-switch:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
 @keyframes settings-in {
   from {
     opacity: 0;
@@ -2090,11 +2094,10 @@ button.set-row {
   background: rgba(242, 193, 78, 0.18);
   color: var(--warn);
 }
-@media (prefers-reduced-motion: reduce) {
-  .title-daily,
-  .daily-btn.shake {
-    animation: none;
-  }
+/* Reduce motion (the device setting or Settings > General): see src/a11y/motion.ts. */
+:root.reduce-motion .title-daily,
+:root.reduce-motion .daily-btn.shake {
+  animation: none;
 }
 
 /* --- backup code (Settings > Your progress) --- */
@@ -2282,12 +2285,11 @@ button.set-row {
     --bot-eye: var(--bot-eye-b);
   }
 }
-@media (prefers-reduced-motion: reduce) {
-  .eye-dot.glow-pulse,
-  .eye-dot.glow-shimmer,
-  :root[data-eye-glow] {
-    animation: none;
-  }
+/* Reduce motion (the device setting or Settings > General): see src/a11y/motion.ts. */
+:root.reduce-motion .eye-dot.glow-pulse,
+:root.reduce-motion .eye-dot.glow-shimmer,
+:root.reduce-motion[data-eye-glow] {
+  animation: none;
 }
 .achievements {
   list-style: none;
@@ -2374,11 +2376,10 @@ button.set-row {
     transform: translate(-50%, -20px) scale(0.9);
   }
 }
-@media (prefers-reduced-motion: reduce) {
-  .reward-toast,
-  .locker-preview svg {
-    animation: none;
-  }
+/* Reduce motion (the device setting or Settings > General): see src/a11y/motion.ts. */
+:root.reduce-motion .reward-toast,
+:root.reduce-motion .locker-preview svg {
+  animation: none;
 }
 .daily-freeze {
   color: #8fd3ff;
@@ -2765,27 +2766,26 @@ button.set-row {
 .ending-caption .speaker {
   margin-right: 8px;
 }
-@media (prefers-reduced-motion: reduce) {
-  .interlude,
-  .radio-line,
-  .ending-scene .drone,
-  .ending-scene .car,
-  .ending-scene .north,
-  .meet .mini-bot,
-  .patch-eye,
-  .radio-wave i {
-    animation: none;
-  }
-  .scene-lights .win {
-    animation: none;
-    fill: #ffd27a;
-  }
-  .ending-scene .drone {
-    transform: translate(150px, 6px);
-  }
-  .ending-scene .car {
-    transform: translateY(104px);
-  }
+/* Reduce motion (the device setting or Settings > General): see src/a11y/motion.ts. */
+:root.reduce-motion .interlude,
+:root.reduce-motion .radio-line,
+:root.reduce-motion .ending-scene .drone,
+:root.reduce-motion .ending-scene .car,
+:root.reduce-motion .ending-scene .north,
+:root.reduce-motion .meet .mini-bot,
+:root.reduce-motion .patch-eye,
+:root.reduce-motion .radio-wave i {
+  animation: none;
+}
+:root.reduce-motion .scene-lights .win {
+  animation: none;
+  fill: #ffd27a;
+}
+:root.reduce-motion .ending-scene .drone {
+  transform: translate(150px, 6px);
+}
+:root.reduce-motion .ending-scene .car {
+  transform: translateY(104px);
 }
 
 /* Settings > Larger text: the reading text grows about 15 to 20 percent. */
@@ -3087,14 +3087,13 @@ button.set-row {
     opacity: 0;
   }
 }
-@media (prefers-reduced-motion: reduce) {
-  .tp-list,
-  .tp-scrim {
-    animation: none;
-  }
-  .tp-chevron {
-    transition: none;
-  }
+/* Reduce motion (the device setting or Settings > General): see src/a11y/motion.ts. */
+:root.reduce-motion .tp-list,
+:root.reduce-motion .tp-scrim {
+  animation: none;
+}
+:root.reduce-motion .tp-chevron {
+  transition: none;
 }
 .tower-2 .tower-roof .beacon {
   background: #9fd8ff;
@@ -3733,4 +3732,78 @@ button.set-row {
 }
 :lang(fr) .row.cancels .line-tile::after {
   white-space: nowrap;
+}
+
+/* --- accessibility pass --- */
+/* Touch areas of at least 44 x 44 for small buttons, without moving anything: an invisible margin
+   around each one takes the tap (Apple asks for 44 pt, Android 48 dp). */
+.back-btn,
+.tab,
+.tab-tool,
+.daily-archive-link,
+.times button,
+.cond button {
+  position: relative;
+}
+.back-btn::after,
+.rotate-btn::after,
+.tab::after,
+.tab-tool::after,
+.daily-archive-link::after,
+.times button::after,
+.cond button::after {
+  content: '';
+  position: absolute;
+}
+.back-btn::after {
+  inset: -10px -6px;
+}
+.rotate-btn::after,
+.tab::after,
+.tab-tool::after {
+  inset: -4px 0;
+}
+.daily-archive-link::after {
+  inset: -14px 0;
+}
+.times button::after,
+.cond button::after {
+  inset: -5px -4px;
+}
+
+/* Keyboard focus shows on everything that can take it, sheets and the board included. */
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+/* A sheet takes focus when it opens so screen readers read its name; that needs no ring. */
+[role='dialog']:focus {
+  outline: none;
+}
+.board-canvas:focus-visible {
+  outline-offset: -3px;
+  border-radius: 12px;
+}
+.locker-tabs button,
+.loop-foot .row-btn {
+  position: relative;
+}
+.locker-tabs button::after {
+  content: '';
+  position: absolute;
+  inset: -2px 0;
+}
+/* The thin foot that closes a loop: a little more room to tap, without covering the rows around it. */
+.loop-foot .row-btn::after {
+  content: '';
+  position: absolute;
+  inset: -4px 0;
+}
+/* Line numbers stay readable on the highlighted (running) line. */
+.row.active .line-no,
+.row.crashed .line-no {
+  color: var(--ink);
 }

@@ -16,6 +16,8 @@ import { EMPTY_PREFIX, LIST_ID, useDragState } from './dnd';
 import type { EditorRow } from './rows';
 import { flatten, sameSpot, subtreeIds } from './rows';
 import { msg, t, tn } from '../i18n';
+import { reducedMotion } from '../a11y/motion';
+import { announce } from '../a11y/announce';
 
 interface Props {
   blocks: Block[];
@@ -92,7 +94,7 @@ function LineRow({
   const self = useRef<HTMLLIElement | null>(null);
   // Keep the running (or crashing) line in view on a small screen.
   useEffect(() => {
-    if (active || crashed) self.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    if (active || crashed) self.current?.scrollIntoView({ block: 'nearest', behavior: reducedMotion() ? 'auto' : 'smooth' });
   }, [active, crashed]);
   const [leaving, setLeaving] = useState(false);
   const gesture = useRef<{ x: number; y: number; id: number; swiping: boolean; moved: boolean } | null>(null);
@@ -148,6 +150,8 @@ function LineRow({
   };
 
   const armed = dx < -SWIPE_DELETE_PX;
+  // What the highlight shows, in words: the line that crashed, turns that cancel out.
+  const state = crashed ? ` ${t('LoopBot crashed here.')}` : cancels ? ` ${t('This turn cancels out the one next to it.')}` : '';
   const label =
     t(COMMAND_META[blockCommand(block)].label) +
     (block.kind === 'repeat' ? (block.times === BY_TALLY ? '' : ` ${tn(block.times, '{n} time', '{n} times')}`) : block.kind === 'if' || block.kind === 'while' ? ` ${condLabel(block.cond)}` : '');
@@ -174,8 +178,8 @@ function LineRow({
         style={{ transform: `translateX(${dx}px)`, transition: gesture.current?.swiping ? 'none' : 'transform 160ms ease', opacity: leaving ? 0 : 1 }}
         aria-label={
           row.kind === 'loop'
-            ? t('Line {n}: {label}. Enter to put the cursor inside the loop, Delete to remove, Alt and arrow keys to move.', { n: row.line, label })
-            : t('Line {n}: {label}. Enter to put the cursor after it, Delete to remove, Alt and arrow keys to move.', { n: row.line, label })
+            ? t('Line {n}: {label}. Enter to put the cursor inside the loop, Delete to remove, Alt and arrow keys to move.', { n: row.line, label }) + state
+            : t('Line {n}: {label}. Enter to put the cursor after it, Delete to remove, Alt and arrow keys to move.', { n: row.line, label }) + state
         }
         {...drag.attributes}
         {...drag.listeners}
@@ -183,6 +187,20 @@ function LineRow({
       >
         <Tile block={block} line={row.line} />
       </button>
+      {/* TalkBack and VoiceOver take over swipes and long presses, so blind players can't swipe to
+          delete or drag to move. These buttons do the same, and only a screen reader finds them
+          (keyboard players have Delete and Alt + arrows on the line itself). */}
+      <span className="sr-only" onPointerDown={(e) => e.stopPropagation()} onPointerUp={(e) => e.stopPropagation()}>
+        <button type="button" tabIndex={-1} onClick={() => onNudge(-1)}>
+          {t('Move line {n} up', { n: row.line })}
+        </button>
+        <button type="button" tabIndex={-1} onClick={() => onNudge(1)}>
+          {t('Move line {n} down', { n: row.line })}
+        </button>
+        <button type="button" tabIndex={-1} onClick={onDelete}>
+          {t('Delete line {n}', { n: row.line })}
+        </button>
+      </span>
       {extra}
     </li>
   );
@@ -344,7 +362,10 @@ export function ProgramList({ blocks, limit, cursor, activeIds, crashId, cancelI
   const nudge = (row: Extract<EditorRow, { kind: 'line' | 'loop' }>, dir: -1 | 1) => {
     const to = { parent: row.before.parent, index: row.before.index + (dir < 0 ? -1 : 2) };
     // Already first or last in its list: nothing to do.
-    if (to.index >= 0 && to.index <= (listAt(blocks, to.parent)?.length ?? 0)) onMove(row.block.id, to);
+    if (to.index >= 0 && to.index <= (listAt(blocks, to.parent)?.length ?? 0)) {
+      onMove(row.block.id, to);
+      announce(dir < 0 ? t('Moved up') : t('Moved down'));
+    } else announce(dir < 0 ? t('Already at the top') : t('Already at the bottom'));
   };
 
   return (

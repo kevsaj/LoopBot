@@ -17,7 +17,7 @@ interface Props {
 export function CodeView({ program, routines, activeIds, crashId, recursion }: Props) {
   const lines = toCode(program, routines, recursion);
   return (
-    <pre className="code-view" aria-label={t('Program as code (read only)')}>
+    <pre className="code-view" role="group" aria-label={t('Program as code (read only)')}>
       {lines.map((l, i) => (
         <div
           key={i}

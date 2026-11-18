@@ -103,10 +103,9 @@
     opacity: 1;
   }
 }
-@media (prefers-reduced-motion: reduce) {
-  .board-tally-n {
-    animation: none;
-  }
+/* Reduce motion (the device setting or Settings > General): see src/a11y/motion.ts. */
+:root.reduce-motion .board-tally-n {
+  animation: none;
 }
 
 /* The tower map's bands in Dockyard. */
