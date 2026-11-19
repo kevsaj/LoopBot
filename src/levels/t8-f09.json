@@ -1,0 +1,79 @@
+{
+  "id": "t8-f09",
+  "title": "Two Switches",
+  "band": "frontdesk",
+  "size": {
+    "w": 3,
+    "h": 3
+  },
+  "tiles": [
+    "s_s",
+    "d_.",
+    "._."
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 2,
+    "facing": "north"
+  },
+  "goals": [
+    "all_switches_on"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait"
+  ],
+  "slots": {
+    "main": 8,
+    "F3": 5
+  },
+  "par": {
+    "commands": 9,
+    "steps": 6
+  },
+  "reference": "wait wait wait forward forward activate def DASH { forward forward activate }",
+  "hints": [
+    "Every switch has to be on. LoopBot's is behind a door that only DASH's switch opens.",
+    "DASH goes first and flips its switch. LoopBot waits three steps, then walks through and flips its own.",
+    "wait wait wait forward forward activate def DASH { forward forward activate }"
+  ],
+  "story": {
+    "intro": "DASH: \"Lights out on both sides. One switch each, and mine opens your door. You are welcome in advance.\"",
+    "outro": null
+  },
+  "links": [
+    {
+      "switch": {
+        "x": 2,
+        "y": 0
+      },
+      "doors": [
+        {
+          "x": 0,
+          "y": 1
+        }
+      ]
+    },
+    {
+      "switch": {
+        "x": 0,
+        "y": 0
+      },
+      "doors": []
+    }
+  ],
+  "partner": {
+    "x": 2,
+    "y": 2,
+    "facing": "north"
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "id": "t8-f15",
+  "title": "Stakeout",
+  "band": "evidence",
+  "size": {
+    "w": 6,
+    "h": 6
+  },
+  "tiles": [
+    "......",
+    "___e.s",
+    "__e...",
+    "_____.",
+    "_____d",
+    "_____."
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait",
+    "radio",
+    "listen",
+    "repeat"
+  ],
+  "slots": {
+    "main": 11,
+    "F3": 8
+  },
+  "par": {
+    "commands": 15,
+    "steps": 14
+  },
+  "reference": "repeat 5 { forward } turn_right forward activate radio turn_right forward forward def DASH { listen repeat 3 { forward } turn_left repeat 3 { forward } }",
+  "hints": [
+    "DASH is staking out the door. It only moves when LoopBot calls in.",
+    "LoopBot walks to the switch, flips it and radios. DASH waits for radio, then walks up and left.",
+    "repeat 5 { forward } turn_right forward activate radio turn_right forward forward def DASH { listen repeat 3 { forward } turn_left repeat 3 { forward } }"
+  ],
+  "story": {
+    "intro": "DASH: \"A stakeout. I have snacks. I have night vision. I have been waiting for this my whole life. Call me when the door opens.\"",
+    "outro": null
+  },
+  "links": [
+    {
+      "switch": {
+        "x": 5,
+        "y": 1
+      },
+      "doors": [
+        {
+          "x": 5,
+          "y": 4
+        }
+      ]
+    }
+  ],
+  "partner": {
+    "x": 5,
+    "y": 5,
+    "facing": "north"
+  }
+}

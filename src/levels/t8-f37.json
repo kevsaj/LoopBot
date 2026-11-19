@@ -1,0 +1,79 @@
+{
+  "id": "t8-f37",
+  "title": "Empty the Cell",
+  "band": "cells",
+  "size": {
+    "w": 3,
+    "h": 3
+  },
+  "tiles": [
+    ".__",
+    "...",
+    "__."
+  ],
+  "heights": null,
+  "boxes": [
+    {
+      "x": 0,
+      "y": 0,
+      "count": 3
+    }
+  ],
+  "targets": [
+    {
+      "x": 2,
+      "y": 2,
+      "count": 3
+    }
+  ],
+  "bot": {
+    "x": 0,
+    "y": 1,
+    "facing": "north"
+  },
+  "goals": [
+    "all_targets_filled"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait",
+    "radio",
+    "listen",
+    "repeat",
+    "F1",
+    "while",
+    "if"
+  ],
+  "sensors": [
+    "box_ahead"
+  ],
+  "slots": {
+    "main": 7,
+    "F3": 9
+  },
+  "par": {
+    "commands": 12,
+    "steps": 13
+  },
+  "reference": "while box_ahead { pick_up turn_right drop turn_left } def DASH { repeat 3 { turn_right while not box_ahead { wait } pick_up turn_left drop } }",
+  "hints": [
+    "LoopBot keeps lifting while there is a crate in front of it.",
+    "LoopBot: while box ahead, lift, turn right, drop, turn left. DASH: repeat 3 turn right, wait while no box ahead, lift, turn left, drop.",
+    "while box_ahead { pick_up turn_right drop turn_left } def DASH { repeat 3 { turn_right while not box_ahead { wait } pick_up turn_left drop } }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "partner": {
+    "x": 2,
+    "y": 1,
+    "facing": "south"
+  }
+}

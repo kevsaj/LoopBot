@@ -1,0 +1,81 @@
+{
+  "id": "t8-f44",
+  "title": "Signal Fire",
+  "band": "watchtower",
+  "size": {
+    "w": 3,
+    "h": 3
+  },
+  "tiles": [
+    ".__",
+    "...",
+    "__."
+  ],
+  "heights": null,
+  "boxes": [
+    {
+      "x": 0,
+      "y": 0,
+      "count": 3
+    }
+  ],
+  "targets": [
+    {
+      "x": 2,
+      "y": 2,
+      "count": 3
+    }
+  ],
+  "bot": {
+    "x": 0,
+    "y": 1,
+    "facing": "north"
+  },
+  "goals": [
+    "all_targets_filled"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait",
+    "radio",
+    "listen",
+    "repeat",
+    "F1",
+    "F2",
+    "while",
+    "if"
+  ],
+  "sensors": [
+    "box_ahead"
+  ],
+  "slots": {
+    "main": 8,
+    "F3": 8
+  },
+  "par": {
+    "commands": 12,
+    "steps": 13
+  },
+  "reference": "while box_ahead { pick_up turn_right drop radio turn_left } def DASH { repeat 3 { turn_right listen pick_up turn_left drop } }",
+  "hints": [
+    "LoopBot sends crates while there are any left, and calls each one in.",
+    "LoopBot: while box ahead, lift, turn right, drop, radio, turn left. DASH: repeat 3 turn right, wait for radio, lift, turn left, drop.",
+    "while box_ahead { pick_up turn_right drop radio turn_left } def DASH { repeat 3 { turn_right listen pick_up turn_left drop } }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "typing": true,
+  "partner": {
+    "x": 2,
+    "y": 1,
+    "facing": "south"
+  }
+}

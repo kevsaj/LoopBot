@@ -1,0 +1,92 @@
+{
+  "id": "t8-f27",
+  "title": "Briefing",
+  "band": "briefing",
+  "size": {
+    "w": 8,
+    "h": 4
+  },
+  "tiles": [
+    "...s.s.e",
+    "________",
+    "________",
+    "...d.d.e"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait",
+    "radio",
+    "listen",
+    "repeat",
+    "F1",
+    "F2"
+  ],
+  "slots": {
+    "main": 7,
+    "F1": 5,
+    "F2": 4,
+    "F3": 7
+  },
+  "par": {
+    "commands": 17,
+    "steps": 9
+  },
+  "reference": "forward forward F1 F1 forward def DASH { forward forward F2 F2 forward } def F1 { forward activate radio forward } def F2 { listen forward forward }",
+  "hints": [
+    "The same two routines as before, with a longer walk around them.",
+    "LoopBot: forward, forward, F1, F1, forward. DASH: forward, forward, F2, F2, forward.",
+    "forward forward F1 F1 forward def DASH { forward forward F2 F2 forward } def F1 { forward activate radio forward } def F2 { listen forward forward }"
+  ],
+  "story": {
+    "intro": "LEDGER: \"Today's briefing. Item one: VANTA is in the building. Item two: there is cake in the break room. Item one is more important. Slightly.\"",
+    "outro": null
+  },
+  "links": [
+    {
+      "switch": {
+        "x": 3,
+        "y": 0
+      },
+      "doors": [
+        {
+          "x": 3,
+          "y": 3
+        }
+      ]
+    },
+    {
+      "switch": {
+        "x": 5,
+        "y": 0
+      },
+      "doors": [
+        {
+          "x": 5,
+          "y": 3
+        }
+      ]
+    }
+  ],
+  "partner": {
+    "x": 0,
+    "y": 3,
+    "facing": "east"
+  }
+}

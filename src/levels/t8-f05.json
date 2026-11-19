@@ -1,0 +1,58 @@
+{
+  "id": "t8-f05",
+  "title": "Hold the Door",
+  "band": "frontdesk",
+  "size": {
+    "w": 5,
+    "h": 3
+  },
+  "tiles": [
+    "..d.e",
+    "_____",
+    "..s.e"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait"
+  ],
+  "slots": {
+    "main": 8,
+    "F3": 7
+  },
+  "par": {
+    "commands": 11,
+    "steps": 6
+  },
+  "reference": "forward wait wait forward forward forward def DASH { forward forward activate forward forward }",
+  "hints": [
+    "The door won't open from LoopBot's side. DASH's switch opens it.",
+    "DASH walks to the switch and activates it. LoopBot waits at the door until then.",
+    "forward wait wait forward forward forward def DASH { forward forward activate forward forward }"
+  ],
+  "story": {
+    "intro": "DASH: \"Classic move: I hit the switch, you go through the door. Then we both look back at the explosion. There is no explosion. Still cool.\"",
+    "outro": null
+  },
+  "partner": {
+    "x": 0,
+    "y": 2,
+    "facing": "east"
+  }
+}

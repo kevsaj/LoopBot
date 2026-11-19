@@ -29,7 +29,12 @@ export interface Tile {
  * 'tally_up' and 'tally_down' (Dockyard): add 1 to or take 1 from the tally, LoopBot's one number
  * (CR-TALLY). Counting moves nothing, so like a sensor it costs no step.
  */
-export type Action = 'forward' | 'jump' | 'turn_left' | 'turn_right' | 'pick_up' | 'drop' | 'activate' | 'wait' | 'tally_up' | 'tally_down';
+/**
+ * 'radio' and 'listen' (Precinct 404, CR-RADIO): on a partner floor, radio sends one call to the
+ * other bot, and listen ("wait for radio") holds until a call has arrived, then uses it up. A radio
+ * call is instant; waiting for one costs a step for every step spent waiting.
+ */
+export type Action = 'forward' | 'jump' | 'turn_left' | 'turn_right' | 'pick_up' | 'drop' | 'activate' | 'wait' | 'tally_up' | 'tally_down' | 'radio' | 'listen';
 
 export const ACTIONS: readonly Action[] = [
   'forward',
@@ -42,10 +47,15 @@ export const ACTIONS: readonly Action[] = [
   'wait',
   'tally_up',
   'tally_down',
+  'radio',
+  'listen',
 ];
 
-/** Actions that cost no step and move nothing: they only change the tally (CR-TALLY). */
-export const FREE_ACTIONS: ReadonlySet<Action> = new Set<Action>(['tally_up', 'tally_down']);
+/**
+ * Actions that cost no step and move nothing: they change the tally (CR-TALLY), send a radio call,
+ * or use up one that arrived (CR-RADIO). Waiting for a call that hasn't come is a 'wait' step.
+ */
+export const FREE_ACTIONS: ReadonlySet<Action> = new Set<Action>(['tally_up', 'tally_down', 'radio', 'listen']);
 
 /** The tally goes from 0 to this. */
 export const MAX_TALLY = 9;
@@ -55,6 +65,16 @@ export const BY_TALLY = 0;
 
 export type FunctionName = 'F1' | 'F2' | 'F3';
 export const FUNCTION_NAMES: readonly FunctionName[] = ['F1', 'F2', 'F3'];
+
+/**
+ * Precinct 404 (CR-PARTNER): on a partner floor the partner bot's own program lives in the F3
+ * routine. The editor shows it as the partner's tab (DASH or LEDGER), never as a function to call.
+ */
+export const PARTNER_ROUTINE: FunctionName = 'F3';
+
+/** The partner bots of Precinct 404. DASH is the detective; LEDGER, the captain, joins at the top. */
+export type PartnerName = 'DASH' | 'LEDGER';
+export const PARTNER_NAMES: readonly PartnerName[] = ['DASH', 'LEDGER'];
 
 /**
  * Fractal (CR-RECUR): on a recursion floor every function has a depth n. Main sets it on each call
@@ -150,6 +170,13 @@ export interface LevelFile {
    * inside a function goes to n - 1, and a call at depth 0 does nothing. Mosaic tiles are 'm'.
    */
   recursion?: boolean;
+  /**
+   * Precinct 404 (CR-PARTNER): a partner bot with a program of its own (the PARTNER_ROUTINE). Each
+   * step LoopBot acts first, then the partner; each counts as a wall to the other. A bot that
+   * reaches an exit parks there and stops, and bot_on_exit needs both parked. The two can send each
+   * other radio calls (CR-RADIO). `who` names the partner, DASH when not set.
+   */
+  partner?: Pos & { facing: Facing; who?: PartnerName };
 }
 
 export interface Bot {
@@ -157,6 +184,8 @@ export interface Bot {
   y: number;
   facing: Facing;
   carrying: boolean;
+  /** Precinct 404 (CR-RADIO): radio calls this bot has received and not yet used up. */
+  radio?: number;
 }
 
 export interface World {
@@ -180,8 +209,10 @@ export interface World {
   /** Dockyard's tally: LoopBot's one number, 0 to MAX_TALLY. Starts at 0. */
   tally: number;
   bot: Bot;
-  /** Twin Spires: Echo, the second bot (CR-TWIN). Null on every other floor. */
+  /** Twin Spires: Echo, the second bot (CR-TWIN). Precinct 404: the partner bot (CR-PARTNER). Null on every other floor. */
   twin: Bot | null;
+  /** Precinct 404: the partner's name when `twin` is a partner with its own program, else null. */
+  partner: PartnerName | null;
   /** Fractal: mosaic tiles that have been lit, keyed "x,y" (CR-MOSAIC). Empty on other floors. */
   lit: Record<string, boolean>;
   goals: Goal[];

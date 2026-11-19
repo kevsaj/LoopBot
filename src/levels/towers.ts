@@ -6,6 +6,7 @@ import { TWIST } from './twist';
 import { DOCKYARD } from './dockyard';
 import { TWINSPIRES } from './twinspires';
 import { FRACTAL } from './fractal';
+import { PRECINCT } from './precinct';
 import { DEMO } from '../demo';
 import { msg } from '../i18n';
 import type { PackId } from '../store/packs';
@@ -39,6 +40,7 @@ export const TOWERS: Tower[] = [
   ...(DEMO || !(PREVIEW || STORE_ON) ? [] : [{ n: 5, name: msg('The Wavehouse'), city: 'Dockyard', levels: DOCKYARD, plus: false, pack: 'dockyard' as const }]),
   ...(DEMO || !(PREVIEW || STORE_ON) ? [] : [{ n: 6, name: msg('The Skybridge'), city: 'Twin Spires', levels: TWINSPIRES, plus: false, pack: 'twinspires' as const }]),
   ...(DEMO || !(PREVIEW || STORE_ON) ? [] : [{ n: 7, name: msg('The Fernwork'), city: 'Fractal', levels: FRACTAL, plus: false, pack: 'fractal' as const }]),
+  ...(DEMO || !(PREVIEW || STORE_ON) ? [] : [{ n: 8, name: msg('The Watchhouse'), city: 'Precinct 404', levels: PRECINCT, plus: false, pack: 'precinct404' as const }]),
 ];
 
 export function towerOf(n: number): Tower {

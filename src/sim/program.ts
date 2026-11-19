@@ -1,5 +1,5 @@
-import { ACTIONS, BY_TALLY, FUNCTION_NAMES, SENSORS } from './types';
-import type { Action, Block, Colour, Condition, FunctionName, PaletteCommand, Program, Routine, Sensor } from './types';
+import { ACTIONS, BY_TALLY, FUNCTION_NAMES, PARTNER_NAMES, PARTNER_ROUTINE, SENSORS } from './types';
+import type { Action, Block, Colour, Condition, FunctionName, PaletteCommand, PartnerName, Program, Routine, Sensor } from './types';
 
 let counter = 0;
 /** Block ids only need to be unique within a session's program. */
@@ -51,6 +51,8 @@ export function countCommands(p: Program): number {
  * Conditions: "while not wall_ahead { forward }", "if tile_is r { turn_left } else { forward }".
  * Dockyard's tally: "tally_up repeat tally { forward }".
  * Fractal's recursion: "F1(3) def F1 { forward F1 }" (a call from main carries its depth).
+ * Precinct 404's partner: main is LoopBot's program, and "def DASH { wait forward radio }" (or
+ * "def LEDGER { ... }") is the partner's, kept in the PARTNER_ROUTINE (CR-PARTNER).
  */
 export function parseReference(ref: string): Program {
   const words = ref.replace(/[{}]/g, ' $& ').trim().split(/\s+/).filter(Boolean);
@@ -110,7 +112,8 @@ export function parseReference(ref: string): Program {
   p.main = list();
   // Function bodies follow main: "F1 F1 def F1 { forward jump }"
   while (words[i] === 'def') {
-    const name = words[i + 1] as FunctionName;
+    const word = words[i + 1];
+    const name = ((PARTNER_NAMES as readonly string[]).includes(word) ? PARTNER_ROUTINE : word) as FunctionName;
     if (!(FUNCTION_NAMES as readonly string[]).includes(name) || words[i + 2] !== '{') throw new Error(`bad def in reference: ${ref}`);
     i += 3;
     p[name] = list();
@@ -129,6 +132,7 @@ function condText(c: Condition): string {
 export function actionCode(a: Action): string {
   if (a === 'tally_up') return 'tally += 1';
   if (a === 'tally_down') return 'tally -= 1';
+  if (a === 'listen') return 'wait_for_radio()';
   return `${a}()`;
 }
 
@@ -184,13 +188,15 @@ function blocksToLines(blocks: Block[], indent: number, out: CodeLine[], ctx: { 
  * ED-9: the read-only Python-like code view. Functions are shown only when used or non-empty.
  * On a recursion floor (CR-RECUR) each function takes its depth n and starts with its base case.
  */
-export function toCode(p: Program, routines: Routine[] = ['main', ...FUNCTION_NAMES], recursion = false): CodeLine[] {
+export function toCode(p: Program, routines: Routine[] = ['main', ...FUNCTION_NAMES], recursion = false, partner: PartnerName | null = null): CodeLine[] {
   const out: CodeLine[] = [];
   for (const r of routines) {
-    if (r !== 'main' && p[r].length === 0) continue;
+    // Precinct 404 (CR-PARTNER): the partner's program always shows, under the partner's name
+    const own = !!partner && r === PARTNER_ROUTINE;
+    if (r !== 'main' && !own && p[r].length === 0) continue;
     if (out.length) out.push({ text: '', blockId: null });
     const fn = recursion && r !== 'main';
-    out.push({ text: `def ${r}(${fn ? 'n' : ''}):`, blockId: null });
+    out.push({ text: `def ${own ? partner.toLowerCase() : r}(${fn ? 'n' : ''}):`, blockId: null });
     if (fn) out.push({ text: '    if n == 0: return', blockId: null });
     blocksToLines(p[r], 1, out, { main: r === 'main', recursion });
   }

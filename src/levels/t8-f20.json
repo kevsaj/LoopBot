@@ -1,0 +1,111 @@
+{
+  "id": "t8-f20",
+  "title": "The Locker",
+  "band": "evidence",
+  "size": {
+    "w": 7,
+    "h": 3
+  },
+  "tiles": [
+    "s.ds.de",
+    "_______",
+    ".dsdse_"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait",
+    "radio",
+    "listen",
+    "repeat"
+  ],
+  "slots": {
+    "main": 9,
+    "F3": 9
+  },
+  "par": {
+    "commands": 14,
+    "steps": 10
+  },
+  "reference": "repeat 2 { activate radio forward listen forward forward } def DASH { repeat 2 { listen forward forward activate radio } forward }",
+  "hints": [
+    "Four doors, and every switch opens a door on the other side. Call, wait, go. Twice.",
+    "LoopBot: repeat 2 activate, radio, forward, wait for radio, forward, forward. DASH: repeat 2 wait for radio, forward, forward, activate, radio; then forward.",
+    "repeat 2 { activate radio forward listen forward forward } def DASH { repeat 2 { listen forward forward activate radio } forward }"
+  ],
+  "story": {
+    "intro": "BULWARK: \"The locker doors. Last stop before the briefing room. Talk to each other, little buddies. Out loud. On the radio.\"",
+    "outro": "ROOK: \"Fine. You can work together.\" DASH: \"Was that a compliment? ROOK, was that a compliment?\" ROOK: \"No.\""
+  },
+  "links": [
+    {
+      "switch": {
+        "x": 0,
+        "y": 0
+      },
+      "doors": [
+        {
+          "x": 1,
+          "y": 2
+        }
+      ]
+    },
+    {
+      "switch": {
+        "x": 3,
+        "y": 0
+      },
+      "doors": [
+        {
+          "x": 3,
+          "y": 2
+        }
+      ]
+    },
+    {
+      "switch": {
+        "x": 2,
+        "y": 2
+      },
+      "doors": [
+        {
+          "x": 2,
+          "y": 0
+        }
+      ]
+    },
+    {
+      "switch": {
+        "x": 4,
+        "y": 2
+      },
+      "doors": [
+        {
+          "x": 5,
+          "y": 0
+        }
+      ]
+    }
+  ],
+  "partner": {
+    "x": 0,
+    "y": 2,
+    "facing": "east"
+  }
+}

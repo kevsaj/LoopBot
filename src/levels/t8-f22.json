@@ -1,0 +1,102 @@
+{
+  "id": "t8-f22",
+  "title": "Bug Hunt: Too Soon",
+  "band": "briefing",
+  "size": {
+    "w": 8,
+    "h": 3
+  },
+  "tiles": [
+    ".s.s.s.e",
+    "________",
+    ".d.d.d.e"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait",
+    "radio",
+    "listen",
+    "repeat",
+    "F1"
+  ],
+  "slots": {
+    "main": 6,
+    "F1": 5,
+    "F3": 7
+  },
+  "par": {
+    "commands": 13,
+    "steps": 10
+  },
+  "reference": "F1 F1 F1 forward def DASH { repeat 3 { listen forward forward } forward } def F1 { forward activate radio forward }",
+  "hints": [
+    "Run it and watch DASH at the first door. Did the call come before the door opened?",
+    "In F1, the radio comes before activate. Swap them.",
+    "F1 F1 F1 forward def DASH { repeat 3 { listen forward forward } forward } def F1 { forward activate radio forward }"
+  ],
+  "story": {
+    "intro": "LEDGER: \"VANTA has been editing our routines. Find the faulty block. I expect a report in triplicate.\"",
+    "outro": null
+  },
+  "links": [
+    {
+      "switch": {
+        "x": 1,
+        "y": 0
+      },
+      "doors": [
+        {
+          "x": 1,
+          "y": 2
+        }
+      ]
+    },
+    {
+      "switch": {
+        "x": 3,
+        "y": 0
+      },
+      "doors": [
+        {
+          "x": 3,
+          "y": 2
+        }
+      ]
+    },
+    {
+      "switch": {
+        "x": 5,
+        "y": 0
+      },
+      "doors": [
+        {
+          "x": 5,
+          "y": 2
+        }
+      ]
+    }
+  ],
+  "starter": "F1 F1 F1 forward def DASH { repeat 3 { listen forward forward } forward } def F1 { forward radio activate forward }",
+  "partner": {
+    "x": 0,
+    "y": 2,
+    "facing": "east"
+  }
+}

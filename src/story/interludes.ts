@@ -4,7 +4,8 @@
 
 import { msg } from '../i18n';
 
-export type Speaker = 'PATCH' | 'VANTA';
+/** PATCH and VANTA, plus the Precinct 404 squad: DASH, BULWARK, LEDGER and ROOK. */
+export type Speaker = 'PATCH' | 'VANTA' | 'DASH' | 'BULWARK' | 'LEDGER' | 'ROOK';
 
 export interface RadioLine {
   who: Speaker;
@@ -39,6 +40,11 @@ export type Interlude = Radio | Ending;
 
 const P = (text: string): RadioLine => ({ who: 'PATCH', text });
 const V = (text: string): RadioLine => ({ who: 'VANTA', text });
+// The Precinct 404 squad (Tower 8)
+const D = (text: string): RadioLine => ({ who: 'DASH', text });
+const B = (text: string): RadioLine => ({ who: 'BULWARK', text });
+const L = (text: string): RadioLine => ({ who: 'LEDGER', text });
+const R = (text: string): RadioLine => ({ who: 'ROOK', text });
 
 export const INTERLUDES: Record<number, Interlude> = {
   10: {
@@ -458,7 +464,77 @@ export const FRACTAL_INTERLUDES: Record<number, Interlude> = {
   },
 };
 
-const TOWER_INTERLUDES: Record<number, Record<number, Interlude>> = { 1: INTERLUDES, 2: FROSTLINE_INTERLUDES, 3: HEATWAVE_INTERLUDES, 4: TWIST_INTERLUDES, 5: DOCKYARD_INTERLUDES, 6: TWINSPIRES_INTERLUDES, 7: FRACTAL_INTERLUDES };
+/**
+ * Tower 8, the Watchhouse in Precinct 404: the precinct the maps forgot, on Heist Night, the one
+ * night a year the squad tries to steal its own Golden Badge. VANTA picks the same night for a real
+ * heist. The squad is original: DASH, BULWARK, ROOK and Captain LEDGER.
+ */
+export const PRECINCT_INTERLUDES: Record<number, Interlude> = {
+  10: {
+    kind: 'radio',
+    id: 't8-after-10',
+    heading: msg('Next: the Evidence Locker'),
+    lines: [
+      P(msg("LoopBot, PATCH here. Tonight is Heist Night at Precinct 404, the one night a year the squad plays at robbery.")),
+      P(msg('Whoever steals the Golden Badge trophy before midnight wins. Bragging rights only.')),
+      D(msg('I have never won. Not once in nine years. This is my year, partner. I can feel it in my treads.')),
+      V(msg('A whole police tower playing at robbery. How thoughtful. Nobody will notice a real one.')),
+      B(msg('Did anybody else hear that? The Evidence Locker just locked itself. Radios on, little buddies.')),
+    ],
+  },
+  20: {
+    kind: 'radio',
+    id: 't8-after-20',
+    heading: msg('Next: the Briefing Room'),
+    lines: [
+      R(msg('Locker is clear. Somebody went through the case files. Every file from every tower you have climbed.')),
+      P(msg("That's all the evidence against VANTA. Seven towers of it.")),
+      L(msg('Briefing room. Now. Bring the new partner. And DASH, leave the sunglasses.')),
+      D(msg('These are tactical sunglasses, Captain.')),
+      L(msg('It is night time, DASH. Indoors.')),
+    ],
+  },
+  30: {
+    kind: 'radio',
+    id: 't8-after-30',
+    heading: msg('Next: the Holding Cells'),
+    lines: [
+      L(msg('VANTA has locked BULWARK and half the squad in the holding cells. Only ROOK got out.')),
+      R(msg('I always get out.')),
+      P(msg('The cell block has sensors on every door. From here on, each bot can ask what is in front of it.')),
+      V(msg('Tick tock, detectives. At midnight the vault opens, and I will be standing in it.')),
+      D(msg('Not if partners have anything to say about it. Do we? We do. Right, partner? Say ten-four.')),
+    ],
+  },
+  40: {
+    kind: 'radio',
+    id: 't8-after-40',
+    heading: msg('Next: the Watchtower'),
+    lines: [
+      B(msg('We are out! Group hug! Everybody in! ROOK, you are part of everybody.')),
+      R(msg('I am not.')),
+      L(msg('VANTA is heading for the roof. I will partner LoopBot myself. DASH, guard the squad.')),
+      D(msg("Captain, you can't go up there alone!")),
+      L(msg('I am not alone, DASH. I have a partner. And a clipboard.')),
+      P(msg('Typing is back on up top. Write both programs like a pro.')),
+    ],
+  },
+  50: {
+    kind: 'ending',
+    id: 't8-ending',
+    panels: [
+      { scene: 'lights', text: msg('Midnight. The searchlight sweeps the city in red and blue, and every floor of the Watchhouse lights up.') },
+      { scene: 'escape', who: 'VANTA', text: msg('The vault is empty! Just a note: "Nice try. Love, the squad." Fine. I know somewhere older than you.') },
+      { scene: 'elevator', who: 'LEDGER', text: msg('For the record, I let VANTA in. It robbed a decoy vault. The real files never left my desk. Labelled.') },
+      { scene: 'meet', who: 'DASH', text: msg('Heist Night winners: LoopBot and DASH! Nobody wins it alone. I am not crying. BULWARK is crying.') },
+      { scene: 'meet', who: 'PATCH', text: msg('Two programs, each with its own job, talking at just the right moment. That is how code works together.') },
+      { scene: 'next', text: msg("Tower 8 cleared. VANTA is heading for the Builders' ziggurat.") },
+    ],
+    next: 'OVERFLOW',
+  },
+};
+
+const TOWER_INTERLUDES: Record<number, Record<number, Interlude>> = { 1: INTERLUDES, 2: FROSTLINE_INTERLUDES, 3: HEATWAVE_INTERLUDES, 4: TWIST_INTERLUDES, 5: DOCKYARD_INTERLUDES, 6: TWINSPIRES_INTERLUDES, 7: FRACTAL_INTERLUDES, 8: PRECINCT_INTERLUDES };
 
 const KEY = 'loopbot.interludes';
 

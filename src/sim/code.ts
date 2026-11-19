@@ -15,7 +15,7 @@
 //       else:
 //           pass
 
-import { ACTIONS, BY_TALLY, FUNCTION_NAMES, MAX_CALL_DEPTH, MIN_CALL_DEPTH, SENSORS } from './types';
+import { ACTIONS, BY_TALLY, FUNCTION_NAMES, MAX_CALL_DEPTH, MIN_CALL_DEPTH, PARTNER_ROUTINE, SENSORS } from './types';
 import type { Action, Block, Colour, Condition, FunctionName, LevelFile, Program, Routine, Sensor } from './types';
 import { countBlocks, emptyProgram, loopHeight, MAX_DEPTH, MAX_TIMES, MIN_TIMES, newId } from './program';
 import { t } from '../i18n';
@@ -161,7 +161,11 @@ function parse(text: string, level?: LevelFile): Program {
         throw new CodeError(l.no, t('else needs an if just above it'));
       } else if ((m = l.text.match(/^([A-Za-z_]\w*)\s*(\(\s*\))?$/))) {
         const name = m[1];
-        if ((ACTIONS as readonly string[]).includes(name) && !name.startsWith('tally_')) {
+        if (name === 'wait_for_radio') {
+          // Precinct 404 (CR-RADIO): the code view's name for the listen block
+          need('listen', l.no);
+          out.push({ id: newId(), kind: 'action', action: 'listen' });
+        } else if ((ACTIONS as readonly string[]).includes(name) && !name.startsWith('tally_') && name !== 'listen') {
           need(name, l.no);
           out.push({ id: newId(), kind: 'action', action: name as Action });
         } else if ((FUNCTION_NAMES as readonly string[]).includes(name)) {
@@ -186,9 +190,14 @@ function parse(text: string, level?: LevelFile): Program {
     const l = lines[i++];
     const m = l.text.match(/^def\s+(\w+)\s*\(\s*(n)?\s*\)\s*:$/);
     if (!m) throw new CodeError(l.no, t('can\'t read "{code}"', { code: l.text }));
-    const name = m[1] as Routine;
+    // Precinct 404 (CR-PARTNER): the partner's program is written under its own name, def dash():
+    const partner = level?.partner ? (level.partner.who ?? 'DASH').toLowerCase() : null;
+    if (partner && m[1] === PARTNER_ROUTINE) throw new CodeError(l.no, t('{name} is the partner\'s program here: def {partner}():', { name: m[1], partner }));
+    const name = (partner && m[1] === partner ? PARTNER_ROUTINE : m[1]) as Routine;
     if (m[2] && (!recursion || name === 'main')) throw new CodeError(l.no, t('can\'t read "{code}"', { code: l.text }));
-    if (name !== 'main' && !(FUNCTION_NAMES as readonly string[]).includes(name)) throw new CodeError(l.no, t('routines are main, F1, F2 and F3, not {name}', { name }));
+    if (name !== 'main' && !(FUNCTION_NAMES as readonly string[]).includes(name)) {
+      throw new CodeError(l.no, partner ? t('routines are main, {partner}, F1 and F2, not {name}', { name, partner }) : t('routines are main, F1, F2 and F3, not {name}', { name }));
+    }
     if (slots(name) === 0) throw new CodeError(l.no, t('{name} isn\'t unlocked on this floor', { name }));
     if (seen.has(name)) throw new CodeError(l.no, t('{name} is defined twice', { name }));
     seen.add(name);
@@ -199,12 +208,13 @@ function parse(text: string, level?: LevelFile): Program {
   // The same limits the block editor keeps.
   for (const r of ['main', ...FUNCTION_NAMES] as Routine[]) {
     const n = countBlocks(p[r]);
-    if (n > slots(r)) throw new CodeError(lineOf(lines, r), t('{name} has {n} commands but only {slots} slots', { name: r, n, slots: slots(r) }));
+    const shown = level?.partner && r === PARTNER_ROUTINE ? (level.partner.who ?? 'DASH').toLowerCase() : r;
+    if (n > slots(r)) throw new CodeError(lineOf(lines, shown), t('{name} has {n} commands but only {slots} slots', { name: shown, n, slots: slots(r) }));
     if (p[r].some((b) => loopHeight(b) > MAX_DEPTH)) throw new CodeError(lineOf(lines, r), t('blocks nest at most {n} deep', { n: MAX_DEPTH }));
   }
   return p;
 }
 
-function lineOf(lines: Line[], r: Routine): number {
+function lineOf(lines: Line[], r: string): number {
   return lines.find((l) => l.text.startsWith(`def ${r}`))?.no ?? lines[0]?.no ?? 1;
 }

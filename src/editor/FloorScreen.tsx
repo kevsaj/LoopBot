@@ -1,8 +1,8 @@
 // The floor screen: board on top, program below (see "Floor screen sketch" in the doc).
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { Condition, LevelFile, PaletteCommand, Routine, World } from '../sim/types';
-import { FUNCTION_NAMES } from '../sim/types';
+import type { Condition, LevelFile, PaletteCommand, PartnerName, Routine, World } from '../sim/types';
+import { FUNCTION_NAMES, PARTNER_ROUTINE } from '../sim/types';
 import { Runner } from '../sim/interpreter';
 import type { Outcome } from '../sim/interpreter';
 import { createWorld } from '../sim/world';
@@ -27,7 +27,7 @@ import { recordClear, recordFail } from '../progress';
 import { maybeAskForReview } from '../review';
 import { HintSheet } from './HintSheet';
 import { ResultsCard } from './ResultsCard';
-import { cancellingTurns, spinNote, stepLine, twinNote, tutorialStep, TUTORIAL_TEXT } from './tutorial';
+import { cancellingTurns, partnerLine, spinNote, stepLine, twinNote, tutorialStep, TUTORIAL_TEXT } from './tutorial';
 import { track } from '../telemetry';
 import { FeedbackSheet } from '../FeedbackSheet';
 import { DIFFICULTY_LABEL, difficultyOn, shareText, shortDate } from '../daily';
@@ -99,12 +99,21 @@ function runError(error: string): string {
 
 /** Twin Spires: an error that happened to Echo starts "Echo:" (CR-TWIN), and both parts translate. */
 const ECHO_PREFIX = msg('Echo:');
+/** Precinct 404: an error that happened to the partner starts with its name, "DASH:" (CR-PARTNER). */
+const PARTNER_PREFIX = /^(DASH|LEDGER): /;
 function echoError(error: string): string {
+  const partner = PARTNER_PREFIX.exec(error);
+  if (partner) return `${partner[1]}: ${t(error.slice(partner[0].length))}`;
   return error.startsWith(`${ECHO_PREFIX} `) ? `${t(ECHO_PREFIX)} ${t(error.slice(ECHO_PREFIX.length + 1))}` : t(error);
 }
 
-/** A routine's tab name: Main, F1, F2, F3. */
-export function routineName(r: Routine): string {
+/**
+ * A routine's tab name: Main, F1, F2, F3. On a Precinct 404 partner floor (CR-PARTNER), Main is
+ * LoopBot's program and the partner's program is shown under the partner's name.
+ */
+export function routineName(r: Routine, partner: PartnerName | null = null): string {
+  if (partner && r === 'main') return 'LoopBot';
+  if (partner && r === PARTNER_ROUTINE) return partner;
   return r === 'main' ? t('Main') : r;
 }
 
@@ -127,10 +136,13 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
     }
     return out;
   }, [level]);
+  // Precinct 404 (CR-PARTNER): the partner's program sits next to LoopBot's, before the functions
+  const partner: PartnerName | null = level.partner ? (level.partner.who ?? 'DASH') : null;
   const routines = useMemo(
-    () => (['main', ...FUNCTION_NAMES] as Routine[]).filter((r) => (level.slots[r] ?? 0) > 0),
+    () => ((level.partner ? ['main', PARTNER_ROUTINE, 'F1', 'F2'] : ['main', ...FUNCTION_NAMES]) as Routine[]).filter((r) => (level.slots[r] ?? 0) > 0),
     [level],
   );
+  const nameOf = (r: Routine) => routineName(r, partner);
   // The program tab being edited, and whether the read-only code view is showing over it.
   const [routine, setRoutine] = useState<Routine>('main');
   const [showCode, setShowCode] = useState(false);
@@ -233,11 +245,13 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
     const world: World = r.snapshot();
     setSteps(r.steps);
     if (ev) {
-      setActiveIds(new Set([ev.blockId, ...ev.callStack]));
+      // Precinct 404: light up what both bots are running
+      setActiveIds(new Set([ev.blockId, ...ev.callStack, ...(world.partner && ev.twin ? [ev.twin.blockId, ...ev.twin.callStack] : [])]));
       if (ev.ok) fx.step(ev.action);
       // Say what each step did. Turns get spelled out: they spin LoopBot without moving it,
       // which new players often miss when they only watch the board.
-      if (ev.ok && ev.action) {
+      if (world.partner) setTerminal(partnerLine(ev, world));
+      else if (ev.ok && ev.action) {
         const spun = spinNote(ev.action, world);
         const line = spun ? `${stepLine(ev.action)} · ${spun}` : stepLine(ev.action);
         // Twin Spires: say when a bot parks, and whose step it was once LoopBot has parked
@@ -258,7 +272,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
         ? {
             action: ev?.who === 'twin' ? undefined : ev?.action,
             twinAction: ev?.who === 'twin' ? ev.action : ev?.twin?.action,
-            crashWho: o?.status === 'crashed' && o.error.startsWith(`${ECHO_PREFIX} `) ? ('twin' as const) : ('bot' as const),
+            crashWho: o?.status === 'crashed' && (o.error.startsWith(`${ECHO_PREFIX} `) || PARTNER_PREFIX.test(o.error)) ? ('twin' as const) : ('bot' as const),
           }
         : {}),
     });
@@ -378,7 +392,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
     }
     if (full) {
       fx.denied();
-      setTerminal(t('> no empty slots left in {routine}', { routine: routineName(routine) }));
+      setTerminal(t('> no empty slots left in {routine}', { routine: nameOf(routine) }));
       return false;
     }
     if (!canPlace(list, spot, makeBlock(cmd))) {
@@ -402,7 +416,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
   };
   // Screen readers: say what went in, and how full the program is now.
   const sayAdded = (cmd: PaletteCommand) =>
-    announce(t('{command} added. {used} of {slots} used in {routine}.', { command: t(COMMAND_META[cmd].label), used: countBlocks(list) + 1, slots: limit, routine: routineName(routine) }));
+    announce(t('{command} added. {used} of {slots} used in {routine}.', { command: t(COMMAND_META[cmd].label), used: countBlocks(list) + 1, slots: limit, routine: nameOf(routine) }));
   // Dragged in from the palette: lands where it was dropped.
   const drop = (cmd: PaletteCommand, spot: Spot) => {
     editor.place(routine, spot, makeBlock(cmd));
@@ -427,7 +441,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
     // The slots may have filled up since, or the loop it sat in may be gone.
     if (countBlocks(target) + countBlocks([deleted.block]) > (level.slots[deleted.r] ?? 0)) {
       fx.denied();
-      setTerminal(t('> no room to put it back in {routine}', { routine: routineName(deleted.r) }));
+      setTerminal(t('> no room to put it back in {routine}', { routine: nameOf(deleted.r) }));
       return;
     }
     const spot = listAt(target, deleted.spot.parent) ? deleted.spot : { parent: null, index: target.length };
@@ -501,7 +515,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
     ...PALETTE_ORDER,
     ...EXTRA_ORDER.filter((c) => level.commands.includes(c)),
     ...CONTROL_ORDER.filter((c) => level.commands.includes(c)),
-    ...FUNCTION_NAMES.filter((f) => (level.slots[f] ?? 0) > 0),
+    ...FUNCTION_NAMES.filter((f) => (level.slots[f] ?? 0) > 0 && !(partner && f === PARTNER_ROUTINE)),
   ];
   undoRef.current.run = run;
   undoRef.current.step = step;
@@ -617,7 +631,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
           <div className="tab-list" role="tablist" aria-label={t('Program')}>
           {routines.map((r) => (
             <button key={r} type="button" role="tab" aria-selected={tab === r} className={`tab${tab === r ? ' on' : ''}`} onClick={() => (fx.tap(), setShowCode(false), setTyping(0), setRoutine(r))}>
-              {routineName(r)}
+              {nameOf(r)}
             </button>
           ))}
           </div>
@@ -657,7 +671,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
             />
           ) : tab === 'code' ? (
             <>
-              <CodeView program={program} routines={routines} activeIds={activeIds} crashId={crashId} recursion={!!level.recursion} />
+              <CodeView program={program} routines={routines} activeIds={activeIds} crashId={crashId} recursion={!!level.recursion} partner={partner} />
               {level.typing && (
                 <button type="button" className="pill type-btn" onClick={() => (fx.tap(), reset(true), setTyping((n) => n + 1))}>
                   ✎ {t('Type code')}
@@ -776,7 +790,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
                     stars: earned,
                     band: level.band,
                     board: await snapshotBoard(),
-                    code: daily ? undefined : toCode(program, routines, !!level.recursion),
+                    code: daily ? undefined : toCode(program, routines, !!level.recursion, partner),
                     daily: daily && { streak: daily.streak },
                     commands: total,
                     steps: outcome.steps,

@@ -71,6 +71,12 @@ const SKIES: Record<string, string[]> = {
   cloister: ['#241830', '#4a3460', '#b48aa8', '#f2d8c8'],
   nautilus: ['#071a22', '#12384a', '#2a6a78', '#5a9a9a'],
   canopy: ['#1c1030', '#4a2a5a', '#c8604a', '#ffb46a'],
+  // Tower 8, Precinct 404
+  frontdesk: ['#141c2e', '#26365a', '#4a6a9a', '#d8e2f0'],
+  evidence: ['#14181c', '#2a3238', '#5a6a6e', '#e2c46a'],
+  briefing: ['#1a1410', '#3a2c20', '#7a5a3a', '#f0dcb0'],
+  cells: ['#0c1014', '#1c2630', '#3a4c5a', '#8ab0c8'],
+  watchtower: ['#060a1a', '#101c3e', '#2a3a7a', '#ff5a5a'],
 };
 
 /** How many code lines fit; longer programs end with "…". */

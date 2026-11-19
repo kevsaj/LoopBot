@@ -3,7 +3,7 @@
 import type { LevelFile } from '../sim/types';
 import { SENSORS } from '../sim/types';
 import { MAX_DEPTH, MAX_TIMES, MIN_TIMES, countBlocks, loopHeight, parseReference } from '../sim/program';
-import { FUNCTION_NAMES } from '../sim/types';
+import { FUNCTION_NAMES, PARTNER_NAMES } from '../sim/types';
 
 const TILE_CHARS = new Set(['.', '#', '_', 's', 'd', 'e', 'r', 'g', 'b', 'y', 'i', 't', 'v', 'w', 'x', 'z', 'c', 'a', 'm']);
 /** Heatwave vent tiles and the phase each one blasts on (CR-VENT). */
@@ -42,6 +42,21 @@ export function validateLevel(l: LevelFile, opts: { custom?: boolean } = {}): st
     if (l.tiles.some((r) => /[vwxz]/.test(r))) e('vents run on one clock per bot, so a floor with a twin has none');
     if (l.tiles[l.bot.y]?.[l.bot.x] === 'e' || l.tiles[l.twin.y]?.[l.twin.x] === 'e') e('neither bot may start parked on an exit');
   }
+  if (l.partner) {
+    // Precinct 404 (CR-PARTNER): the partner needs its own tile, its own exit and its own program
+    const p = l.partner;
+    if (l.twin) e('a floor has a twin or a partner, not both');
+    if (!FACINGS.includes(p.facing)) e('partner.facing must be north, east, south or west');
+    if (p.who !== undefined && !PARTNER_NAMES.includes(p.who)) e(`partner.who must be one of ${PARTNER_NAMES.join(', ')}`);
+    if (!walkable(p.x, p.y)) e('partner must start on a walkable tile');
+    if (p.x === l.bot.x && p.y === l.bot.y) e('partner and bot must start on different tiles');
+    if (l.goals.includes('bot_on_exit') && l.tiles.join('').split('e').length - 1 < 2) e('bot_on_exit with a partner needs two exit tiles');
+    if (l.tiles.some((r) => /[vwxz]/.test(r))) e('a floor with a partner has no vents');
+    if (l.tiles[l.bot.y]?.[l.bot.x] === 'e' || l.tiles[p.y]?.[p.x] === 'e') e('neither bot may start parked on an exit');
+    if (!l.slots.F3) e("slots.F3 holds the partner's program and is required");
+    if (l.commands.includes('F3')) e("F3 is the partner's program on a partner floor, not a command");
+    if (l.recursion) e('a partner floor has no recursion');
+  } else if (l.commands.includes('radio') || l.commands.includes('listen')) e('radio and wait for radio need a partner');
   const cycle = l.ventCycle ?? 2;
   if (l.ventCycle !== undefined && (!Number.isInteger(cycle) || cycle < 2 || cycle > 4)) e('ventCycle must be 2, 3 or 4');
   l.tiles.forEach((row, y) => {
@@ -103,7 +118,15 @@ function checkProgram(l: LevelFile, name: string, text: string, e: (m: string) =
       if (!l.commands.includes(deep[1] as never)) e(`${name} uses '${deep[1]}', which this floor does not allow`);
       continue;
     }
-    if (/^\d+$/.test(word) || word === 'def' || word === 'not' || word === 'else') continue; // a count, a function body, or part of a condition
+    if (word === 'def') {
+      // Precinct 404 (CR-PARTNER): "def DASH { ... }" is the partner's program
+      const fn = words[++i];
+      if ((PARTNER_NAMES as readonly string[]).includes(fn)) {
+        if (!l.partner || (l.partner.who ?? 'DASH') !== fn) e(`${name} defines ${fn}, who is not this floor's partner`);
+      } else if (!l.commands.includes(fn as never)) e(`${name} defines '${fn}', which this floor does not allow`);
+      continue;
+    }
+    if (/^\d+$/.test(word) || word === 'not' || word === 'else') continue; // a count, or part of a condition
     if (word === 'if' || word === 'while') {
       if (!l.commands.includes(word)) e(`${name} uses '${word}', which this floor does not allow`);
       const sensor = words[i + 1] === 'not' ? words[(i += 2)] : words[(i += 1)];

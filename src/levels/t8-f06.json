@@ -1,0 +1,70 @@
+{
+  "id": "t8-f06",
+  "title": "Pass the Evidence",
+  "band": "frontdesk",
+  "size": {
+    "w": 3,
+    "h": 3
+  },
+  "tiles": [
+    ".._",
+    ".__",
+    ".._"
+  ],
+  "heights": null,
+  "boxes": [
+    {
+      "x": 1,
+      "y": 0,
+      "count": 1
+    }
+  ],
+  "targets": [
+    {
+      "x": 1,
+      "y": 2,
+      "count": 1
+    }
+  ],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "all_targets_filled"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait"
+  ],
+  "slots": {
+    "main": 5,
+    "F3": 7
+  },
+  "par": {
+    "commands": 8,
+    "steps": 5
+  },
+  "reference": "pick_up turn_right drop def DASH { wait wait pick_up turn_right drop }",
+  "hints": [
+    "LoopBot can reach the crate. DASH can reach the evidence spot. Meet in the middle.",
+    "LoopBot lifts the crate and sets it down on the tile between you. DASH waits for it, lifts it and drops it on the spot.",
+    "pick_up turn_right drop def DASH { wait wait pick_up turn_right drop }"
+  ],
+  "story": {
+    "intro": "BULWARK: \"That crate is evidence. Hand it over gently, like a baby bird. A heavy, square baby bird.\"",
+    "outro": null
+  },
+  "partner": {
+    "x": 0,
+    "y": 2,
+    "facing": "north"
+  }
+}

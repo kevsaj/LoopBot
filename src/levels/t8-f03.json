@@ -1,0 +1,57 @@
+{
+  "id": "t8-f03",
+  "title": "Corner Desk",
+  "band": "frontdesk",
+  "size": {
+    "w": 5,
+    "h": 3
+  },
+  "tiles": [
+    ".___.",
+    ".___.",
+    "..ee."
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "south"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate"
+  ],
+  "slots": {
+    "main": 7,
+    "F3": 6
+  },
+  "par": {
+    "commands": 9,
+    "steps": 5
+  },
+  "reference": "forward forward turn_left forward forward def DASH { forward forward turn_right forward }",
+  "hints": [
+    "Both bots go down, then turn toward each other.",
+    "LoopBot turns left at the bottom. DASH, facing the other way, turns right.",
+    "forward forward turn_left forward forward def DASH { forward forward turn_right forward }"
+  ],
+  "story": {
+    "intro": "DASH: \"Mirror moves. Very cool. Very partner. Left for you, right for me.\"",
+    "outro": null
+  },
+  "partner": {
+    "x": 4,
+    "y": 0,
+    "facing": "south"
+  }
+}

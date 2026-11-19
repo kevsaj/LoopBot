@@ -1,0 +1,74 @@
+{
+  "id": "t8-f11",
+  "title": "Radio Check",
+  "band": "evidence",
+  "size": {
+    "w": 6,
+    "h": 3
+  },
+  "tiles": [
+    "....se",
+    "______",
+    "..d.e_"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait",
+    "radio",
+    "listen"
+  ],
+  "slots": {
+    "main": 9,
+    "F3": 7
+  },
+  "par": {
+    "commands": 12,
+    "steps": 7
+  },
+  "reference": "forward forward forward forward activate radio forward def DASH { forward listen forward forward forward }",
+  "hints": [
+    "Counting waits works, but it is a lot of waits. A radio call tells DASH exactly when.",
+    "LoopBot radios right after it flips the switch. DASH walks to the door, then waits for radio.",
+    "forward forward forward forward activate radio forward def DASH { forward listen forward forward forward }"
+  ],
+  "story": {
+    "intro": "DASH: \"New toys! Radio sends a call to your partner. Wait for radio holds a bot until a call comes in. Ten-four, good buddy!\"",
+    "outro": "BULWARK: \"Look at that timing! Not a single wasted wait. I might cry. I am crying.\""
+  },
+  "links": [
+    {
+      "switch": {
+        "x": 4,
+        "y": 0
+      },
+      "doors": [
+        {
+          "x": 2,
+          "y": 2
+        }
+      ]
+    }
+  ],
+  "partner": {
+    "x": 0,
+    "y": 2,
+    "facing": "east"
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "id": "t8-f01",
+  "title": "Partners",
+  "band": "frontdesk",
+  "size": {
+    "w": 4,
+    "h": 3
+  },
+  "tiles": [
+    "...e",
+    "____",
+    "...e"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate"
+  ],
+  "slots": {
+    "main": 5,
+    "F3": 5
+  },
+  "par": {
+    "commands": 6,
+    "steps": 3
+  },
+  "reference": "forward forward forward def DASH { forward forward forward }",
+  "hints": [
+    "LoopBot runs the Main tab. DASH runs the DASH tab. Each bot needs its own program.",
+    "Both exits are three tiles ahead: three forwards on each tab.",
+    "forward forward forward def DASH { forward forward forward }"
+  ],
+  "story": {
+    "intro": "DASH: \"Detective DASH, Precinct 404. You must be my new partner. Partners get two programs: you write yours, then you write mine. Tap my tab.\"",
+    "outro": "DASH: \"Two bots, two programs, perfect sync. I am already writing the movie.\""
+  },
+  "partner": {
+    "x": 0,
+    "y": 2,
+    "facing": "east"
+  }
+}

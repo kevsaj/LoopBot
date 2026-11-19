@@ -1,0 +1,86 @@
+{
+  "id": "t8-f14",
+  "title": "Ping Pong",
+  "band": "evidence",
+  "size": {
+    "w": 6,
+    "h": 3
+  },
+  "tiles": [
+    ".s.d.e",
+    "______",
+    ".d.s.e"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait",
+    "radio",
+    "listen"
+  ],
+  "slots": {
+    "main": 10,
+    "F3": 10
+  },
+  "par": {
+    "commands": 16,
+    "steps": 8
+  },
+  "reference": "forward activate radio forward listen forward forward forward def DASH { listen forward forward forward activate radio forward forward }",
+  "hints": [
+    "Each bot's switch opens the other bot's door. Take turns.",
+    "LoopBot flips its switch and radios. DASH waits, goes through, flips its own switch and radios back.",
+    "forward activate radio forward listen forward forward forward def DASH { listen forward forward forward activate radio forward forward }"
+  ],
+  "story": {
+    "intro": "DASH: \"You open my door, I open yours. That is what partners do. Also, say over when you finish talking. Over.\"",
+    "outro": null
+  },
+  "links": [
+    {
+      "switch": {
+        "x": 1,
+        "y": 0
+      },
+      "doors": [
+        {
+          "x": 1,
+          "y": 2
+        }
+      ]
+    },
+    {
+      "switch": {
+        "x": 3,
+        "y": 2
+      },
+      "doors": [
+        {
+          "x": 3,
+          "y": 0
+        }
+      ]
+    }
+  ],
+  "partner": {
+    "x": 0,
+    "y": 2,
+    "facing": "east"
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "id": "t8-f38",
+  "title": "Bug Hunt: Endless",
+  "band": "cells",
+  "size": {
+    "w": 8,
+    "h": 5
+  },
+  "tiles": [
+    "........",
+    "_______.",
+    "_______e",
+    "___.....",
+    "_______e"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait",
+    "radio",
+    "listen",
+    "repeat",
+    "F1",
+    "while",
+    "if"
+  ],
+  "slots": {
+    "main": 7,
+    "F3": 7
+  },
+  "par": {
+    "commands": 10,
+    "steps": 10
+  },
+  "reference": "while not wall_ahead { forward } turn_right while not wall_ahead { forward } def DASH { while not wall_ahead { forward } turn_right while not wall_ahead { forward } }",
+  "hints": [
+    "Run it and watch LoopBot after the turn.",
+    "The second while in Main is missing its not.",
+    "while not wall_ahead { forward } turn_right while not wall_ahead { forward } def DASH { while not wall_ahead { forward } turn_right while not wall_ahead { forward } }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "starter": "while not wall_ahead { forward } turn_right while wall_ahead { forward } def DASH { while not wall_ahead { forward } turn_right while not wall_ahead { forward } }",
+  "partner": {
+    "x": 3,
+    "y": 3,
+    "facing": "east"
+  }
+}

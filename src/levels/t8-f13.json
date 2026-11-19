@@ -1,0 +1,72 @@
+{
+  "id": "t8-f13",
+  "title": "Chain of Custody",
+  "band": "evidence",
+  "size": {
+    "w": 5,
+    "h": 3
+  },
+  "tiles": [
+    "...._",
+    "___._",
+    "....."
+  ],
+  "heights": null,
+  "boxes": [
+    {
+      "x": 1,
+      "y": 0,
+      "count": 1
+    }
+  ],
+  "targets": [
+    {
+      "x": 4,
+      "y": 2,
+      "count": 1
+    }
+  ],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "all_targets_filled"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait",
+    "radio",
+    "listen"
+  ],
+  "slots": {
+    "main": 9,
+    "F3": 10
+  },
+  "par": {
+    "commands": 15,
+    "steps": 8
+  },
+  "reference": "pick_up forward forward forward turn_right drop radio def DASH { forward forward forward turn_left listen pick_up turn_right drop }",
+  "hints": [
+    "LoopBot hands the crate over in the middle. DASH must not grab before it is there.",
+    "LoopBot carries the crate along, drops it on the middle tile and radios. DASH walks under it, waits for radio, lifts it and books it on the spot.",
+    "pick_up forward forward forward turn_right drop radio def DASH { forward forward forward turn_left listen pick_up turn_right drop }"
+  ],
+  "story": {
+    "intro": "ROOK: \"Chain of custody. One bot hands it over. The other signs for it. By radio.\"",
+    "outro": null
+  },
+  "partner": {
+    "x": 0,
+    "y": 2,
+    "facing": "east"
+  }
+}

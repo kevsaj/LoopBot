@@ -1,5 +1,5 @@
 import { FREE_ACTIONS, MAX_TALLY } from './types';
-import type { Action, Bot, Colour, Condition, Facing, LevelFile, Pos, Tile, TileType, World } from './types';
+import type { Action, Bot, Colour, Condition, Facing, LevelFile, PartnerName, Pos, Tile, TileType, World } from './types';
 import { msg } from '../i18n';
 
 const TILE_CHARS: Record<string, { type: TileType; colour?: Colour; phase?: number; spin?: 1 | -1 }> = {
@@ -83,8 +83,13 @@ export function createWorld(level: LevelFile): World {
     clock: 0,
     ventCycle: vents ? (level.ventCycle ?? DEFAULT_VENT_CYCLE) : 0,
     tally: 0,
-    bot: { x: level.bot.x, y: level.bot.y, facing: level.bot.facing, carrying: false },
-    twin: level.twin ? { x: level.twin.x, y: level.twin.y, facing: level.twin.facing, carrying: false } : null,
+    bot: { x: level.bot.x, y: level.bot.y, facing: level.bot.facing, carrying: false, ...(level.partner ? { radio: 0 } : {}) },
+    twin: level.twin
+      ? { x: level.twin.x, y: level.twin.y, facing: level.twin.facing, carrying: false }
+      : level.partner
+        ? { x: level.partner.x, y: level.partner.y, facing: level.partner.facing, carrying: false, radio: 0 }
+        : null,
+    partner: level.partner ? (level.partner.who ?? 'DASH') : null,
     // A mosaic under LoopBot's start is lit from the beginning (CR-MOSAIC)
     lit: key(level.bot.x, level.bot.y) in lit ? { ...lit, [key(level.bot.x, level.bot.y)]: true } : lit,
     goals: [...level.goals],
@@ -141,14 +146,14 @@ export function applyBoth(w: World, action: Action): ActionResult {
   }
   if (!parked(w, w.twin)) {
     const r = asTwin(w, () => applyAction(w, action));
-    if (!r.ok) return { ok: false, error: twinError(r.error) };
+    if (!r.ok) return { ok: false, error: twinError(r.error, w.partner) };
   }
   return { ok: true };
 }
 
-/** An error that happened to Echo says so (the floor screen translates both parts). */
-export function twinError(error: string): string {
-  return `${msg('Echo:')} ${error}`;
+/** An error that happened to Echo, or to a Precinct 404 partner, says so (the floor screen translates both parts). */
+export function twinError(error: string, partner: PartnerName | null = null): string {
+  return `${partner ? `${partner}:` : msg('Echo:')} ${error}`;
 }
 
 const DELTA: Record<Facing, Pos> = {
@@ -244,12 +249,28 @@ export function ventBlasting(w: World, p: Pos, clock = w.clock): boolean {
  */
 export function applyAction(w: World, action: Action): ActionResult {
   // Counting (CR-TALLY) is free: no step, so the clock doesn't tick either.
-  if (FREE_ACTIONS.has(action)) return count(w, action);
+  if (FREE_ACTIONS.has(action)) return action === 'radio' || action === 'listen' ? radio(w, action) : count(w, action);
   const res = act(w, action);
   if (!res.ok) return res;
   w.clock++;
   if (ventBlasting(w, w.bot)) return { ok: false, error: msg('ERR: scorched by a vent') };
   return res;
+}
+
+/**
+ * Radio calls (CR-RADIO): radio adds one call to the other bot's inbox; listen uses up one call
+ * from this bot's own. The interpreter only runs listen once a call is there: until then the bot
+ * waits, a step at a time. Both are instant.
+ */
+function radio(w: World, action: Action): ActionResult {
+  if (!w.partner || !w.twin) return { ok: false, error: msg('ERR: nobody to radio on this floor') };
+  if (action === 'radio') {
+    w.twin.radio = (w.twin.radio ?? 0) + 1;
+    return { ok: true };
+  }
+  if (!w.bot.radio) return { ok: false, error: msg('ERR: no radio call has come in') };
+  w.bot.radio -= 1;
+  return { ok: true };
 }
 
 /** The tally (CR-TALLY): one number, 0 to MAX_TALLY. Going past either end is an error. */
@@ -322,6 +343,9 @@ function act(w: World, action: Action): ActionResult {
     case 'tally_up':
     case 'tally_down':
       return count(w, action);
+    case 'radio':
+    case 'listen':
+      return radio(w, action);
     case 'activate': {
       const k = key(bot.x, bot.y);
       if (w.tiles[bot.y][bot.x].type !== 'switch') return { ok: false, error: msg('ERR: no switch here') };
@@ -393,7 +417,7 @@ export function goalsMet(w: World): boolean {
 export function worldKey(w: World): string {
   const b = w.bot;
   const e = w.twin;
-  return `${b.x},${b.y},${b.facing},${b.carrying ? 1 : 0}${e ? `;${e.x},${e.y},${e.facing},${e.carrying ? 1 : 0}` : ''}|${w.boxes.map((r) => r.join('')).join('/')}|${Object.values(w.switches)
+  return `${b.x},${b.y},${b.facing},${b.carrying ? 1 : 0}${b.radio ? `r${b.radio}` : ''}${e ? `;${e.x},${e.y},${e.facing},${e.carrying ? 1 : 0}${e.radio ? `r${e.radio}` : ''}` : ''}|${w.boxes.map((r) => r.join('')).join('/')}|${Object.values(w.switches)
     .map((s) => (s ? 1 : 0))
     .join('')}|${Object.values(w.doors)
     .map((s) => (s ? 1 : 0))

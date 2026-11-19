@@ -19,6 +19,7 @@ import FR_T4 from '../i18n/fr/t4.json';
 import FR_T5 from '../i18n/fr/t5.json';
 import FR_T6 from '../i18n/fr/t6.json';
 import FR_T7 from '../i18n/fr/t7.json';
+import FR_T8 from '../i18n/fr/t8.json';
 import FR_DAILY from '../i18n/fr/daily.json';
 import { frenchSpacing } from '../i18n/fr';
 
@@ -31,13 +32,13 @@ export interface FloorText {
 }
 
 /**
- * Same switches as levels/towers.ts: the city packs' words (Heatwave, Twist, Dockyard, Twin Spires, Fractal) only ship in the
+ * Same switches as levels/towers.ts: the city packs' words (Heatwave, Twist, Dockyard, Twin Spires, Fractal, Precinct 404) only ship in the
  * builds that have those towers, which are preview builds and builds with the store turned on.
  */
 const PACKS_IN_BUILD = import.meta.env.DEV || import.meta.env.VITE_PLUS_PREVIEW === '1' || import.meta.env.VITE_PLUS === '1';
 
 export const FLOOR_TEXT: Record<Exclude<Lang, 'en'>, Record<string, FloorText>> = {
-  fr: spaced({ ...FR_T1, ...FR_T2, ...(PACKS_IN_BUILD ? { ...FR_T3, ...FR_T4, ...FR_T5, ...FR_T6, ...FR_T7 } : {}) }),
+  fr: spaced({ ...FR_T1, ...FR_T2, ...(PACKS_IN_BUILD ? { ...FR_T3, ...FR_T4, ...FR_T5, ...FR_T6, ...FR_T7, ...FR_T8 } : {}) }),
 };
 
 function spaced(floors: Record<string, FloorText>): Record<string, FloorText> {

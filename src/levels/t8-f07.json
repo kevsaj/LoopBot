@@ -1,0 +1,68 @@
+{
+  "id": "t8-f07",
+  "title": "Boost",
+  "band": "frontdesk",
+  "size": {
+    "w": 5,
+    "h": 3
+  },
+  "tiles": [
+    "....e",
+    "_e.__",
+    "__.._"
+  ],
+  "heights": [
+    "00022",
+    "00000",
+    "00000"
+  ],
+  "boxes": [
+    {
+      "x": 3,
+      "y": 2,
+      "count": 1
+    }
+  ],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait"
+  ],
+  "slots": {
+    "main": 9,
+    "F3": 8
+  },
+  "par": {
+    "commands": 13,
+    "steps": 7
+  },
+  "reference": "forward wait wait wait jump jump forward def DASH { pick_up turn_left forward drop turn_left forward }",
+  "hints": [
+    "The ledge is too high to jump from the floor. A crate makes a step.",
+    "DASH lifts the crate, steps north and drops it in LoopBot's path. LoopBot waits for it, then jumps up.",
+    "forward wait wait wait jump jump forward def DASH { pick_up turn_left forward drop turn_left forward }"
+  ],
+  "story": {
+    "intro": "DASH: \"You need a boost. Lucky for you, I was born to give boosts.\"",
+    "outro": null
+  },
+  "partner": {
+    "x": 2,
+    "y": 2,
+    "facing": "east"
+  }
+}

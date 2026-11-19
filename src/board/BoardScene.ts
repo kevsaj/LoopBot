@@ -5,7 +5,7 @@
 import Phaser from 'phaser';
 import { boardColors, mixColor, tipPoints } from '../rewards/looks';
 import type { TipShape } from '../rewards/looks';
-import type { Facing, World } from '../sim/types';
+import type { Facing, PartnerName, World } from '../sim/types';
 import { ahead, isWalkable, surfaceHeight } from '../sim/world';
 import { webglRenderTargetsWork } from './webglProbe';
 import { onMotionChange, reducedMotion } from '../a11y/motion';
@@ -483,6 +483,71 @@ const BANDS: Record<string, Partial<typeof C>> = {
     edge: 0x140c18,
     void: 0x100a14,
   },
+  // Tower 8, Precinct 404 (the Watchhouse). The Front Desk: worn blue lino, painted cinderblock.
+  frontdesk: {
+    floorTop: 0xdde4ee,
+    floorL: 0xb2bccc,
+    floorR: 0x919cae,
+    floorEdge: 0xf4f8ff,
+    wallTop: 0x34507e,
+    wallL: 0x2a4266,
+    wallR: 0x203450,
+    wallCap: 0xe8c24a,
+    edge: 0x0e1422,
+    void: 0x0a101c,
+  },
+  // Evidence Locker: steel shelving, tagged crates, caution yellow.
+  evidence: {
+    floorTop: 0xd2d6d8,
+    floorL: 0xa8aeb2,
+    floorR: 0x888e94,
+    floorEdge: 0xeef0f2,
+    wallTop: 0x4a5258,
+    wallL: 0x3c4348,
+    wallR: 0x2e3438,
+    wallCap: 0xf2c230,
+    edge: 0x101214,
+    void: 0x0c0e10,
+  },
+  // Briefing Room: wood panelling and a corkboard full of red string.
+  briefing: {
+    floorTop: 0xead6b4,
+    floorL: 0xc6b08c,
+    floorR: 0xa48e6c,
+    floorEdge: 0xfff0d6,
+    wallTop: 0x6e4a2e,
+    wallL: 0x5a3c24,
+    wallR: 0x462e1c,
+    wallCap: 0xd8463a,
+    edge: 0x1a120c,
+    void: 0x140e0a,
+  },
+  // Holding Cells: cold tile and bars, one flickering light.
+  cells: {
+    floorTop: 0xc8d4dc,
+    floorL: 0x9eacb6,
+    floorR: 0x7e8c96,
+    floorEdge: 0xe6eef4,
+    wallTop: 0x2e3a46,
+    wallL: 0x24303a,
+    wallR: 0x1c262e,
+    wallCap: 0x8ab0c8,
+    edge: 0x0a0e12,
+    void: 0x080a0e,
+  },
+  // The Watchtower: the rooftop at night, the searchlight sweeping red and blue.
+  watchtower: {
+    floorTop: 0xe2e6f2,
+    floorL: 0xb4bad0,
+    floorR: 0x9298b0,
+    floorEdge: 0xfafcff,
+    wallTop: 0x1e2850,
+    wallL: 0x182040,
+    wallR: 0x121832,
+    wallCap: 0xff4a5a,
+    edge: 0x060812,
+    void: 0x04060e,
+  },
   // Summit: wind-scoured snow and dark rock, the beacon glowing gold.
   summit: {
     floorTop: 0xf3f6fa,
@@ -530,6 +595,15 @@ export interface BoardUpdate {
 
 /** Echo's paint (Twin Spires): lilac, so it never reads as LoopBot whatever look the player picks. */
 const ECHO = { body: 0xc4b2ff, l: 0x9a86e0, r: 0x7a68c0, visor: 0x2a2244, eye: 0xfff1a8 };
+
+/**
+ * Precinct 404's partners (CR-PARTNER): DASH in police blue with a gold badge, LEDGER in captain's
+ * charcoal with a red one. Each wears a peaked cap where Echo has antennae.
+ */
+const PARTNER_PAINT: Record<PartnerName, typeof ECHO & { badge: number; cap: number }> = {
+  DASH: { body: 0x4a7ae8, l: 0x3560c0, r: 0x264896, visor: 0x0e1630, eye: 0xffd24a, badge: 0xffd24a, cap: 0x1c2c58 },
+  LEDGER: { body: 0x6c7180, l: 0x565a68, r: 0x41444f, visor: 0x14151a, eye: 0xcfe6ff, badge: 0xe8464a, cap: 0x23252c },
+};
 
 /** The world seen from Echo: Echo in LoopBot's place, so the position and arrow helpers work for it. */
 function echoView(w: World): World {
@@ -1514,17 +1588,36 @@ export class BoardScene extends Phaser.Scene {
     g.clear();
     const { fx, fy } = this.screenFacing(angle);
     this.drawArrow(w, crashed, angle, this.echoArrow);
-    const body = crashed ? C.crash : ECHO.body;
-    this.prism(g, 0, -16, 12, body, ECHO.l, ECHO.r, 0.44);
-    g.fillStyle(0x9ff0ff, crashed ? 0.4 : 1);
-    g.fillCircle(5, -5, 1.6);
-    this.prism(g, 0, -30, 10, body, ECHO.l, ECHO.r, 0.36);
-    g.fillStyle(ECHO.visor, 1);
+    const paint = w.partner ? PARTNER_PAINT[w.partner] : null;
+    const P = paint ?? ECHO;
+    const body = crashed ? C.crash : P.body;
+    this.prism(g, 0, -16, 12, body, P.l, P.r, 0.44);
+    g.fillStyle(paint ? paint.badge : 0x9ff0ff, crashed ? 0.4 : 1);
+    if (paint) {
+      // a little shield badge on the chest
+      g.fillTriangle(3, -8, 7, -8, 5, -3.5);
+      g.fillRect(3, -10, 4, 2.4);
+    } else g.fillCircle(5, -5, 1.6);
+    this.prism(g, 0, -30, 10, body, P.l, P.r, 0.36);
+    g.fillStyle(P.visor, 1);
     g.fillEllipse(fx * 0.34, -27 + fy * 0.34, 13.5, 8.5);
     const ex = fx * 0.4;
     const ey = -27 + fy * 0.4;
-    g.fillStyle(crashed ? C.crash : ECHO.eye, fy < 0 ? 0.35 : 1);
+    g.fillStyle(crashed ? C.crash : P.eye, fy < 0 ? 0.35 : 1);
     g.fillEllipse(ex, ey, 6.4, 4.4);
+    if (paint) {
+      // a peaked cap: a flat crown with a brim that points the way the bot faces
+      g.fillStyle(paint.cap, 1);
+      g.fillEllipse(0, -36, 17, 7);
+      g.fillRect(-7, -41, 14, 5);
+      g.fillEllipse(0, -41, 14, 5);
+      g.fillStyle(paint.badge, 1);
+      g.fillCircle(0, -39, 1.6);
+      g.fillStyle(paint.cap, 1);
+      g.fillEllipse(fx * 0.5, -35 + fy * 0.3, 9, 3.6);
+      if (w.bot.carrying) this.crate(g, 0, -56, 0.5);
+      return;
+    }
     // two short antennae, where LoopBot has one
     g.lineStyle(1.5, ECHO.r, 1);
     g.lineBetween(-3.5, -36, -4.5, -42);

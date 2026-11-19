@@ -4,6 +4,7 @@
 import type { Action, Block, Program, World } from '../sim/types';
 import type { RunStatus, StepEvent } from '../sim/interpreter';
 import { msg, t } from '../i18n';
+import { COMMAND_META } from './commands';
 
 export type TutorialStep = 'tap' | 'run' | 'more' | 'turn' | 'spin' | 'cancel';
 
@@ -92,14 +93,38 @@ const STEP_LINE: Record<Action, string> = {
   wait: msg('> ‖ wait: stayed put for one step'),
   tally_up: msg('> + tally + 1: counted, no step taken'),
   tally_down: msg('> − tally − 1: counted, no step taken'),
+  radio: msg('> ≋ radio: sent a call, no step taken'),
+  listen: msg('> ⧗ wait for radio: a call was in, no step taken'),
 };
+
+/**
+ * Precinct 404 (CR-PARTNER): one line for a step on a partner floor, saying what each bot did:
+ * "> LoopBot ↑ forward + ≋ radio · DASH ⧗ waiting for radio". Parking at an exit is noted too.
+ */
+export function partnerLine(ev: StepEvent, w: World): string {
+  if (!w.partner || !w.twin) return stepLine(ev.action);
+  const what = (e: StepEvent | undefined): string => {
+    if (!e) return t('stays put');
+    const main = e.listening ? `⧗ ${t('waiting for radio')}` : `${COMMAND_META[e.action].glyph} ${t(COMMAND_META[e.action].label)}`;
+    const extra = (e.instant ?? []).map((a) => ` + ${COMMAND_META[a].glyph} ${t(COMMAND_META[a].label)}`).join('');
+    return main + extra;
+  };
+  const atExit = (b: { x: number; y: number }) => w.tiles[b.y][b.x].type === 'exit';
+  const botStep = ev.who === 'twin' ? undefined : ev;
+  const twinStep = ev.who === 'twin' ? ev : ev.twin;
+  const moved = (e: StepEvent | undefined) => !!e && e.ok && (e.action === 'forward' || e.action === 'jump');
+  let line = `> LoopBot ${what(botStep)} · ${w.partner} ${what(twinStep)}`;
+  if (moved(botStep) && atExit(w.bot)) line += ` · ${t('LoopBot parked at its exit')}`;
+  if (moved(twinStep) && atExit(w.twin)) line += ` · ${t('{name} parked at its exit', { name: w.partner })}`;
+  return line;
+}
 
 /**
  * Twin Spires (CR-TWIN): the words added to a step's line when a bot just parked at its lift.
  * Starts with " · " when there is something to say, so it can go straight after the step line.
  */
 export function twinNote(ev: StepEvent, w: World): string {
-  if (!w.twin) return '';
+  if (!w.twin || w.partner) return '';
   const atExit = (b: { x: number; y: number }) => w.tiles[b.y][b.x].type === 'exit';
   const moved = (e: StepEvent | undefined) => !!e && e.ok && (e.action === 'forward' || e.action === 'jump');
   const botStep = ev.who === 'twin' ? undefined : ev;

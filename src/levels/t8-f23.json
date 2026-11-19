@@ -1,0 +1,73 @@
+{
+  "id": "t8-f23",
+  "title": "Handoff Routine",
+  "band": "briefing",
+  "size": {
+    "w": 5,
+    "h": 1
+  },
+  "tiles": [
+    "....."
+  ],
+  "heights": null,
+  "boxes": [
+    {
+      "x": 0,
+      "y": 0,
+      "count": 3
+    }
+  ],
+  "targets": [
+    {
+      "x": 4,
+      "y": 0,
+      "count": 3
+    }
+  ],
+  "bot": {
+    "x": 1,
+    "y": 0,
+    "facing": "west"
+  },
+  "goals": [
+    "all_targets_filled"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait",
+    "radio",
+    "listen",
+    "repeat",
+    "F1"
+  ],
+  "slots": {
+    "main": 7,
+    "F1": 5,
+    "F3": 9
+  },
+  "par": {
+    "commands": 16,
+    "steps": 19
+  },
+  "reference": "repeat 3 { F1 radio turn_left turn_left } def DASH { repeat 2 { listen F1 turn_left turn_left } listen F1 } def F1 { pick_up turn_left turn_left drop }",
+  "hints": [
+    "Both bots pass a crate the same way: lift, turn round, set down. One routine for both.",
+    "F1: lift, turn left twice, drop. LoopBot radios after each drop; DASH waits for radio before each F1.",
+    "repeat 3 { F1 radio turn_left turn_left } def DASH { repeat 2 { listen F1 turn_left turn_left } listen F1 } def F1 { pick_up turn_left turn_left drop }"
+  ],
+  "story": {
+    "intro": "BULWARK: \"An evidence line! Lift, turn, set it down. Same moves for both of you, so write them once.\"",
+    "outro": null
+  },
+  "partner": {
+    "x": 3,
+    "y": 0,
+    "facing": "west"
+  }
+}

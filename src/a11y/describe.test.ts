@@ -7,6 +7,7 @@ import { TWIST } from '../levels/twist';
 import { DOCKYARD } from '../levels/dockyard';
 import { TWINSPIRES } from '../levels/twinspires';
 import { FRACTAL } from '../levels/fractal';
+import { PRECINCT } from '../levels/precinct';
 import { describeBoard, describeBrief, relative } from './describe';
 import { setLangForTest } from '../i18n';
 
@@ -48,7 +49,7 @@ describe('board description', () => {
   it('describes every floor in every tower without a gap, in English and French', () => {
     for (const lang of ['en', 'fr'] as const) {
       setLangForTest(lang);
-      for (const level of [...LEVELS, ...FROSTLINE, ...HEATWAVE, ...TWIST, ...DOCKYARD, ...TWINSPIRES, ...FRACTAL]) {
+      for (const level of [...LEVELS, ...FROSTLINE, ...HEATWAVE, ...TWIST, ...DOCKYARD, ...TWINSPIRES, ...FRACTAL, ...PRECINCT]) {
         const text = describeBoard(createWorld(level));
         expect(text, level.id).not.toMatch(/\{|\}|undefined|NaN/);
         expect(text.length, level.id).toBeGreaterThan(40);

@@ -1,0 +1,79 @@
+{
+  "id": "t8-f35",
+  "title": "Lookout",
+  "band": "cells",
+  "size": {
+    "w": 3,
+    "h": 3
+  },
+  "tiles": [
+    ".._",
+    ".__",
+    ".._"
+  ],
+  "heights": null,
+  "boxes": [
+    {
+      "x": 1,
+      "y": 0,
+      "count": 3
+    }
+  ],
+  "targets": [
+    {
+      "x": 1,
+      "y": 2,
+      "count": 3
+    }
+  ],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "all_targets_filled"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait",
+    "radio",
+    "listen",
+    "repeat",
+    "F1",
+    "while",
+    "if"
+  ],
+  "sensors": [
+    "box_ahead"
+  ],
+  "slots": {
+    "main": 7,
+    "F3": 9
+  },
+  "par": {
+    "commands": 12,
+    "steps": 13
+  },
+  "reference": "repeat 3 { pick_up turn_right drop turn_left } def DASH { repeat 3 { turn_left while not box_ahead { wait } pick_up turn_right drop } }",
+  "hints": [
+    "No radio this time. DASH can watch the tile in front of it instead.",
+    "DASH: repeat 3 turn left; while no box ahead, wait; lift, turn right, drop.",
+    "repeat 3 { pick_up turn_right drop turn_left } def DASH { repeat 3 { turn_left while not box_ahead { wait } pick_up turn_right drop } }"
+  ],
+  "story": {
+    "intro": "ROOK: \"Radio is noisy. A good lookout just watches. Wait until the crate is there. Then move.\"",
+    "outro": null
+  },
+  "partner": {
+    "x": 0,
+    "y": 2,
+    "facing": "east"
+  }
+}

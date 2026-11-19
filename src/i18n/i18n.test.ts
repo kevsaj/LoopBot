@@ -12,12 +12,13 @@ import { TWIST } from '../levels/twist';
 import { DOCKYARD } from '../levels/dockyard';
 import { TWINSPIRES } from '../levels/twinspires';
 import { FRACTAL } from '../levels/fractal';
+import { PRECINCT } from '../levels/precinct';
 import { INTERLUDES } from '../story/interludes';
 import bank from '../daily/bank.json';
 
 const keys = collectKeys(join(__dirname, '..'));
 const texts = [...new Set(keys.map((k) => k.text))];
-const ALL_FLOORS = [...LEVELS, ...FROSTLINE, ...HEATWAVE, ...TWIST, ...DOCKYARD, ...TWINSPIRES, ...FRACTAL];
+const ALL_FLOORS = [...LEVELS, ...FROSTLINE, ...HEATWAVE, ...TWIST, ...DOCKYARD, ...TWINSPIRES, ...FRACTAL, ...PRECINCT];
 
 afterEach(() => setLangForTest('en'));
 

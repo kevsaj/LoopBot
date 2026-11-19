@@ -126,6 +126,24 @@ function Compass({ deg }: { deg: number }) {
  */
 function TwinBadge({ world }: { world: World }) {
   const parked = (b: { x: number; y: number }) => world.tiles[b.y][b.x].type === 'exit';
+  if (world.partner && world.twin) {
+    // Precinct 404 (CR-PARTNER): each bot has its own program, and ≋ shows a radio call waiting for it
+    const name = world.partner;
+    const call = (b: { radio?: number }) => (b.radio ? <b className="board-call" aria-hidden="true">≋</b> : null);
+    return (
+      <div className="board-twins board-partners" role="img" aria-label={t('LoopBot and {name} each run their own program', { name })}>
+        <span className={parked(world.bot) ? 'parked' : ''}>
+          <i style={{ background: 'var(--bot-top, #f7f3ea)' }} />
+          LoopBot{call(world.bot)}
+        </span>
+        <span className={parked(world.twin) ? 'parked' : ''}>
+          <i style={{ background: name === 'LEDGER' ? '#6c7180' : '#4a7ae8' }} />
+          {name}
+          {call(world.twin)}
+        </span>
+      </div>
+    );
+  }
   return (
     <div className="board-twins" role="img" aria-label={t('LoopBot and Echo both run your program')}>
       <span className={parked(world.bot) ? 'parked' : ''}>

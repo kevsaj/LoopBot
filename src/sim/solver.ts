@@ -220,6 +220,9 @@ function usefulActions(level: LevelFile): Action[] {
     wait: hasVents,
     tally_up: true,
     tally_down: true,
+    // Radio calls only mean something between two programs (CR-RADIO), which this search never writes.
+    radio: false,
+    listen: false,
   };
   return ACTIONS.filter((a) => level.commands.includes(a) && can[a]);
 }

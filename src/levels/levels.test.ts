@@ -6,12 +6,13 @@ import { TWIST } from './twist';
 import { DOCKYARD } from './dockyard';
 import { TWINSPIRES } from './twinspires';
 import { FRACTAL } from './fractal';
+import { PRECINCT } from './precinct';
 import { validateLevel } from './validate';
 import { Runner } from '../sim/interpreter';
 import { countBlocks, countCommands, parseReference } from '../sim/program';
 import { shortestActionPath, shortestTwinSteps, smallestProgram } from '../sim/solver';
 
-describe.each([...LEVELS, ...FROSTLINE, ...HEATWAVE, ...TWIST, ...DOCKYARD, ...TWINSPIRES, ...FRACTAL].map((l) => [l.id, l] as const))('floor %s', (_id, level) => {
+describe.each([...LEVELS, ...FROSTLINE, ...HEATWAVE, ...TWIST, ...DOCKYARD, ...TWINSPIRES, ...FRACTAL, ...PRECINCT].map((l) => [l.id, l] as const))('floor %s', (_id, level) => {
   it('LV-1: matches the floor format', () => {
     expect(validateLevel(level)).toEqual([]);
   });
@@ -26,6 +27,13 @@ describe.each([...LEVELS, ...FROSTLINE, ...HEATWAVE, ...TWIST, ...DOCKYARD, ...T
   });
 
   it('LV-3: the step par is the true minimum', () => {
+    // Precinct 404 (CR-PARTNER): two programs, so the bots may do different things in one step.
+    // The reference's steps are the par, and no pair of action sequences may beat it.
+    if (level.partner) {
+      expect(new Runner(parseReference(level.reference), level).runToEnd().steps).toBe(level.par.steps);
+      expect(shortestTwinSteps(level)).toBe(level.par.steps);
+      return;
+    }
     // Twin Spires with if and while: each bot runs its own copy, so they can act differently in
     // one step. The par is the reference's steps, and no pair of action sequences may beat it.
     if (level.twin && (level.commands.includes('if') || level.commands.includes('while'))) {
@@ -55,6 +63,16 @@ describe.each([...LEVELS, ...FROSTLINE, ...HEATWAVE, ...TWIST, ...DOCKYARD, ...T
   const sensors = level.commands.includes('if') || level.commands.includes('while');
   const big = level.commands.includes('repeat_tally') && level.par.commands >= 9;
   const bounded = sensors || level.commands.includes('F1') || big;
+  // Precinct 404 (CR-PARTNER): two programs at once is beyond this search; the command par is the
+  // reference's count (LV-2), and the partner check below keeps each program in its own slots.
+  if (level.partner) {
+    it('LV-4: a partner floor gives each bot a program of its own', () => {
+      const p = parseReference(level.reference);
+      expect(p.main.length).toBeGreaterThan(0);
+      expect(p.F3.length).toBeGreaterThan(0);
+      expect(countCommands(p)).toBe(level.par.commands);
+    });
+  } else
   it(
     bounded ? 'LV-4: no shorter program with loops and F1 (small bodies)' : 'LV-4: the command par is the true minimum, loops included',
     () => {

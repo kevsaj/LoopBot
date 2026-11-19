@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import type { LevelFile, Program, Routine } from '../sim/types';
+import type { LevelFile, PartnerName, Program, Routine } from '../sim/types';
 import { countCommands, toCode } from '../sim/program';
 import { parseCode } from '../sim/code';
 import { t } from '../i18n';
@@ -11,11 +11,13 @@ interface Props {
   crashId: string | null;
   /** Fractal (CR-RECUR): functions take a depth n. */
   recursion?: boolean;
+  /** Precinct 404: the partner whose program is written def dash(): (CR-PARTNER). */
+  partner?: PartnerName | null;
 }
 
 /** ED-9 to ED-11: the same program as read-only Python-like code, with the running line lit. */
-export function CodeView({ program, routines, activeIds, crashId, recursion }: Props) {
-  const lines = toCode(program, routines, recursion);
+export function CodeView({ program, routines, activeIds, crashId, recursion, partner = null }: Props) {
+  const lines = toCode(program, routines, recursion, partner);
   return (
     <pre className="code-view" role="group" aria-label={t('Program as code (read only)')}>
       {lines.map((l, i) => (
@@ -45,7 +47,7 @@ interface EditorProps {
  * same syntax the read-only view shows; a mistake names its line and leaves the blocks alone.
  */
 export function CodeEditor({ program, routines, level, onApply, onError, onClose }: EditorProps) {
-  const [text, setText] = useState(() => toCode(program, routines, !!level.recursion).map((l) => l.text).join('\n') + '\n');
+  const [text, setText] = useState(() => toCode(program, routines, !!level.recursion, level.partner ? (level.partner.who ?? 'DASH') : null).map((l) => l.text).join('\n') + '\n');
   const [error, setError] = useState<{ line: number; error: string } | null>(null);
   const box = useRef<HTMLTextAreaElement>(null);
   useEffect(() => box.current?.focus(), []);

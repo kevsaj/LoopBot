@@ -1,0 +1,401 @@
+{
+ "t8-f01": {
+  "title": "Partenaires",
+  "hints": [
+   "LoopBot suit l'onglet LoopBot. DASH suit l'onglet DASH. Chaque robot a besoin de son propre programme.",
+   "Les deux sorties sont trois cases devant : trois fois avancer dans chaque onglet."
+  ],
+  "intro": "DASH : « Inspecteur DASH, Commissariat 404. Tu dois être mon nouveau partenaire. Les partenaires ont deux programmes : tu écris le tien, puis tu écris le mien. Touche mon onglet. »",
+  "outro": "DASH : « Deux robots, deux programmes, synchro parfaite. J'écris déjà le film. »"
+ },
+ "t8-f02": {
+  "title": "Chacun son rythme",
+  "hints": [
+   "Les deux programmes n'ont pas besoin d'être pareils. LoopBot tourne ; DASH marche tout droit.",
+   "LoopBot : avancer deux fois, tourner à droite, avancer deux fois. DASH : avancer quatre fois."
+  ],
+  "intro": "BULWARK : « Sergent BULWARK, accueil. Bienvenue, mon petit pote ! Ton programme et celui de DASH tournent côte à côte, un pas chacun, à chaque pas. »"
+ },
+ "t8-f03": {
+  "title": "Bureau d'angle",
+  "hints": [
+   "Les deux robots descendent, puis se tournent l'un vers l'autre.",
+   "LoopBot tourne à gauche en bas. DASH, qui regarde de l'autre côté, tourne à droite."
+  ],
+  "intro": "DASH : « Des gestes en miroir. Très classe. Très partenaire. À gauche pour toi, à droite pour moi. »"
+ },
+ "t8-f04": {
+  "title": "Après toi",
+  "hints": [
+   "Les deux robots ont besoin de la case du milieu. S'ils y vont en même temps, ils se cognent.",
+   "LoopBot passe en premier. DASH attend deux pas, puis suit le couloir vers le bas."
+  ],
+  "intro": "BULWARK : « Couloirs étroits, mon petit pote. Quand deux robots veulent la même case, l'un des deux attend. C'est juste de la politesse. »",
+  "outro": "DASH : « Je t'ai laissé passer. Souviens-t'en. Mets-le dans mon dossier. »"
+ },
+ "t8-f05": {
+  "title": "Tiens la porte",
+  "hints": [
+   "La porte ne s'ouvre pas du côté de LoopBot. C'est l'interrupteur de DASH qui l'ouvre.",
+   "DASH marche jusqu'à l'interrupteur et l'active. LoopBot attend devant la porte jusque-là."
+  ],
+  "intro": "DASH : « Le grand classique : j'appuie sur l'interrupteur, tu passes la porte. Puis on se retourne vers l'explosion. Il n'y a pas d'explosion. Ça reste classe. »"
+ },
+ "t8-f06": {
+  "title": "Passe la pièce à conviction",
+  "hints": [
+   "LoopBot peut atteindre la caisse. DASH peut atteindre la zone des pièces. Retrouvez-vous au milieu.",
+   "LoopBot ramasse la caisse et la dépose sur la case entre vous. DASH attend qu'elle y soit, la ramasse et la dépose sur la zone."
+  ],
+  "intro": "BULWARK : « Cette caisse, c'est une pièce à conviction. Passe-la doucement, comme un oisillon. Un oisillon lourd et carré. »"
+ },
+ "t8-f07": {
+  "title": "Courte échelle",
+  "hints": [
+   "Le rebord est trop haut pour sauter depuis le sol. Une caisse fait une marche.",
+   "DASH ramasse la caisse, fait un pas vers le nord et la dépose sur le chemin de LoopBot. LoopBot l'attend, puis saute dessus."
+  ],
+  "intro": "DASH : « Il te faut une courte échelle. Ça tombe bien, je suis né pour faire la courte échelle. »"
+ },
+ "t8-f08": {
+  "title": "Changement de plan",
+  "hints": [
+   "N'importe quel robot peut se garer sur n'importe quelle sortie. Qui a dit que LoopBot devait aller au bout du couloir ?",
+   "LoopBot prend la sortie de côté. DASH fait demi-tour et prend celle du fond. Personne n'a besoin d'attendre."
+  ],
+  "intro": "BULWARK : « DASH bloque encore le couloir. Avant d'attendre, demande-toi : est-ce que tout le monde doit vraiment aller là où il pensait aller ? »",
+  "outro": "DASH : « C'était prévu. Depuis le début. Échanger les sorties, c'était mon idée. »"
+ },
+ "t8-f09": {
+  "title": "Deux interrupteurs",
+  "hints": [
+   "Tous les interrupteurs doivent être allumés. Celui de LoopBot est derrière une porte que seul l'interrupteur de DASH ouvre.",
+   "DASH passe en premier et active son interrupteur. LoopBot attend trois pas, puis traverse et active le sien."
+  ],
+  "intro": "DASH : « Lumières éteintes des deux côtés. Un interrupteur chacun, et le mien ouvre ta porte. De rien, d'avance. »"
+ },
+ "t8-f10": {
+  "title": "Enregistrement",
+  "hints": [
+   "DASH porte la caisse, ouvre la porte en passant et dépose la caisse sur la zone. Ensuite, il doit l'escalader.",
+   "DASH : ramasser, avancer deux fois, activer, déposer, puis sauter en haut et sauter en bas. LoopBot attend la porte."
+  ],
+  "intro": "BULWARK : « Enregistre la pièce, ouvre la grille, et tu as passé l'accueil. Je crois en toi, mon petit pote ! »"
+ },
+ "t8-f11": {
+  "title": "Essai radio",
+  "hints": [
+   "Compter les attentes, ça marche, mais ça fait beaucoup d'attentes. Un appel radio dit à DASH exactement quand partir.",
+   "LoopBot envoie un appel radio juste après avoir activé l'interrupteur. DASH marche jusqu'à la porte, puis attend la radio."
+  ],
+  "intro": "DASH : « Nouveaux jouets ! Radio envoie un appel à ton partenaire. Attendre la radio bloque un robot jusqu'à ce qu'un appel arrive. Bien reçu, mon pote ! »",
+  "outro": "BULWARK : « Regardez-moi ce timing ! Pas une seule attente perdue. Je vais pleurer. Je pleure. »"
+ },
+ "t8-f12": {
+  "title": "Bien reçu",
+  "hints": [
+   "Cette fois, c'est DASH qui a l'interrupteur, alors c'est DASH qui appelle.",
+   "DASH : répéter 5 avancer, activer, radio, avancer. LoopBot : attendre la radio, puis répéter 5 avancer."
+  ],
+  "intro": "ROOK : « ROOK. Salle des scellés. Personne n'entre sans un appel de la salle des interrupteurs. Personne. »"
+ },
+ "t8-f13": {
+  "title": "Chaîne de traçabilité",
+  "hints": [
+   "LoopBot passe la caisse au milieu. DASH ne doit pas la saisir avant qu'elle y soit.",
+   "LoopBot porte la caisse, la dépose sur la case du milieu et appelle. DASH se place dessous, attend la radio, la ramasse et l'enregistre sur place."
+  ],
+  "intro": "ROOK : « Chaîne de traçabilité. Un robot remet la pièce. L'autre signe. Par radio. »"
+ },
+ "t8-f14": {
+  "title": "Ping-pong",
+  "hints": [
+   "L'interrupteur de chaque robot ouvre la porte de l'autre. Chacun son tour.",
+   "LoopBot active son interrupteur et appelle. DASH attend, passe, active le sien et rappelle."
+  ],
+  "intro": "DASH : « Tu ouvres ma porte, j'ouvre la tienne. C'est ça, des partenaires. Et dis « terminé » quand tu as fini de parler. Terminé. »"
+ },
+ "t8-f15": {
+  "title": "Planque",
+  "hints": [
+   "DASH surveille la porte. Il ne bouge que quand LoopBot appelle.",
+   "LoopBot marche jusqu'à l'interrupteur, l'active et appelle. DASH attend la radio, puis monte et part à gauche."
+  ],
+  "intro": "DASH : « Une planque. J'ai des en-cas. J'ai la vision de nuit. J'attends ce moment depuis toujours. Appelle-moi quand la porte s'ouvre. »"
+ },
+ "t8-f16": {
+  "title": "Retour à l'envoyeur",
+  "hints": [
+   "Même passage qu'avant, dans l'autre sens. Cette fois, c'est LoopBot qui attend.",
+   "DASH porte la caisse, la dépose sur la case du milieu et appelle. LoopBot se place dessous, attend la radio, la ramasse et l'enregistre."
+  ],
+  "intro": "DASH : « À moi de porter. Regarde ma technique. On soulève avec les jambes. Je n'ai pas de jambes. On soulève avec les chenilles. »"
+ },
+ "t8-f17": {
+  "title": "Sésame",
+  "hints": [
+   "Les deux robots doivent d'abord activer un interrupteur derrière eux. Chaque interrupteur ouvre la porte de l'autre.",
+   "Chaque robot : avancer, activer, radio, demi-tour, attendre la radio, puis marcher vers l'est jusqu'au bout."
+  ],
+  "intro": "BULWARK : « Le même programme pour vous deux, mes petits potes. Seule la longueur de la marche change. »"
+ },
+ "t8-f18": {
+  "title": "Encore et encore",
+  "hints": [
+   "Trois interrupteurs, trois portes. Le même passage, trois fois.",
+   "LoopBot : répéter 3 avancer, activer, radio, avancer. DASH : répéter 3 attendre la radio, avancer, avancer."
+  ],
+  "intro": "ROOK : « Trois portes. Trois appels. Ne me fais pas répéter. » DASH : « Ha ! Répéter ! ROOK a fait une blague de code ! » ROOK : « Non. »"
+ },
+ "t8-f19": {
+  "title": "Pièces empilées",
+  "hints": [
+   "Trois caisses passent une par une, par la case du milieu.",
+   "LoopBot : répéter 3 ramasser, tourner à droite, déposer, radio, tourner à gauche. DASH : répéter 3 attendre la radio, ramasser, tourner à droite, déposer, tourner à gauche."
+  ],
+  "intro": "ROOK : « Trois caisses. Une à la fois. Je surveille. »"
+ },
+ "t8-f20": {
+  "title": "Le casier",
+  "hints": [
+   "Quatre portes, et chaque interrupteur ouvre une porte de l'autre côté. Appeler, attendre, avancer. Deux fois.",
+   "LoopBot : répéter 2 activer, radio, avancer, attendre la radio, avancer, avancer. DASH : répéter 2 attendre la radio, avancer, avancer, activer, radio ; puis avancer."
+  ],
+  "intro": "BULWARK : « Les portes du casier. Dernier arrêt avant la salle de briefing. Parlez-vous, mes petits potes. À voix haute. À la radio. »",
+  "outro": "ROOK : « Bon. Vous savez travailler ensemble. » DASH : « C'était un compliment ? ROOK, c'était un compliment ? » ROOK : « Non. »"
+ },
+ "t8-f21": {
+  "title": "Plan commun",
+  "hints": [
+   "F1 appartient à toute l'équipe. Les deux robots peuvent l'appeler.",
+   "F1 : avancer, tourner à droite, avancer, tourner à gauche. LoopBot l'appelle trois fois, DASH deux fois."
+  ],
+  "intro": "LEDGER : « Capitaine LEDGER. Dans ma salle de briefing, un plan s'écrit une fois et tout le monde le suit. C'est à ça que sert F1. Vous pouvez l'appeler tous les deux. »",
+  "outro": "DASH : « Le capitaine nous a parlé ! LEDGER ne parle jamais à personne ! Je crois que c'était un sourire. Un seul pixel. Mais il était là. »"
+ },
+ "t8-f22": {
+  "title": "Chasse au bug : trop tôt",
+  "hints": [
+   "Lance-le et regarde DASH à la première porte. L'appel est-il arrivé avant que la porte s'ouvre ?",
+   "Dans F1, la radio vient avant activer. Inverse-les."
+  ],
+  "intro": "LEDGER : « VANTA a modifié nos routines. Trouvez le bloc fautif. J'attends un rapport en trois exemplaires. »"
+ },
+ "t8-f23": {
+  "title": "Routine de passage",
+  "hints": [
+   "Les deux robots passent une caisse de la même façon : ramasser, demi-tour, déposer. Une routine pour les deux.",
+   "F1 : ramasser, tourner à gauche deux fois, déposer. LoopBot appelle après chaque dépôt ; DASH attend la radio avant chaque F1."
+  ],
+  "intro": "BULWARK : « Une chaîne de pièces à conviction ! Ramasser, tourner, déposer. Les mêmes gestes pour vous deux, alors écrivez-les une fois. »"
+ },
+ "t8-f24": {
+  "title": "Chasse au bug : mauvais sens",
+  "hints": [
+   "Lance-le et regarde DASH après qu'il a activé l'interrupteur.",
+   "DASH tourne à gauche après la radio. Sa sortie est à droite."
+  ],
+  "intro": "DASH : « VANTA a trafiqué mon programme ! Personne ne trafique mon programme. Sauf toi. Toi, tu peux. Répare-le, s'il te plaît. »"
+ },
+ "t8-f25": {
+  "title": "Deux routines",
+  "hints": [
+   "Une routine pour le robot qui appelle, une pour le robot qui attend.",
+   "F1 : avancer, activer, radio, avancer. F2 : attendre la radio, avancer, avancer. LoopBot fait F1 deux fois, DASH fait F2 deux fois."
+  ],
+  "intro": "LEDGER : « Deux routines. F1 pour celui qui appelle, F2 pour celui qui écoute. Je les ai étiquetées. J'étiquette tout. Mon agrafeuse a une étiquette qui dit agrafeuse. »"
+ },
+ "t8-f26": {
+  "title": "Chasse au bug : silence radio",
+  "hints": [
+   "Lance-le. Les deux robots finissent par s'attendre l'un l'autre.",
+   "F2 active l'interrupteur mais ne prévient jamais LoopBot. Ajoute une radio à la fin de F2."
+  ],
+  "intro": "DASH : « Silence radio. Dans les films, ça veut dire qu'il va se passer un truc énorme. Ici, ça veut dire que quelqu'un a oublié d'appeler. »"
+ },
+ "t8-f27": {
+  "title": "Briefing",
+  "hints": [
+   "Les deux mêmes routines qu'avant, avec une marche plus longue autour.",
+   "LoopBot : avancer, avancer, F1, F1, avancer. DASH : avancer, avancer, F2, F2, avancer."
+  ],
+  "intro": "LEDGER : « Briefing du jour. Point un : VANTA est dans le bâtiment. Point deux : il y a du gâteau en salle de pause. Le point un est plus important. Légèrement. »"
+ },
+ "t8-f28": {
+  "title": "Chasse au bug : erreur de compte",
+  "hints": [
+   "Lance-le et compte les caisses que LoopBot envoie.",
+   "Le répéter de LoopBot envoie deux caisses. Il y en a trois."
+  ],
+  "intro": "ROOK : « Quelqu'un a touché à la chaîne des pièces. Comptez les caisses. »"
+ },
+ "t8-f29": {
+  "title": "Cage d'escalier",
+  "hints": [
+   "Un robot monte, l'autre descend. Un saut marche dans les deux sens.",
+   "F1 : sauter, avancer. Les deux robots l'appellent trois fois."
+  ],
+  "intro": "BULWARK : « Les ascenseurs sont bloqués, alors escaliers pour tout le monde. Excellent pour les chenilles ! L'un monte, l'autre descend, même rythme. »"
+ },
+ "t8-f30": {
+  "title": "Réunion d'équipe",
+  "hints": [
+   "Trois portes. Une routine chacun, répétée.",
+   "LoopBot : avancer, puis répéter 3 F1. DASH : avancer, puis répéter 3 F2."
+  ],
+  "intro": "LEDGER : « Réunion d'équipe. VANTA a enfermé tous les autres dans les cellules. Vous deux, c'est tout ce qu'il nous reste. Je trouve cela... acceptable. »"
+ },
+ "t8-f31": {
+  "title": "Bloc cellulaire",
+  "hints": [
+   "Les capteurs de chaque robot lisent son propre couloir. La même boucle tant que parcourt un long couloir et un court.",
+   "Les deux robots : tant que pas de mur devant, avancer ; tourner à droite ; tant que pas de mur devant, avancer."
+  ],
+  "intro": "ROOK : « Cellules. VANTA a enfermé l'équipe. Moi, j'ai réussi à sortir. Évidemment. » DASH : « Les capteurs sont de retour ! Chaque robot lit ce qui l'entoure. »"
+ },
+ "t8-f32": {
+  "title": "Escorte",
+  "hints": [
+   "Chaque interrupteur que LoopBot active ouvre la porte de cellule suivante devant DASH.",
+   "LoopBot : répéter 4 avancer, activer, radio ; puis marcher jusqu'au mur. DASH : répéter 4 attendre la radio, avancer ; puis marcher jusqu'au mur."
+  ]
+ },
+ "t8-f33": {
+  "title": "Flèches peintes",
+  "hints": [
+   "Au bout de chaque couloir, le sol indique la direction : rouge veut dire à droite, bleu veut dire à gauche.",
+   "F1 : marcher jusqu'au mur, puis si la case est rouge tourner à droite, sinon tourner à gauche. Chaque robot : F1, F1, avancer."
+  ],
+  "intro": "BULWARK : « Quelqu'un a peint des flèches dans le bloc cellulaire. Rouge veut dire à droite, bleu veut dire à gauche. Chacun lit son propre sol. »"
+ },
+ "t8-f34": {
+  "title": "Chasse au bug : daltonien",
+  "hints": [
+   "Lance-le et regarde la première case rouge.",
+   "Les deux virages de F1 sont inversés."
+  ]
+ },
+ "t8-f35": {
+  "title": "Guetteur",
+  "hints": [
+   "Pas de radio cette fois. DASH peut surveiller la case devant lui à la place.",
+   "DASH : répéter 3 tourner à gauche ; tant que pas de caisse devant, attendre ; ramasser, tourner à droite, déposer."
+  ],
+  "intro": "ROOK : « La radio, c'est bruyant. Un bon guetteur se contente de regarder. Attends que la caisse soit là. Puis bouge. »"
+ },
+ "t8-f36": {
+  "title": "Chasse au bug : trop pressé",
+  "hints": [
+   "Lance-le. DASH attrape du vide.",
+   "DASH tend la pince avant que la caisse soit là. Après son virage, il doit attendre tant qu'il n'y a pas de caisse devant."
+  ]
+ },
+ "t8-f37": {
+  "title": "Vider la cellule",
+  "hints": [
+   "LoopBot continue de ramasser tant qu'il y a une caisse devant lui.",
+   "LoopBot : tant que caisse devant, ramasser, tourner à droite, déposer, tourner à gauche. DASH : répéter 3 tourner à droite, attendre tant que pas de caisse devant, ramasser, tourner à gauche, déposer."
+  ]
+ },
+ "t8-f38": {
+  "title": "Chasse au bug : sans fin",
+  "hints": [
+   "Lance-le et regarde LoopBot après le virage.",
+   "Il manque le non dans le deuxième tant que de LoopBot."
+  ]
+ },
+ "t8-f39": {
+  "title": "Chasse à l'interrupteur",
+  "hints": [
+   "LoopBot ne sait pas où est l'interrupteur, mais il sent quand il est dessus.",
+   "LoopBot : tant que pas sur un interrupteur, avancer ; activer ; radio ; marcher jusqu'au mur. DASH : attendre la radio, marcher jusqu'au mur, tourner à droite, avancer."
+  ]
+ },
+ "t8-f40": {
+  "title": "Évasion",
+  "hints": [
+   "LoopBot parcourt le couloir et active chaque interrupteur sur lequel il passe, en appelant DASH à chaque fois.",
+   "LoopBot : tant que pas de mur devant, avancer, et si sur un interrupteur, activer et radio. DASH : répéter 4 attendre la radio, avancer ; puis marcher jusqu'au mur, tourner à droite, avancer."
+  ],
+  "intro": "ROOK : « Quatre portes de cellule. L'équipe est derrière. Sortez-les. » DASH : « C'est la scène de l'évasion ! J'attends la scène de l'évasion depuis toujours ! »"
+ },
+ "t8-f41": {
+  "title": "La tour de guet",
+  "hints": [
+   "Tu peux taper le code, si tu veux. Le programme du partenaire s'écrit def dash():",
+   "LoopBot : attendre la radio, puis marcher jusqu'au mur. DASH : marcher jusqu'à un interrupteur, activer, radio, marcher jusqu'au mur."
+  ],
+  "intro": "DASH : « La tour de guet. Le sommet du commissariat. Et tu peux de nouveau taper le code, partenaire. Écris def dash(): et tape mes gestes. J'ai confiance en toi. En gros. »"
+ },
+ "t8-f42": {
+  "title": "Chasse au bug : face-à-face",
+  "hints": [
+   "Lance-le. Les deux robots restent plantés là à s'attendre.",
+   "Il faut que quelqu'un commence. LoopBot ne doit pas commencer par attendre la radio."
+  ],
+  "intro": "VANTA : « Deux robots, chacun attend que l'autre bouge. Je pourrais regarder ça toute la nuit. »"
+ },
+ "t8-f43": {
+  "title": "Panne de courant",
+  "hints": [
+   "Tous les interrupteurs doivent être allumés. Les deux couloirs sont différents, mais le travail est le même.",
+   "Les deux robots : tant que pas de mur devant, avancer, et si sur un interrupteur, activer."
+  ],
+  "intro": "LEDGER : « VANTA a coupé le courant de la tour de guet. Rétablissez-le. Chaque interrupteur. Je vous chronomètre. Je chronomètre toujours. »"
+ },
+ "t8-f44": {
+  "title": "Feu de signal",
+  "hints": [
+   "LoopBot envoie des caisses tant qu'il en reste, et signale chacune par radio.",
+   "LoopBot : tant que caisse devant, ramasser, tourner à droite, déposer, radio, tourner à gauche. DASH : répéter 3 tourner à droite, attendre la radio, ramasser, tourner à gauche, déposer."
+  ]
+ },
+ "t8-f45": {
+  "title": "Chasse au bug : dernier interrupteur",
+  "hints": [
+   "Lance-le et regarde l'interrupteur au bout du couloir de LoopBot.",
+   "LoopBot cherche un interrupteur avant d'avancer, alors le dernier n'est jamais vérifié. D'abord avancer, ensuite vérifier."
+  ]
+ },
+ "t8-f46": {
+  "title": "Le capitaine",
+  "hints": [
+   "Ton partenaire est LEDGER maintenant : l'onglet et le code disent def ledger():",
+   "LEDGER : ramasser, avancer deux fois, activer, radio, déposer, sauter, sauter. LoopBot : avancer, attendre la radio, puis avancer trois fois."
+  ],
+  "intro": "LEDGER : « DASH garde l'équipe. Je serai votre partenaire moi-même. Je n'ai pas fait de terrain depuis onze ans et quatre mois. Cela m'a manqué. Approximativement. »",
+  "outro": "LEDGER : « Satisfaisant. C'est la meilleure note que je donne. Je ne l'ai donnée qu'une fois, en 2019. »"
+ },
+ "t8-f47": {
+  "title": "Selon le règlement",
+  "hints": [
+   "LoopBot peut trouver les interrupteurs au toucher. LEDGER suit le règlement : une routine par porte.",
+   "LoopBot : tant que pas de mur devant, avancer, et si sur un interrupteur, activer et radio. LEDGER : avancer, avancer, F1, F1, avancer, avec F1 = attendre la radio, avancer, avancer."
+  ],
+  "intro": "LEDGER : « J'ai rédigé la procédure des portes. Page un : attendre l'appel. Page deux : franchir la porte. Il n'y a pas de page trois. »"
+ },
+ "t8-f48": {
+  "title": "Chasse au bug : décalage d'un",
+  "hints": [
+   "Lance-le et regarde où LEDGER attend le premier appel.",
+   "LEDGER attend une case trop tôt, alors il avance dans la porte avant qu'elle s'ouvre. Il lui faut un avancer de plus au début."
+  ],
+  "intro": "LEDGER : « Quelqu'un a modifié ma procédure. C'est le pire crime commis dans ce bâtiment ce soir. Casse comprise. »"
+ },
+ "t8-f49": {
+  "title": "Le casse dans le casse",
+  "hints": [
+   "LEDGER reçoit un appel par porte, puis fait une longue marche. Écris la marche une seule fois.",
+   "LEDGER : F1 quatre fois, puis F2, tourner à droite, F2. F1 : attendre la radio, avancer. F2 : tant que pas de mur devant, avancer."
+  ],
+  "intro": "LEDGER : « Un aveu. Je savais que VANTA frapperait pendant la Nuit du Casse. Le coffre qu'il dévalise est un leurre. Les vrais dossiers sont dans le tiroir de mon bureau. Étiquetés. »"
+ },
+ "t8-f50": {
+  "title": "L'Insigne d'or",
+  "hints": [
+   "Dernier étage. Les deux robots passent les caisses de la même façon, alors ils peuvent partager le geste.",
+   "F1 : ramasser, tourner à droite, déposer. LoopBot : tant que caisse devant, F1, radio, tourner à gauche. LEDGER : répéter 3 tourner à gauche, attendre la radio, F1."
+  ],
+  "intro": "DASH : « Partenaire ! L'Insigne d'or est dans cette pile de caisses, et VANTA est sur le toit. Toi et le capitaine, vous le sortez. Moi, je m'occupe de la musique dramatique. » BULWARK : « Allez, mes petits potes ! »"
+ }
+}

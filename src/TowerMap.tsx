@@ -23,6 +23,7 @@ import './twist.css';
 import './dockyard.css';
 import './twinspires.css';
 import './fractal.css';
+import './precinct.css';
 import { msg, t, t as tr, tn } from './i18n';
 
 interface Props {
@@ -83,13 +84,18 @@ const BAND_NAMES: Record<string, string> = {
   cloister: msg('The Cloister'),
   nautilus: msg('Nautilus Stair'),
   canopy: msg('The Canopy'),
+  frontdesk: msg('The Front Desk'),
+  evidence: msg('Evidence Locker'),
+  briefing: msg('Briefing Room'),
+  cells: msg('Holding Cells'),
+  watchtower: msg('The Watchtower'),
 };
 
 /** What lies under each tower, shown at the foot of its map. */
-const GROUND: Record<number, string> = { 1: msg('Sub-basement'), 2: msg('Ice cellar'), 3: msg('Old cistern'), 4: msg('River vault'), 5: msg('Dry dock'), 6: msg('Twin vault'), 7: msg('Root crypt') };
+const GROUND: Record<number, string> = { 1: msg('Sub-basement'), 2: msg('Ice cellar'), 3: msg('Old cistern'), 4: msg('River vault'), 5: msg('Dry dock'), 6: msg('Twin vault'), 7: msg('Root crypt'), 8: msg('Impound lot') };
 
 /** Each tower's own light, used for its beacon and its row in the tower picker. */
-const TOWER_LIGHT: Record<number, string> = { 1: '#7cc4ff', 2: '#9fd8ff', 3: '#ffb466', 4: '#7fd6c8', 5: '#ffcf6e', 6: '#c9b8ff', 7: '#ff9a6a' };
+const TOWER_LIGHT: Record<number, string> = { 1: '#7cc4ff', 2: '#9fd8ff', 3: '#ffb466', 4: '#7fd6c8', 5: '#ffcf6e', 6: '#c9b8ff', 7: '#ff9a6a', 8: '#6aa8ff' };
 
 /** The towers the picker lists. A Plus tower only shows once Plus is on sale, or while previewing it. */
 function pickable(towers: Tower[]): Tower[] {
