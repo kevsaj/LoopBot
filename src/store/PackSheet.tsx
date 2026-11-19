@@ -4,9 +4,11 @@
 import { useEffect, useState } from 'react';
 import { fx } from '../audio/feedback';
 import { buyPack, getPackOffer, packUnlocked, restorePurchases } from './purchases';
+import { skylineOnSale } from './purchases';
 import type { PackOffer } from './purchases';
 import type { PackId } from './packs';
 import { msg, t } from '../i18n';
+import { SkylineSheet } from './SkylineSheet';
 
 interface PackInfo {
   /** The pack's name on the screen, e.g. "Heatwave". */
@@ -103,6 +105,7 @@ export function PackSheet({ pack, onClose }: { pack: PackId; onClose(): void }) 
   const [offer, setOffer] = useState<PackOffer | null | 'loading'>('loading');
   const [busy, setBusy] = useState(false);
   const [note, setNote] = useState<string | null>(null);
+  const [skyline, setSkyline] = useState(false);
   const name = t(info.title);
 
   useEffect(() => {
@@ -179,6 +182,11 @@ export function PackSheet({ pack, onClose }: { pack: PackId; onClose(): void }) 
               {note}
             </p>
           )}
+          {!owned && skylineOnSale() && (
+            <button type="button" className="sky-link" onClick={() => (fx.tap(), setSkyline(true))}>
+              {t('Want every tower? See the Skyline Pass')} ›
+            </button>
+          )}
           {!owned && (
             <button type="button" className="plus-restore" onClick={restore} disabled={busy}>
               {t('Restore purchases')}
@@ -186,6 +194,14 @@ export function PackSheet({ pack, onClose }: { pack: PackId; onClose(): void }) 
           )}
         </div>
       </div>
+      {skyline && (
+        <SkylineSheet
+          onClose={() => {
+            setSkyline(false);
+            setOwned(packUnlocked(pack));
+          }}
+        />
+      )}
     </div>
   );
 }

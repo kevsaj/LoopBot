@@ -4,15 +4,18 @@
 // Setup (once, in Kevin's accounts):
 //  - App Store Connect: non-consumable in-app purchases `loopbot_plus`, `loopbot_pack_heatwave`,
 //    `loopbot_pack_twist`, `loopbot_pack_dockyard`, `loopbot_pack_twinspires`,
-//    `loopbot_pack_fractal`, `loopbot_pack_precinct404` and `loopbot_overflow`, and two consumables,
+//    `loopbot_pack_fractal`, `loopbot_pack_precinct404`, `loopbot_overflow` and
+//    `loopbot_skyline_pass`, and two consumables,
 //    `loopbot_hints_10` and `loopbot_hints_40`.
-//  - Play Console: one-time products with the same nine ids.
+//  - Play Console: one-time products with the same ten ids.
 //  - RevenueCat: entitlement `plus` with `loopbot_plus` attached, entitlement `heatwave` with
 //    `loopbot_pack_heatwave` attached, entitlement `twist` with `loopbot_pack_twist` attached,
 //    entitlement `dockyard` with `loopbot_pack_dockyard` attached, entitlement `twinspires` with
 //    `loopbot_pack_twinspires` attached, entitlement `fractal` with `loopbot_pack_fractal`
 //    attached, entitlement `precinct404` with `loopbot_pack_precinct404` attached, entitlement
-//    `overflow` with `loopbot_overflow` attached (see
+//    `overflow` with `loopbot_overflow` attached, entitlement `skyline` with
+//    `loopbot_skyline_pass` attached (see store/skyline.ts; the app reads `skyline` as owning
+//    everything, so the pass needs attaching to nothing else) (see
 //    store/packs.ts), and an
 //    offering whose package holds
 //    Plus (the package with `loopbot_plus` is what the Plus sheet sells).
@@ -27,6 +30,8 @@ import { HINT_PACKS, loadLedger, payPlusBonus, payTransactions, saveLedger } fro
 import type { StoreTransaction } from './hintLedger';
 import { PACK_PRODUCTS, ownsPack, packById, packsFromEntitlements, saveOwnedPacks } from './packs';
 import type { PackId } from './packs';
+import { SKYLINE_PRODUCT, ownsSkyline, saveSkyline, skylineIn } from './skyline';
+import type { PassItemId } from './skyline';
 import type { Tower } from '../levels/towers';
 
 export const ENTITLEMENT = 'plus';
@@ -130,7 +135,24 @@ export function onPlusChange(l: Listener): () => void {
 }
 
 type CustomerInfoLike = { entitlements: { active: Record<string, unknown> }; nonSubscriptionTransactions?: readonly StoreTransaction[] };
-const ownsPlus = (info: CustomerInfoLike) => ENTITLEMENT in info.entitlements.active;
+/** Plus is owned on its own, or as part of the Skyline Pass. */
+const ownsPlus = (info: CustomerInfoLike) => ENTITLEMENT in info.entitlements.active || skylineIn(info.entitlements.active);
+
+type SkylineListener = (owned: boolean) => void;
+const skylineListeners = new Set<SkylineListener>();
+
+/** Called when the Skyline Pass is bought, restored or refunded. Returns a function that stops listening. */
+export function onSkylineChange(l: SkylineListener): () => void {
+  skylineListeners.add(l);
+  return () => skylineListeners.delete(l);
+}
+
+/** Takes the store's word for the Skyline Pass, and returns it. */
+function syncSkyline(info: CustomerInfoLike): boolean {
+  const owned = skylineIn(info.entitlements.active);
+  if (saveSkyline(owned)) skylineListeners.forEach((l) => l(owned));
+  return owned;
+}
 
 type PacksListener = (owned: PackId[]) => void;
 const packListeners = new Set<PacksListener>();
@@ -150,6 +172,7 @@ function syncPacks(info: CustomerInfoLike): PackId[] {
 
 /** Everything the store says about this customer: Plus, packs, and hint packs to pay out. */
 function sync(info: CustomerInfoLike) {
+  syncSkyline(info);
   setOwned(ownsPlus(info));
   syncPacks(info);
   payHintPacks(info);
@@ -189,7 +212,7 @@ export async function getPlusOffer(): Promise<PlusOffer | null> {
     const { current } = await rc.Purchases.getOfferings();
     // Plus is the package holding `loopbot_plus`; hint packs and city packs may sit in the same offering.
     const pkgs = current?.availablePackages ?? [];
-    const other = (id: string) => HINT_PACKS.some((h) => h.id === id) || PACK_PRODUCTS.includes(id);
+    const other = (id: string) => HINT_PACKS.some((h) => h.id === id) || PACK_PRODUCTS.includes(id) || id === SKYLINE_PRODUCT;
     const pkg = pkgs.find((p) => p.product.identifier === PLUS_PRODUCT) ?? pkgs.find((p) => !other(p.product.identifier));
     return pkg ? { price: pkg.product.priceString, pkg } : null;
   } catch {
@@ -219,6 +242,7 @@ export async function restorePurchases(): Promise<RestoreResult> {
   try {
     const rc = await ready;
     const { customerInfo } = await rc.Purchases.restorePurchases();
+    syncSkyline(customerInfo);
     const plus = ownsPlus(customerInfo);
     setOwned(plus);
     const packs = syncPacks(customerInfo);
@@ -296,4 +320,59 @@ export async function buyPack(offer: PackOffer): Promise<BuyResult> {
   } catch (err) {
     return (err as { userCancelled?: boolean | null })?.userCancelled ? 'cancelled' : 'failed';
   }
+}
+
+export interface SkylineOffer {
+  /** The store's localized price for the pass, for example "$14.99". */
+  price: string;
+  /** The same price as a number, and its currency, to compare with buying the pieces one by one. */
+  amount: number;
+  currency: string;
+  product: PurchasesStoreProduct;
+  /** Each piece's own store price, where the store knows it (same currency as the pass). */
+  prices: Partial<Record<PassItemId, number>>;
+}
+
+const productOf = (id: PassItemId) => (id === 'plus' ? PLUS_PRODUCT : packById(id)?.product ?? '');
+
+/**
+ * The Skyline Pass with its store price, and the prices of the pieces it includes (for the
+ * "bought one by one" comparison), or null if the store can't be reached.
+ */
+export async function getSkylineOffer(items: PassItemId[]): Promise<SkylineOffer | null> {
+  if (!(await initPurchases()) || !ready) return null;
+  try {
+    const rc = await ready;
+    const ids = [SKYLINE_PRODUCT, ...items.map(productOf)];
+    const { products } = await rc.Purchases.getProducts({ productIdentifiers: ids, type: rc.PRODUCT_CATEGORY.NON_SUBSCRIPTION });
+    const product = products.find((x) => x.identifier === SKYLINE_PRODUCT);
+    if (!product) return null;
+    const prices: Partial<Record<PassItemId, number>> = {};
+    for (const id of items) {
+      const p = products.find((x) => x.identifier === productOf(id));
+      // Only compare like with like: a piece priced in another currency is left out.
+      if (p && p.currencyCode === product.currencyCode) prices[id] = p.price;
+    }
+    return { price: product.priceString, amount: product.price, currency: product.currencyCode, product, prices };
+  } catch {
+    return null;
+  }
+}
+
+/** Buys the Skyline Pass. Bought means the store now reports the `skyline` entitlement as active. */
+export async function buySkyline(offer: SkylineOffer): Promise<BuyResult> {
+  if (!ready) return 'failed';
+  try {
+    const rc = await ready;
+    const { customerInfo } = await rc.Purchases.purchaseStoreProduct({ product: offer.product });
+    sync(customerInfo);
+    return skylineIn(customerInfo.entitlements.active) ? 'bought' : 'failed';
+  } catch (err) {
+    return (err as { userCancelled?: boolean | null })?.userCancelled ? 'cancelled' : 'failed';
+  }
+}
+
+/** Whether to point a player at the Skyline Pass: the store is open and they don't have it yet. */
+export function skylineOnSale(): boolean {
+  return SHOP_OPEN && !ownsSkyline();
 }

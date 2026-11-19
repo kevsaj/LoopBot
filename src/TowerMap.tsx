@@ -13,9 +13,11 @@ import { DEMO } from './demo';
 import { DailyButton } from './daily/DailyButton';
 import type { DailyState } from './daily';
 import type { Tower } from './levels/towers';
-import { PLUS_VISIBLE, STORE_AVAILABLE, plusUnlocked, towerUnlocked } from './store/purchases';
+import { PLUS_VISIBLE, STORE_AVAILABLE, plusUnlocked, skylineOnSale, towerUnlocked } from './store/purchases';
+import { SkylineSheet } from './store/SkylineSheet';
 import { dailyUnlocked } from './daily';
 import { PlusSheet } from './store/PlusSheet';
+import { TOWER_LIGHT, lightVars } from './towerLight';
 import { PackSheet } from './store/PackSheet';
 import type { PackId } from './store/packs';
 import './heatwave.css';
@@ -96,8 +98,6 @@ const BAND_NAMES: Record<string, string> = {
 /** What lies under each tower, shown at the foot of its map. */
 const GROUND: Record<number, string> = { 1: msg('Sub-basement'), 2: msg('Ice cellar'), 3: msg('Old cistern'), 4: msg('River vault'), 5: msg('Dry dock'), 6: msg('Twin vault'), 7: msg('Root crypt'), 8: msg('Impound lot') };
 
-/** Each tower's own light, used for its beacon and its row in the tower picker. */
-const TOWER_LIGHT: Record<number, string> = { 1: '#7cc4ff', 2: '#9fd8ff', 3: '#ffb466', 4: '#7fd6c8', 5: '#ffcf6e', 6: '#c9b8ff', 7: '#ff9a6a', 8: '#6aa8ff' };
 
 /** The towers the picker lists. A Plus tower only shows once Plus is on sale, or while previewing it. */
 function pickable(towers: Tower[]): Tower[] {
@@ -121,7 +121,7 @@ export interface OverflowEntryProps {
   onOpen(): void;
 }
 
-function TowerSwitch({ tower, towers, progress, onPick, onLocked, overflow }: { tower: number; towers: Tower[]; progress: Progress; onPick(n: number): void; onLocked(t: Tower): void; overflow?: OverflowEntryProps }) {
+function TowerSwitch({ tower, towers, progress, onPick, onLocked, overflow, onSkyline }: { tower: number; towers: Tower[]; progress: Progress; onPick(n: number): void; onLocked(t: Tower): void; overflow?: OverflowEntryProps; onSkyline?: () => void }) {
   const [open, setOpen] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
@@ -149,12 +149,7 @@ function TowerSwitch({ tower, towers, progress, onPick, onLocked, overflow }: { 
 
   if (shown.length < 2) return null;
   const here = shown.find((t) => t.n === tower) ?? shown[0];
-  // Plain rgba rather than CSS color-mix(), which older Android WebViews don't have.
-  const light = (t: Tower) => {
-    const hex = TOWER_LIGHT[t.n] ?? TOWER_LIGHT[1];
-    const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
-    return { ['--tp-light' as string]: hex, ['--tp-soft' as string]: `rgba(${r}, ${g}, ${b}, 0.16)`, ['--tp-glow' as string]: `rgba(${r}, ${g}, ${b}, 0.45)` };
-  };
+  const light = (t: Tower) => lightVars(TOWER_LIGHT[t.n] ?? TOWER_LIGHT[1]);
   const toggle = () => {
     fx.tap();
     setOpen((o) => !o);
@@ -278,6 +273,31 @@ function TowerSwitch({ tower, towers, progress, onPick, onLocked, overflow }: { 
               </span>
             </button>
           )}
+          {onSkyline && (
+            <button
+              type="button"
+              role="menuitem"
+              className="tp-row tp-skyline"
+              style={lightVars('#f2c46a')}
+              aria-label={t('Skyline Pass: every tower in one purchase')}
+              onClick={() => {
+                setOpen(false);
+                fx.tap();
+                onSkyline();
+              }}
+            >
+              <span className="tp-badge" aria-hidden="true">
+                ★
+              </span>
+              <span className="tp-text">
+                <span className="tp-name">{tr('Skyline Pass')}</span>
+                <span className="tp-sub">{tr('Every tower in one purchase')}</span>
+              </span>
+              <span className="tp-state" aria-hidden="true">
+                <span className="tp-go">›</span>
+              </span>
+            </button>
+          )}
         </div>
       )}
     </div>
@@ -360,6 +380,7 @@ export function TowerMap({ levels, tower, towers, onTowerPick, progress, current
 
   const [plusSheet, setPlusSheet] = useState(false);
   const [packSheet, setPackSheet] = useState<PackId | null>(null);
+  const [skySheet, setSkySheet] = useState(false);
   const lockedTower = (t: Tower) => {
     fx.denied();
     if (PLUS_VISIBLE && STORE_AVAILABLE) return t.pack ? setPackSheet(t.pack) : setPlusSheet(true);
@@ -407,7 +428,7 @@ export function TowerMap({ levels, tower, towers, onTowerPick, progress, current
           {t('{n} / {total} floors', { n: cleared, total: ids.length })}
         </span>
       </div>
-      <TowerSwitch tower={tower} towers={towers} progress={progress} onPick={onTowerPick} onLocked={lockedTower} overflow={overflow} />
+      <TowerSwitch tower={tower} towers={towers} progress={progress} onPick={onTowerPick} onLocked={lockedTower} overflow={overflow} onSkyline={skylineOnSale() ? () => setSkySheet(true) : undefined} />
       {!DEMO && <DailyButton className="tower-daily" progress={progress} daily={daily} onOpen={onDaily} />}
       {!DEMO && dailyUnlocked(progress) && (PLUS_VISIBLE || plusUnlocked()) && (
         <button type="button" className="link-btn daily-archive-link" onClick={() => (fx.tap(), onArchive())}>
@@ -506,6 +527,7 @@ export function TowerMap({ levels, tower, towers, onTowerPick, progress, current
       </div>
       {plusSheet && <PlusSheet onClose={() => setPlusSheet(false)} />}
       {packSheet && <PackSheet pack={packSheet} onClose={() => setPackSheet(null)} />}
+      {skySheet && <SkylineSheet onClose={() => setSkySheet(false)} />}
     </div>
   );
 }

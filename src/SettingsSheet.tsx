@@ -12,6 +12,8 @@ import type { PackId } from './store/packs';
 import { HintShop } from './store/HintShop';
 import { PlusSheet } from './store/PlusSheet';
 import { PackSheet } from './store/PackSheet';
+import { SkylineSheet } from './store/SkylineSheet';
+import { ownsSkyline } from './store/skyline';
 import { OVERFLOW_ON, TOWERS } from './levels/towers';
 import { bigTextOn, setBigText } from './textSize';
 import { deviceReducesMotion, reduceMotionPref, setReduceMotion } from './a11y/motion';
@@ -246,6 +248,10 @@ function PurchaseRows({ hints }: { hints: number }) {
   const owns = () => [...SOLD_PACKS.map((p) => p.id), ...(SELLS_OVERFLOW ? (['overflow'] as const) : [])].filter((id) => ownsPack(id));
   const [packs, setPacks] = useState(owns);
   const refreshPacks = () => setPacks(owns());
+  const [skyline, setSkyline] = useState(false);
+  const [pass, setPass] = useState(ownsSkyline);
+  /** What a row says when it's owned: through the Skyline Pass, or bought on its own. */
+  const ownedLabel = () => (pass ? t('In your pass ✓') : t('Owned ✓'));
   const [note, setNote] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const restore = async () => {
@@ -255,6 +261,7 @@ function PurchaseRows({ hints }: { hints: number }) {
     const r = await restorePurchases();
     setBusy(false);
     setOwned(hasPlus());
+    setPass(ownsSkyline());
     refreshPacks();
     setNote(r === 'restored' ? t('Purchases restored.') : r === 'nothing' ? t('No purchases found for this store account.') : t("Couldn't reach the store. Try again later."));
   };
@@ -262,9 +269,19 @@ function PurchaseRows({ hints }: { hints: number }) {
     <>
       <h3 className="set-section">{t('Subscriptions & Purchases')}</h3>
       <div className="set-item">
+        <button type="button" className="set-row set-link sky-row" onClick={() => (fx.tap(), setSkyline(true))}>
+          <span className="set-label">{t('Skyline Pass')}</span>
+          <span className="set-value">{pass ? t('Owned ✓') : t('Get')}</span>
+          <span className="set-chevron" aria-hidden="true">
+            ›
+          </span>
+        </button>
+        <p className="set-caption">{t('Everything below in one lifetime purchase, plus every tower still to come.')}</p>
+      </div>
+      <div className="set-item">
         <button type="button" className="set-row set-link" onClick={() => (fx.tap(), setSheet(true))}>
           <span className="set-label">LoopBot Plus</span>
-          <span className="set-value">{owned ? t('Owned ✓') : t('Get')}</span>
+          <span className="set-value">{owned ? ownedLabel() : t('Get')}</span>
           <span className="set-chevron" aria-hidden="true">
             ›
           </span>
@@ -275,7 +292,7 @@ function PurchaseRows({ hints }: { hints: number }) {
         <div className="set-item" key={p.id}>
           <button type="button" className="set-row set-link" onClick={() => (fx.tap(), setPack(p.id))}>
             <span className="set-label">{t('{city} city pack', { city: t(p.city) })}</span>
-            <span className="set-value">{packs.includes(p.id) ? t('Owned ✓') : t('Get')}</span>
+            <span className="set-value">{packs.includes(p.id) ? ownedLabel() : t('Get')}</span>
             <span className="set-chevron" aria-hidden="true">
               ›
             </span>
@@ -287,7 +304,7 @@ function PurchaseRows({ hints }: { hints: number }) {
         <div className="set-item">
           <button type="button" className="set-row set-link" onClick={() => (fx.tap(), setPack('overflow'))}>
             <span className="set-label">Overflow</span>
-            <span className="set-value">{packs.includes('overflow') ? t('Owned ✓') : t('Get')}</span>
+            <span className="set-value">{packs.includes('overflow') ? ownedLabel() : t('Get')}</span>
             <span className="set-chevron" aria-hidden="true">
               ›
             </span>
@@ -308,7 +325,7 @@ function PurchaseRows({ hints }: { hints: number }) {
         <button type="button" className="set-row set-link" onClick={restore} disabled={busy}>
           <span className="set-label">{t('Restore purchases')}</span>
         </button>
-        <p className="set-caption">{note ?? t('Bought Plus or a city pack on another device, or reinstalled? Restore them here.')}</p>
+        <p className="set-caption">{note ?? t('Bought the Skyline Pass, Plus or a city pack on another device, or reinstalled? Restore them here.')}</p>
       </div>
       {shop && <HintShop hints={hints} onClose={() => setShop(false)} />}
       {pack && (
@@ -316,6 +333,16 @@ function PurchaseRows({ hints }: { hints: number }) {
           pack={pack}
           onClose={() => {
             setPack(null);
+            refreshPacks();
+          }}
+        />
+      )}
+      {skyline && (
+        <SkylineSheet
+          onClose={() => {
+            setSkyline(false);
+            setPass(ownsSkyline());
+            setOwned(hasPlus());
             refreshPacks();
           }}
         />

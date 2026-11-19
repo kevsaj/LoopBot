@@ -1,0 +1,173 @@
+/* --- Skyline Pass: a night-sky screen, gold for the pass, each tower in its own light --- */
+.settings.skyline-sheet {
+  background: radial-gradient(120% 60% at 50% 0%, #2a2456 0%, var(--bg) 70%);
+}
+.skyline-sheet h2 {
+  color: #f6d98a;
+  letter-spacing: 0.02em;
+}
+.sky-art {
+  display: block;
+  width: 100%;
+  max-height: 170px;
+  margin: 2px 0 10px;
+  border-radius: 14px;
+  box-shadow: 0 0 0 1px rgba(242, 196, 106, 0.35), 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+.sky-star {
+  animation: sky-twinkle 3.2s ease-in-out infinite;
+}
+.sky-beacon {
+  animation: sky-twinkle 2.4s ease-in-out infinite;
+}
+@keyframes sky-twinkle {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sky-star,
+  .sky-beacon {
+    animation: none;
+  }
+}
+.sky-kicker {
+  margin: 4px 0 0;
+  text-align: center;
+  color: #f2c46a;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.sky-lede {
+  text-align: center;
+  margin-top: 4px;
+}
+.sky-deal {
+  margin: 0 0 12px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(242, 196, 106, 0.1);
+  border: 1px solid rgba(242, 196, 106, 0.4);
+  color: var(--ink);
+  font-size: 15px;
+  line-height: 1.4;
+}
+.sky-deal p {
+  margin: 0;
+}
+.sky-deal-cheaper-alone,
+.sky-deal-owns-all {
+  background: var(--panel-2);
+  border-color: var(--line);
+}
+.sky-compare {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px 12px;
+  text-align: center;
+}
+.sky-was {
+  color: var(--quiet);
+}
+.sky-save {
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: #f2c46a;
+  color: #2a1d05;
+  font-weight: 800;
+  font-size: 14px;
+}
+.sky-grid {
+  list-style: none;
+  margin: 0 0 10px;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+@media (min-width: 520px) {
+  .sky-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.sky-tile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 9px 12px;
+  border-radius: 14px;
+  background: var(--panel-2);
+  border: 1px solid transparent;
+}
+.sky-tile.mine {
+  border-color: var(--tp-glow);
+}
+.sky-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.sky-text strong {
+  overflow-wrap: anywhere;
+}
+.sky-sub {
+  color: var(--quiet);
+  font-size: 13px;
+}
+.sky-state {
+  flex: none;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--quiet);
+}
+.sky-tile.mine .sky-state {
+  color: var(--good);
+}
+.sky-future {
+  --tp-light: #ffffff;
+  --tp-soft: rgba(255, 255, 255, 0.06);
+  --tp-glow: rgba(255, 255, 255, 0.35);
+  background: transparent;
+  border: 1px dashed rgba(255, 255, 255, 0.3);
+}
+.sky-buy.primary {
+  background: linear-gradient(180deg, #f8d78a, #e6ad48);
+  border-color: #f2c46a;
+  color: #2a1d05;
+  box-shadow: 0 6px 20px rgba(242, 196, 106, 0.3);
+}
+.sky-buy.quiet {
+  background: var(--panel-2);
+  color: var(--ink);
+}
+/* The Skyline Pass row in Settings and in the tower picker: a touch of gold. */
+.set-row.sky-row .set-label,
+.tp-row.tp-skyline .tp-name {
+  color: #f6d98a;
+}
+.big-text .sky-sub,
+.big-text .sky-state {
+  font-size: 14px;
+}
+.sky-link {
+  display: block;
+  width: 100%;
+  margin: 16px 0 0;
+  min-height: 48px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(242, 196, 106, 0.45);
+  background: rgba(242, 196, 106, 0.08);
+  color: #f6d98a;
+  font-weight: 700;
+}
