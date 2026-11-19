@@ -34,6 +34,8 @@ import { DIFFICULTY_LABEL, difficultyOn, shareText, shortDate } from '../daily';
 import { msg, t, tn } from '../i18n';
 import { announce } from '../a11y/announce';
 import { describeBrief } from '../a11y/describe';
+import { Medallion, TERRACE_INFO } from '../overflow/OverflowScreen';
+import { terraceOf } from '../overflow';
 
 /** Keys typed into a text box (code editor, feedback, maker) are never play shortcuts. */
 function typingTarget(el: EventTarget | null): boolean {
@@ -77,6 +79,8 @@ export interface OverflowProps {
   /** The floor of the climb, from 1. */
   floor: number;
   bricks: number;
+  /** 3-star clears in a row so far on this climb (three win a brick back). */
+  perfect: number;
   /** Called on every clear; says whether it set a new record and will earn a brick back. */
   onClear(stars: number): { record: boolean; brick: boolean };
   /** Skip this floor for a brick. */
@@ -568,7 +572,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
     (tut === 'tap' && cmd === 'forward') || (tut === 'turn' && (cmd === 'turn_left' || cmd === 'turn_right'));
 
   return (
-    <main className={`floor${tab === 'code' && typing ? ' typing-code' : ''}`}>
+    <main className={`floor${tab === 'code' && typing ? ' typing-code' : ''}${overflow ? ' ovf-floor' : ''}`}>
       <header className="topbar">
         <div className="floor-title">
           {custom ? (
@@ -642,6 +646,12 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
           </span>
           <span>{t('step {n}', { n: steps })}</span>
         </div>
+        {overflow && (
+          <span className="ovf-altitude">
+            <Medallion terrace={terraceOf(overflow.floor)} reached size={18} />
+            {t(TERRACE_INFO[terraceOf(overflow.floor)].name)}
+          </span>
+        )}
         <button type="button" className="rotate-btn" onClick={() => (fx.tap(), setRotateSignal((n) => n + 1))} aria-label={t('Rotate view: turn the camera a quarter turn. LoopBot does not move.')}>
           ⟲ {t('Rotate view')}
         </button>
@@ -831,7 +841,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
           onNext={() => onGo(floorNumber)}
           onTower={onTower}
           custom={custom && { note: customNote, noPar: custom.noPar }}
-          overflow={overflow && { floor: overflow.floor, record: !!climbNote?.record, brick: !!climbNote?.brick }}
+          overflow={overflow && { floor: overflow.floor, record: !!climbNote?.record, brick: !!climbNote?.brick, streak: climbNote?.brick ? 3 : earned >= 3 ? Math.min(2, overflow.perfect + 1) : 0 }}
           onShareImage={
             custom || overflow
               ? undefined

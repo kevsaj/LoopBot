@@ -31,7 +31,7 @@ interface Props {
   /** A player-made floor: no tower or streak, just a note and Done. */
   custom?: { note: string | null; noPar?: boolean };
   /** An Overflow climb: the record and brick badges, and "Next floor" climbs on. */
-  overflow?: { floor: number; record: boolean; brick: boolean };
+  overflow?: { floor: number; record: boolean; brick: boolean; streak: number };
   /** Share a picture: the solved board and program on tower floors, a spoiler-free card on the daily. */
   onShareImage?(): Promise<ShareResult>;
 }
@@ -118,7 +118,7 @@ export function ResultsCard({ floorNumber, tower = 1, floorCount, earned, prevBe
 
   return (
     <div className="results-backdrop" onClick={onClose}>
-      <div className={`results${shown >= 3 ? ` tier-${earned}` : ''}`} role="dialog" aria-label={t('{title} cleared, {n} of 3 stars', { title, n: earned })} onClick={(e) => e.stopPropagation()}>
+      <div className={`results${overflow ? ' ovf-results' : ''}${shown >= 3 ? ` tier-${earned}` : ''}`} role="dialog" aria-label={t('{title} cleared, {n} of 3 stars', { title, n: earned })} onClick={(e) => e.stopPropagation()}>
         {earned === 3 && shown >= 3 && <div className="results-rays" aria-hidden="true" />}
         <p className="results-floor">{title}</p>
         <h2 className={shown >= 3 ? 'in' : ''}>{t(shown >= 3 ? HEADLINE[earned] : HEADLINE[1])}</h2>
@@ -141,6 +141,16 @@ export function ResultsCard({ floorNumber, tower = 1, floorCount, earned, prevBe
           {overflow?.record && <span className="badge best">🏆 {t('New record!')}</span>}
           {overflow?.brick && <span className="badge streak">🧱 {t('Brick won back')}</span>}
         </div>
+        {overflow && (
+          <p className="ovf-streak">
+            <span className="ovf-pips" aria-hidden="true">
+              {[0, 1, 2].map((i) => (
+                <span key={i} className={`ovf-pip${i < overflow.streak ? ' on' : ''}`} />
+              ))}
+            </span>
+            {overflow.brick ? t('Three perfect in a row!') : tn(3 - overflow.streak, '{n} more perfect clear wins a brick', '{n} more perfect clears win a brick')}
+          </p>
+        )}
         <table className="score">
           <tbody>
             <tr className={commands <= par.commands ? 'met' : ''}>

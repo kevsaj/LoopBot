@@ -33,7 +33,7 @@ import { hasPlus, initPurchases, onHintsGranted, towerUnlocked } from './store/p
 import { t, useLang } from './i18n';
 import { localFloor } from './levels/localFloor';
 import { OVERFLOW_ON } from './levels/towers';
-import { OverflowScreen } from './overflow/OverflowScreen';
+import { OverflowScreen, TerraceBanner } from './overflow/OverflowScreen';
 import { climbOn, earnsBrick, endClimb, loadOverflow, markCleared, overflowLevel, pruneOverflow, saveOverflow, skipFloor, startClimb } from './overflow';
 import type { OverflowState } from './overflow';
 import { packUnlocked } from './store/purchases';
@@ -188,6 +188,8 @@ export default function App() {
   const overflowRef = useRef(overflow);
   overflowRef.current = overflow;
   const [climbFloor, setClimbFloor] = useState<LevelFile | null>(null);
+  // The terrace banner shows as a climb starts and on every tenth floor after (11, 21, ...).
+  const [banner, setBanner] = useState<string | null>(null);
   const setOverflow = useCallback((next: OverflowState) => {
     saveOverflow(next);
     overflowRef.current = next;
@@ -202,6 +204,7 @@ export default function App() {
         setProgress((p) => pruneOverflow(p, level.id));
         ride(() => {
           setClimbFloor(level);
+          setBanner(run.floor % 10 === 1 ? level.id : null);
           setScreen('climb');
         });
       });
@@ -438,8 +441,9 @@ export default function App() {
           setProgress={setProgress}
           onGo={continueOverflow}
           onTower={() => setScreen('overflow')}
-          overflow={{ floor: run.floor, bricks: run.bricks, onClear: clearOverflowFloor, onSkip: skipOverflowFloor }}
+          overflow={{ floor: run.floor, bricks: run.bricks, perfect: run.perfect, onClear: clearOverflowFloor, onSkip: skipOverflowFloor }}
         />
+        {banner === climbFloor.id && <TerraceBanner floor={run.floor} onDone={() => setBanner(null)} />}
         {overlays}
         {elevator}
       </>

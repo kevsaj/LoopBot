@@ -1,110 +1,313 @@
-/* Overflow, the endless climb up the tower of Babel. Kept in its own file so it never collides with other work in styles.css. */
+/* Overflow, the endless climb up the tower of Babel. Kept in its own file so it never collides with other work in styles.css.
+   Overflow is a paid mode, so it has a look of its own: lapis blue and gold, glazed-brick friezes. */
+
+:root {
+  --ovf-gold: #f2c46a;
+  --ovf-gold-hi: #ffe6a0;
+  --ovf-gold-lo: #b8862e;
+  --ovf-lapis: #1b2f66;
+  --ovf-lapis-hi: #2f5fb3;
+  --ovf-night: #0b1030;
+  --ovf-gold-grad: linear-gradient(180deg, #ffe9a8 0%, #f2c46a 45%, #c8923a 100%);
+  /* The glazed-brick frieze of the gate: blue tiles, gold rosettes, a gold rule above and below. */
+  --ovf-frieze: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='16' viewBox='0 0 28 16'><rect width='28' height='16' fill='%231b2f66'/><path d='M0 0.5H28M0 15.5H28' stroke='%23f2c46a' stroke-width='1'/><path d='M14 2.5V13.5M0 8H28' stroke='%23122452' stroke-width='0.8'/><g fill='%23f2c46a' transform='translate(7 8)'><circle r='1.3'/><ellipse cy='-3' rx='1' ry='1.8'/><ellipse cy='3' rx='1' ry='1.8'/><ellipse cx='-3' rx='1.8' ry='1'/><ellipse cx='3' rx='1.8' ry='1'/></g><g fill='%235a8ee6' transform='translate(21 8)'><path d='M0 -4L4 0L0 4L-4 0Z'/></g></svg>");
+}
 
 /* --- the hub --- */
 .ovf-hub {
+  position: relative;
   height: 100dvh;
   display: flex;
   flex-direction: column;
   padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-  background: linear-gradient(180deg, #1c2246 0%, #241d36 60%, var(--bg) 100%);
+  background:
+    radial-gradient(ellipse 80% 40% at 50% 0%, rgba(47, 95, 179, 0.45), transparent 70%),
+    radial-gradient(1px 1px at 12% 20%, rgba(255, 255, 255, 0.6) 50%, transparent 51%),
+    radial-gradient(1px 1px at 82% 12%, rgba(255, 255, 255, 0.5) 50%, transparent 51%),
+    radial-gradient(1px 1px at 64% 44%, rgba(255, 255, 255, 0.4) 50%, transparent 51%),
+    radial-gradient(1px 1px at 28% 64%, rgba(255, 255, 255, 0.35) 50%, transparent 51%),
+    linear-gradient(180deg, #0d1336 0%, #121634 45%, #151326 100%);
+  color: #f4eedc;
+}
+.ovf-topbar {
+  min-height: 44px;
+}
+.ovf-topbar .back-btn {
+  color: rgba(242, 196, 106, 0.85);
 }
 .ovf-scroll {
   flex: 1;
   overflow-y: auto;
-  padding: 0 16px 24px;
+  padding: 0 16px 28px;
+}
+.ovf-head {
+  text-align: center;
+  margin: 0 auto 14px;
+}
+.ovf-eyebrow {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: rgba(242, 196, 106, 0.8);
+}
+.ovf-wordmark {
+  margin: 2px 0 2px;
+  font-family: 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, 'Noto Serif', serif;
+  font-size: clamp(40px, 12vw, 56px);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  line-height: 1.05;
+  background: var(--ovf-gold-grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 2px 0 rgba(90, 50, 10, 0.6)) drop-shadow(0 0 18px rgba(242, 196, 106, 0.25));
+}
+.ovf-tagline {
+  margin: 0;
+  font-size: 14px;
+  color: #b9b4d4;
 }
 .ovf-hero {
   position: relative;
   max-width: 420px;
   margin: 0 auto;
-  border-radius: 18px;
-  overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  padding: 4px;
+  border-radius: 22px;
+  background: var(--ovf-gold-grad);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5), 0 14px 40px rgba(0, 0, 0, 0.55), 0 0 40px rgba(242, 196, 106, 0.15);
 }
 .babel-art {
   display: block;
   width: 100%;
   height: auto;
   aspect-ratio: 1;
+  border-radius: 18px 18px 0 0;
+}
+.ovf-frieze {
+  height: 16px;
+  border-radius: 0 0 18px 18px;
+  background: var(--ovf-frieze) left center / auto 100% repeat-x;
 }
 .babel-bot {
   animation: babel-bob 2.4s ease-in-out infinite;
 }
 @keyframes babel-bob {
   50% {
-    translate: 0 -3px;
+    transform: translateY(-3px);
   }
 }
-:root.reduce-motion .babel-bot {
+.babel-cloud {
+  animation: babel-drift 14s ease-in-out infinite alternate;
+}
+.babel-cloud.c2 {
+  animation-duration: 19s;
+  animation-direction: alternate-reverse;
+}
+@keyframes babel-drift {
+  to {
+    transform: translateX(12px);
+  }
+}
+.babel-twinkle {
+  animation: babel-twinkle 3s ease-in-out infinite;
+}
+.babel-twinkle.tw-1 {
+  animation-delay: -1s;
+}
+.babel-twinkle.tw-2 {
+  animation-delay: -2s;
+}
+@keyframes babel-twinkle {
+  50% {
+    opacity: 0.25;
+  }
+}
+:root.reduce-motion .babel-bot,
+:root.reduce-motion .babel-cloud,
+:root.reduce-motion .babel-twinkle,
+:root.reduce-motion .ovf-gold::after {
   animation: none;
 }
-.ovf-kicker {
+
+/* the record plate */
+.ovf-record {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 420px;
+  margin: 16px auto 0;
+  padding: 12px 16px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(47, 95, 179, 0.28), rgba(27, 47, 102, 0.35));
+  border: 1px solid rgba(242, 196, 106, 0.45);
+  box-shadow: inset 0 1px 0 rgba(255, 230, 160, 0.15);
+}
+.ovf-laurel {
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 8px;
-  margin: 0;
-  text-align: center;
-  font-size: 12px;
+  left: 16px;
+  top: 50%;
+  width: 64px;
+  height: 64px;
+  transform: translateY(-50%);
+  fill: rgba(242, 196, 106, 0.6);
+}
+.ovf-record-text {
+  position: relative;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+}
+.ovf-record-num {
+  font-family: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, 'Noto Serif', serif;
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--ovf-gold-hi);
+  text-shadow: 0 0 12px rgba(242, 196, 106, 0.5);
+}
+.ovf-record-label {
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #fff6e0;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+  color: var(--ovf-gold);
 }
-.ovf-stats {
-  display: flex;
-  gap: 10px;
-  max-width: 420px;
-  margin: 14px auto 0;
-}
-.ovf-stat {
+.ovf-record-side {
   flex: 1;
   display: flex;
   flex-direction: column;
+  gap: 2px;
+  font-size: 13px;
+  color: #b9b4d4;
+}
+.ovf-record-side strong {
+  color: #f4eedc;
+  font-size: 15px;
+}
+
+/* the terraces trail */
+.ovf-trail {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 2px;
+  max-width: 420px;
+  margin: 16px auto 0;
+}
+.ovf-trail::before {
+  content: '';
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  top: 23px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--ovf-gold-lo), rgba(242, 196, 106, 0.25));
+}
+.ovf-trail-stop {
+  position: relative;
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  padding: 10px 8px;
-  border-radius: 14px;
-  background: var(--panel);
-  border: 1px solid var(--line);
-}
-.ovf-stat-num {
-  font-size: 28px;
-  font-weight: 800;
-  color: #f2c46a;
-  line-height: 1.1;
-}
-.ovf-stat-label {
-  font-size: 12px;
-  color: var(--quiet);
   text-align: center;
+  gap: 3px;
 }
+.ovf-trail-name {
+  font-size: 10.5px;
+  line-height: 1.15;
+  color: #8f8aac;
+}
+.ovf-trail-floor {
+  font-size: 10px;
+  color: #6c688a;
+}
+.ovf-trail-stop.reached .ovf-trail-name {
+  color: #f4eedc;
+}
+.ovf-trail-stop.reached .ovf-trail-floor {
+  color: var(--ovf-gold);
+}
+.ovf-trail-stop.here .ovf-medal {
+  filter: drop-shadow(0 0 10px rgba(242, 196, 106, 0.8));
+}
+.ovf-medal {
+  position: relative;
+  --ovf-gold: #5a5878;
+}
+.ovf-medal .ovf-medal-ring {
+  fill: #2a2944;
+  stroke: #4a4868;
+  stroke-width: 1.5;
+}
+.ovf-medal .ovf-medal-face {
+  fill: #191830;
+}
+.ovf-medal .ovf-medal-bead {
+  fill: #4a4868;
+}
+.ovf-medal.reached {
+  --ovf-gold: #ffe0a0;
+}
+.ovf-medal.reached .ovf-medal-ring {
+  fill: #c8923a;
+  stroke: #ffe6a0;
+}
+.ovf-medal.reached .ovf-medal-face {
+  fill: #1b2f66;
+}
+.ovf-medal.reached .ovf-medal-bead {
+  fill: #ffe6a0;
+}
+
+/* the climb card and the gold button */
 .ovf-card {
   max-width: 420px;
-  margin: 12px auto 0;
+  margin: 16px auto 0;
   padding: 14px;
-  border-radius: 16px;
-  background: var(--panel-2);
-  border: 1px solid rgba(242, 196, 106, 0.4);
-  text-align: center;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #1d2350, #161a3a);
+  border: 1px solid rgba(242, 196, 106, 0.5);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 230, 160, 0.12);
+}
+.ovf-card-start {
+  padding: 10px;
+}
+.ovf-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
 }
 .ovf-card-title {
-  margin: 0 0 4px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: #f2c46a;
+  color: var(--ovf-gold);
 }
-.ovf-card-line {
-  margin: 0 0 12px;
+.ovf-card-body {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  justify-content: center;
-  gap: 6px;
-  font-size: 16px;
-  font-weight: 600;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.ovf-card-floor {
+  margin: 0;
+  font-family: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, 'Noto Serif', serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: #fff4d6;
+}
+.ovf-card-sub {
+  margin: 0;
+  font-size: 13px;
+  color: #b9b4d4;
 }
 .ovf-actions {
   display: flex;
@@ -114,19 +317,53 @@
 .ovf-confirm {
   flex-basis: 100%;
   margin: 0 0 4px;
-  color: var(--quiet);
+  color: #b9b4d4;
+  text-align: center;
+}
+.pill.ovf-gold {
+  position: relative;
+  overflow: hidden;
+  background: var(--ovf-gold-grad);
+  border-color: #ffe6a0;
+  color: #3a2208;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  box-shadow: 0 3px 0 #8a5a1c, 0 0 18px rgba(242, 196, 106, 0.35);
+}
+/* a slow shine across the gold */
+.pill.ovf-gold::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, 0.55) 50%, transparent 65%);
+  transform: translateX(-120%);
+  animation: ovf-shine 3.6s ease-in-out infinite;
+}
+@keyframes ovf-shine {
+  0%,
+  55% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(120%);
+  }
+}
+.pill.ovf-ghost {
+  background: transparent;
+  border-color: rgba(242, 196, 106, 0.4);
+  color: #e8dcc0;
 }
 .ovf-start {
   width: 100%;
   flex: none;
-  background: #f2c46a;
-  border-color: #f2c46a;
-  color: #2a1a08;
+  min-height: 54px;
+  font-size: 17px;
 }
 .ovf-start.locked {
-  background: var(--panel);
-  border-color: #f2c46a;
-  color: var(--ink);
+  background: #1b2f66;
+  color: var(--ovf-gold-hi);
+  border-color: var(--ovf-gold);
+  box-shadow: 0 3px 0 #0c1630;
 }
 .pill.danger {
   border-color: var(--bad);
@@ -134,28 +371,34 @@
 }
 .ovf-rules {
   max-width: 420px;
-  margin: 16px auto 0;
+  margin: 18px auto 0;
   padding: 0;
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  color: var(--quiet);
+  gap: 12px;
+  color: #b9b4d4;
   font-size: 14px;
   line-height: 1.35;
 }
 .ovf-rules li {
   display: flex;
-  gap: 10px;
+  align-items: flex-start;
+  gap: 12px;
 }
-.ovf-rules li > span {
+.ovf-rule-icon {
   flex: none;
-  width: 22px;
-  text-align: center;
-  color: #f2c46a;
+  width: 30px;
+  height: 30px;
+  padding: 6px;
+  border-radius: 9px;
+  background: rgba(47, 95, 179, 0.35);
+  border: 1px solid rgba(242, 196, 106, 0.35);
+  color: var(--ovf-gold);
+  overflow: visible;
 }
 
-/* --- bricks: the climb's lives --- */
+/* --- bricks: the climb's lives, glazed lapis with a gold rim --- */
 .ovf-line {
   display: flex;
   align-items: center;
@@ -177,25 +420,28 @@
   width: 14px;
   height: 9px;
   border-radius: 2px;
-  border: 1px solid rgba(242, 196, 106, 0.5);
-  background: transparent;
+  border: 1px solid rgba(242, 196, 106, 0.35);
+  background: rgba(27, 47, 102, 0.3);
 }
 .ovf-brick.on {
-  background: linear-gradient(180deg, #f0c47a 0 40%, #c98c48 40% 100%);
-  border-color: #f0c47a;
+  background: linear-gradient(180deg, #7fb0ff 0%, #2f5fb3 55%, #1b3c80 100%);
+  border-color: var(--ovf-gold);
+  box-shadow: 0 0 6px rgba(90, 142, 230, 0.6);
 }
 .ovf-bricks.big {
   margin-left: 0;
+  gap: 4px;
 }
 .ovf-bricks.big .ovf-brick {
-  width: 20px;
-  height: 12px;
+  width: 22px;
+  height: 13px;
 }
 .pill.ovf-skip {
   flex: none;
   min-height: 40px;
   padding: 0 12px;
   font-size: 13px;
+  border-color: rgba(242, 196, 106, 0.45);
 }
 .pill.ovf-skip.armed {
   border-color: var(--warn);
@@ -205,14 +451,174 @@
   opacity: 0.45;
 }
 
+/* --- a climb floor: the gold-framed board and the terrace banner --- */
+.floor.ovf-floor {
+  background: linear-gradient(180deg, #161a3a 0%, var(--panel) 40%);
+}
+.floor.ovf-floor .floor-name {
+  font-family: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, 'Noto Serif', serif;
+  letter-spacing: 0.02em;
+}
+.floor.ovf-floor .back-btn {
+  color: rgba(242, 196, 106, 0.9);
+}
+.floor.ovf-floor .board-wrap {
+  box-shadow: 0 0 0 2px #c8923a, 0 0 0 3px rgba(255, 230, 160, 0.5), 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+/* a glazed-brick frieze along the bottom of the board */
+.floor.ovf-floor .board-wrap::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 10px;
+  z-index: 1;
+  pointer-events: none;
+  background: var(--ovf-frieze) left center / auto 100% repeat-x;
+}
+.ovf-altitude {
+  position: absolute;
+  z-index: 2;
+  left: 10px;
+  top: 46px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 9px 2px 3px;
+  border-radius: 999px;
+  background: rgba(11, 16, 48, 0.72);
+  border: 1px solid rgba(242, 196, 106, 0.55);
+  color: var(--ovf-gold-hi);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+.ovf-banner {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(ellipse at center, rgba(11, 16, 48, 0.9), rgba(11, 16, 48, 0.75));
+  animation: ovf-banner-in 0.35s ease-out, ovf-banner-out 0.45s ease-in 2.1s forwards;
+}
+.ovf-banner-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 26px 34px 22px;
+  border-radius: 22px;
+  border: 1px solid rgba(242, 196, 106, 0.6);
+  background: linear-gradient(180deg, #1d2350, #121636);
+  box-shadow: 0 0 60px rgba(242, 196, 106, 0.2);
+  animation: ovf-rise 0.6s cubic-bezier(0.2, 1.3, 0.4, 1);
+}
+.ovf-banner-kicker {
+  margin: 6px 0 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(242, 196, 106, 0.85);
+}
+.ovf-banner-name {
+  margin: 0;
+  font-family: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, 'Noto Serif', serif;
+  font-size: 26px;
+  font-weight: 700;
+  background: var(--ovf-gold-grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+@keyframes ovf-banner-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes ovf-banner-out {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+@keyframes ovf-rise {
+  from {
+    transform: translateY(24px) scale(0.92);
+    opacity: 0;
+  }
+}
+:root.reduce-motion .ovf-banner,
+:root.reduce-motion .ovf-banner-inner {
+  animation: ovf-banner-out 0.01s linear 1.8s forwards;
+}
+
+/* gold for the main buttons on a climb */
+.floor.ovf-floor .run-controls .pill.primary,
+.results.ovf-results .pill.primary {
+  background: var(--ovf-gold-grad);
+  border-color: #ffe6a0;
+  color: #3a2208;
+  font-weight: 800;
+}
+.floor.ovf-floor .run-controls .pill.primary.on {
+  background: var(--warn);
+}
+
+/* --- the results card on a climb --- */
+.results.ovf-results {
+  background: linear-gradient(180deg, #1d2350, #151938);
+  border-color: rgba(242, 196, 106, 0.6);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4), 0 0 40px rgba(242, 196, 106, 0.18);
+}
+.results.ovf-results .results-floor {
+  color: var(--ovf-gold);
+  letter-spacing: 0.18em;
+}
+.ovf-streak {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 2px 0 10px;
+  font-size: 12px;
+  color: #b9b4d4;
+}
+.ovf-pips {
+  display: inline-flex;
+  gap: 4px;
+}
+.ovf-pip {
+  width: 9px;
+  height: 9px;
+  transform: rotate(45deg);
+  border: 1px solid rgba(242, 196, 106, 0.6);
+}
+.ovf-pip.on {
+  background: var(--ovf-gold-grad);
+  box-shadow: 0 0 6px rgba(242, 196, 106, 0.7);
+}
+
 /* --- the tower picker's Overflow row --- */
 .tp-row.tp-overflow {
   margin-top: 6px;
   border-top: 1px solid var(--line);
   border-radius: 0 0 10px 10px;
+  background: linear-gradient(90deg, rgba(27, 47, 102, 0.55), rgba(242, 196, 106, 0.08));
 }
 .tp-overflow .tp-badge {
   font-size: 20px;
+  background: var(--ovf-gold-grad);
+  border-color: #ffe6a0;
+  color: #3a2208;
+}
+.tp-overflow .tp-name {
+  font-family: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, 'Noto Serif', serif;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ovf-gold-hi);
 }
 
 /* --- the boards: one sky per terrace --- */
@@ -277,4 +683,20 @@
 .board-wrap.band-gardens .step-counter {
   color: #1e3a2a;
   font-weight: 600;
+}
+
+/* The Overflow store sheet wears the same lapis and gold. */
+.settings.pack-sheet.pack-overflow {
+  background: linear-gradient(180deg, #1d2350, #121636);
+  border-color: rgba(242, 196, 106, 0.55);
+}
+.pack-sheet.pack-overflow h2 {
+  font-family: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, 'Noto Serif', serif;
+  color: var(--ovf-gold-hi);
+  letter-spacing: 0.06em;
+}
+.pack-sheet.pack-overflow .plus-buy {
+  background: var(--ovf-gold-grad);
+  border-color: #ffe6a0;
+  color: #3a2208;
 }
