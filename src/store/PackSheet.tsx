@@ -73,6 +73,17 @@ export const PACK_INFO: Record<PackId, PackInfo> = {
       { icon: '🎬', title: msg('A squad of new friends'), text: msg('DASH, BULWARK, ROOK and Captain LEDGER, a heist on Heist Night, and new precinct music.') },
     ],
   },
+  overflow: {
+    title: msg('Overflow'),
+    tower: msg('Overflow'),
+    lede: msg('An endless climb up the tower of Babel. Every floor is new, and every trick from the other towers is waiting in the brickwork.'),
+    perks: [
+      { icon: '∞', title: msg('Floors that never run out'), text: msg('Each climb shuffles hundreds of solvable floors and turns them, so no two climbs look alike.') },
+      { icon: '🧱', title: msg('Three bricks'), text: msg('Skip a floor for a brick, and win one back with three perfect clears in a row.') },
+      { icon: '🏆', title: msg('Beat your best height'), text: msg('How high can you climb? Your record stays with you.') },
+      { icon: '🎶', title: msg('Five terraces'), text: msg('From the Brickyard to above the clouds, each with its own look and music.') },
+    ],
+  },
   dockyard: {
     title: msg('Dockyard'),
     tower: msg('The Wavehouse'),
@@ -130,13 +141,13 @@ export function PackSheet({ pack, onClose }: { pack: PackId; onClose(): void }) 
 
   return (
     <div className="results-backdrop settings-screen" onClick={onClose}>
-      <div className={`settings plus-sheet pack-sheet pack-${pack}`} role="dialog" aria-label={t('{pack} city pack', { pack: name })} onClick={(e) => e.stopPropagation()}>
+      <div className={`settings plus-sheet pack-sheet pack-${pack}`} role="dialog" aria-label={pack === 'overflow' ? t('Overflow endless mode') : t('{pack} city pack', { pack: name })} onClick={(e) => e.stopPropagation()}>
         <header className="settings-head">
           <button type="button" className="settings-close" aria-label={t('Close')} onClick={() => (fx.tap(), onClose())}>
             ✕
           </button>
           <h2>
-            {name} <span className="pack-word">{t('city pack')}</span>
+            {name} <span className="pack-word">{pack === 'overflow' ? t('endless mode') : t('city pack')}</span>
           </h2>
         </header>
         <div className="settings-body">
@@ -154,10 +165,10 @@ export function PackSheet({ pack, onClose }: { pack: PackId; onClose(): void }) 
               </li>
             ))}
           </ul>
-          <p className="set-caption">{t('One purchase, yours to keep. City packs are separate from LoopBot Plus. No subscription and no ads.')}</p>
+          <p className="set-caption">{pack === 'overflow' ? t('One purchase, yours to keep. Overflow is separate from LoopBot Plus. No subscription and no ads.') : t('One purchase, yours to keep. City packs are separate from LoopBot Plus. No subscription and no ads.')}</p>
 
           {owned ? (
-            <p className="plus-owned">✓ {t('{tower} is open', { tower: t(info.tower) })}</p>
+            <p className="plus-owned">✓ {pack === 'overflow' ? t('Overflow is open') : t('{tower} is open', { tower: t(info.tower) })}</p>
           ) : (
             <button type="button" className="pill primary plus-buy" disabled={busy || !offer || offer === 'loading'} onClick={buy}>
               {offer === 'loading' ? t('Loading price…') : offer ? t('Get {pack} · {price}', { pack: name, price: offer.price }) : t('Store unavailable')}

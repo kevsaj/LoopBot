@@ -21,7 +21,8 @@ export type Theme =
   | 'quay' | 'crane' | 'ropewalk' | 'office' | 'crest'
   | 'atrium' | 'skybridge' | 'batik' | 'mirror' | 'twintops'
   | 'tessera' | 'fernhall' | 'cloister' | 'nautilus' | 'canopy'
-  | 'frontdesk' | 'evidence' | 'briefing' | 'cells' | 'watchtower';
+  | 'frontdesk' | 'evidence' | 'briefing' | 'cells' | 'watchtower'
+  | 'brickyard' | 'lapisgate' | 'gardens' | 'starstair' | 'cloudtop';
 
 interface Recipe {
   bpm: number;
@@ -58,6 +59,8 @@ const PHRYGIAN_DOMINANT = [0, 1, 4, 5, 7, 8, 10];
 const PENTATONIC = [0, 2, 4, 7, 9];
 /** Its minor sister, for the Lantern Lab at night. */
 const MINOR_PENTATONIC = [0, 3, 5, 7, 10];
+/** Two augmented seconds: the old, sun-baked sound of Overflow's tower of Babel. */
+const DOUBLE_HARMONIC = [0, 1, 4, 5, 7, 8, 11];
 
 const RECIPES: Record<Theme, Recipe> = {
   // Night sky over the city: slow, open, no drums.
@@ -472,6 +475,57 @@ const RECIPES: Record<Theme, Recipe> = {
     kick: 'x...x...x...x...', snare: '....x.......x..x', hat: 'xxxxxxxxxxxxxxxx',
     seed: 277,
   },
+  // Overflow, the endless climb up the tower of Babel. Floors 1-10: the Brickyard, a hand-drum
+  // groove and a plucked lute line in the old double harmonic scale, workers laying bricks.
+  brickyard: {
+    bpm: 96, root: 45, mode: DOUBLE_HARMONIC, chords: [0, 1, 0, 6], sevenths: false,
+    pad: { wave: 'triangle', cutoff: 1200, gain: 0.035 },
+    bass: 'x..x..x.x..x..o.', bassWave: 'triangle',
+    arp: '0.1.2.1.0.1.4.2.', arpWave: 'triangle',
+    lead: { wave: 'triangle', density: 0.38, gain: 0.045 },
+    kick: 'x..x..x...x..x..', snare: '......x.......x.', hat: '..x...x...x.x.x.',
+    seed: 281,
+  },
+  // Floors 11-20: the Lapis Gate, blue glazed bricks and lions; a proud march with a reedy lead.
+  lapisgate: {
+    bpm: 104, root: 43, mode: PHRYGIAN_DOMINANT, chords: [0, 1, 6, 0], sevenths: false,
+    pad: { wave: 'sawtooth', cutoff: 1300, gain: 0.03 },
+    bass: 'x.x.x.o.x.x.x.h.', bassWave: 'sawtooth',
+    arp: '0.2.4.2.1.2.4.2.', arpWave: 'square',
+    lead: { wave: 'square', density: 0.4, gain: 0.025 },
+    kick: 'x...x...x...x...', snare: '....x.......x...', hat: 'x.x.x.x.x.x.x.x.',
+    seed: 283,
+  },
+  // Floors 21-30: the hanging gardens, water running down the terraces; light and green.
+  gardens: {
+    bpm: 92, root: 46, mode: MIXOLYDIAN, chords: [0, 6, 3, 0], sevenths: true,
+    pad: { wave: 'sine', cutoff: 1500, gain: 0.045 },
+    bass: 'x...o...x...o.x.', bassWave: 'triangle',
+    arp: '0.2.4.3.0.2.4.3.', arpWave: 'sine',
+    lead: { wave: 'sine', density: 0.4, gain: 0.05 },
+    kick: 'x.......x.......', snare: '....x.......x...', hat: '..x...x...x...x.',
+    seed: 293,
+  },
+  // Floors 31-40: the Star Stair, night on the upper terraces where the astronomers kept watch.
+  starstair: {
+    bpm: 84, root: 41, mode: DOUBLE_HARMONIC, chords: [0, 5, 1, 0], sevenths: false,
+    pad: { wave: 'sine', cutoff: 1000, gain: 0.05 },
+    bass: 'x.......o.......', bassWave: 'sine',
+    arp: '0..2..4..3..1..2', arpWave: 'triangle',
+    lead: { wave: 'triangle', density: 0.28, gain: 0.045 },
+    kick: 'x.......x.......', snare: '............x...', hat: '....x.......x...',
+    seed: 307,
+  },
+  // Floor 41 and up: the Cloud Top, above the weather, where the tower just keeps going.
+  cloudtop: {
+    bpm: 120, root: 47, mode: LYDIAN, chords: [0, 1, 4, 0], sevenths: true,
+    pad: { wave: 'triangle', cutoff: 1900, gain: 0.035 },
+    bass: 'x.xo..x.x.xo..o.', bassWave: 'triangle',
+    arp: '0240240302402403', arpWave: 'sine',
+    lead: { wave: 'triangle', density: 0.44, gain: 0.045 },
+    kick: 'x...x...x...x...', snare: '....x.......x...', hat: 'x.xxx.xxx.xxx.xx',
+    seed: 311,
+  },
   // The daily challenge: cheerful and a little different every bar.
   daily: {
     bpm: 104, root: 46, mode: IONIAN, chords: [0, 3, 5, 4], sevenths: false,
@@ -498,6 +552,12 @@ export function themeForFloor(n: number, tower = 1): Theme {
   if (n <= 30) return 'workshop';
   if (n <= 40) return 'control';
   return 'rooftop';
+}
+
+/** Which theme plays on a floor of an Overflow climb: one per terrace (see terraceOf in src/overflow). */
+export function themeForOverflow(floor: number): Theme {
+  const i = Math.floor((Math.max(1, floor) - 1) / 10);
+  return (['brickyard', 'lapisgate', 'gardens', 'starstair', 'cloudtop'] as const)[i < 5 ? i : 1 + ((i - 1) % 4)];
 }
 
 // --- composition (pure, so it can be tested) ---

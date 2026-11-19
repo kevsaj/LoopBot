@@ -34,6 +34,8 @@ import { DIFFICULTY_LABEL, difficultyOn, shareText, shortDate } from '../daily';
 import { msg, t, tn } from '../i18n';
 import { announce } from '../a11y/announce';
 import { describeBrief } from '../a11y/describe';
+import { Medallion, TERRACE_INFO } from '../overflow/OverflowScreen';
+import { terraceOf } from '../overflow';
 
 /** Keys typed into a text box (code editor, feedback, maker) are never play shortcuts. */
 function typingTarget(el: EventTarget | null): boolean {
@@ -69,6 +71,20 @@ interface Props {
   daily?: DailyProps;
   /** Set for a player-made floor (floor maker test play, or a share code). */
   custom?: CustomProps;
+  /** Set for a floor of an Overflow climb (src/overflow). */
+  overflow?: OverflowProps;
+}
+
+export interface OverflowProps {
+  /** The floor of the climb, from 1. */
+  floor: number;
+  bricks: number;
+  /** 3-star clears in a row so far on this climb (three win a brick back). */
+  perfect: number;
+  /** Called on every clear; says whether it set a new record and will earn a brick back. */
+  onClear(stars: number): { record: boolean; brick: boolean };
+  /** Skip this floor for a brick. */
+  onSkip(): void;
 }
 
 export interface CustomProps {
@@ -123,7 +139,7 @@ export function stars(level: LevelFile, commands: number, steps: number) {
   return 1;
 }
 
-export function FloorScreen({ level, floorNumber, floorCount, progress, setProgress, onGo, onTower, daily, custom }: Props) {
+export function FloorScreen({ level, floorNumber, floorCount, progress, setProgress, onGo, onTower, daily, custom, overflow }: Props) {
   const editor = useEditor(level.id, level.starter);
   const { program } = editor.state;
   // The questions if and while can ask here: wall ahead always, plus the floor's own sensors.
@@ -179,9 +195,19 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
   const customRef = useRef(custom);
   customRef.current = custom;
   const [customNote, setCustomNote] = useState<string | null>(null);
-  // Player-made floors don't count as tower fails (the stuck-floor stats are for tower floors).
+  const overflowRef = useRef(overflow);
+  overflowRef.current = overflow;
+  const [climbNote, setClimbNote] = useState<{ record: boolean; brick: boolean } | null>(null);
+  // Skipping costs a brick, so it takes a second tap to confirm.
+  const [skipArmed, setSkipArmed] = useState(false);
+  useEffect(() => {
+    if (!skipArmed) return;
+    const id = window.setTimeout(() => setSkipArmed(false), 3000);
+    return () => window.clearTimeout(id);
+  }, [skipArmed]);
+  // Player-made and Overflow floors don't count as tower fails (the stuck-floor stats are for tower floors).
   const fail = useCallback(() => {
-    if (!customRef.current) setProgress((p) => recordFail(p, level.id));
+    if (!customRef.current && !overflowRef.current) setProgress((p) => recordFail(p, level.id));
   }, [setProgress, level.id]);
   const [rotateSignal, setRotateSignal] = useState(0);
   const [sheet, setSheet] = useState<'hints' | 'settings' | 'feedback' | null>(null);
@@ -298,6 +324,10 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
         if (customRef.current) {
           setPrevBest(0);
           setCustomNote(customRef.current.onClear(countCommands(program), o.steps, s) || null);
+        } else if (overflowRef.current) {
+          // Overflow stars live with the climb, not the tower's star count.
+          setPrevBest(0);
+          setClimbNote(overflowRef.current.onClear(s));
         } else if (dailyRef.current) {
           // Daily stars live with the daily streak, not the tower's star count.
           setPrevBest(dailyRef.current.best);
@@ -542,13 +572,24 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
     (tut === 'tap' && cmd === 'forward') || (tut === 'turn' && (cmd === 'turn_left' || cmd === 'turn_right'));
 
   return (
-    <main className={`floor${tab === 'code' && typing ? ' typing-code' : ''}`}>
+    <main className={`floor${tab === 'code' && typing ? ' typing-code' : ''}${overflow ? ' ovf-floor' : ''}`}>
       <header className="topbar">
         <div className="floor-title">
           {custom ? (
             <button type="button" className="back-btn" onClick={() => (fx.tap(), onTower())} aria-label={t('{place}: back', { place: custom.back })}>
               ‹ {custom.back}
             </button>
+          ) : overflow ? (
+            <div className="ovf-line">
+              <button type="button" className="back-btn" onClick={() => (fx.tap(), onTower())} aria-label={t('{place}: back', { place: t('Overflow · Floor {n}', { n: overflow.floor }) })}>
+                ‹ {t('Floor {n}', { n: overflow.floor })}
+              </button>
+              <span className="ovf-bricks" role="img" aria-label={tn(overflow.bricks, '{n} brick left', '{n} bricks left')}>
+                {[0, 1, 2].map((i) => (
+                  <span key={i} className={`ovf-brick${i < overflow.bricks ? ' on' : ''}`} aria-hidden="true" />
+                ))}
+              </span>
+            </div>
           ) : daily ? (
             <button type="button" className="back-btn" onClick={() => (fx.tap(), onTower())} aria-label={t('{place}: back', { place: t('Daily · {date}', { date: shortDate(daily.date) }) })}>
               ‹ {t('Daily · {date}', { date: shortDate(daily.date) })}
@@ -563,6 +604,21 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
             {daily && <span className={`daily-diff diff-${difficultyOn(daily.date)}`}>{t(DIFFICULTY_LABEL[difficultyOn(daily.date)])}</span>}
           </h1>
         </div>
+        {overflow && (
+          <button
+            type="button"
+            className={`pill ovf-skip${skipArmed ? ' armed' : ''}`}
+            disabled={overflow.bricks <= 0 || outcome?.status === 'cleared'}
+            aria-label={overflow.bricks <= 0 ? t('No bricks left to skip with: clear this floor to climb on') : skipArmed ? t('Tap again to skip this floor for a brick') : t('Skip this floor for a brick')}
+            onClick={() => {
+              if (!skipArmed) return (fx.tap(), setSkipArmed(true));
+              fx.denied();
+              overflow.onSkip();
+            }}
+          >
+            {skipArmed ? t('Skip? −1 brick') : t('Skip')}
+          </button>
+        )}
         {level.hints.length > 0 && (
           <button type="button" className="hint-btn" onClick={() => (fx.tap(), setSheet('hints'))} aria-label={t('Hint, {n} left', { n: progress.hints })}>
             {t('Hint')} <span className="hint-count">{progress.hints}</span>
@@ -590,6 +646,12 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
           </span>
           <span>{t('step {n}', { n: steps })}</span>
         </div>
+        {overflow && (
+          <span className="ovf-altitude">
+            <Medallion terrace={terraceOf(overflow.floor)} reached size={18} />
+            {t(TERRACE_INFO[terraceOf(overflow.floor)].name)}
+          </span>
+        )}
         <button type="button" className="rotate-btn" onClick={() => (fx.tap(), setRotateSignal((n) => n + 1))} aria-label={t('Rotate view: turn the camera a quarter turn. LoopBot does not move.')}>
           ⟲ {t('Rotate view')}
         </button>
@@ -779,8 +841,9 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
           onNext={() => onGo(floorNumber)}
           onTower={onTower}
           custom={custom && { note: customNote, noPar: custom.noPar }}
+          overflow={overflow && { floor: overflow.floor, record: !!climbNote?.record, brick: !!climbNote?.brick, streak: climbNote?.brick ? 3 : earned >= 3 ? Math.min(2, overflow.perfect + 1) : 0 }}
           onShareImage={
-            custom
+            custom || overflow
               ? undefined
               : async () => {
                   const tw = towerOf(Number(/^t(\d+)-/.exec(level.id)?.[1] ?? 1));

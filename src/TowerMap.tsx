@@ -42,6 +42,8 @@ interface Props {
   /** Opens the daily archive (LoopBot Plus). */
   onArchive(): void;
   onLocker(): void;
+  /** Overflow's row in the tower picker, in builds that have it. */
+  overflow?: OverflowEntryProps;
   lockerNew: boolean;
 }
 
@@ -112,7 +114,14 @@ function clearedIn(t: Tower, progress: Progress): number {
  * tower with its progress, or a lock and what opens it (LoopBot Plus or a city pack). It replaces a
  * row of tabs that had no room left on phones, and a list scales as more cities arrive.
  */
-function TowerSwitch({ tower, towers, progress, onPick, onLocked }: { tower: number; towers: Tower[]; progress: Progress; onPick(n: number): void; onLocked(t: Tower): void }) {
+/** The Overflow row under the towers: the endless climb, with the best height or a lock. */
+export interface OverflowEntryProps {
+  best: number;
+  locked: boolean;
+  onOpen(): void;
+}
+
+function TowerSwitch({ tower, towers, progress, onPick, onLocked, overflow }: { tower: number; towers: Tower[]; progress: Progress; onPick(n: number): void; onLocked(t: Tower): void; overflow?: OverflowEntryProps }) {
   const [open, setOpen] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
@@ -233,6 +242,42 @@ function TowerSwitch({ tower, towers, progress, onPick, onLocked }: { tower: num
               </button>
             );
           })}
+          {overflow && (
+            <button
+              type="button"
+              role="menuitem"
+              className={`tp-row tp-overflow${overflow.locked ? ' locked' : ''}`}
+              style={{ ['--tp-light' as string]: '#f2c46a', ['--tp-soft' as string]: 'rgba(242, 196, 106, 0.16)', ['--tp-glow' as string]: 'rgba(242, 196, 106, 0.45)' }}
+              aria-label={
+                overflow.locked
+                  ? t('Overflow, the endless climb, locked: sold on its own')
+                  : tn(overflow.best, 'Overflow, the endless climb, best height {n} floor', 'Overflow, the endless climb, best height {n} floors')
+              }
+              onClick={() => {
+                setOpen(false);
+                fx.tap();
+                overflow.onOpen();
+              }}
+            >
+              <span className="tp-badge" aria-hidden="true">
+                ∞
+              </span>
+              <span className="tp-text">
+                <span className="tp-name">Overflow</span>
+                <span className="tp-sub">{overflow.locked ? `${tr('Endless climb')} · ${tr('Sold on its own')}` : `${tr('Endless climb')} · ${tn(overflow.best, 'best {n} floor', 'best {n} floors')}`}</span>
+              </span>
+              <span className="tp-state" aria-hidden="true">
+                {overflow.locked ? (
+                  <svg className="tp-lock" viewBox="0 0 16 18">
+                    <path d="M4 8V5.5a4 4 0 0 1 8 0V8" fill="none" stroke="currentColor" strokeWidth="2" />
+                    <rect x="2" y="8" width="12" height="9" rx="2" fill="currentColor" />
+                  </svg>
+                ) : (
+                  <span className="tp-go">›</span>
+                )}
+              </span>
+            </button>
+          )}
         </div>
       )}
     </div>
@@ -279,7 +324,7 @@ export function MiniBot() {
   );
 }
 
-export function TowerMap({ levels, tower, towers, onTowerPick, progress, current, onPick, onSettings, onHome, daily, onDaily, onArchive, onLocker, lockerNew }: Props) {
+export function TowerMap({ levels, tower, towers, onTowerPick, progress, current, onPick, onSettings, onHome, daily, onDaily, onArchive, onLocker, lockerNew, overflow }: Props) {
   const ids = levels.map((l) => l.id);
   const totalStars = ids.reduce((n, id) => n + (progress.stars[id] ?? 0), 0);
   const cleared = ids.filter((id) => (progress.stars[id] ?? 0) > 0).length;
@@ -362,7 +407,7 @@ export function TowerMap({ levels, tower, towers, onTowerPick, progress, current
           {t('{n} / {total} floors', { n: cleared, total: ids.length })}
         </span>
       </div>
-      <TowerSwitch tower={tower} towers={towers} progress={progress} onPick={onTowerPick} onLocked={lockedTower} />
+      <TowerSwitch tower={tower} towers={towers} progress={progress} onPick={onTowerPick} onLocked={lockedTower} overflow={overflow} />
       {!DEMO && <DailyButton className="tower-daily" progress={progress} daily={daily} onOpen={onDaily} />}
       {!DEMO && dailyUnlocked(progress) && (PLUS_VISIBLE || plusUnlocked()) && (
         <button type="button" className="link-btn daily-archive-link" onClick={() => (fx.tap(), onArchive())}>

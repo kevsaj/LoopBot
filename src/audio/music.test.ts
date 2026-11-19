@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { composeLead, themeForFloor } from './music';
+import { composeLead, themeForFloor, themeForOverflow } from './music';
 import type { Theme } from './music';
 
-const THEMES: Theme[] = ['title', 'lobby', 'maintenance', 'workshop', 'control', 'rooftop', 'daily', 'frostgate', 'glacier', 'signal', 'aurora', 'summit', 'dunegate', 'furnace', 'bazaar', 'mirage', 'crown', 'ferry', 'garden', 'loom', 'lantern', 'pinnacle', 'quay', 'crane', 'ropewalk', 'office', 'crest', 'atrium', 'skybridge', 'batik', 'mirror', 'twintops', 'tessera', 'fernhall', 'cloister', 'nautilus', 'canopy', 'frontdesk', 'evidence', 'briefing', 'cells', 'watchtower'];
+const THEMES: Theme[] = ['title', 'lobby', 'maintenance', 'workshop', 'control', 'rooftop', 'daily', 'frostgate', 'glacier', 'signal', 'aurora', 'summit', 'dunegate', 'furnace', 'bazaar', 'mirage', 'crown', 'ferry', 'garden', 'loom', 'lantern', 'pinnacle', 'quay', 'crane', 'ropewalk', 'office', 'crest', 'atrium', 'skybridge', 'batik', 'mirror', 'twintops', 'tessera', 'fernhall', 'cloister', 'nautilus', 'canopy', 'frontdesk', 'evidence', 'briefing', 'cells', 'watchtower', 'brickyard', 'lapisgate', 'gardens', 'starstair', 'cloudtop'];
 
 describe('music', () => {
   it('gives each band of the tower its theme', () => {
@@ -33,6 +33,10 @@ describe('music', () => {
 
   it('gives each band of Fractal its own theme', () => {
     expect([1, 10, 11, 21, 31, 41, 50].map((n) => themeForFloor(n, 7))).toEqual(['tessera', 'tessera', 'fernhall', 'cloister', 'nautilus', 'canopy', 'canopy']);
+  });
+
+  it('gives each terrace of Overflow its own theme, cycling above the clouds', () => {
+    expect([1, 10, 11, 21, 31, 41, 50, 51, 81, 91].map(themeForOverflow)).toEqual(['brickyard', 'brickyard', 'lapisgate', 'gardens', 'starstair', 'cloudtop', 'cloudtop', 'lapisgate', 'cloudtop', 'lapisgate']);
   });
 
   it('gives each band of Precinct 404 its own theme', () => {

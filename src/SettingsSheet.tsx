@@ -12,7 +12,7 @@ import type { PackId } from './store/packs';
 import { HintShop } from './store/HintShop';
 import { PlusSheet } from './store/PlusSheet';
 import { PackSheet } from './store/PackSheet';
-import { TOWERS } from './levels/towers';
+import { OVERFLOW_ON, TOWERS } from './levels/towers';
 import { bigTextOn, setBigText } from './textSize';
 import { deviceReducesMotion, reduceMotionPref, setReduceMotion } from './a11y/motion';
 import { version } from '../package.json';
@@ -234,6 +234,8 @@ export function SettingsSheet({ progress, setProgress, onClose, floor, floorTitl
 
 /** The city packs this build sells: the ones whose tower is in it. */
 const SOLD_PACKS = TOWERS.flatMap((tw) => (tw.pack ? [{ id: tw.pack, city: tw.city, tower: tw.name }] : []));
+/** Overflow is sold when the city packs are (it rides on the same switches). */
+const SELLS_OVERFLOW = OVERFLOW_ON;
 
 /** Settings > Subscriptions & Purchases: LoopBot Plus, city packs, hints and Restore (Kevin, Nov 7: Almanac style). */
 function PurchaseRows({ hints }: { hints: number }) {
@@ -241,8 +243,9 @@ function PurchaseRows({ hints }: { hints: number }) {
   const [shop, setShop] = useState(false);
   const [pack, setPack] = useState<PackId | null>(null);
   const [owned, setOwned] = useState(hasPlus);
-  const [packs, setPacks] = useState(() => SOLD_PACKS.filter((p) => ownsPack(p.id)).map((p) => p.id));
-  const refreshPacks = () => setPacks(SOLD_PACKS.filter((p) => ownsPack(p.id)).map((p) => p.id));
+  const owns = () => [...SOLD_PACKS.map((p) => p.id), ...(SELLS_OVERFLOW ? (['overflow'] as const) : [])].filter((id) => ownsPack(id));
+  const [packs, setPacks] = useState(owns);
+  const refreshPacks = () => setPacks(owns());
   const [note, setNote] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const restore = async () => {
@@ -280,6 +283,18 @@ function PurchaseRows({ hints }: { hints: number }) {
           <p className="set-caption">{t('{tower}: 50 floors in its own tower. Sold on its own, not part of Plus.', { tower: t(p.tower) })}</p>
         </div>
       ))}
+      {SELLS_OVERFLOW && (
+        <div className="set-item">
+          <button type="button" className="set-row set-link" onClick={() => (fx.tap(), setPack('overflow'))}>
+            <span className="set-label">Overflow</span>
+            <span className="set-value">{packs.includes('overflow') ? t('Owned ✓') : t('Get')}</span>
+            <span className="set-chevron" aria-hidden="true">
+              ›
+            </span>
+          </button>
+          <p className="set-caption">{t('The endless climb up the tower of Babel. Sold on its own, not part of Plus.')}</p>
+        </div>
+      )}
       <div className="set-item">
         <button type="button" className="set-row set-link" onClick={() => (fx.tap(), setShop(true))}>
           <span className="set-label">{t('Hint packs')}</span>

@@ -31,6 +31,12 @@ export interface Tower {
 const PREVIEW = import.meta.env.DEV || import.meta.env.VITE_PLUS_PREVIEW === '1';
 const STORE_ON = import.meta.env.VITE_PLUS === '1';
 
+/**
+ * Overflow, the endless climb (src/overflow), rides on the same switches as the city packs: it is
+ * in dev and preview builds, and in store builds, where it is sold as `loopbot_overflow`.
+ */
+export const OVERFLOW_ON = !DEMO && (PREVIEW || STORE_ON);
+
 /** Every tower in play order. The web demo only has the Lobby of Tower 1. */
 export const TOWERS: Tower[] = [
   { n: 1, name: msg('Meridian Spire'), city: 'Meridian', levels: LEVELS, plus: false },
