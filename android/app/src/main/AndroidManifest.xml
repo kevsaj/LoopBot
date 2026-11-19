@@ -11,7 +11,7 @@
         <activity
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode|navigation|density"
             android:name=".MainActivity"
-            android:screenOrientation="portrait"
+            android:screenOrientation="unspecified"
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBarLaunch"
             android:launchMode="singleTask"
@@ -31,10 +31,10 @@
         </provider>
     </application>
 
-    <!-- The activity is locked to portrait, which makes Google Play treat
-         android.hardware.screen.portrait as required and hide the app from devices that
-         don't report it (some tablets, Chromebooks, Play Games on PC, XR). The game still
-         runs in portrait on those devices, so mark the feature optional. -->
+    <!-- Orientation is left open here and phones are locked to portrait in MainActivity:
+         Google Play Games on PC reads the window shape from this manifest only, so a portrait
+         lock here kept the PC window phone-shaped. Portrait stays optional so Google Play never
+         hides the game from devices that don't report it (some tablets, Chromebooks, PCs, XR). -->
     <uses-feature android:name="android.hardware.screen.portrait" android:required="false" />
 
     <!-- Google Play Games on PC. With type.pc declared, the PC sends real mouse events (hover,

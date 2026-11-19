@@ -6,9 +6,11 @@ import { restoreSaves } from './storage/persist';
 import { applyTextSize, readDeviceTextSize } from './textSize';
 import { applyMotion } from './a11y/motion';
 import { watchDialogs } from './a11y/dialogs';
+import { applyDisplay, devPcPreview } from './display';
 
 applyTextSize();
 applyMotion();
+applyDisplay(devPcPreview());
 watchDialogs();
 
 // On the phones, bring saves back from the native copy first if the WebView storage was wiped,
