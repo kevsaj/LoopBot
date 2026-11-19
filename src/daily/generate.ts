@@ -27,9 +27,9 @@ export function rng(seed: number) {
   const pick = <T>(xs: readonly T[]): T => xs[Math.floor(next() * xs.length)];
   return { next, int, pick };
 }
-type Rng = ReturnType<typeof rng>;
+export type Rng = ReturnType<typeof rng>;
 
-type Shape = Array<Action | { times: number; body: Shape }>;
+export type Shape = Array<Action | { times: number; body: Shape }>;
 
 const FACINGS: Facing[] = ['north', 'east', 'south', 'west'];
 const DELTA: Record<Facing, [number, number]> = { north: [0, -1], east: [1, 0], south: [0, 1], west: [-1, 0] };
@@ -42,9 +42,9 @@ function atoms(r: Rng, n: number, pool: Action[]): Action[] {
   return out;
 }
 
-const hasMove = (xs: Shape): boolean => xs.some((b) => (typeof b === 'string' ? b === 'forward' || b === 'jump' : hasMove(b.body)));
+export const hasMove = (xs: Shape): boolean => xs.some((b) => (typeof b === 'string' ? b === 'forward' || b === 'jump' : hasMove(b.body)));
 
-function shapeFor(r: Rng, d: Difficulty, switches: boolean): Shape {
+export function shapeFor(r: Rng, d: Difficulty, switches: boolean): Shape {
   const walk: Action[] = ['forward', 'forward', 'forward', 'turn_left', 'turn_right'];
   const climb: Action[] = [...walk, 'jump', 'jump'];
   const body = (n: number, pool: Action[]) => {
@@ -78,7 +78,7 @@ function shapeFor(r: Rng, d: Difficulty, switches: boolean): Shape {
   ];
 }
 
-function flatten(s: Shape, out: Action[] = []): Action[] {
+export function flatten(s: Shape, out: Action[] = []): Action[] {
   for (const b of s) {
     if (typeof b === 'string') out.push(b);
     else for (let i = 0; i < b.times; i++) flatten(b.body, out);
@@ -93,7 +93,7 @@ interface Cell {
 }
 
 /** Walks the actions over empty sky, laying floor under LoopBot. Null if the walk breaks a rule. */
-function carve(r: Rng, actions: Action[], facing: Facing, h0: number) {
+export function carve(r: Rng, actions: Action[], facing: Facing, h0: number) {
   const cells = new Map<string, Cell & { x: number; y: number }>();
   let x = 0;
   let y = 0;
@@ -136,7 +136,7 @@ const NAMES_A = ['Neon', 'Glass', 'Copper', 'Night', 'Signal', 'Static', 'Sky', 
 const NAMES_B = ['Stair', 'Bridge', 'Relay', 'Ledge', 'Loop', 'Gantry', 'Circuit', 'Catwalk', 'Shaft', 'Terrace', 'Switchback', 'Beacon', 'Ramp', 'Walk', 'Track', 'Steps'];
 const BANDS = ['lobby', 'maintenance', 'workshop', 'control', 'rooftop'];
 
-function toRef(s: Shape): string {
+export function toRef(s: Shape): string {
   return s.map((b) => (typeof b === 'string' ? b : `repeat ${b.times} { ${toRef(b.body)} }`)).join(' ');
 }
 

@@ -38,12 +38,12 @@ describe('city packs', () => {
   it('ignores a damaged or unknown cache', () => {
     localStorage.setItem('loopbot.packs', 'not json');
     expect(ownedPacks()).toEqual([]);
-    localStorage.setItem('loopbot.packs', '["heatwave","overflow"]');
+    localStorage.setItem('loopbot.packs', '["heatwave","nope"]');
     expect(ownedPacks()).toEqual(['heatwave']);
   });
 
   it('points every pack at a tower that is sold as that pack', () => {
-    for (const p of PACKS) {
+    for (const p of PACKS.filter((x) => x.tower > 0)) {
       const tower = TOWERS.find((t) => t.n === p.tower);
       // Tests run as a dev build, so preview towers are present.
       expect(tower?.pack, p.id).toBe(p.id);

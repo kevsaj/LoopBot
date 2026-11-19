@@ -4,14 +4,15 @@
 // Setup (once, in Kevin's accounts):
 //  - App Store Connect: non-consumable in-app purchases `loopbot_plus`, `loopbot_pack_heatwave`,
 //    `loopbot_pack_twist`, `loopbot_pack_dockyard`, `loopbot_pack_twinspires`,
-//    `loopbot_pack_fractal` and `loopbot_pack_precinct404`, and two consumables,
+//    `loopbot_pack_fractal`, `loopbot_pack_precinct404` and `loopbot_overflow`, and two consumables,
 //    `loopbot_hints_10` and `loopbot_hints_40`.
 //  - Play Console: one-time products with the same nine ids.
 //  - RevenueCat: entitlement `plus` with `loopbot_plus` attached, entitlement `heatwave` with
 //    `loopbot_pack_heatwave` attached, entitlement `twist` with `loopbot_pack_twist` attached,
 //    entitlement `dockyard` with `loopbot_pack_dockyard` attached, entitlement `twinspires` with
 //    `loopbot_pack_twinspires` attached, entitlement `fractal` with `loopbot_pack_fractal`
-//    attached, entitlement `precinct404` with `loopbot_pack_precinct404` attached (see
+//    attached, entitlement `precinct404` with `loopbot_pack_precinct404` attached, entitlement
+//    `overflow` with `loopbot_overflow` attached (see
 //    store/packs.ts), and an
 //    offering whose package holds
 //    Plus (the package with `loopbot_plus` is what the Plus sheet sells).

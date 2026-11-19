@@ -30,6 +30,8 @@ interface Props {
   daily?: { date: string; streak: number; froze?: boolean; share: string };
   /** A player-made floor: no tower or streak, just a note and Done. */
   custom?: { note: string | null; noPar?: boolean };
+  /** An Overflow climb: the record and brick badges, and "Next floor" climbs on. */
+  overflow?: { floor: number; record: boolean; brick: boolean };
   /** Share a picture: the solved board and program on tower floors, a spoiler-free card on the daily. */
   onShareImage?(): Promise<ShareResult>;
 }
@@ -37,7 +39,7 @@ interface Props {
 const STAR_MS = 420;
 const HEADLINE = ['', msg('Floor cleared'), msg('Nice work!'), msg('Perfect run!')];
 
-export function ResultsCard({ floorNumber, tower = 1, floorCount, earned, prevBest, commands, steps, par, outro, onClose, onRetry, onNext, onTower, daily, custom, onShareImage }: Props) {
+export function ResultsCard({ floorNumber, tower = 1, floorCount, earned, prevBest, commands, steps, par, outro, onClose, onRetry, onNext, onTower, daily, custom, overflow, onShareImage }: Props) {
   const calm = reducedMotion();
   const [shown, setShown] = useState(calm ? 3 : 0);
   const starsRef = useRef<HTMLDivElement>(null);
@@ -106,7 +108,7 @@ export function ResultsCard({ floorNumber, tower = 1, floorCount, earned, prevBe
     const on = await setReminder(true);
     setReminderNote(on ? t('Reminder set for {time}. Change it in Settings.', { time: hourLabel(DEFAULT_HOUR) }) : t('Notifications are off for LoopBot. You can allow them in your phone settings.'));
   };
-  const title = custom ? t('Your floor') : daily ? t('Daily · {date}', { date: shortDate(daily.date) }) : t('Floor {n}', { n: floorNumber });
+  const title = custom ? t('Your floor') : overflow ? t('Overflow · Floor {n}', { n: overflow.floor }) : daily ? t('Daily · {date}', { date: shortDate(daily.date) }) : t('Floor {n}', { n: floorNumber });
   const tip =
     earned === 3
       ? null
@@ -129,13 +131,15 @@ export function ResultsCard({ floorNumber, tower = 1, floorCount, earned, prevBe
         </div>
         <div className={`badges${shown >= 3 ? ' in' : ''}`}>
           {best && <span className="badge best">{t('New best!')}</span>}
-          {prevBest === 0 && !custom && <span className="badge first">{daily ? t('Cleared today') : t('First clear')}</span>}
+          {prevBest === 0 && !custom && !overflow && <span className="badge first">{daily ? t('Cleared today') : t('First clear')}</span>}
           {daily && daily.streak > 0 && (
             <span className="badge streak">
               🔥 {tn(daily.streak, '{n}-day streak', '{n}-day streak')}
             </span>
           )}
           {daily?.froze && <span className="badge freeze">🧊 {t('A streak freeze saved your streak')}</span>}
+          {overflow?.record && <span className="badge best">🏆 {t('New record!')}</span>}
+          {overflow?.brick && <span className="badge streak">🧱 {t('Brick won back')}</span>}
         </div>
         <table className="score">
           <tbody>
@@ -177,55 +181,55 @@ export function ResultsCard({ floorNumber, tower = 1, floorCount, earned, prevBe
             </div>
           </div>
         )}
-        {!daily && !custom && DEMO && floorNumber === floorCount && (
+        {!daily && !custom && !overflow && DEMO && floorNumber === floorCount && (
           <p className="demo-end">
             <strong>{t('You cleared the Lobby!')}</strong>{' '}
             {t("That's the end of the free demo. LoopBot's climb continues in the full game: loops in the Maintenance floors, functions in the Workshop, and all the way to the Rooftop.")}
           </p>
         )}
-        {!daily && !custom && !DEMO && floorNumber === floorCount && tower === 8 && (
+        {!daily && !custom && !overflow && !DEMO && floorNumber === floorCount && tower === 8 && (
           <p className="demo-end">
             <strong>{t('Tower 8 cleared!')}</strong>{' '}
             {t('Heist Night is over, the case files are safe, and LoopBot and DASH won the Golden Badge together. VANTA is heading for the oldest tower of all.')}
           </p>
         )}
-        {!daily && !custom && !DEMO && floorNumber === floorCount && tower === 7 && (
+        {!daily && !custom && !overflow && !DEMO && floorNumber === floorCount && tower === 7 && (
           <p className="demo-end">
             <strong>{t('Tower 7 cleared!')}</strong>{' '}
             {t('Every mosaic in the Fernwork is lit, from the smallest tile to the tallest spire. VANTA is heading for the precinct.')}
           </p>
         )}
-        {!daily && !custom && !DEMO && floorNumber === floorCount && tower === 6 && (
+        {!daily && !custom && !overflow && !DEMO && floorNumber === floorCount && tower === 6 && (
           <p className="demo-end">
             <strong>{t('Tower 6 cleared!')}</strong>{' '}
             {t('Both spires are dark and the skybridge is lit. Echo is coming along, and VANTA is heading for a tower made of smaller towers.')}
           </p>
         )}
-        {!daily && !custom && !DEMO && floorNumber === floorCount && tower === 5 && (
+        {!daily && !custom && !overflow && !DEMO && floorNumber === floorCount && tower === 5 && (
           <p className="demo-end">
             <strong>{t('Tower 5 cleared!')}</strong>{' '}
             {t("The cranes are counting crates again and the Wavehouse's roof is lit. VANTA's signal is splitting in two, and PATCH is tracking both halves.")}
           </p>
         )}
-        {!daily && !custom && !DEMO && floorNumber === floorCount && tower === 4 && (
+        {!daily && !custom && !overflow && !DEMO && floorNumber === floorCount && tower === 4 && (
           <p className="demo-end">
             <strong>{t('Tower 4 cleared!')}</strong>{' '}
             {t("The turntables are still and the Helix's mast points at the sky again. VANTA's signal is heading for the docks, and PATCH is right on it.")}
           </p>
         )}
-        {!daily && !custom && !DEMO && floorNumber === floorCount && tower === 3 && (
+        {!daily && !custom && !overflow && !DEMO && floorNumber === floorCount && tower === 3 && (
           <p className="demo-end">
             <strong>{t('Tower 3 cleared!')}</strong>{' '}
             {t("The sun mirrors point at the sky again and the Sandglass is cooling. VANTA's signal is twisting away east, and PATCH is tuning in.")}
           </p>
         )}
-        {!daily && !custom && !DEMO && floorNumber === floorCount && tower === 2 && (
+        {!daily && !custom && !overflow && !DEMO && floorNumber === floorCount && tower === 2 && (
           <p className="demo-end">
             <strong>{t('Tower 2 cleared!')}</strong>{' '}
             {t("The Northstar beacon is dark and Frostline is thawing out. VANTA's signal is fading south, and PATCH is already listening for it.")}
           </p>
         )}
-        {!daily && !custom && !DEMO && floorNumber === floorCount && tower === 1 && (
+        {!daily && !custom && !overflow && !DEMO && floorNumber === floorCount && tower === 1 && (
           <p className="demo-end">
             <strong>{t('Tower 1 cleared!')}</strong>{' '}
             {t("Meridian Spire is back online and VANTA's drones are grounded. LoopBot rides the elevator down to meet PATCH at last. More towers are on the way.")}
@@ -249,7 +253,7 @@ export function ResultsCard({ floorNumber, tower = 1, floorCount, earned, prevBe
           ) : (
             <>
               {onShareImage && <ShareButton busy={sharing} onClick={share} />}
-              {floorNumber === floorCount ? (
+              {floorNumber === floorCount && !overflow ? (
                 <button type="button" className="pill primary" onClick={() => (fx.tap(), onTower())}>
                   {t('Tower')}
                 </button>

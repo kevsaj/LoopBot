@@ -1,0 +1,280 @@
+/* Overflow, the endless climb up the tower of Babel. Kept in its own file so it never collides with other work in styles.css. */
+
+/* --- the hub --- */
+.ovf-hub {
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  background: linear-gradient(180deg, #1c2246 0%, #241d36 60%, var(--bg) 100%);
+}
+.ovf-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 16px 24px;
+}
+.ovf-hero {
+  position: relative;
+  max-width: 420px;
+  margin: 0 auto;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+}
+.babel-art {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+}
+.babel-bot {
+  animation: babel-bob 2.4s ease-in-out infinite;
+}
+@keyframes babel-bob {
+  50% {
+    translate: 0 -3px;
+  }
+}
+:root.reduce-motion .babel-bot {
+  animation: none;
+}
+.ovf-kicker {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 8px;
+  margin: 0;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #fff6e0;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+.ovf-stats {
+  display: flex;
+  gap: 10px;
+  max-width: 420px;
+  margin: 14px auto 0;
+}
+.ovf-stat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 8px;
+  border-radius: 14px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+}
+.ovf-stat-num {
+  font-size: 28px;
+  font-weight: 800;
+  color: #f2c46a;
+  line-height: 1.1;
+}
+.ovf-stat-label {
+  font-size: 12px;
+  color: var(--quiet);
+  text-align: center;
+}
+.ovf-card {
+  max-width: 420px;
+  margin: 12px auto 0;
+  padding: 14px;
+  border-radius: 16px;
+  background: var(--panel-2);
+  border: 1px solid rgba(242, 196, 106, 0.4);
+  text-align: center;
+}
+.ovf-card-title {
+  margin: 0 0 4px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #f2c46a;
+}
+.ovf-card-line {
+  margin: 0 0 12px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 16px;
+  font-weight: 600;
+}
+.ovf-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.ovf-confirm {
+  flex-basis: 100%;
+  margin: 0 0 4px;
+  color: var(--quiet);
+}
+.ovf-start {
+  width: 100%;
+  flex: none;
+  background: #f2c46a;
+  border-color: #f2c46a;
+  color: #2a1a08;
+}
+.ovf-start.locked {
+  background: var(--panel);
+  border-color: #f2c46a;
+  color: var(--ink);
+}
+.pill.danger {
+  border-color: var(--bad);
+  color: var(--bad);
+}
+.ovf-rules {
+  max-width: 420px;
+  margin: 16px auto 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  color: var(--quiet);
+  font-size: 14px;
+  line-height: 1.35;
+}
+.ovf-rules li {
+  display: flex;
+  gap: 10px;
+}
+.ovf-rules li > span {
+  flex: none;
+  width: 22px;
+  text-align: center;
+  color: #f2c46a;
+}
+
+/* --- bricks: the climb's lives --- */
+.ovf-line {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+.ovf-line .back-btn {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ovf-bricks {
+  display: inline-flex;
+  gap: 3px;
+  margin-left: 8px;
+  vertical-align: 1px;
+}
+.ovf-brick {
+  width: 14px;
+  height: 9px;
+  border-radius: 2px;
+  border: 1px solid rgba(242, 196, 106, 0.5);
+  background: transparent;
+}
+.ovf-brick.on {
+  background: linear-gradient(180deg, #f0c47a 0 40%, #c98c48 40% 100%);
+  border-color: #f0c47a;
+}
+.ovf-bricks.big {
+  margin-left: 0;
+}
+.ovf-bricks.big .ovf-brick {
+  width: 20px;
+  height: 12px;
+}
+.pill.ovf-skip {
+  flex: none;
+  min-height: 40px;
+  padding: 0 12px;
+  font-size: 13px;
+}
+.pill.ovf-skip.armed {
+  border-color: var(--warn);
+  color: var(--warn);
+}
+.pill.ovf-skip:disabled {
+  opacity: 0.45;
+}
+
+/* --- the tower picker's Overflow row --- */
+.tp-row.tp-overflow {
+  margin-top: 6px;
+  border-top: 1px solid var(--line);
+  border-radius: 0 0 10px 10px;
+}
+.tp-overflow .tp-badge {
+  font-size: 20px;
+}
+
+/* --- the boards: one sky per terrace --- */
+/* The Brickyard: a hot afternoon over the river plain. */
+.board-wrap.band-brickyard {
+  background:
+    radial-gradient(circle at 80% 26%, rgba(255, 240, 190, 0.9) 0 14px, rgba(255, 210, 120, 0.25) 15px, transparent 60px),
+    linear-gradient(180deg, #e0905a 0%, #eab070 50%, #f4d29a 100%);
+}
+.board-wrap.band-brickyard::after,
+.board-wrap.band-lapisgate::after {
+  height: 34%;
+  opacity: 0.4;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 100' preserveAspectRatio='none'><g fill='%235a3418'><path d='M0 100V70h40V56h30v14h40v30z'/><path d='M150 100V80h20V64h20V50h20V36h20v14h20v14h20v16h20v20z'/><path d='M310 100V66h30V54h20v12h40v34z'/></g><g fill='%23386a2a'><path d='M120 100V60h4v40zM112 62q10-8 20 0q-10-4-20 0zM296 100V58h4v42zM288 60q10-8 20 0q-10-4-20 0z'/></g></svg>") bottom / 100% 100% no-repeat;
+}
+/* The Lapis Gate: deep blue dusk, gold lions on the gate far below. */
+.board-wrap.band-lapisgate {
+  background:
+    radial-gradient(ellipse 50% 30% at 50% 100%, rgba(242, 194, 74, 0.35), transparent 70%),
+    linear-gradient(180deg, #14244e 0%, #23408a 55%, #4a6ec0 100%);
+}
+/* The hanging gardens: green leaves trailing over the edges, morning light. */
+.board-wrap.band-gardens {
+  background:
+    radial-gradient(ellipse 70% 40% at 50% 0%, rgba(255, 250, 220, 0.5), transparent 70%),
+    linear-gradient(180deg, #8cc6d8 0%, #a8d8c0 55%, #6aa878 100%);
+}
+.board-wrap.band-gardens::after {
+  height: 100%;
+  opacity: 0.55;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300' preserveAspectRatio='none'><g fill='none' stroke='%232e6a36' stroke-width='5' stroke-linecap='round'><path d='M20 0q6 40-6 80q-8 30 4 60'/><path d='M60 0q-4 30 6 56'/><path d='M350 0q-8 50 6 96q6 30-4 50'/><path d='M388 0q6 30-4 62'/></g><g fill='%23ff8fb0'><circle cx='18' cy='82' r='5'/><circle cx='66' cy='58' r='4'/><circle cx='356' cy='98' r='5'/><circle cx='384' cy='64' r='4'/></g></svg>") center / 100% 100% no-repeat;
+}
+/* The Star Stair: night, the old star charts in the sky. */
+.board-wrap.band-starstair {
+  background:
+    radial-gradient(1.5px 1.5px at 12% 18%, #fff 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 30% 8%, #fff 50%, transparent 51%),
+    radial-gradient(2px 2px at 52% 22%, #fff6c8 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 72% 12%, #fff 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 88% 30%, #fff 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 20% 40%, #fff 50%, transparent 51%),
+    radial-gradient(circle at 84% 18%, rgba(246, 230, 180, 0.9) 0 10px, transparent 11px),
+    linear-gradient(180deg, #0a0a24 0%, #1e1a4e 60%, #3a2e7a 100%);
+}
+/* The Cloud Top: above the weather, a sea of cloud below and the tower going on. */
+.board-wrap.band-cloudtop {
+  background:
+    radial-gradient(ellipse 30% 14% at 18% 92%, #ffffff 60%, transparent 62%),
+    radial-gradient(ellipse 34% 16% at 52% 98%, #f6f4ff 60%, transparent 62%),
+    radial-gradient(ellipse 30% 13% at 86% 92%, #ffffff 60%, transparent 62%),
+    linear-gradient(180deg, #3e5ab8 0%, #7a9ae0 55%, #c8d6f6 100%);
+}
+.board-wrap.band-starstair::after,
+.board-wrap.band-cloudtop::after {
+  display: none;
+}
+/* The bright skies need dark text for the command and step count. */
+.board-wrap.band-brickyard .step-counter {
+  color: #4a2a10;
+  font-weight: 600;
+}
+.board-wrap.band-gardens .step-counter {
+  color: #1e3a2a;
+  font-weight: 600;
+}

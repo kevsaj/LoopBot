@@ -8,7 +8,7 @@ import { SettingsSheet } from './SettingsSheet';
 import { isUnlocked, loadProgress, saveProgress } from './progress';
 import type { Progress } from './progress';
 import { fx } from './audio/feedback';
-import { initMusic, setMusicTheme, themeForFloor } from './audio/music';
+import { initMusic, setMusicTheme, themeForFloor, themeForOverflow } from './audio/music';
 import { useRewards } from './rewards/useRewards';
 import { Locker } from './rewards/Locker';
 import { Toasts } from './rewards/Toasts';
@@ -32,6 +32,11 @@ import { MAKER } from './maker/draft';
 import { hasPlus, initPurchases, onHintsGranted, towerUnlocked } from './store/purchases';
 import { t, useLang } from './i18n';
 import { localFloor } from './levels/localFloor';
+import { OVERFLOW_ON } from './levels/towers';
+import { OverflowScreen } from './overflow/OverflowScreen';
+import { climbOn, earnsBrick, endClimb, loadOverflow, markCleared, overflowLevel, pruneOverflow, saveOverflow, skipFloor, startClimb } from './overflow';
+import type { OverflowState } from './overflow';
+import { packUnlocked } from './store/purchases';
 
 /** Each tower remembers its own floor: Tower 1 keeps the original key so old saves carry over. */
 const floorKey = (tower: number) => (tower === 1 ? 'loopbot.floor' : `loopbot.floor.t${tower}`);
@@ -74,7 +79,7 @@ export default function App() {
   }, []);
   // Every launch opens on the title screen, whose intro plays once per session; its Play button
   // goes to the next floor (Floor 1 for a new player), and the tower map is one tap further.
-  const [screen, setScreen] = useState<'title' | 'map' | 'floor' | 'daily' | 'maker' | 'custom'>('title');
+  const [screen, setScreen] = useState<'title' | 'map' | 'floor' | 'daily' | 'maker' | 'custom' | 'overflow' | 'climb'>('title');
   // The floor maker's draft, and the player-made floor being played (a test of the draft, or a code).
   const [draft, setDraft] = useMakerDraft();
   const [customFloor, setCustomFloor] = useState<{ level: LevelFile; from: 'test' | 'code' } | null>(null);
@@ -178,6 +183,64 @@ export default function App() {
     },
     [setProgress],
   );
+  // Overflow, the endless climb: the record and the climb in progress, and the floor being played.
+  const [overflow, setOverflowState] = useState<OverflowState>(loadOverflow);
+  const overflowRef = useRef(overflow);
+  overflowRef.current = overflow;
+  const [climbFloor, setClimbFloor] = useState<LevelFile | null>(null);
+  const setOverflow = useCallback((next: OverflowState) => {
+    saveOverflow(next);
+    overflowRef.current = next;
+    setOverflowState(next);
+  }, []);
+  /** Opens the floor the climb is on, behind the elevator doors. */
+  const playClimb = useCallback(
+    (state: OverflowState) => {
+      const run = state.run;
+      if (!run) return;
+      void overflowLevel(run).then((level) => {
+        setProgress((p) => pruneOverflow(p, level.id));
+        ride(() => {
+          setClimbFloor(level);
+          setScreen('climb');
+        });
+      });
+    },
+    [ride, setProgress],
+  );
+  const startOverflow = useCallback(() => {
+    const next = startClimb(overflowRef.current);
+    setOverflow(next);
+    playClimb(next);
+  }, [setOverflow, playClimb]);
+  /** Continue a climb: a floor already cleared counts, and the climb moves on past it. */
+  const continueOverflow = useCallback(() => {
+    const next = climbOn(overflowRef.current).state;
+    setOverflow(next);
+    playClimb(next);
+  }, [setOverflow, playClimb]);
+  const clearOverflowFloor = useCallback(
+    (stars: number) => {
+      const before = overflowRef.current;
+      if (!before.run) return { record: false, brick: false };
+      const next = markCleared(before, stars);
+      setOverflow(next);
+      // the record badge shows once a climb, on the floor that first beats the best from before it
+      const was = before.run.startBest;
+      return { record: was > 0 && before.best <= was && next.best > was, brick: earnsBrick(before.run, next.run!.done) };
+    },
+    [setOverflow],
+  );
+  const skipOverflowFloor = useCallback(() => {
+    const next = skipFloor(overflowRef.current);
+    setOverflow(next);
+    playClimb(next);
+  }, [setOverflow, playClimb]);
+  const endOverflow = useCallback(() => {
+    setOverflow(endClimb(overflowRef.current));
+    setProgress((p) => pruneOverflow(p, null));
+  }, [setOverflow, setProgress]);
+
   // Hints bought in the store, or the Plus bonus, go straight into the wallet.
   useEffect(() => onHintsGranted((n) => setProgress((p) => ({ ...p, hints: p.hints + n }))), [setProgress]);
   const elevator = doors && (
@@ -194,7 +257,8 @@ export default function App() {
     () =>
       listenForBack(() => {
         if (screenRef.current === 'title') return false;
-        setScreen(screenRef.current === 'floor' ? 'map' : screenRef.current === 'daily' ? dailyFrom.current : screenRef.current === 'custom' ? 'maker' : 'title');
+        const s = screenRef.current;
+        setScreen(s === 'floor' || s === 'overflow' ? 'map' : s === 'daily' ? dailyFrom.current : s === 'custom' ? 'maker' : s === 'climb' ? 'overflow' : 'title');
         return true;
       }),
     [],
@@ -242,8 +306,16 @@ export default function App() {
   );
   // Each band of the tower has its own theme; the title and tower map share one.
   useEffect(() => {
-    setMusicTheme(screen === 'floor' ? themeForFloor(safeIndex + 1, tower) : screen === 'daily' || screen === 'custom' ? 'daily' : 'title');
-  }, [screen, safeIndex, tower]);
+    setMusicTheme(
+      screen === 'floor'
+        ? themeForFloor(safeIndex + 1, tower)
+        : screen === 'climb' || screen === 'overflow'
+          ? themeForOverflow(overflow.run ? overflow.run.floor : 1)
+          : screen === 'daily' || screen === 'custom'
+            ? 'daily'
+            : 'title',
+    );
+  }, [screen, safeIndex, tower, overflow.run]);
 
   if (screen === 'title') {
     return (
@@ -327,8 +399,47 @@ export default function App() {
           onArchive={() => setArchive(true)}
           onLocker={openLocker}
           lockerNew={rewards.hasNew}
+          overflow={OVERFLOW_ON ? { best: overflow.best, locked: !packUnlocked('overflow'), onOpen: () => setScreen('overflow') } : undefined}
         />
         {settings && <SettingsSheet progress={progress} setProgress={setProgress} onClose={() => setSettings(false)} />}
+        {overlays}
+        {elevator}
+      </>
+    );
+  }
+  if (screen === 'overflow') {
+    return (
+      <>
+        <OverflowScreen
+          state={overflow}
+          unlocked={packUnlocked('overflow')}
+          onBack={() => setScreen('map')}
+          onSettings={() => setSettings(true)}
+          onStart={startOverflow}
+          onContinue={continueOverflow}
+          onEnd={endOverflow}
+        />
+        {settings && <SettingsSheet progress={progress} setProgress={setProgress} onClose={() => setSettings(false)} />}
+        {overlays}
+        {elevator}
+      </>
+    );
+  }
+  if (screen === 'climb' && climbFloor && overflow.run) {
+    const run = overflow.run;
+    return (
+      <>
+        <FloorScreen
+          key={climbFloor.id}
+          level={localFloor(climbFloor)}
+          floorNumber={run.floor}
+          floorCount={0}
+          progress={progress}
+          setProgress={setProgress}
+          onGo={continueOverflow}
+          onTower={() => setScreen('overflow')}
+          overflow={{ floor: run.floor, bricks: run.bricks, onClear: clearOverflowFloor, onSkip: skipOverflowFloor }}
+        />
         {overlays}
         {elevator}
       </>

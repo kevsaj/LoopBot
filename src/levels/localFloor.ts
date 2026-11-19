@@ -87,7 +87,8 @@ export function blockWords(code: string): string {
 export function localFloor(level: LevelFile): LevelFile {
   const l = lang();
   if (l === 'en') return level;
-  if (level.id.startsWith('daily-')) {
+  // Overflow floors are named the daily way, from the same word list (src/overflow/index.ts)
+  if (level.id.startsWith('daily-') || level.id.startsWith('overflow-')) {
     // (its first two hints are written in the player's language when the puzzle is made)
     return { ...level, title: dailyTitle(level.title), hints: level.hints.map((h, i) => (i === 2 ? blockWords(h) : h)) };
   }

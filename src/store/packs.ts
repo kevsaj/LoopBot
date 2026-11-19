@@ -1,12 +1,13 @@
 // City packs: one tower each, bought once, separate from LoopBot Plus (growth plan: city packs
-// $2.99). Heatwave was the first, Twist the second, Dockyard the third, Twin Spires the fourth, Fractal the fifth, Precinct 404 the sixth. Each pack is a non-consumable store product that unlocks a
+// $2.99). Heatwave was the first, Twist the second, Dockyard the third, Twin Spires the fourth, Fractal the fifth, Precinct 404 the sixth. Overflow,
+// the endless climb, is sold the same way (growth plan: $3.99) though it is a mode, not a tower. Each pack is a non-consumable store product that unlocks a
 // RevenueCat entitlement of the same name, so a later Skyline Pass only needs attaching to every
 // pack's entitlement in RevenueCat to unlock them all.
 //
 // Ownership is cached on the device (loopbot.packs) so packs work offline, and it is never in
 // backup codes: the store is the only thing that can say a pack was bought.
 
-export type PackId = 'heatwave' | 'twist' | 'dockyard' | 'twinspires' | 'fractal' | 'precinct404';
+export type PackId = 'heatwave' | 'twist' | 'dockyard' | 'twinspires' | 'fractal' | 'precinct404' | 'overflow';
 
 export interface CityPack {
   id: PackId;
@@ -14,7 +15,7 @@ export interface CityPack {
   product: string;
   /** RevenueCat entitlement the product unlocks. */
   entitlement: string;
-  /** The tower number the pack unlocks. */
+  /** The tower number the pack unlocks; 0 for Overflow, which is a mode rather than a tower. */
   tower: number;
   city: string;
 }
@@ -26,6 +27,7 @@ export const PACKS: CityPack[] = [
   { id: 'twinspires', product: 'loopbot_pack_twinspires', entitlement: 'twinspires', tower: 6, city: 'Twin Spires' },
   { id: 'fractal', product: 'loopbot_pack_fractal', entitlement: 'fractal', tower: 7, city: 'Fractal' },
   { id: 'precinct404', product: 'loopbot_pack_precinct404', entitlement: 'precinct404', tower: 8, city: 'Precinct 404' },
+  { id: 'overflow', product: 'loopbot_overflow', entitlement: 'overflow', tower: 0, city: 'Overflow' },
 ];
 
 export const PACK_PRODUCTS = PACKS.map((p) => p.product);
