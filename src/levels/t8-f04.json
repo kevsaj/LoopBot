@@ -1,0 +1,59 @@
+{
+  "id": "t8-f04",
+  "title": "After You",
+  "band": "frontdesk",
+  "size": {
+    "w": 5,
+    "h": 4
+  },
+  "tiles": [
+    "__.__",
+    "....e",
+    "__.__",
+    "__e__"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 1,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait"
+  ],
+  "slots": {
+    "main": 6,
+    "F3": 7
+  },
+  "par": {
+    "commands": 9,
+    "steps": 5
+  },
+  "reference": "forward forward forward forward def DASH { wait wait forward forward forward }",
+  "hints": [
+    "Both bots need the middle tile. If they both go now, they bump.",
+    "LoopBot goes first. DASH waits two steps, then follows the hall down.",
+    "forward forward forward forward def DASH { wait wait forward forward forward }"
+  ],
+  "story": {
+    "intro": "BULWARK: \"Narrow halls, little buddy. When two bots want the same tile, one of them waits. That is just good manners.\"",
+    "outro": "DASH: \"I let you go first. Remember that. Put it in my file.\""
+  },
+  "partner": {
+    "x": 2,
+    "y": 0,
+    "facing": "south"
+  }
+}

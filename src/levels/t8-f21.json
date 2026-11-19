@@ -1,0 +1,64 @@
+{
+  "id": "t8-f21",
+  "title": "Shared Plan",
+  "band": "briefing",
+  "size": {
+    "w": 7,
+    "h": 4
+  },
+  "tiles": [
+    "..__.._",
+    "_..__..",
+    "__..__e",
+    "___e___"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait",
+    "radio",
+    "listen",
+    "repeat",
+    "F1"
+  ],
+  "slots": {
+    "main": 5,
+    "F1": 5,
+    "F3": 4
+  },
+  "par": {
+    "commands": 9,
+    "steps": 11
+  },
+  "reference": "F1 F1 F1 def DASH { F1 F1 } def F1 { forward turn_right forward turn_left }",
+  "hints": [
+    "F1 belongs to the whole squad. Both bots can call it.",
+    "F1: forward, turn right, forward, turn left. LoopBot calls it three times, DASH twice.",
+    "F1 F1 F1 def DASH { F1 F1 } def F1 { forward turn_right forward turn_left }"
+  ],
+  "story": {
+    "intro": "LEDGER: \"Captain LEDGER. In my briefing room, a plan is written once and followed by everyone. That is what F1 is for. Both of you may call it.\"",
+    "outro": "DASH: \"The captain spoke to us! LEDGER never speaks to anyone! I think that was a smile. It was one pixel. But it was there.\""
+  },
+  "partner": {
+    "x": 4,
+    "y": 0,
+    "facing": "east"
+  }
+}

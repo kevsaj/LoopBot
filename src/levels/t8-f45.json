@@ -1,0 +1,70 @@
+{
+  "id": "t8-f45",
+  "title": "Bug Hunt: Last Switch",
+  "band": "watchtower",
+  "size": {
+    "w": 8,
+    "h": 3
+  },
+  "tiles": [
+    ".s..s.s_",
+    "________",
+    "..s.s___"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "all_switches_on"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait",
+    "radio",
+    "listen",
+    "repeat",
+    "F1",
+    "F2",
+    "while",
+    "if"
+  ],
+  "sensors": [
+    "on_switch"
+  ],
+  "slots": {
+    "main": 6,
+    "F3": 6
+  },
+  "par": {
+    "commands": 8,
+    "steps": 9
+  },
+  "reference": "while not wall_ahead { forward if on_switch { activate } } def DASH { while not wall_ahead { forward if on_switch { activate } } }",
+  "hints": [
+    "Run it and watch the switch at the end of LoopBot's hall.",
+    "LoopBot checks for a switch before it steps, so the last one never gets checked. Step first, then check.",
+    "while not wall_ahead { forward if on_switch { activate } } def DASH { while not wall_ahead { forward if on_switch { activate } } }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "typing": true,
+  "starter": "while not wall_ahead { if on_switch { activate } forward } def DASH { while not wall_ahead { forward if on_switch { activate } } }",
+  "partner": {
+    "x": 0,
+    "y": 2,
+    "facing": "east"
+  }
+}

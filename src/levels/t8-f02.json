@@ -1,0 +1,58 @@
+{
+  "id": "t8-f02",
+  "title": "Different Beats",
+  "band": "frontdesk",
+  "size": {
+    "w": 5,
+    "h": 4
+  },
+  "tiles": [
+    "...__",
+    "__.__",
+    "__e__",
+    "e...."
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate"
+  ],
+  "slots": {
+    "main": 7,
+    "F3": 6
+  },
+  "par": {
+    "commands": 9,
+    "steps": 5
+  },
+  "reference": "forward forward turn_right forward forward def DASH { forward forward forward forward }",
+  "hints": [
+    "The two programs do not have to match. LoopBot turns; DASH just walks.",
+    "LoopBot: two forwards, turn right, two forwards. DASH: four forwards.",
+    "forward forward turn_right forward forward def DASH { forward forward forward forward }"
+  ],
+  "story": {
+    "intro": "BULWARK: \"Sergeant BULWARK, front desk. Welcome, little buddy! Your program and DASH's run side by side, one step each, every step.\"",
+    "outro": null
+  },
+  "partner": {
+    "x": 4,
+    "y": 3,
+    "facing": "west"
+  }
+}

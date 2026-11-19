@@ -1,0 +1,99 @@
+{
+  "id": "t8-f18",
+  "title": "Over and Over",
+  "band": "evidence",
+  "size": {
+    "w": 8,
+    "h": 3
+  },
+  "tiles": [
+    ".s.s.s.e",
+    "________",
+    ".d.d.d.e"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait",
+    "radio",
+    "listen",
+    "repeat"
+  ],
+  "slots": {
+    "main": 8,
+    "F3": 7
+  },
+  "par": {
+    "commands": 11,
+    "steps": 10
+  },
+  "reference": "repeat 3 { forward activate radio forward } forward def DASH { repeat 3 { listen forward forward } forward }",
+  "hints": [
+    "Three switches, three doors. The same handoff, three times.",
+    "LoopBot: repeat 3 forward, activate, radio, forward. DASH: repeat 3 wait for radio, forward, forward.",
+    "repeat 3 { forward activate radio forward } forward def DASH { repeat 3 { listen forward forward } forward }"
+  ],
+  "story": {
+    "intro": "ROOK: \"Three doors. Three calls. Do not make me repeat myself.\" DASH: \"Ha! Repeat! ROOK made a coding joke!\" ROOK: \"No.\"",
+    "outro": null
+  },
+  "links": [
+    {
+      "switch": {
+        "x": 1,
+        "y": 0
+      },
+      "doors": [
+        {
+          "x": 1,
+          "y": 2
+        }
+      ]
+    },
+    {
+      "switch": {
+        "x": 3,
+        "y": 0
+      },
+      "doors": [
+        {
+          "x": 3,
+          "y": 2
+        }
+      ]
+    },
+    {
+      "switch": {
+        "x": 5,
+        "y": 0
+      },
+      "doors": [
+        {
+          "x": 5,
+          "y": 2
+        }
+      ]
+    }
+  ],
+  "partner": {
+    "x": 0,
+    "y": 2,
+    "facing": "east"
+  }
+}

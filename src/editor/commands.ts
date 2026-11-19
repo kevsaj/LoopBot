@@ -14,6 +14,8 @@ export const COMMAND_META: Record<PaletteCommand, { label: string; glyph: string
   wait: { label: msg('wait'), glyph: '‖', tone: 'turn' },
   tally_up: { label: msg('tally + 1'), glyph: '+', tone: 'count' },
   tally_down: { label: msg('tally − 1'), glyph: '−', tone: 'count' },
+  radio: { label: msg('radio'), glyph: '≋', tone: 'radio' },
+  listen: { label: msg('wait for radio'), glyph: '⧗', tone: 'radio' },
   repeat: { label: msg('repeat'), glyph: '⟳', tone: 'flow' },
   repeat_tally: { label: msg('repeat tally'), glyph: '⟳#', tone: 'flow' },
   if: { label: msg('if'), glyph: '?', tone: 'flow' },
@@ -27,10 +29,10 @@ export const COMMAND_META: Record<PaletteCommand, { label: string; glyph: string
 export const PALETTE_ORDER: PaletteCommand[] = ['forward', 'turn_left', 'turn_right', 'jump', 'pick_up', 'drop', 'activate'];
 
 /**
- * Heatwave's wait and Dockyard's tally blocks join the palette only on floors that have them, so
+ * Heatwave's wait, Dockyard's tally and Precinct 404's radio blocks join the palette only on floors that have them, so
  * other towers never see them locked.
  */
-export const EXTRA_ORDER: PaletteCommand[] = ['wait', 'tally_up', 'tally_down'];
+export const EXTRA_ORDER: PaletteCommand[] = ['wait', 'tally_up', 'tally_down', 'radio', 'listen'];
 
 /** Control blocks join the palette on the floors that allow them (repeat from Floor 11, repeat tally in Dockyard). */
 export const CONTROL_ORDER: PaletteCommand[] = ['repeat', 'repeat_tally', 'while', 'if'];

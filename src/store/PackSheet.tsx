@@ -62,6 +62,17 @@ export const PACK_INFO: Record<PackId, PackInfo> = {
       { icon: '📻', title: msg('The story goes on'), text: msg("PATCH's radio calls and the chase after VANTA, plus new music for the spires.") },
     ],
   },
+  precinct404: {
+    title: msg('Precinct 404'),
+    tower: msg('The Watchhouse'),
+    lede: msg('Tower 8 is the precinct the maps forgot. Team up with Detective DASH: two bots, two programs, one radio.'),
+    perks: [
+      { icon: '🚨', title: msg('50 new floors'), text: msg('The Watchhouse, from the Front Desk to the Watchtower, with 3 stars to win on every floor.') },
+      { icon: '🤝', title: msg('Partner mode'), text: msg('Write a program for LoopBot and another for your partner, and make them work together.') },
+      { icon: '📻', title: msg('Radio calls'), text: msg('Radio your partner and wait for the call back, so every handoff happens at just the right step.') },
+      { icon: '🎬', title: msg('A squad of new friends'), text: msg('DASH, BULWARK, ROOK and Captain LEDGER, a heist on Heist Night, and new precinct music.') },
+    ],
+  },
   dockyard: {
     title: msg('Dockyard'),
     tower: msg('The Wavehouse'),

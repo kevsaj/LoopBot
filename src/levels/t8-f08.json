@@ -1,0 +1,57 @@
+{
+  "id": "t8-f08",
+  "title": "Change of Plan",
+  "band": "frontdesk",
+  "size": {
+    "w": 7,
+    "h": 2
+  },
+  "tiles": [
+    "......e",
+    "___e___"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait"
+  ],
+  "slots": {
+    "main": 7,
+    "F3": 6
+  },
+  "par": {
+    "commands": 9,
+    "steps": 5
+  },
+  "reference": "forward forward forward turn_right forward def DASH { turn_left turn_left forward forward }",
+  "hints": [
+    "Any bot can park at any exit. Who says LoopBot has to go all the way down the hall?",
+    "LoopBot takes the side exit. DASH turns round and takes the far one. Nobody has to wait.",
+    "forward forward forward turn_right forward def DASH { turn_left turn_left forward forward }"
+  ],
+  "story": {
+    "intro": "BULWARK: \"DASH is blocking the hall again. Before anyone waits, ask yourself: does everybody have to go where they first thought?\"",
+    "outro": "DASH: \"I planned that. The whole time. Swapping exits was my idea.\""
+  },
+  "partner": {
+    "x": 4,
+    "y": 0,
+    "facing": "west"
+  }
+}

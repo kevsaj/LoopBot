@@ -1,0 +1,82 @@
+{
+  "id": "t8-f50",
+  "title": "The Golden Badge",
+  "band": "watchtower",
+  "size": {
+    "w": 3,
+    "h": 2
+  },
+  "tiles": [
+    "._.",
+    "..."
+  ],
+  "heights": null,
+  "boxes": [
+    {
+      "x": 0,
+      "y": 0,
+      "count": 3
+    }
+  ],
+  "targets": [
+    {
+      "x": 2,
+      "y": 0,
+      "count": 3
+    }
+  ],
+  "bot": {
+    "x": 0,
+    "y": 1,
+    "facing": "north"
+  },
+  "goals": [
+    "all_targets_filled"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait",
+    "radio",
+    "listen",
+    "repeat",
+    "F1",
+    "F2",
+    "while",
+    "if"
+  ],
+  "sensors": [
+    "box_ahead"
+  ],
+  "slots": {
+    "main": 6,
+    "F1": 4,
+    "F3": 6
+  },
+  "par": {
+    "commands": 11,
+    "steps": 13
+  },
+  "reference": "while box_ahead { F1 radio turn_left } def LEDGER { repeat 3 { turn_left listen F1 } } def F1 { pick_up turn_right drop }",
+  "hints": [
+    "Last floor. Both bots pass crates the same way, so they can share the move.",
+    "F1: lift, turn right, drop. LoopBot: while box ahead, F1, radio, turn left. LEDGER: repeat 3 turn left, wait for radio, F1.",
+    "while box_ahead { F1 radio turn_left } def LEDGER { repeat 3 { turn_left listen F1 } } def F1 { pick_up turn_right drop }"
+  ],
+  "story": {
+    "intro": "DASH: \"Partner! The Golden Badge is in that crate stack, and VANTA is on the roof. You and the captain get it out. I will provide dramatic music.\" BULWARK: \"Go, little buddies!\"",
+    "outro": null
+  },
+  "typing": true,
+  "partner": {
+    "x": 2,
+    "y": 1,
+    "facing": "north",
+    "who": "LEDGER"
+  }
+}

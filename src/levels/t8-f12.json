@@ -1,0 +1,75 @@
+{
+  "id": "t8-f12",
+  "title": "Copy That",
+  "band": "evidence",
+  "size": {
+    "w": 7,
+    "h": 3
+  },
+  "tiles": [
+    ".d...e_",
+    "_______",
+    ".....se"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait",
+    "radio",
+    "listen",
+    "repeat"
+  ],
+  "slots": {
+    "main": 5,
+    "F3": 7
+  },
+  "par": {
+    "commands": 8,
+    "steps": 11
+  },
+  "reference": "listen repeat 5 { forward } def DASH { repeat 5 { forward } activate radio forward }",
+  "hints": [
+    "This time DASH has the switch, so DASH makes the call.",
+    "DASH: repeat 5 forward, activate, radio, forward. LoopBot: wait for radio, then repeat 5 forward.",
+    "listen repeat 5 { forward } def DASH { repeat 5 { forward } activate radio forward }"
+  ],
+  "story": {
+    "intro": "ROOK: \"ROOK. Evidence Locker. Nobody gets in without a call from the switch room. Nobody.\"",
+    "outro": null
+  },
+  "links": [
+    {
+      "switch": {
+        "x": 5,
+        "y": 2
+      },
+      "doors": [
+        {
+          "x": 1,
+          "y": 0
+        }
+      ]
+    }
+  ],
+  "partner": {
+    "x": 0,
+    "y": 2,
+    "facing": "east"
+  }
+}

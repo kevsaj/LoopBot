@@ -20,7 +20,8 @@ export type Theme =
   | 'ferry' | 'garden' | 'loom' | 'lantern' | 'pinnacle'
   | 'quay' | 'crane' | 'ropewalk' | 'office' | 'crest'
   | 'atrium' | 'skybridge' | 'batik' | 'mirror' | 'twintops'
-  | 'tessera' | 'fernhall' | 'cloister' | 'nautilus' | 'canopy';
+  | 'tessera' | 'fernhall' | 'cloister' | 'nautilus' | 'canopy'
+  | 'frontdesk' | 'evidence' | 'briefing' | 'cells' | 'watchtower';
 
 interface Recipe {
   bpm: number;
@@ -420,6 +421,57 @@ const RECIPES: Record<Theme, Recipe> = {
     kick: 'x.....x...x.....', snare: '....x.......x...', hat: 'x.xxx.xxx.xxx.xx',
     seed: 251,
   },
+  // Tower 8, Precinct 404 (the Watchhouse). Floors 1-10: the Front Desk, a busy funky groove with a
+  // walking bass, like the first scene of a cop show.
+  frontdesk: {
+    bpm: 104, root: 43, mode: DORIAN, chords: [0, 3, 0, 4], sevenths: true,
+    pad: { wave: 'triangle', cutoff: 1500, gain: 0.035 },
+    bass: 'x.xo..x.x.xo.x..', bassWave: 'sawtooth',
+    arp: '0.2.0.4.0.2.0.4.', arpWave: 'square',
+    lead: { wave: 'triangle', density: 0.42, gain: 0.045 },
+    kick: 'x.....x...x.....', snare: '....x.......x...', hat: 'x.x.x.xxx.x.x.xx',
+    seed: 257,
+  },
+  // Floors 11-20: the Evidence Locker, quiet and sneaky, plucked steps between radio blips.
+  evidence: {
+    bpm: 92, root: 41, mode: AEOLIAN, chords: [0, 5, 3, 4], sevenths: true,
+    pad: { wave: 'sine', cutoff: 1100, gain: 0.045 },
+    bass: 'x...x.o.x...x.o.', bassWave: 'triangle',
+    arp: '0..2..4..2..0..1', arpWave: 'triangle',
+    lead: { wave: 'sine', density: 0.3, gain: 0.05 },
+    kick: 'x.......x.......', snare: '....x.......x...', hat: '..x.x...x.x...x.',
+    seed: 263,
+  },
+  // Floors 21-30: the Briefing Room, a steady march with a horn-like lead that states the plan.
+  briefing: {
+    bpm: 98, root: 43, mode: MIXOLYDIAN, chords: [0, 3, 4, 0], sevenths: false,
+    pad: { wave: 'sawtooth', cutoff: 1300, gain: 0.03 },
+    bass: 'x.x.x.x.x.x.x.o.', bassWave: 'triangle',
+    arp: '0.4.2.4.0.4.2.4.', arpWave: 'triangle',
+    lead: { wave: 'square', density: 0.36, gain: 0.025 },
+    kick: 'x...x...x...x...', snare: '....x.......x...', hat: 'x.x.x.x.x.x.x.x.',
+    seed: 269,
+  },
+  // Floors 31-40: the Holding Cells, low and tense, a bass line that paces up and down.
+  cells: {
+    bpm: 108, root: 40, mode: PHRYGIAN_DOMINANT, chords: [0, 1, 0, 6], sevenths: false,
+    pad: { wave: 'sine', cutoff: 1000, gain: 0.05 },
+    bass: 'x.x.x.o.x.x.x.o.', bassWave: 'sawtooth',
+    arp: '0101210101012101', arpWave: 'sine',
+    lead: { wave: 'triangle', density: 0.32, gain: 0.045 },
+    kick: 'x..x..x...x..x..', snare: '....x.......x...', hat: 'xxx.xxx.xxx.xxx.',
+    seed: 271,
+  },
+  // Floors 41-50: the Watchtower, the big finale chase, fast and bright with sirens in the arp.
+  watchtower: {
+    bpm: 132, root: 45, mode: DORIAN, chords: [0, 6, 3, 4], sevenths: false,
+    pad: { wave: 'sawtooth', cutoff: 2000, gain: 0.03 },
+    bass: 'x.xox.x.x.xox.o.', bassWave: 'sawtooth',
+    arp: '0404040412121212', arpWave: 'square',
+    lead: { wave: 'square', density: 0.48, gain: 0.025 },
+    kick: 'x...x...x...x...', snare: '....x.......x..x', hat: 'xxxxxxxxxxxxxxxx',
+    seed: 277,
+  },
   // The daily challenge: cheerful and a little different every bar.
   daily: {
     bpm: 104, root: 46, mode: IONIAN, chords: [0, 3, 5, 4], sevenths: false,
@@ -440,6 +492,7 @@ export function themeForFloor(n: number, tower = 1): Theme {
   if (tower === 5) return (['quay', 'crane', 'ropewalk', 'office', 'crest'] as const)[Math.min(4, Math.floor((n - 1) / 10))];
   if (tower === 6) return (['atrium', 'skybridge', 'batik', 'mirror', 'twintops'] as const)[Math.min(4, Math.floor((n - 1) / 10))];
   if (tower === 7) return (['tessera', 'fernhall', 'cloister', 'nautilus', 'canopy'] as const)[Math.min(4, Math.floor((n - 1) / 10))];
+  if (tower === 8) return (['frontdesk', 'evidence', 'briefing', 'cells', 'watchtower'] as const)[Math.min(4, Math.floor((n - 1) / 10))];
   if (n <= 10) return 'lobby';
   if (n <= 20) return 'maintenance';
   if (n <= 30) return 'workshop';

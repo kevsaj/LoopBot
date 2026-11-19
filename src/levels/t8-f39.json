@@ -1,0 +1,82 @@
+{
+  "id": "t8-f39",
+  "title": "Switch Hunt",
+  "band": "cells",
+  "size": {
+    "w": 8,
+    "h": 4
+  },
+  "tiles": [
+    "....s..e",
+    "________",
+    ".d......",
+    "_______e"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait",
+    "radio",
+    "listen",
+    "repeat",
+    "F1",
+    "while",
+    "if"
+  ],
+  "sensors": [
+    "on_switch"
+  ],
+  "slots": {
+    "main": 8,
+    "F3": 7
+  },
+  "par": {
+    "commands": 11,
+    "steps": 13
+  },
+  "reference": "while not on_switch { forward } activate radio while not wall_ahead { forward } def DASH { listen while not wall_ahead { forward } turn_right forward }",
+  "hints": [
+    "LoopBot does not know where the switch is, but it can feel when it is standing on one.",
+    "LoopBot: while not on switch, forward; activate; radio; walk to the wall. DASH: wait for radio, walk to the wall, turn right, forward.",
+    "while not on_switch { forward } activate radio while not wall_ahead { forward } def DASH { listen while not wall_ahead { forward } turn_right forward }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "links": [
+    {
+      "switch": {
+        "x": 4,
+        "y": 0
+      },
+      "doors": [
+        {
+          "x": 1,
+          "y": 2
+        }
+      ]
+    }
+  ],
+  "partner": {
+    "x": 0,
+    "y": 2,
+    "facing": "east"
+  }
+}

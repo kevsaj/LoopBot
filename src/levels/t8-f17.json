@@ -1,0 +1,87 @@
+{
+  "id": "t8-f17",
+  "title": "Open Sesame",
+  "band": "evidence",
+  "size": {
+    "w": 7,
+    "h": 3
+  },
+  "tiles": [
+    "s.d...e",
+    "_______",
+    "s..d.ee"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 1,
+    "y": 0,
+    "facing": "west"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait",
+    "radio",
+    "listen",
+    "repeat"
+  ],
+  "slots": {
+    "main": 10,
+    "F3": 10
+  },
+  "par": {
+    "commands": 16,
+    "steps": 10
+  },
+  "reference": "forward activate radio turn_right turn_right listen repeat 6 { forward } def DASH { forward activate radio turn_right turn_right listen repeat 5 { forward } }",
+  "hints": [
+    "Both bots have to flip a switch behind them first. Each switch opens the other bot's door.",
+    "Each bot: forward, activate, radio, turn round, wait for radio, then walk east to the end.",
+    "forward activate radio turn_right turn_right listen repeat 6 { forward } def DASH { forward activate radio turn_right turn_right listen repeat 5 { forward } }"
+  ],
+  "story": {
+    "intro": "BULWARK: \"Same program shape for both of you, little buddies. Only the length of the walk is different.\"",
+    "outro": null
+  },
+  "links": [
+    {
+      "switch": {
+        "x": 0,
+        "y": 0
+      },
+      "doors": [
+        {
+          "x": 3,
+          "y": 2
+        }
+      ]
+    },
+    {
+      "switch": {
+        "x": 0,
+        "y": 2
+      },
+      "doors": [
+        {
+          "x": 2,
+          "y": 0
+        }
+      ]
+    }
+  ],
+  "partner": {
+    "x": 1,
+    "y": 2,
+    "facing": "west"
+  }
+}

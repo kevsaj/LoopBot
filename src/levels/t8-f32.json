@@ -1,0 +1,114 @@
+{
+  "id": "t8-f32",
+  "title": "Escort",
+  "band": "cells",
+  "size": {
+    "w": 8,
+    "h": 3
+  },
+  "tiles": [
+    ".ssss..e",
+    "________",
+    ".dddd..e"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait",
+    "radio",
+    "listen",
+    "repeat",
+    "F1",
+    "while",
+    "if"
+  ],
+  "slots": {
+    "main": 8,
+    "F3": 7
+  },
+  "par": {
+    "commands": 11,
+    "steps": 11
+  },
+  "reference": "repeat 4 { forward activate radio } while not wall_ahead { forward } def DASH { repeat 4 { listen forward } while not wall_ahead { forward } }",
+  "hints": [
+    "Every switch LoopBot flips opens the next cell door in front of DASH.",
+    "LoopBot: repeat 4 forward, activate, radio; then walk to the wall. DASH: repeat 4 wait for radio, forward; then walk to the wall.",
+    "repeat 4 { forward activate radio } while not wall_ahead { forward } def DASH { repeat 4 { listen forward } while not wall_ahead { forward } }"
+  ],
+  "story": {
+    "intro": null,
+    "outro": null
+  },
+  "links": [
+    {
+      "switch": {
+        "x": 1,
+        "y": 0
+      },
+      "doors": [
+        {
+          "x": 1,
+          "y": 2
+        }
+      ]
+    },
+    {
+      "switch": {
+        "x": 2,
+        "y": 0
+      },
+      "doors": [
+        {
+          "x": 2,
+          "y": 2
+        }
+      ]
+    },
+    {
+      "switch": {
+        "x": 3,
+        "y": 0
+      },
+      "doors": [
+        {
+          "x": 3,
+          "y": 2
+        }
+      ]
+    },
+    {
+      "switch": {
+        "x": 4,
+        "y": 0
+      },
+      "doors": [
+        {
+          "x": 4,
+          "y": 2
+        }
+      ]
+    }
+  ],
+  "partner": {
+    "x": 0,
+    "y": 2,
+    "facing": "east"
+  }
+}

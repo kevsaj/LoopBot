@@ -1,0 +1,104 @@
+{
+  "id": "t8-f30",
+  "title": "Squad Meeting",
+  "band": "briefing",
+  "size": {
+    "w": 8,
+    "h": 4
+  },
+  "tiles": [
+    "..s.s.se",
+    "________",
+    "________",
+    "..d.d.de"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait",
+    "radio",
+    "listen",
+    "repeat",
+    "F1",
+    "F2"
+  ],
+  "slots": {
+    "main": 5,
+    "F1": 5,
+    "F2": 4,
+    "F3": 5
+  },
+  "par": {
+    "commands": 13,
+    "steps": 10
+  },
+  "reference": "forward repeat 3 { F1 } def DASH { forward repeat 3 { F2 } } def F1 { forward activate radio forward } def F2 { listen forward forward }",
+  "hints": [
+    "Three doors. One routine each, repeated.",
+    "LoopBot: forward, then repeat 3 F1. DASH: forward, then repeat 3 F2.",
+    "forward repeat 3 { F1 } def DASH { forward repeat 3 { F2 } } def F1 { forward activate radio forward } def F2 { listen forward forward }"
+  ],
+  "story": {
+    "intro": "LEDGER: \"Squad meeting. VANTA has locked everyone else in the holding cells. You two are all we have. I find this... acceptable.\"",
+    "outro": null
+  },
+  "links": [
+    {
+      "switch": {
+        "x": 2,
+        "y": 0
+      },
+      "doors": [
+        {
+          "x": 2,
+          "y": 3
+        }
+      ]
+    },
+    {
+      "switch": {
+        "x": 4,
+        "y": 0
+      },
+      "doors": [
+        {
+          "x": 4,
+          "y": 3
+        }
+      ]
+    },
+    {
+      "switch": {
+        "x": 6,
+        "y": 0
+      },
+      "doors": [
+        {
+          "x": 6,
+          "y": 3
+        }
+      ]
+    }
+  ],
+  "partner": {
+    "x": 0,
+    "y": 3,
+    "facing": "east"
+  }
+}

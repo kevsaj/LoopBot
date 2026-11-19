@@ -106,7 +106,7 @@ export function tileWords(w: World, p: Pos, fromHeight: number, from: Bot = w.bo
   }
   const extra: string[] = [];
   if (w.bot !== from && w.bot.x === p.x && w.bot.y === p.y) extra.push(t('LoopBot is there'));
-  if (w.twin && w.twin !== from && w.twin.x === p.x && w.twin.y === p.y) extra.push(t('Echo is there'));
+  if (w.twin && w.twin !== from && w.twin.x === p.x && w.twin.y === p.y) extra.push(w.partner ? t('{name} is there', { name: w.partner }) : t('Echo is there'));
   const target = w.targets.find((g) => g.x === p.x && g.y === p.y);
   if (target) extra.push(t('a crate target'));
   const crates = w.boxes[p.y][p.x];
@@ -179,7 +179,9 @@ function goalLines(w: World): string[] {
     if (goal === 'bot_on_exit') {
       const exits = cells(w, (p) => w.tiles[p.y][p.x].type === 'exit');
       out.push(
-        w.twin
+        w.twin && w.partner
+          ? t('Goal: park LoopBot and {name} on the exits. Exits: {where}.', { name: w.partner, where: places(bot, exits) })
+          : w.twin
           ? t('Goal: park LoopBot and Echo on the exits. Exits: {where}.', { where: places(bot, exits) })
           : tn(exits.length, 'Goal: reach the exit, {where}.', 'Goal: reach an exit. Exits: {where}.', { where: places(bot, exits) }),
       );
@@ -231,9 +233,17 @@ export function describeBoard(w: World): string {
   const lines = [whoLine(w, w.bot, 'LoopBot'), aheadLine(w, w.bot), sidesLine(w, w.bot), ...goalLines(w)];
   if (w.twin) {
     lines.push(
-      t('Echo is {where}.', { where: relative(w.bot, w.twin) }),
-      whoLine(w, w.twin, t('Echo')),
-      t('From Echo: {ahead}', { ahead: aheadLine(w, w.twin) }),
+      ...(w.partner
+        ? [
+            t('{name} is {where}.', { name: w.partner, where: relative(w.bot, w.twin) }),
+            whoLine(w, w.twin, w.partner),
+            t('From {name}: {ahead}', { name: w.partner, ahead: aheadLine(w, w.twin) }),
+          ]
+        : [
+            t('Echo is {where}.', { where: relative(w.bot, w.twin) }),
+            whoLine(w, w.twin, t('Echo')),
+            t('From Echo: {ahead}', { ahead: aheadLine(w, w.twin) }),
+          ]),
     );
   }
   if (w.tally > 0) lines.push(t('Tally: {n}', { n: w.tally }));

@@ -183,6 +183,12 @@ export function ResultsCard({ floorNumber, tower = 1, floorCount, earned, prevBe
             {t("That's the end of the free demo. LoopBot's climb continues in the full game: loops in the Maintenance floors, functions in the Workshop, and all the way to the Rooftop.")}
           </p>
         )}
+        {!daily && !custom && !DEMO && floorNumber === floorCount && tower === 8 && (
+          <p className="demo-end">
+            <strong>{t('Tower 8 cleared!')}</strong>{' '}
+            {t('Heist Night is over, the case files are safe, and LoopBot and DASH won the Golden Badge together. VANTA is heading for the oldest tower of all.')}
+          </p>
+        )}
         {!daily && !custom && !DEMO && floorNumber === floorCount && tower === 7 && (
           <p className="demo-end">
             <strong>{t('Tower 7 cleared!')}</strong>{' '}

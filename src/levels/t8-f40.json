@@ -1,0 +1,118 @@
+{
+  "id": "t8-f40",
+  "title": "Breakout",
+  "band": "cells",
+  "size": {
+    "w": 8,
+    "h": 4
+  },
+  "tiles": [
+    ".ssss..e",
+    "________",
+    ".dddd...",
+    "_______e"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait",
+    "radio",
+    "listen",
+    "repeat",
+    "F1",
+    "while",
+    "if"
+  ],
+  "sensors": [
+    "on_switch"
+  ],
+  "slots": {
+    "main": 7,
+    "F3": 9
+  },
+  "par": {
+    "commands": 12,
+    "steps": 13
+  },
+  "reference": "while not wall_ahead { forward if on_switch { activate radio } } def DASH { repeat 4 { listen forward } while not wall_ahead { forward } turn_right forward }",
+  "hints": [
+    "LoopBot walks the hall and flips every switch it stands on, calling DASH each time.",
+    "LoopBot: while not wall ahead, forward, and if on a switch, activate and radio. DASH: repeat 4 wait for radio, forward; then walk to the wall, turn right, forward.",
+    "while not wall_ahead { forward if on_switch { activate radio } } def DASH { repeat 4 { listen forward } while not wall_ahead { forward } turn_right forward }"
+  ],
+  "story": {
+    "intro": "ROOK: \"Four cell doors. Squad's behind them. Get them out.\" DASH: \"This is the jailbreak scene! I have waited my whole life for the jailbreak scene!\"",
+    "outro": null
+  },
+  "links": [
+    {
+      "switch": {
+        "x": 1,
+        "y": 0
+      },
+      "doors": [
+        {
+          "x": 1,
+          "y": 2
+        }
+      ]
+    },
+    {
+      "switch": {
+        "x": 2,
+        "y": 0
+      },
+      "doors": [
+        {
+          "x": 2,
+          "y": 2
+        }
+      ]
+    },
+    {
+      "switch": {
+        "x": 3,
+        "y": 0
+      },
+      "doors": [
+        {
+          "x": 3,
+          "y": 2
+        }
+      ]
+    },
+    {
+      "switch": {
+        "x": 4,
+        "y": 0
+      },
+      "doors": [
+        {
+          "x": 4,
+          "y": 2
+        }
+      ]
+    }
+  ],
+  "partner": {
+    "x": 0,
+    "y": 2,
+    "facing": "east"
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "id": "t8-f16",
+  "title": "Return to Sender",
+  "band": "evidence",
+  "size": {
+    "w": 5,
+    "h": 3
+  },
+  "tiles": [
+    "...._",
+    "___._",
+    "....."
+  ],
+  "heights": null,
+  "boxes": [
+    {
+      "x": 1,
+      "y": 0,
+      "count": 1
+    }
+  ],
+  "targets": [
+    {
+      "x": 4,
+      "y": 2,
+      "count": 1
+    }
+  ],
+  "bot": {
+    "x": 0,
+    "y": 2,
+    "facing": "east"
+  },
+  "goals": [
+    "all_targets_filled"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait",
+    "radio",
+    "listen"
+  ],
+  "slots": {
+    "main": 10,
+    "F3": 9
+  },
+  "par": {
+    "commands": 15,
+    "steps": 9
+  },
+  "reference": "forward forward forward turn_left listen pick_up turn_right drop def DASH { pick_up forward forward forward turn_right drop radio }",
+  "hints": [
+    "Same handoff as before, the other way round. This time LoopBot does the waiting.",
+    "DASH carries the crate, drops it on the middle tile and radios. LoopBot walks under it, waits for radio, lifts it and books it.",
+    "forward forward forward turn_left listen pick_up turn_right drop def DASH { pick_up forward forward forward turn_right drop radio }"
+  ],
+  "story": {
+    "intro": "DASH: \"My turn to carry. Watch my form. Lift with the legs. I do not have legs. Lift with the treads.\"",
+    "outro": null
+  },
+  "partner": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  }
+}

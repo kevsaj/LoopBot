@@ -1,0 +1,93 @@
+{
+  "id": "t8-f42",
+  "title": "Bug Hunt: Standoff",
+  "band": "watchtower",
+  "size": {
+    "w": 6,
+    "h": 3
+  },
+  "tiles": [
+    ".s.d.e",
+    "______",
+    ".d.s.e"
+  ],
+  "heights": null,
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait",
+    "radio",
+    "listen",
+    "repeat",
+    "F1",
+    "F2",
+    "while",
+    "if"
+  ],
+  "slots": {
+    "main": 10,
+    "F3": 10
+  },
+  "par": {
+    "commands": 16,
+    "steps": 8
+  },
+  "reference": "forward activate radio forward listen forward forward forward def DASH { listen forward forward forward activate radio forward forward }",
+  "hints": [
+    "Run it. Both bots stand there waiting for each other.",
+    "Somebody has to go first. LoopBot should not start by waiting for radio.",
+    "forward activate radio forward listen forward forward forward def DASH { listen forward forward forward activate radio forward forward }"
+  ],
+  "story": {
+    "intro": "VANTA: \"Two bots, each waiting for the other to move. I could watch this all night.\"",
+    "outro": null
+  },
+  "links": [
+    {
+      "switch": {
+        "x": 1,
+        "y": 0
+      },
+      "doors": [
+        {
+          "x": 1,
+          "y": 2
+        }
+      ]
+    },
+    {
+      "switch": {
+        "x": 3,
+        "y": 2
+      },
+      "doors": [
+        {
+          "x": 3,
+          "y": 0
+        }
+      ]
+    }
+  ],
+  "typing": true,
+  "starter": "listen forward activate radio forward listen forward forward forward def DASH { listen forward forward forward activate radio forward forward }",
+  "partner": {
+    "x": 0,
+    "y": 2,
+    "facing": "east"
+  }
+}

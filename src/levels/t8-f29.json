@@ -1,0 +1,70 @@
+{
+  "id": "t8-f29",
+  "title": "Stairwell",
+  "band": "briefing",
+  "size": {
+    "w": 7,
+    "h": 4
+  },
+  "tiles": [
+    "......e",
+    "_______",
+    "_______",
+    "e......"
+  ],
+  "heights": [
+    "0112233",
+    "0000000",
+    "0000000",
+    "0011223"
+  ],
+  "boxes": [],
+  "targets": [],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "bot_on_exit"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait",
+    "radio",
+    "listen",
+    "repeat",
+    "F1",
+    "F2"
+  ],
+  "slots": {
+    "main": 5,
+    "F1": 3,
+    "F3": 5
+  },
+  "par": {
+    "commands": 8,
+    "steps": 6
+  },
+  "reference": "F1 F1 F1 def DASH { F1 F1 F1 } def F1 { jump forward }",
+  "hints": [
+    "One bot climbs, one comes down. A jump works both ways.",
+    "F1: jump, forward. Both bots call it three times.",
+    "F1 F1 F1 def DASH { F1 F1 F1 } def F1 { jump forward }"
+  ],
+  "story": {
+    "intro": "BULWARK: \"The lifts are locked, so it is stairs for everyone. Good for the treads! One goes up, one goes down, same rhythm.\"",
+    "outro": null
+  },
+  "partner": {
+    "x": 6,
+    "y": 3,
+    "facing": "west"
+  }
+}

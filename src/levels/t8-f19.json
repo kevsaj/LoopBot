@@ -1,0 +1,73 @@
+{
+  "id": "t8-f19",
+  "title": "Stacked Evidence",
+  "band": "evidence",
+  "size": {
+    "w": 3,
+    "h": 3
+  },
+  "tiles": [
+    ".._",
+    ".__",
+    ".._"
+  ],
+  "heights": null,
+  "boxes": [
+    {
+      "x": 1,
+      "y": 0,
+      "count": 3
+    }
+  ],
+  "targets": [
+    {
+      "x": 1,
+      "y": 2,
+      "count": 3
+    }
+  ],
+  "bot": {
+    "x": 0,
+    "y": 0,
+    "facing": "east"
+  },
+  "goals": [
+    "all_targets_filled"
+  ],
+  "commands": [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "jump",
+    "pick_up",
+    "drop",
+    "activate",
+    "wait",
+    "radio",
+    "listen",
+    "repeat"
+  ],
+  "slots": {
+    "main": 8,
+    "F3": 8
+  },
+  "par": {
+    "commands": 12,
+    "steps": 13
+  },
+  "reference": "repeat 3 { pick_up turn_right drop radio turn_left } def DASH { repeat 3 { listen pick_up turn_right drop turn_left } }",
+  "hints": [
+    "Three crates go across one at a time, through the tile in the middle.",
+    "LoopBot: repeat 3 lift, turn right, drop, radio, turn left. DASH: repeat 3 wait for radio, lift, turn right, drop, turn left.",
+    "repeat 3 { pick_up turn_right drop radio turn_left } def DASH { repeat 3 { listen pick_up turn_right drop turn_left } }"
+  ],
+  "story": {
+    "intro": "ROOK: \"Three crates. One at a time. I am watching.\"",
+    "outro": null
+  },
+  "partner": {
+    "x": 0,
+    "y": 2,
+    "facing": "north"
+  }
+}
