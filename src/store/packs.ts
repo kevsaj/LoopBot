@@ -2,10 +2,13 @@
 // $2.99). Heatwave was the first, Twist the second, Dockyard the third, Twin Spires the fourth, Fractal the fifth, Precinct 404 the sixth. Overflow,
 // the endless climb, is sold the same way (growth plan: $3.99) though it is a mode, not a tower. Each pack is a non-consumable store product that unlocks a
 // RevenueCat entitlement of the same name, so a later Skyline Pass only needs attaching to every
-// pack's entitlement in RevenueCat to unlock them all.
+// pack's entitlement in RevenueCat to unlock them all. (The Skyline Pass, store/skyline.ts, does
+// it in code instead: its own `skyline` entitlement counts as owning every pack, future ones too.)
 //
 // Ownership is cached on the device (loopbot.packs) so packs work offline, and it is never in
 // backup codes: the store is the only thing that can say a pack was bought.
+
+import { skylineIn } from './skyline';
 
 export type PackId = 'heatwave' | 'twist' | 'dockyard' | 'twinspires' | 'fractal' | 'precinct404' | 'overflow';
 
@@ -64,7 +67,7 @@ export function saveOwnedPacks(ids: PackId[]): boolean {
   return before.join() !== next.join();
 }
 
-/** The packs a set of active RevenueCat entitlements unlocks. */
+/** The packs a set of active RevenueCat entitlements unlocks. The Skyline Pass unlocks them all. */
 export function packsFromEntitlements(active: Record<string, unknown>): PackId[] {
-  return PACKS.filter((p) => p.entitlement in active).map((p) => p.id);
+  return PACKS.filter((p) => skylineIn(active) || p.entitlement in active).map((p) => p.id);
 }

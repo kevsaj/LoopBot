@@ -4,8 +4,10 @@
 import { useEffect, useState } from 'react';
 import { fx } from '../audio/feedback';
 import { buyPlus, getPlusOffer, hasPlus, restorePurchases } from './purchases';
+import { skylineOnSale } from './purchases';
 import type { PlusOffer } from './purchases';
 import { msg, t } from '../i18n';
+import { SkylineSheet } from './SkylineSheet';
 
 export const PLUS_PERKS: { icon: string; title: string; text: string }[] = [
   { icon: '❄️', title: msg('Frostline tower'), text: msg('A whole new tower of floors with ice to slide on, and the next chapter of the VANTA story.') },
@@ -20,6 +22,7 @@ export function PlusSheet({ onClose }: { onClose(): void }) {
   const [offer, setOffer] = useState<PlusOffer | null | 'loading'>('loading');
   const [busy, setBusy] = useState(false);
   const [note, setNote] = useState<string | null>(null);
+  const [skyline, setSkyline] = useState(false);
 
   useEffect(() => {
     let live = true;
@@ -96,6 +99,11 @@ export function PlusSheet({ onClose }: { onClose(): void }) {
               {note}
             </p>
           )}
+          {!owned && skylineOnSale() && (
+            <button type="button" className="sky-link" onClick={() => (fx.tap(), setSkyline(true))}>
+              {t('Want every tower? See the Skyline Pass')} ›
+            </button>
+          )}
           {!owned && (
             <button type="button" className="plus-restore" onClick={restore} disabled={busy}>
               {t('Restore purchases')}
@@ -103,6 +111,14 @@ export function PlusSheet({ onClose }: { onClose(): void }) {
           )}
         </div>
       </div>
+      {skyline && (
+        <SkylineSheet
+          onClose={() => {
+            setSkyline(false);
+            setOwned(hasPlus());
+          }}
+        />
+      )}
     </div>
   );
 }
