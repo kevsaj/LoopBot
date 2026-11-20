@@ -27,7 +27,7 @@ interface Props {
   onNext(): void;
   onTower(): void;
   /** The daily challenge: shows the streak and a share button instead of "Next floor". */
-  daily?: { date: string; streak: number; froze?: boolean; share: string };
+  daily?: { date: string; boss?: boolean; onBoss?(): void; streak: number; froze?: boolean; share: string };
   /** A player-made floor: no tower or streak, just a note and Done. */
   custom?: { note: string | null; noPar?: boolean };
   /** An Overflow climb: the record and brick badges, and "Next floor" climbs on. */
@@ -108,7 +108,7 @@ export function ResultsCard({ floorNumber, tower = 1, floorCount, earned, prevBe
     const on = await setReminder(true);
     setReminderNote(on ? t('Reminder set for {time}. Change it in Settings.', { time: hourLabel(DEFAULT_HOUR) }) : t('Notifications are off for LoopBot. You can allow them in your phone settings.'));
   };
-  const title = custom ? t('Your floor') : overflow ? t('Overflow · Floor {n}', { n: overflow.floor }) : daily ? t('Daily · {date}', { date: shortDate(daily.date) }) : t('Floor {n}', { n: floorNumber });
+  const title = custom ? t('Your floor') : overflow ? t('Overflow · Floor {n}', { n: overflow.floor }) : daily ? (daily.boss ? t('Sunday boss · {date}', { date: shortDate(daily.date) }) : t('Daily · {date}', { date: shortDate(daily.date) })) : t('Floor {n}', { n: floorNumber });
   const tip =
     earned === 3
       ? null
@@ -131,7 +131,7 @@ export function ResultsCard({ floorNumber, tower = 1, floorCount, earned, prevBe
         </div>
         <div className={`badges${shown >= 3 ? ' in' : ''}`}>
           {best && <span className="badge best">{t('New best!')}</span>}
-          {prevBest === 0 && !custom && !overflow && <span className="badge first">{daily ? t('Cleared today') : t('First clear')}</span>}
+          {prevBest === 0 && !custom && !overflow && <span className="badge first">{daily ? (daily.boss ? t('Boss beaten') : t('Cleared today')) : t('First clear')}</span>}
           {daily && daily.streak > 0 && (
             <span className="badge streak">
               🔥 {tn(daily.streak, '{n}-day streak', '{n}-day streak')}
@@ -177,7 +177,12 @@ export function ResultsCard({ floorNumber, tower = 1, floorCount, earned, prevBe
         {outro && <p className="story">{outro}</p>}
         {!daily && shared && <p className="tip">{shared}</p>}
         {custom?.note && <p className="tip">{custom.note}</p>}
-        {daily && <p className="tip">{shared ?? reminderNote ?? t('Same puzzle for everyone today. A new one arrives at midnight.')}</p>}
+        {daily && <p className="tip">{shared ?? reminderNote ?? (daily.boss ? t('Same boss for everyone this Sunday. A new one arrives next week.') : t('Same puzzle for everyone today. A new one arrives at midnight.'))}</p>}
+        {daily?.onBoss && (
+          <button type="button" className="pill boss-cta" onClick={() => (fx.tap(), daily.onBoss!())}>
+            👑 {t("Try today's Sunday boss")} ›
+          </button>
+        )}
         {askReminder && shown >= 3 && (
           <div className="reminder-ask">
             <p>{t("Want a reminder when tomorrow's puzzle is ready?")}</p>

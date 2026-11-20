@@ -8,7 +8,7 @@
 
 import type { Action, Facing, LevelFile } from '../sim/types';
 import { expandDaily } from './entry';
-import type { DailyEntry, Difficulty } from './entry';
+import type { DailyEntry, Difficulty, Twist } from './entry';
 import { countCommands, parseReference } from '../sim/program';
 import { Runner } from '../sim/interpreter';
 import { SearchBudgetExceeded, shortestActionPath, smallestProgram } from '../sim/solver';
@@ -44,8 +44,9 @@ function atoms(r: Rng, n: number, pool: Action[]): Action[] {
 
 export const hasMove = (xs: Shape): boolean => xs.some((b) => (typeof b === 'string' ? b === 'forward' || b === 'jump' : hasMove(b.body)));
 
-export function shapeFor(r: Rng, d: Difficulty, switches: boolean): Shape {
-  const walk: Action[] = ['forward', 'forward', 'forward', 'turn_left', 'turn_right'];
+export function shapeFor(r: Rng, d: Difficulty, switches: boolean, tw?: Twist): Shape {
+  // Right-turns-only days never walk a left turn: the board has to be built from right turns alone.
+  const walk: Action[] = tw === 'right' ? ['forward', 'forward', 'forward', 'turn_right', 'turn_right'] : ['forward', 'forward', 'forward', 'turn_left', 'turn_right'];
   const climb: Action[] = [...walk, 'jump', 'jump'];
   const body = (n: number, pool: Action[]) => {
     const b: Shape = atoms(r, n, pool);
@@ -58,6 +59,22 @@ export function shapeFor(r: Rng, d: Difficulty, switches: boolean): Shape {
     const pre: Shape = r.next() < 0.35 ? atoms(r, 1, walk) : [];
     const post: Shape = r.next() < 0.35 ? atoms(r, r.int(1, 2), walk) : [];
     return [...pre, { times: r.int(2, 5), body: b }, ...post];
+  }
+  if (d === 'medium' && tw === 'nested') {
+    // Loop-in-a-loop day: a small loop inside a bigger one, on a midweek-sized board.
+    const inner: Shape = [{ times: r.int(2, 3), body: atoms(r, r.int(1, 2), climb) }];
+    return [...atoms(r, r.int(0, 1), climb), { times: r.int(2, 3), body: [...atoms(r, r.int(0, 1), climb), ...inner, ...body(r.int(1, 2), climb)] }];
+  }
+  if (d === 'boss') {
+    // The Sunday boss: a loop in a loop and then another loop, on the biggest boards.
+    const inner: Shape = [{ times: r.int(2, 4), body: atoms(r, r.int(1, 2), climb) }];
+    const outer: Shape = [...atoms(r, r.int(0, 2), climb), ...inner, ...body(r.int(1, 3), climb)];
+    return [
+      ...atoms(r, r.int(0, 1), climb),
+      { times: r.int(2, 3), body: outer },
+      ...atoms(r, r.int(0, 1), climb),
+      { times: r.int(2, 4), body: atoms(r, r.int(2, 3), climb) },
+    ];
   }
   if (d === 'medium') {
     const pre: Shape = atoms(r, r.int(0, 2), climb);
@@ -155,18 +172,21 @@ export const TUNING: Tuning = {
   maxSide: 7,
   minSteps: 8,
   maxSteps: 32,
-  minPar: { easy: 4, medium: 4, hard: 5 },
-  maxPar: { easy: 5, medium: 6, hard: 7 },
+  minPar: { easy: 4, medium: 4, hard: 5, boss: 7 },
+  maxPar: { easy: 5, medium: 6, hard: 7, boss: 8 },
 };
+
+/** The Sunday boss gets bigger boards and longer walks. */
+export const BOSS_TUNING: Tuning = { ...TUNING, maxSide: 8, maxSteps: 44 };
 
 /**
  * One candidate puzzle from a seed, or null if this seed doesn't make a good one.
  * Deterministic: the same seed and difficulty always give the same answer.
  */
-export function generate(seed: number, d: Difficulty, t: Tuning = TUNING): DailyEntry | null {
+export function generate(seed: number, d: Difficulty, t: Tuning = TUNING, tw?: Twist): DailyEntry | null {
   const r = rng(seed);
-  const switches = d !== 'easy' && r.next() < 0.35;
-  const shape = shapeFor(r, d, switches);
+  const switches = tw === 'switch' || (d !== 'easy' && r.next() < 0.35);
+  const shape = shapeFor(r, d, switches, tw);
   if (!hasMove(shape)) return null;
   const actions = flatten(shape);
   const moves = actions.filter((a) => a === 'forward' || a === 'jump').length;
@@ -222,6 +242,7 @@ export function generate(seed: number, d: Difficulty, t: Tuning = TUNING): Daily
       par: { commands: 99, steps: 999 },
       main: 99,
       reference: toRef(shape),
+      tw,
     },
     'daily',
   );
@@ -250,7 +271,12 @@ export function generate(seed: number, d: Difficulty, t: Tuning = TUNING): Daily
   const run = new Runner(program, level).runToEnd();
   if (run.status !== 'cleared' || run.steps !== steps) return null;
   if (!best.includes('repeat')) return null;
-  if (d === 'hard' && !/repeat \d+ \{[^}]*repeat/.test(best) && (best.match(/repeat/g) ?? []).length < 2) return null;
+  const nested = /repeat \d+ \{[^}]*repeat/.test(best);
+  const loops = (best.match(/repeat/g) ?? []).length;
+  if (d === 'hard' && !nested && loops < 2) return null;
+  // The twist has to matter: a loop-in-a-loop day needs one, and the boss needs a nest and a third loop.
+  if (tw === 'nested' && !nested) return null;
+  if (d === 'boss' && !(nested && loops >= 3)) return null;
 
   return {
     d,
@@ -261,7 +287,9 @@ export function generate(seed: number, d: Difficulty, t: Tuning = TUNING): Daily
     bot: level.bot,
     goal: switches ? 'switches' : 'exit',
     par: { commands, steps },
-    main: commands + (d === 'hard' ? 3 : 2),
+    // Tight-fit days leave no spare slots: the program has to be the par program.
+    main: tw === 'tight' ? commands : commands + (d === 'hard' || d === 'boss' ? 3 : 2),
     reference: best,
+    ...(tw ? { tw } : {}),
   };
 }

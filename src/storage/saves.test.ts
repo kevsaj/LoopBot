@@ -12,7 +12,7 @@ describe('broken or hand-made saves', () => {
 
   it('daily keeps only fields of the right type', () => {
     const d = sanitizeDaily({ best: { '2026-11-12': 2, bad: {} }, streak: 4, longest: -3, last: 7, frozen: ['2026-11-10', 3] });
-    expect(d).toEqual({ best: { '2026-11-12': 2 }, streak: 4, longest: 0, last: null, freezes: 1, frozen: ['2026-11-10'] });
+    expect(d).toEqual({ best: { '2026-11-12': 2 }, streak: 4, longest: 0, last: null, freezes: 1, frozen: ['2026-11-10'], boss: {} });
     expect(sanitizeDaily([]).streak).toBe(0);
   });
 });

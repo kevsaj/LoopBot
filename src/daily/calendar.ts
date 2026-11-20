@@ -1,7 +1,7 @@
 // Dates for the daily challenge. Everything uses the player's local calendar day, so the puzzle
 // changes at their midnight, and everyone on the same date gets the same puzzle.
 
-import type { Difficulty } from './entry';
+import type { Difficulty, Twist } from './entry';
 
 /** The bank holds 52 weeks of puzzles, then starts over. */
 export const BANK_DAYS = 364;
@@ -40,4 +40,35 @@ const BY_WEEKDAY: Difficulty[] = ['hard', 'easy', 'easy', 'medium', 'medium', 'm
 /** Difficulty of a bank entry (the same for a day number, since the bank is whole weeks). */
 export function difficultyFor(day: number): Difficulty {
   return BY_WEEKDAY[weekday(day)];
+}
+
+// --- Theme weeks and the Sunday boss ---
+
+
+/** The four themes take turns, one per week (weeks run Monday to Sunday). */
+export const THEMES: Twist[] = ['right', 'tight', 'switch', 'nested'];
+
+/** Weeks since the Monday before 1970-01-01 (day 0 was a Thursday). */
+export function weekNumber(day: number): number {
+  return Math.floor((day + 3) / 7);
+}
+
+const mod = (a: number, n: number) => ((a % n) + n) % n;
+
+/** This week's theme. 52 weeks is 13 rounds of 4, so a bank day always gets the same theme. */
+export function themeOf(day: number): Twist {
+  return THEMES[mod(weekNumber(day), THEMES.length)];
+}
+
+/** Wednesday to Friday are theme days: the week's rule applies. The other days are classic. */
+export function twistFor(day: number): Twist | null {
+  const w = weekday(day);
+  return w >= 3 && w <= 5 ? themeOf(day) : null;
+}
+
+/** One boss puzzle a week, on Sunday. The boss bank holds 52, then starts over. */
+export const BOSS_WEEKS = 52;
+export const isBossDay = (day: number) => weekday(day) === 0;
+export function bossIndex(day: number): number {
+  return mod(weekNumber(day), BOSS_WEEKS);
 }

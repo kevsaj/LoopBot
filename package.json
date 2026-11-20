@@ -12,6 +12,7 @@
     "typecheck": "tsc -b",
     "check-levels": "vitest run src/levels",
     "daily:bank": "esbuild scripts/make-daily.ts --bundle --platform=node --format=esm --outfile=node_modules/.cache/make-daily.mjs --log-level=warning && node node_modules/.cache/make-daily.mjs",
+    "daily:boss": "esbuild scripts/make-daily.ts --bundle --platform=node --format=esm --outfile=node_modules/.cache/make-daily.mjs --log-level=warning && (node node_modules/.cache/make-daily.mjs boss 0 13 & node node_modules/.cache/make-daily.mjs boss 13 26 & node node_modules/.cache/make-daily.mjs boss 26 39 & node node_modules/.cache/make-daily.mjs boss 39 52 & wait) && node node_modules/.cache/make-daily.mjs boss-merge",
     "overflow:bank": "esbuild scripts/make-overflow.ts --bundle --platform=node --format=esm --outfile=node_modules/.cache/make-overflow.mjs --log-level=warning && node node_modules/.cache/make-overflow.mjs",
     "cap:sync": "npm run build && cap sync android",
     "android:open": "cap open android",

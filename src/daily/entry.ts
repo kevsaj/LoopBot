@@ -5,7 +5,14 @@ import type { Facing, LevelFile } from '../sim/types';
 import { parseReference } from '../sim/program';
 import { t, tn } from '../i18n';
 
-export type Difficulty = 'easy' | 'medium' | 'hard';
+export type Difficulty = 'easy' | 'medium' | 'hard' | 'boss';
+
+/**
+ * A theme day's rule (Wednesday to Friday, one theme per week):
+ * right = no turn left block; tight = no spare program slots; switch = every floor is a switch floor;
+ * nested = the par program needs a loop inside a loop.
+ */
+export type Twist = 'right' | 'tight' | 'switch' | 'nested';
 
 /** A compact daily puzzle, as stored in the bank. `expandDaily` turns it into a full floor. */
 export interface DailyEntry {
@@ -20,6 +27,8 @@ export interface DailyEntry {
   par: { commands: number; steps: number };
   main: number;
   reference: string;
+  /** The theme day's rule, if this puzzle plays on one. */
+  tw?: Twist;
 }
 
 /** Floors 11-20 commands: everything the player has by the time loops arrive. */
@@ -27,12 +36,25 @@ export const DAILY_COMMANDS: LevelFile['commands'] = ['forward', 'turn_left', 't
 
 /** Expands a bank entry into a floor the game can play. */
 export function expandDaily(e: DailyEntry, id: string): LevelFile {
+  const commands = e.tw === 'right' ? DAILY_COMMANDS.filter((c) => c !== 'turn_left') : DAILY_COMMANDS;
   const program = parseReference(e.reference);
   const loops = program.main.filter((b) => b.kind === 'repeat').length;
   const structure =
     e.goal === 'switches'
       ? tn(e.par.commands, 'Par is {n} command. Find the stretch of path between two switches and loop it.', 'Par is {n} commands. Find the stretch of path between two switches and loop it.')
-      : `${tn(e.par.commands, 'Par is {n} command.', 'Par is {n} commands.')} ${loops > 1 ? t('There is more than one pattern here.') : t('One repeat block can carry most of the walk.')}`;
+      : `${tn(e.par.commands, 'Par is {n} command.', 'Par is {n} commands.')} ${
+          e.tw === 'nested' || e.d === 'boss'
+            ? t('Look for a short pattern that repeats inside a longer one.')
+            : loops > 1
+              ? t('There is more than one pattern here.')
+              : t('One repeat block can carry most of the walk.')
+        }`;
+  const first =
+    e.tw === 'right'
+      ? t('No left turns today. Three right turns face the same way as one left turn.')
+      : e.goal === 'switches'
+        ? t('Every switch has to end up on. Watch how the path between them repeats.')
+        : t('Trace the path to the exit with your finger. Where does it start repeating itself?');
   return {
     id,
     title: e.title,
@@ -44,14 +66,12 @@ export function expandDaily(e: DailyEntry, id: string): LevelFile {
     targets: [],
     bot: e.bot,
     goals: [e.goal === 'exit' ? 'bot_on_exit' : 'all_switches_on'],
-    commands: DAILY_COMMANDS,
+    commands,
     slots: { main: e.main },
     par: e.par,
     reference: e.reference,
     hints: [
-      e.goal === 'switches'
-        ? t('Every switch has to end up on. Watch how the path between them repeats.')
-        : t('Trace the path to the exit with your finger. Where does it start repeating itself?'),
+      first,
       structure,
       e.reference,
     ],

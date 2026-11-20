@@ -26,7 +26,7 @@ interface Props {
   onTower(): void;
   onSettings(): void;
   daily: DailyState;
-  onDaily(): void;
+  onDaily(boss?: boolean): void;
   onLocker(): void;
   /** The floor maker, when it's switched on. */
   onMaker?(): void;

@@ -23,7 +23,7 @@ import { Interlude } from './story/Interlude';
 import { interludeAfter, markInterludeSeen } from './story/interludes';
 import type { Interlude as Beat } from './story/interludes';
 import type { LevelFile } from './sim/types';
-import { currentStreak, yesterday, dailyLevel, dateKey, loadDaily, pruneOldDailies, recordArchiveClear, recordDailyClear, saveDaily } from './daily';
+import { bossHintReward, bossLevel, bossOn, currentStreak, yesterday, dailyLevel, dateKey, loadDaily, pruneOldDailies, recordArchiveClear, recordBossClear, recordDailyClear, saveDaily } from './daily';
 import { DailyArchive } from './daily/DailyArchive';
 import type { DailyState } from './daily';
 import { MAX_FREEZES, PLUS_MAX_FREEZES, dailyHintReward } from './daily';
@@ -103,7 +103,7 @@ export default function App() {
   useEffect(() => void refreshReminders(daily), [daily, language]);
   // The daily archive sheet (LoopBot Plus), opened from the tower map.
   const [archive, setArchive] = useState(false);
-  const [dailyFloor, setDailyFloor] = useState<{ date: string; level: LevelFile } | null>(null);
+  const [dailyFloor, setDailyFloor] = useState<{ date: string; level: LevelFile; boss: boolean } | null>(null);
   const dailyFrom = useRef<'title' | 'map'>('title');
   const [booted, setBooted] = useState(false);
   const onBooted = useCallback(() => setBooted(true), []);
@@ -153,13 +153,13 @@ export default function App() {
     [ride, levels, tower],
   );
   const openDaily = useCallback(
-    (from: 'title' | 'map', date: string = dateKey()) => {
+    (from: 'title' | 'map', date: string = dateKey(), boss = false) => {
       dailyFrom.current = from;
       setArchive(false);
       setProgress((p) => pruneOldDailies(dateKey(), p, date));
-      void dailyLevel(date).then((level) =>
+      void (boss ? bossLevel(date) : dailyLevel(date)).then((level) =>
         ride(() => {
-          setDailyFloor({ date, level });
+          setDailyFloor({ date, level, boss });
           setScreen('daily');
         }),
       );
@@ -169,8 +169,18 @@ export default function App() {
   const dailyRef = useRef(daily);
   dailyRef.current = daily;
   const clearDaily = useCallback(
-    (date: string, stars: number) => {
+    (date: string, stars: number, boss = false) => {
       const before = dailyRef.current;
+      if (boss) {
+        // The Sunday boss keeps its own stars and pays 2 hints the first time it's beaten on the day.
+        const next = recordBossClear(before, date, stars);
+        saveDaily(next);
+        dailyRef.current = next;
+        setDailyState(next);
+        const earned = bossHintReward(before, date);
+        if (earned) setProgress((p) => ({ ...p, hints: p.hints + earned }));
+        return;
+      }
       // a past day from the archive keeps its stars, but only today's clear moves the streak or earns hints
       const today = date === dateKey();
       const next = today ? recordDailyClear(before, date, stars, hasPlus() ? PLUS_MAX_FREEZES : MAX_FREEZES) : recordArchiveClear(before, date, stars);
@@ -292,7 +302,7 @@ export default function App() {
   };
   const overlays = (
     <>
-      {archive && <DailyArchive daily={daily} onPlay={(date) => openDaily('map', date)} onClose={() => setArchive(false)} />}
+      {archive && <DailyArchive daily={daily} onPlay={(date, boss) => openDaily('map', date, boss)} onClose={() => setArchive(false)} />}
       {beat && (
         <Interlude
           beat={beat.beat}
@@ -333,7 +343,7 @@ export default function App() {
           onTower={() => setScreen('map')}
           onSettings={() => setSettings(true)}
           daily={daily}
-          onDaily={() => openDaily('title')}
+          onDaily={(boss) => openDaily('title', dateKey(), boss)}
           onLocker={openLocker}
           lockerNew={rewards.hasNew}
           onMaker={MAKER ? () => setScreen('maker') : undefined}
@@ -398,7 +408,7 @@ export default function App() {
           onSettings={() => setSettings(true)}
           onHome={() => setScreen('title')}
           daily={daily}
-          onDaily={() => openDaily('map')}
+          onDaily={(boss) => openDaily('map', dateKey(), boss)}
           onArchive={() => setArchive(true)}
           onLocker={openLocker}
           lockerNew={rewards.hasNew}
@@ -450,7 +460,7 @@ export default function App() {
     );
   }
   if (screen === 'daily' && dailyFloor) {
-    const { date, level: today } = dailyFloor;
+    const { date, level: today, boss } = dailyFloor;
     return (
       <>
         <FloorScreen
@@ -464,10 +474,13 @@ export default function App() {
           onTower={() => setScreen(dailyFrom.current)}
           daily={{
             date,
-            best: daily.best[date] ?? 0,
+            boss,
+            best: (boss ? daily.boss?.[date] : daily.best[date]) ?? 0,
             streak: currentStreak(daily, date),
-            froze: daily.last === date && (daily.frozen ?? []).includes(yesterday(date)),
-            onClear: (stars) => clearDaily(date, stars),
+            froze: !boss && daily.last === date && (daily.frozen ?? []).includes(yesterday(date)),
+            onClear: (stars) => clearDaily(date, stars, boss),
+            // After Sunday's daily, the results card points to the boss.
+            onBoss: !boss && bossOn(date) && date === dateKey() ? () => openDaily(dailyFrom.current, date, true) : undefined,
           }}
         />
         {overlays}

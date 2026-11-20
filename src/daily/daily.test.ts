@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import bank from './bank.json';
+import bossBank from './boss.json';
 import type { DailyEntry } from './entry';
 import { expandDaily } from './entry';
-import { BANK_DAYS, bankIndex, dateKey, dayNumber, difficultyFor, keyFromDay, weekday } from './calendar';
-import { archiveDates, currentStreak, dailyHintReward, recordArchiveClear, recordDailyClear } from './index';
+import { BANK_DAYS, BOSS_WEEKS, THEMES, bankIndex, bossIndex, dateKey, dayNumber, difficultyFor, isBossDay, keyFromDay, themeOf, twistFor, weekday } from './calendar';
+import { archiveDates, bossHintReward, currentStreak, dailyHintReward, recordArchiveClear, recordBossClear, recordDailyClear, sanitizeDaily, themeComing } from './index';
 import type { DailyState } from './index';
 import { validateLevel } from '../levels/validate';
 import { Runner } from '../sim/interpreter';
@@ -11,6 +12,7 @@ import { countCommands, parseReference } from '../sim/program';
 import { shortestActionPath, smallestProgram } from '../sim/solver';
 
 const entries = bank as unknown as DailyEntry[];
+const bosses = bossBank as unknown as DailyEntry[];
 
 describe('daily calendar', () => {
   it('reads dates in local time and counts days without time zones', () => {
@@ -178,5 +180,94 @@ describe('daily hints', () => {
       s = next;
     }
     expect(paid).toEqual([1, 1, 1, 1, 1, 1, 4]);
+  });
+});
+
+describe('theme weeks', () => {
+  it('runs Monday to Sunday and takes the four themes in turn', () => {
+    const mon = dayNumber('2026-11-16');
+    for (let d = mon; d < mon + 7; d++) expect(themeOf(d)).toBe(themeOf(mon));
+    expect(themeOf(mon - 1)).not.toBe(themeOf(mon));
+    const seen = [0, 1, 2, 3].map((w) => themeOf(mon + 7 * w));
+    expect(new Set(seen).size).toBe(THEMES.length);
+    expect(themeOf(mon + 28)).toBe(themeOf(mon));
+  });
+
+  it('puts the rule on Wednesday to Friday only, and teases it on Monday and Tuesday', () => {
+    const days = ['2026-11-16', '2026-11-17', '2026-11-18', '2026-11-19', '2026-11-20', '2026-11-21', '2026-11-22'];
+    expect(days.map((d) => twistFor(dayNumber(d)) !== null)).toEqual([false, false, true, true, true, false, false]);
+    expect(days.map((d) => themeComing(d) !== null)).toEqual([true, true, false, false, false, false, false]);
+  });
+
+  it('gives a bank day the same theme every year (364 days is 13 rounds of 4 weeks)', () => {
+    for (let i = 0; i < BANK_DAYS; i++) expect(twistFor(i + BANK_DAYS * 57)).toBe(twistFor(i));
+  });
+
+  it('builds every theme day for its rule', () => {
+    entries.forEach((e, i) => {
+      const tw = twistFor(i);
+      expect(e.tw ?? null, `day ${i}`).toBe(tw);
+      const level = expandDaily(e, `daily-${i}`);
+      if (tw === 'right') {
+        expect(level.commands).not.toContain('turn_left');
+        expect(e.reference).not.toContain('turn_left');
+      }
+      if (tw === 'tight') expect(level.slots.main).toBe(level.par.commands);
+      if (tw === 'switch') expect(level.goals).toEqual(['all_switches_on']);
+      if (tw === 'nested') expect(e.reference).toMatch(/repeat \d+ \{[^}]*repeat/);
+    });
+  });
+});
+
+describe('Sunday boss', () => {
+  it('plays on Sundays, one boss a week, all 52 before one comes back', () => {
+    expect(isBossDay(dayNumber('2026-11-22'))).toBe(true);
+    expect(isBossDay(dayNumber('2026-11-21'))).toBe(false);
+    const sun = dayNumber('2026-11-22');
+    const seen = new Set<number>();
+    for (let w = 0; w < BOSS_WEEKS; w++) seen.add(bossIndex(sun + 7 * w));
+    expect(seen.size).toBe(BOSS_WEEKS);
+    expect(bossIndex(sun + 7 * BOSS_WEEKS)).toBe(bossIndex(sun));
+  });
+
+  const levels = bosses.map((e, i) => [i, expandDaily(e, `daily-boss-${i}`)] as const);
+
+  it('every boss is a valid floor whose reference clears it within both pars', () => {
+    expect(bosses.length).toBe(BOSS_WEEKS);
+    const tiles = new Set(entries.map((e) => e.tiles.join('/')));
+    for (const [i, level] of levels) {
+      expect(bosses[i].d).toBe('boss');
+      expect(validateLevel({ ...level, id: 't9-f01' }), `boss ${i}`).toEqual([]);
+      const program = parseReference(level.reference);
+      const run = new Runner(program, level).runToEnd();
+      expect(run.status, `boss ${i}`).toBe('cleared');
+      expect(run.steps).toBe(level.par.steps);
+      expect(countCommands(program)).toBe(level.par.commands);
+      expect(level.reference).toMatch(/repeat \d+ \{[^}]*repeat/);
+      expect(tiles.has(level.tiles.join('/')), `boss ${i} repeats a daily`).toBe(false);
+      tiles.add(level.tiles.join('/'));
+    }
+  });
+
+  it('every boss step par is the true minimum', () => {
+    for (const [i, level] of levels) expect(shortestActionPath(level)?.length, `boss ${i}`).toBe(level.par.steps);
+  });
+
+  it('LV-4: no shorter program than the boss command par', () => {
+    for (const [i, level] of levels) expect(smallestProgram(level, level.par.commands - 1), `boss ${i}`).toBeNull();
+  }, 600_000);
+
+  it('keeps its own stars, never the streak, and pays 2 hints the first time on the day', () => {
+    const s: DailyState = { best: {}, streak: 4, longest: 4, last: '2026-11-21', freezes: 1, frozen: [] };
+    const a = recordBossClear(s, '2026-11-22', 2);
+    expect(a.boss).toEqual({ '2026-11-22': 2 });
+    expect([a.streak, a.last, a.freezes]).toEqual([4, '2026-11-21', 1]);
+    expect(recordBossClear(a, '2026-11-22', 1)).toBe(a);
+    expect(bossHintReward(s, '2026-11-22', '2026-11-22')).toBe(2);
+    expect(bossHintReward(a, '2026-11-22', '2026-11-22')).toBe(0);
+    expect(bossHintReward(s, '2026-11-15', '2026-11-22')).toBe(0); // from the archive
+    // the daily keeps the boss results it already had
+    expect(recordDailyClear(a, '2026-11-22', 3).boss).toEqual({ '2026-11-22': 2 });
+    expect(sanitizeDaily({ ...a, boss: { '2026-11-22': 2, bad: 'x' } }).boss).toEqual({ '2026-11-22': 2 });
   });
 });
