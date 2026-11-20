@@ -4,6 +4,7 @@
 // WebView would otherwise scale every font itself, buttons and palette too; see DisplayPlugin.java.)
 
 import { Capacitor, registerPlugin } from '@capacitor/core';
+import { applyDisplay } from './display';
 
 const KEY = 'loopbot.bigText';
 
@@ -39,15 +40,17 @@ export function setBigText(on: boolean) {
 }
 
 interface DisplayPlugin {
-  getFontScale(): Promise<{ fontScale: number }>;
+  /** pc: Google Play Games on PC (app builds from Nov 19 2026 on). */
+  getFontScale(): Promise<{ fontScale: number; pc?: boolean }>;
 }
 
-/** Ask the phone for its font size once at start-up (Android only), then apply. */
+/** Ask the phone for its font size (and whether it's a PC) once at start-up (Android only), then apply. */
 export async function readDeviceTextSize(): Promise<void> {
   if (Capacitor.getPlatform() !== 'android') return;
   try {
-    const { fontScale } = await registerPlugin<DisplayPlugin>('LoopBotDisplay').getFontScale();
+    const { fontScale, pc } = await registerPlugin<DisplayPlugin>('LoopBotDisplay').getFontScale();
     deviceLarge = fontScale >= LARGE_FONT_SCALE;
+    if (pc) applyDisplay(true);
   } catch {
     /* an older app build without the plugin: keep the default */
   }

@@ -688,6 +688,8 @@ type Mood = 'idle' | 'happy' | 'crash' | 'nervous';
 const FACINGS: Facing[] = ['north', 'east', 'south', 'west'];
 
 export class BoardScene extends Phaser.Scene {
+  /** Canvas pixels per CSS pixel (see pixelRatio below). */
+  pxRatio = 1;
   private rot = 0;
   private world: World | null = null;
   private layer!: Phaser.GameObjects.Container;
@@ -839,9 +841,10 @@ export class BoardScene extends Phaser.Scene {
     const up = (half * TH) / 2 + (top + 3.2) * HU; // tallest tile plus LoopBot and its antenna
     const down = (half * TH) / 2 + HU * 1.2; // the board's thickness
     // leave room for the step counter above and PATCH's line below
-    const zoom = Math.min((cam.width * 0.92) / worldW, (cam.height * 0.84) / (up + down), 2.6);
+    // (The canvas has pxRatio pixels per screen pixel, so the cap and the nudge scale with it.)
+    const zoom = Math.min((cam.width * 0.92) / worldW, (cam.height * 0.84) / (up + down), 2.6 * this.pxRatio);
     cam.setZoom(zoom);
-    cam.centerOn(0, (down - up) / 2 + 8 / zoom);
+    cam.centerOn(0, (down - up) / 2 + (8 * this.pxRatio) / zoom);
   }
 
   // --- drawing ---
@@ -1460,7 +1463,7 @@ export class BoardScene extends Phaser.Scene {
     return t.type === 'gap' || (isWalkable(w, n) && surfaceHeight(w, n) < surfaceHeight(w, { x: w.bot.x, y: w.bot.y }));
   }
 
-  /** Tap LoopBot on the board and it answers. Coordinates are relative to the canvas. Returns true on a hit. */
+  /** Tap LoopBot on the board and it answers. Coordinates are canvas pixels. Returns true on a hit. */
   poke(x: number, y: number): boolean {
     if (!this.ready || !this.world) return false;
     const p = this.cameras.main.getWorldPoint(x, y);
@@ -1786,17 +1789,33 @@ export class BoardScene extends Phaser.Scene {
   }
 }
 
+/**
+ * Canvas pixels per CSS pixel: the screen's pixel ratio times any interface scale (the PC's), so
+ * the board is drawn at the screen's real sharpness instead of being stretched up from fewer pixels.
+ * Kept within the 4096-pixel canvas cap, and lower for the slow Canvas fallback.
+ */
+function pixelRatio(parent: HTMLElement, canvasOnly: boolean): number {
+  const w = parent.clientWidth || 360;
+  const h = parent.clientHeight || 300;
+  const shown = parent.getBoundingClientRect().width / w || 1; // CSS zoom on the page
+  const want = (window.devicePixelRatio || 1) * shown;
+  return Math.max(1, Math.min(want, canvasOnly ? 1.5 : 3, 4096 / w, 4096 / h));
+}
+
 export function createBoard(parent: HTMLElement, onReady: (scene: BoardScene) => void): Phaser.Game {
   const make = (type: number) => {
     const scene = new BoardScene();
+    const canvasOnly = type === Phaser.CANVAS;
+    let ratio = pixelRatio(parent, canvasOnly);
+    scene.pxRatio = ratio;
     const game = new Phaser.Game({
       type,
       parent,
       transparent: true, // the sky gradient is CSS behind the canvas
       scale: {
         mode: Phaser.Scale.RESIZE,
-        width: parent.clientWidth || 360,
-        height: parent.clientHeight || 300,
+        width: Math.round((parent.clientWidth || 360) * ratio),
+        height: Math.round((parent.clientHeight || 300) * ratio),
         // Never let the board shrink to nothing. When the board area collapses for a moment (an
         // Android keyboard opening, a layout change), Phaser 3.90 rebuilds its WebGL render targets
         // at 0 pixels, which throws "Framebuffer status: Incomplete Attachment" inside the game loop
@@ -1814,7 +1833,23 @@ export function createBoard(parent: HTMLElement, onReady: (scene: BoardScene) =>
       // floor makes a new game, and phones limit how many contexts an app may open).
       audio: { noAudio: true },
     });
-    game.events.once(Phaser.Core.Events.READY, () => onReady(scene));
+    // RESIZE mode makes the canvas as many pixels as the parent is CSS pixels. Report the parent
+    // ratio times bigger instead; CSS stretches the canvas back over the parent (styles.css).
+    const scale = game.scale;
+    scale.getParentBounds = () => {
+      ratio = pixelRatio(parent, canvasOnly);
+      scene.pxRatio = ratio;
+      const w = Math.round((parent.clientWidth || 1) * ratio);
+      const h = Math.round((parent.clientHeight || 1) * ratio);
+      if (scale.parentSize.width === w && scale.parentSize.height === h) return false;
+      scale.parentSize.setSize(w, h);
+      return true;
+    };
+    game.events.once(Phaser.Core.Events.READY, () => {
+      scale.getParentBounds();
+      scale.refresh();
+      onReady(scene);
+    });
     return game;
   };
   const webgl = webglRenderTargetsWork(parent.clientWidth || 360, parent.clientHeight || 300);

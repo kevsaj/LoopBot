@@ -5,15 +5,24 @@ build changes: the PC is just another Android device with a mouse, a keyboard an
 
 ## What the app does on PC
 
-- **Window**: phones stay locked to portrait. On a PC (or a tablet or Chromebook) the app may turn
-  and resize freely, and the wide layout puts the board on the left and the program on the right.
-  `MainActivity` checks the `com.google.android.play.feature.HPE_EXPERIENCE` system feature
-  (Play Games on PC) and the screen size.
+- **Window**: the manifest leaves orientation open and `MainActivity` locks phones to portrait
+  before the first frame. Play Games on PC picks its window shape from the manifest only, once at
+  launch (a portrait lock there gave a phone-shaped window even in full screen), so the PC now opens
+  a landscape window using the wide layout (board left, program right). Tablets and Chromebooks
+  turn freely too. PC is detected with the `com.google.android.play.feature.HPE_EXPERIENCE`
+  system feature; `DisplayPlugin.getFontScale()` also tells the page (`pc: true`).
+- **Interface size**: PCs report a low screen density, so the page's CSS pixels come out tiny.
+  On PC the whole interface is scaled to the window (`src/display.ts`: CSS zoom, 1.5x on a 1080p
+  window, 2x on 1440p, up to 2.5x; vh/dvh sizes in the CSS are divided by `--z` to undo Chrome
+  zooming them). Larger text in Settings still works on top.
+- **Sharpness**: the board's canvas is drawn at the screen's pixel ratio times that scale
+  (`pixelRatio` in `BoardScene.ts`, up to 3x), so it isn't stretched up from fewer pixels. Phones get
+  a sharper board too.
 - **Mouse**: `android.hardware.type.pc` in the manifest turns off Play Games' "input translation",
   so the game gets real mouse events: hover, the scroll wheel, and click-and-drag from the palette.
   Lines in the program are moved by press-and-hold then drag, same as on a phone.
 - **Keyboard**: `R` runs or pauses, `S` steps, `1`-`9` add the palette command in that position
-  (the number shows in each chip's corner when there's a mouse), `Ctrl+Z` / `Ctrl+Y` undo and redo,
+  (the number shows in each chip's corner when there's a mouse, and always on PC), `Ctrl+Z` / `Ctrl+Y` undo and redo,
   `Esc` closes sheets, `Tab` moves between buttons, and on a program line `Delete` removes it and
   `Alt` + arrows move it.
 - **No touchscreen needed**: `android.hardware.touchscreen` is marked optional.
@@ -33,6 +42,9 @@ build changes: the PC is just another Android device with a mouse, a keyboard an
 
 Optional later: a PC "game card" (Store presence > Main store listing): a 16:9 background with no
 text and a 600x400 transparent logo.
+
+To preview the PC look in a desktop browser during development: `npm run dev`, open the page with
+`?pc` on the address (for example `http://localhost:5173/?pc`) and make the window 1920x1080.
 
 ## Trying it on a Windows PC before Google's review
 

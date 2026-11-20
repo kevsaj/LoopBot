@@ -16,7 +16,7 @@
 /* --- the hub --- */
 .ovf-hub {
   position: relative;
-  height: 100dvh;
+  height: calc(100dvh / var(--z, 1));
   display: flex;
   flex-direction: column;
   padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
@@ -55,7 +55,7 @@
 .ovf-wordmark {
   margin: 2px 0 2px;
   font-family: 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, 'Noto Serif', serif;
-  font-size: clamp(40px, 12vw, 56px);
+  font-size: clamp(40px, calc(12vw / var(--z, 1)), 56px);
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;

@@ -54,7 +54,7 @@ select:focus-visible {
 }
 
 .floor {
-  height: 100dvh;
+  height: calc(100dvh / var(--z, 1));
   display: flex;
   flex-direction: column;
   padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
@@ -179,6 +179,9 @@ select:focus-visible {
 }
 .board-canvas canvas {
   display: block;
+  /* The canvas has more pixels than CSS pixels (screen sharpness, see pixelRatio in BoardScene.ts). */
+  width: 100% !important;
+  height: 100% !important;
 }
 .step-counter {
   z-index: 2;
@@ -672,7 +675,7 @@ select:focus-visible {
   border-radius: 10px;
   background: #11142a;
   overflow: auto;
-  max-height: 46vh;
+  max-height: calc(46vh / var(--z, 1));
 }
 .code-gutter,
 .code-input {
@@ -1156,7 +1159,7 @@ select:focus-visible {
 
 /* --- tower map --- */
 .tower {
-  height: 100dvh;
+  height: calc(100dvh / var(--z, 1));
   display: flex;
   flex-direction: column;
   max-width: 560px;
@@ -1438,7 +1441,7 @@ select:focus-visible {
   min-width: 0;
   font-weight: 600;
   /* one line on every row, so the row with LoopBot on it is as tall as the rest */
-  font-size: clamp(13px, 4vw, 16px);
+  font-size: clamp(13px, calc(4vw / var(--z, 1)), 16px);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1576,7 +1579,7 @@ select:focus-visible {
 /* --- title screen: LoopBot boots up over the skyline (about 1.5 s), then Play --- */
 .title-screen {
   position: relative;
-  height: 100dvh;
+  height: calc(100dvh / var(--z, 1));
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1634,7 +1637,7 @@ select:focus-visible {
 }
 .title-bot {
   display: block;
-  width: min(42vw, 26vh, 200px);
+  width: min(calc(42vw / var(--z, 1)), calc(26vh / var(--z, 1)), 200px);
   height: auto;
   animation:
     title-drop 0.55s cubic-bezier(0.3, 1.4, 0.5, 1) 0.25s both,
@@ -1662,7 +1665,7 @@ select:focus-visible {
 }
 .title-name {
   margin: 10px 0 0;
-  font-size: clamp(44px, 13vw, 64px);
+  font-size: clamp(44px, calc(13vw / var(--z, 1)), 64px);
   font-weight: 800;
   letter-spacing: -0.02em;
   color: #f6f1e6;
@@ -1815,7 +1818,7 @@ select:focus-visible {
 .settings {
   width: 100%;
   max-width: 560px;
-  height: 100dvh;
+  height: calc(100dvh / var(--z, 1));
   display: flex;
   flex-direction: column;
   padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
@@ -2388,7 +2391,7 @@ button.set-row {
   display: flex;
   align-items: center;
   gap: 10px;
-  max-width: calc(100vw - 32px);
+  max-width: calc(calc(100vw / var(--z, 1)) - 32px);
   padding: 10px 18px 10px 12px;
   border-radius: 24px;
   background: rgba(30, 27, 48, 0.96);
@@ -2498,7 +2501,7 @@ button.set-row {
   }
   /* title screen: a bigger LoopBot and buttons */
   .title-bot {
-    width: min(34vw, 30vh, 300px);
+    width: min(calc(34vw / var(--z, 1)), calc(30vh / var(--z, 1)), 300px);
   }
   .title-name {
     font-size: 88px;
@@ -2574,7 +2577,7 @@ button.set-row {
 .interlude-radio {
   /* lines stack downward from a fixed top, so earlier lines don't jump as new ones arrive */
   justify-content: flex-start;
-  padding-top: calc(16vh + env(safe-area-inset-top));
+  padding-top: calc(calc(16vh / var(--z, 1)) + env(safe-area-inset-top));
 }
 .interlude-ending {
   background: linear-gradient(180deg, #04060f 0%, #0b1130 55%, #1c1f45 85%, #3a2b4a 100%);
@@ -3044,7 +3047,7 @@ button.set-row {
   top: calc(100% - 2px);
   left: 16px;
   right: 16px;
-  max-height: min(60vh, 420px);
+  max-height: min(calc(60vh / var(--z, 1)), 420px);
   overflow-y: auto;
   padding: 6px;
   border: 1px solid var(--line);
@@ -3363,7 +3366,7 @@ button.set-row {
 
 /* --- floor maker --- */
 .maker {
-  min-height: 100dvh;
+  min-height: calc(100dvh / var(--z, 1));
   max-width: 1100px;
   margin: 0 auto;
   padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
@@ -3702,11 +3705,11 @@ button.set-row {
   flex: none;
   width: 100%;
   max-width: 460px;
-  height: min(380px, 52vh);
+  height: min(380px, calc(52vh / var(--z, 1)));
   margin: 0;
 }
 .mk-mine {
-  max-height: 80dvh;
+  max-height: calc(80dvh / var(--z, 1));
   overflow-y: auto;
 }
 .mk-list {
@@ -3841,37 +3844,36 @@ textarea:focus-visible,
 }
 
 /* --- mouse and keyboard (web, Chromebooks, Google Play Games on PC) ---
-   Only where the main pointer is a mouse or trackpad, so phones and tablets look exactly the same. */
+   Only with the .mouse class (src/display.ts: a mouse or trackpad, or Play Games on PC), so phones
+   and tablets look exactly the same. */
 .key-hint {
   display: none;
 }
-@media (hover: hover) and (pointer: fine) {
-  button:not(:disabled):not([aria-disabled='true']):hover {
-    filter: brightness(1.15);
-  }
-  .row-btn:not(:disabled):hover {
-    filter: none;
-    background: rgba(255, 255, 255, 0.05);
-  }
-  /* The number key that adds each palette command (1-9), in the chip's corner. */
-  .chip {
-    position: relative;
-  }
-  .key-hint {
-    display: block;
-    position: absolute;
-    top: 2px;
-    left: 4px;
-    font-size: 9px;
-    font-weight: 700;
-    line-height: 1;
-    opacity: 0.55;
-  }
-  /* Lists that scroll show a slim scrollbar, so mouse players can see there's more. */
-  * {
-    scrollbar-width: thin;
-    scrollbar-color: var(--line) transparent;
-  }
+.mouse button:not(:disabled):not([aria-disabled='true']):hover {
+  filter: brightness(1.15);
+}
+.mouse .row-btn:not(:disabled):hover {
+  filter: none;
+  background: rgba(255, 255, 255, 0.05);
+}
+/* The number key that adds each palette command (1-9), in the chip's corner. */
+.mouse .chip {
+  position: relative;
+}
+.mouse .key-hint {
+  display: block;
+  position: absolute;
+  top: 2px;
+  left: 4px;
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1;
+  opacity: 0.55;
+}
+/* Lists that scroll show a slim scrollbar, so mouse players can see there's more. */
+.mouse * {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
 }
 
 /* --- Short and narrow phones (kept last so they win over the base sizes above) --- */

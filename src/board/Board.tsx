@@ -91,7 +91,10 @@ export function Board({ update, rotateSignal, band }: Props) {
   // Tap LoopBot and it chirps back.
   const poke = (e: React.PointerEvent<HTMLDivElement>) => {
     const r = e.currentTarget.getBoundingClientRect();
-    if (scene.current?.poke(e.clientX - r.left, e.clientY - r.top)) fx.voice('poke');
+    const canvas = e.currentTarget.querySelector('canvas');
+    // The canvas has more pixels than the screen shows (sharpness), so convert to its pixels.
+    const k = canvas && r.width ? canvas.width / r.width : 1;
+    if (scene.current?.poke((e.clientX - r.left) * k, (e.clientY - r.top) * k)) fx.voice('poke');
   };
 
   return (
