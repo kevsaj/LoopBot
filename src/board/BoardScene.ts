@@ -9,6 +9,7 @@ import type { Facing, PartnerName, World } from '../sim/types';
 import { ahead, isWalkable, surfaceHeight } from '../sim/world';
 import { webglRenderTargetsWork } from './webglProbe';
 import { onMotionChange, reducedMotion } from '../a11y/motion';
+import { boardRatio, FrameWatch, stepDown } from './quality';
 
 const TW = 64; // tile width on screen
 const TH = 32; // tile height on screen
@@ -1792,14 +1793,16 @@ export class BoardScene extends Phaser.Scene {
 /**
  * Canvas pixels per CSS pixel: the screen's pixel ratio times any interface scale (the PC's), so
  * the board is drawn at the screen's real sharpness instead of being stretched up from fewer pixels.
- * Kept within the 4096-pixel canvas cap, and lower for the slow Canvas fallback.
+ * Kept within the device's pixel budget (src/board/quality.ts: smaller on low-end devices, and lower
+ * still once the board was seen to stutter), the 4096-pixel canvas cap, and lower for the slow
+ * Canvas fallback.
  */
 function pixelRatio(parent: HTMLElement, canvasOnly: boolean): number {
   const w = parent.clientWidth || 360;
   const h = parent.clientHeight || 300;
   const shown = parent.getBoundingClientRect().width / w || 1; // CSS zoom on the page
   const want = (window.devicePixelRatio || 1) * shown;
-  return Math.max(1, Math.min(want, canvasOnly ? 1.5 : 3, 4096 / w, 4096 / h));
+  return Math.max(1, Math.min(boardRatio(want, w, h), canvasOnly ? 1.5 : 3, 4096 / w, 4096 / h));
 }
 
 export function createBoard(parent: HTMLElement, onReady: (scene: BoardScene) => void): Phaser.Game {
@@ -1827,7 +1830,13 @@ export function createBoard(parent: HTMLElement, onReady: (scene: BoardScene) =>
       banner: false,
       render: { antialias: true },
       // 30 frames a second is plenty for a turn-based board and about halves the CPU (and battery) it uses.
-      fps: { target: 30, limit: 30 },
+      // The limit is set a touch above 30 on purpose. Phaser draws a frame once 1000/limit ms have
+      // passed, counted in whole screen refreshes: with exactly 30, two refreshes of a 60 Hz screen
+      // (or three at 90 Hz, four at 120 Hz) often add up to a hair under 33.3 ms, so it waited a
+      // refresh longer, and moves stepped unevenly between 30 and 20 frames a second (worst on
+      // tablets with less regular refresh timing). At 33 the same refreshes always count, so the
+      // board draws a steady 30.
+      fps: { target: 30, limit: 33 },
       input: { mouse: false, touch: false },
       // Sounds and music play through src/audio, so Phaser needs no AudioContext of its own (each
       // floor makes a new game, and phones limit how many contexts an app may open).
@@ -1848,6 +1857,12 @@ export function createBoard(parent: HTMLElement, onReady: (scene: BoardScene) =>
     game.events.once(Phaser.Core.Events.READY, () => {
       scale.getParentBounds();
       scale.refresh();
+      // Too few frames at this sharpness: drop a step (quality.ts) and redraw at the new size.
+      const watch = new FrameWatch(performance.now(), () => {
+        if (!stepDown(ratio)) return;
+        if (scale.getParentBounds()) scale.refresh();
+      });
+      game.events.on(Phaser.Core.Events.POST_RENDER, () => watch.frame(performance.now()));
       onReady(scene);
     });
     return game;
