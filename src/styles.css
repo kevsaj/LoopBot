@@ -2374,11 +2374,36 @@ button.set-row {
     background-position: 0 0;
   }
 }
-:root[data-eye-glow='pulse'] {
+/* Animated on the eye shapes themselves (whatever is filled with --bot-eye), not on <html>: a custom
+   property changing on the root restyles every element on the page every frame, which big low-end
+   tablets feel. The title bot's antenna light already blinks, so it gets both animations. */
+:root[data-eye-glow='pulse']:not(.reduce-motion) :is([style*='--bot-eye'], [fill*='--bot-eye']):not(.tb-light) {
   animation: bot-eye-pulse 2.4s ease-in-out infinite;
 }
-:root[data-eye-glow='shimmer'] {
+:root[data-eye-glow='shimmer']:not(.reduce-motion) :is([style*='--bot-eye'], [fill*='--bot-eye']):not(.tb-light) {
   animation: bot-eye-shimmer 2.6s ease-in-out infinite;
+}
+:root[data-eye-glow='pulse']:not(.reduce-motion) .tb-light {
+  animation:
+    title-light-on 0.35s steps(1) 0.85s both,
+    blink 1.6s steps(1) 1.6s infinite,
+    bot-eye-pulse 2.4s ease-in-out infinite;
+}
+:root[data-eye-glow='shimmer']:not(.reduce-motion) .tb-light {
+  animation:
+    title-light-on 0.35s steps(1) 0.85s both,
+    blink 1.6s steps(1) 1.6s infinite,
+    bot-eye-shimmer 2.6s ease-in-out infinite;
+}
+:root[data-eye-glow='pulse']:not(.reduce-motion) .title-screen.settled .tb-light {
+  animation:
+    blink 1.6s steps(1) infinite,
+    bot-eye-pulse 2.4s ease-in-out infinite;
+}
+:root[data-eye-glow='shimmer']:not(.reduce-motion) .title-screen.settled .tb-light {
+  animation:
+    blink 1.6s steps(1) infinite,
+    bot-eye-shimmer 2.6s ease-in-out infinite;
 }
 @keyframes bot-eye-pulse {
   0%,
@@ -2401,8 +2426,7 @@ button.set-row {
 }
 /* Reduce motion (the device setting or Settings > General): see src/a11y/motion.ts. */
 :root.reduce-motion .eye-dot.glow-pulse,
-:root.reduce-motion .eye-dot.glow-shimmer,
-:root.reduce-motion[data-eye-glow] {
+:root.reduce-motion .eye-dot.glow-shimmer {
   animation: none;
 }
 .achievements {
