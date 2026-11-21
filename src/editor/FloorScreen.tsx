@@ -30,7 +30,7 @@ import { ResultsCard } from './ResultsCard';
 import { cancellingTurns, partnerLine, spinNote, stepLine, twinNote, tutorialStep, TUTORIAL_TEXT } from './tutorial';
 import { track } from '../telemetry';
 import { FeedbackSheet } from '../FeedbackSheet';
-import { DIFFICULTY_LABEL, difficultyOn, shareText, shortDate } from '../daily';
+import { DIFFICULTY_LABEL, TWIST_ICON, TWIST_RULE, difficultyOn, shareText, shortDate, twistOn } from '../daily';
 import { msg, t, tn } from '../i18n';
 import { announce } from '../a11y/announce';
 import { describeBrief } from '../a11y/describe';
@@ -98,6 +98,10 @@ export interface CustomProps {
 
 export interface DailyProps {
   date: string;
+  /** The Sunday boss rather than the day's puzzle. */
+  boss?: boolean;
+  /** Opens the Sunday boss (offered on the results card after Sunday's daily). */
+  onBoss?(): void;
   /** Best stars on today's puzzle so far. */
   best: number;
   /** The streak as it stands now (it updates after a clear). */
@@ -591,8 +595,8 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
               </span>
             </div>
           ) : daily ? (
-            <button type="button" className="back-btn" onClick={() => (fx.tap(), onTower())} aria-label={t('{place}: back', { place: t('Daily · {date}', { date: shortDate(daily.date) }) })}>
-              ‹ {t('Daily · {date}', { date: shortDate(daily.date) })}
+            <button type="button" className="back-btn" onClick={() => (fx.tap(), onTower())} aria-label={t('{place}: back', { place: daily.boss ? t('Sunday boss · {date}', { date: shortDate(daily.date) }) : t('Daily · {date}', { date: shortDate(daily.date) }) })}>
+              ‹ {daily.boss ? t('Sunday boss · {date}', { date: shortDate(daily.date) }) : t('Daily · {date}', { date: shortDate(daily.date) })}
             </button>
           ) : (
             <button type="button" className="back-btn" onClick={() => (fx.tap(), onTower())} aria-label={t('Tower · Floor {n}: back to the tower map', { n: floorNumber })}>
@@ -601,8 +605,13 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
           )}
           <h1 className="floor-name">
             {level.title}
-            {daily && <span className={`daily-diff diff-${difficultyOn(daily.date)}`}>{t(DIFFICULTY_LABEL[difficultyOn(daily.date)])}</span>}
+            {daily && (daily.boss ? <span className="daily-diff diff-boss">👑 {t('Boss')}</span> : <span className={`daily-diff diff-${difficultyOn(daily.date)}`}>{t(DIFFICULTY_LABEL[difficultyOn(daily.date)])}</span>)}
           </h1>
+          {daily && !daily.boss && twistOn(daily.date) && (
+            <p className="daily-rule">
+              <span aria-hidden="true">{TWIST_ICON[twistOn(daily.date)!]}</span> {t(TWIST_RULE[twistOn(daily.date)!])}
+            </p>
+          )}
         </div>
         {overflow && (
           <button
@@ -848,13 +857,19 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
               : async () => {
                   const tw = towerOf(Number(/^t(\d+)-/.exec(level.id)?.[1] ?? 1));
                   const card = drawShareCard({
-                    title: daily ? t('Daily · {date}', { date: shortDate(daily.date) }) : t('Floor {n} · {title}', { n: floorNumber, title: level.title }),
-                    subtitle: daily ? t('{difficulty} puzzle', { difficulty: t(DIFFICULTY_LABEL[difficultyOn(daily.date)]) }) : t('Tower {n} · {name}', { n: tw.n, name: tw.name }),
+                    title: daily ? (daily.boss ? t('Sunday boss · {date}', { date: shortDate(daily.date) }) : t('Daily · {date}', { date: shortDate(daily.date) })) : t('Floor {n} · {title}', { n: floorNumber, title: level.title }),
+                    subtitle: daily
+                      ? daily.boss
+                        ? t('The biggest floor of the week')
+                        : twistOn(daily.date)
+                          ? `${t('{difficulty} puzzle', { difficulty: t(DIFFICULTY_LABEL[difficultyOn(daily.date)]) })} · ${t(TWIST_RULE[twistOn(daily.date)!])}`
+                          : t('{difficulty} puzzle', { difficulty: t(DIFFICULTY_LABEL[difficultyOn(daily.date)]) })
+                      : t('Tower {n} · {name}', { n: tw.n, name: tw.name }),
                     stars: earned,
                     band: level.band,
                     board: await snapshotBoard(),
                     code: daily ? undefined : toCode(program, routines, !!level.recursion, partner),
-                    daily: daily && { streak: daily.streak },
+                    daily: daily && { streak: daily.boss ? 0 : daily.streak },
                     commands: total,
                     steps: outcome.steps,
                     par: level.par,
@@ -862,8 +877,8 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
                   const png = await canvasToBlob(card);
                   if (!png) return 'failed';
                   if (daily) {
-                    const text = shareText(daily.date, level, earned, total, daily.streak);
-                    return shareImage(png, text, `loopbot-daily-${daily.date}.png`);
+                    const text = shareText(daily.date, level, earned, total, daily.streak, daily.boss);
+                    return shareImage(png, text, `loopbot-${daily.boss ? 'boss' : 'daily'}-${daily.date}.png`);
                   }
                   return shareImage(png, tn(total, 'I cleared Floor {floor} of LoopBot in {n} command. Can you do it in fewer?', 'I cleared Floor {floor} of LoopBot in {n} commands. Can you do it in fewer?', { floor: floorNumber }), `loopbot-floor-${floorNumber}.png`);
                 }
@@ -871,9 +886,11 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
           daily={
             daily && {
               date: daily.date,
-              streak: daily.streak,
+              boss: daily.boss,
+              onBoss: daily.onBoss,
+              streak: daily.boss ? 0 : daily.streak,
               froze: daily.froze,
-              share: shareText(daily.date, level, earned, total, daily.streak),
+              share: shareText(daily.date, level, earned, total, daily.streak, daily.boss),
             }
           }
         />

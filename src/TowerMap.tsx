@@ -40,7 +40,7 @@ interface Props {
   onSettings(): void;
   onHome(): void;
   daily: DailyState;
-  onDaily(): void;
+  onDaily(boss?: boolean): void;
   /** Opens the daily archive (LoopBot Plus). */
   onArchive(): void;
   onLocker(): void;

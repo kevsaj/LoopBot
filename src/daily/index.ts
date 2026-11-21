@@ -4,14 +4,14 @@
 import type { LevelFile } from '../sim/types';
 import type { Progress } from '../progress';
 import { expandDaily } from './entry';
-import type { DailyEntry, Difficulty } from './entry';
+import type { DailyEntry, Difficulty, Twist } from './entry';
 import { DEMO } from '../demo';
-import { bankIndex, dateKey, dayNumber, difficultyFor, keyFromDay } from './calendar';
+import { bankIndex, bossIndex, dateKey, dayNumber, difficultyFor, isBossDay, keyFromDay, themeOf, twistFor, weekday } from './calendar';
 import { markSavesDirty } from '../storage/persist';
 import { lang, msg, t, tn } from '../i18n';
 
 export { dateKey } from './calendar';
-export type { Difficulty } from './entry';
+export type { Difficulty, Twist } from './entry';
 
 /** The daily challenge opens once loops have been taught (Floor 11 is the first repeat floor). */
 export const DAILY_UNLOCK_FLOOR = 11;
@@ -36,6 +36,8 @@ export interface DailyState {
   freezes?: number;
   /** Days a freeze covered, recent ones only (for the calendar and the results card). */
   frozen?: string[];
+  /** Best stars on each Sunday boss, by its date (recent ones only). Bosses never touch the streak. */
+  boss?: Record<string, number>;
 }
 
 export const MAX_FREEZES = 2;
@@ -48,7 +50,7 @@ const KEY = 'loopbot.daily';
 const KEEP_DAYS = 60;
 
 function fresh(): DailyState {
-  return { best: {}, streak: 0, longest: 0, last: null, freezes: 1, frozen: [] };
+  return { best: {}, streak: 0, longest: 0, last: null, freezes: 1, frozen: [], boss: {} };
 }
 
 export function loadDaily(): DailyState {
@@ -66,10 +68,14 @@ export function sanitizeDaily(v: unknown): DailyState {
   if (!v || typeof v !== 'object' || Array.isArray(v)) return d;
   const o = v as Record<string, unknown>;
   const int = (x: unknown, fallback: number) => (typeof x === 'number' && Number.isFinite(x) ? Math.max(0, Math.floor(x)) : fallback);
-  const best: Record<string, number> = {};
-  if (o.best && typeof o.best === 'object' && !Array.isArray(o.best)) {
-    for (const [k, n] of Object.entries(o.best)) if (typeof n === 'number' && Number.isFinite(n)) best[k] = n;
-  }
+  const stars = (m: unknown) => {
+    const out: Record<string, number> = {};
+    if (m && typeof m === 'object' && !Array.isArray(m)) {
+      for (const [k, n] of Object.entries(m)) if (typeof n === 'number' && Number.isFinite(n)) out[k] = n;
+    }
+    return out;
+  };
+  const best = stars(o.best);
   return {
     best,
     streak: int(o.streak, 0),
@@ -77,6 +83,7 @@ export function sanitizeDaily(v: unknown): DailyState {
     last: typeof o.last === 'string' ? o.last : null,
     freezes: int(o.freezes, d.freezes!),
     frozen: Array.isArray(o.frozen) ? o.frozen.filter((x): x is string => typeof x === 'string') : [],
+    boss: stars(o.boss),
   };
 }
 
@@ -118,6 +125,7 @@ export function recordDailyClear(s: DailyState, date: string, stars: number, max
     last: s.last && dayNumber(s.last) > dayNumber(date) ? s.last : date,
     freezes,
     frozen,
+    boss: s.boss,
   };
 }
 
@@ -135,7 +143,40 @@ export function streakNeedsFreeze(s: DailyState, today: string = dateKey()): boo
   return gap > 1 && gap - 1 <= (s.freezes ?? 0);
 }
 
-export const DIFFICULTY_LABEL: Record<Difficulty, string> = { easy: msg('Easy'), medium: msg('Medium'), hard: msg('Hard') };
+export const DIFFICULTY_LABEL: Record<Difficulty, string> = { easy: msg('Easy'), medium: msg('Medium'), hard: msg('Hard'), boss: msg('Boss') };
+
+/** Each theme week's name, and the rule its theme days (Wednesday to Friday) play by. */
+export const THEME_NAME: Record<Twist, string> = {
+  right: msg('Right Turn Week'),
+  tight: msg('Tight Fit Week'),
+  switch: msg('Switch Week'),
+  nested: msg('Loop-in-Loop Week'),
+};
+export const TWIST_RULE: Record<Twist, string> = {
+  right: msg('No turn left block'),
+  tight: msg('No spare slots'),
+  switch: msg('Light every switch'),
+  nested: msg('A loop inside a loop'),
+};
+export const TWIST_ICON: Record<Twist, string> = { right: '↻', tight: '▣', switch: '◉', nested: '⟳' };
+
+/** The theme day's rule on a date, or null on a classic day (Monday, Tuesday and the weekend). */
+export function twistOn(date: string): Twist | null {
+  return twistFor(dayNumber(date));
+}
+/** The theme of the week a date falls in. */
+export function themeOn(date: string): Twist {
+  return themeOf(dayNumber(date));
+}
+/** Sunday has a boss puzzle, on top of the daily. */
+export function bossOn(date: string): boolean {
+  return isBossDay(dayNumber(date));
+}
+/** Monday and Tuesday say which theme the week's Wednesday brings. */
+export function themeComing(date: string): Twist | null {
+  const w = weekday(dayNumber(date));
+  return w === 1 || w === 2 ? themeOn(date) : null;
+}
 
 export function difficultyOn(date: string): Difficulty {
   return difficultyFor(dayNumber(date));
@@ -148,6 +189,7 @@ export function shortDate(date: string): string {
 }
 
 export const isDailyId = (id: string) => id.startsWith('daily-');
+export const bossId = (date: string) => `daily-${date}-boss`;
 
 let bank: Promise<DailyEntry[]> | null = null;
 /** The bank loads on demand, so it never slows down the first screen. */
@@ -157,13 +199,42 @@ function loadBank(): Promise<DailyEntry[]> {
   return bank;
 }
 
+let bosses: Promise<DailyEntry[]> | null = null;
+function loadBosses(): Promise<DailyEntry[]> {
+  bosses ??= DEMO ? Promise.resolve([]) : import('./boss.json').then((m) => m.default as unknown as DailyEntry[]);
+  return bosses;
+}
+
+const patch = (line: string) => (lang() === 'fr' ? `PATCH : « ${line} »` : `PATCH: "${line}"`);
+
 /** The floor for a date. Everyone on that date gets the same one. */
 export async function dailyLevel(date: string): Promise<LevelFile> {
   const entries = await loadBank();
   const level = expandDaily(entries[bankIndex(date) % entries.length], `daily-${date}`);
-  const line = t(INTROS[dayNumber(date) % INTROS.length]);
-  return { ...level, story: { intro: lang() === 'fr' ? `PATCH : « ${line} »` : `PATCH: "${line}"`, outro: null } };
+  const tw = twistOn(date);
+  const line = t(tw ? TWIST_INTROS[tw] : INTROS[dayNumber(date) % INTROS.length]);
+  return { ...level, story: { intro: patch(line), outro: null } };
 }
+
+/** The Sunday boss for a date (Sundays only). Everyone that Sunday gets the same one. */
+export async function bossLevel(date: string): Promise<LevelFile> {
+  const entries = await loadBosses();
+  const level = expandDaily(entries[bossIndex(dayNumber(date)) % entries.length], bossId(date));
+  return { ...level, story: { intro: patch(t(BOSS_INTROS[bossIndex(dayNumber(date)) % BOSS_INTROS.length])), outro: null } };
+}
+
+const TWIST_INTROS: Record<Twist, string> = {
+  right: msg("VANTA jammed your left turn. Right turns only today: three of them make a left."),
+  tight: msg('Tight fit today: the program has exactly as many slots as par. No room for spare blocks.'),
+  switch: msg('Switch Week: no exit today. Light every switch on the floor to clear it.'),
+  nested: msg('Loop-in-Loop Week: par needs a repeat inside a repeat. Find the small pattern first.'),
+};
+
+const BOSS_INTROS = [
+  msg("Sunday boss. VANTA built this one big. Take your time; it doesn't touch your streak."),
+  msg('The biggest floor of the week. Loops inside loops, and then some.'),
+  msg('Boss floor unlocked. Every bot in the city is stuck on this one. Show them how.'),
+];
 
 const INTROS = [
   msg("Today's signal just came in. Same puzzle for every bot in the city."),
@@ -180,7 +251,7 @@ const INTROS = [
  * other than `today`, so storage doesn't grow day after day.
  */
 export function pruneOldDailies(today: string, p: Progress, playing: string = today): Progress {
-  const keepIds = new Set([`daily-${today}`, `daily-${playing}`]);
+  const keepIds = new Set([`daily-${today}`, `daily-${playing}`, bossId(today), bossId(playing)]);
   try {
     const stale: string[] = [];
     for (let i = 0; i < localStorage.length; i++) {
@@ -206,12 +277,15 @@ export function pruneOldDailies(today: string, p: Progress, playing: string = to
 }
 
 /** The result line players can share: no spoilers, just how they did. */
-export function shareText(date: string, level: LevelFile, stars: number, commands: number, streak: number): string {
+export function shareText(date: string, level: LevelFile, stars: number, commands: number, streak: number, boss = false): string {
+  const tw = twistOn(date);
   const lines = [
-    `${t('LoopBot Daily')} · ${shortDate(date)} · ${t(DIFFICULTY_LABEL[difficultyOn(date)])}`,
+    boss
+      ? `${t('LoopBot Sunday boss')} · ${shortDate(date)}`
+      : `${t('LoopBot Daily')} · ${shortDate(date)} · ${t(DIFFICULTY_LABEL[difficultyOn(date)])}${tw ? ` · ${TWIST_ICON[tw]} ${t(TWIST_RULE[tw])}` : ''}`,
     `${'★'.repeat(stars)}${'☆'.repeat(3 - stars)}  ${tn(commands, '{n} command (par {par})', '{n} commands (par {par})', { par: level.par.commands })}`,
   ];
-  if (streak > 1) lines.push(`🔥 ${tn(streak, '{n}-day streak', '{n}-day streak')}`);
+  if (streak > 1 && !boss) lines.push(`🔥 ${tn(streak, '{n}-day streak', '{n}-day streak')}`);
   return lines.join('\n');
 }
 
@@ -235,6 +309,25 @@ export function archiveDates(today: string = dateKey(), days = ARCHIVE_DAYS): st
 export function recordArchiveClear(s: DailyState, date: string, stars: number): DailyState {
   if ((s.best[date] ?? 0) >= stars) return s;
   return { ...s, best: { ...s.best, [date]: stars } };
+}
+
+/**
+ * Records a clear of a Sunday boss: its best stars only. Bosses are a bonus, so they never move the
+ * streak or the freezes. Old results are dropped with the same 60-day window as the daily.
+ */
+export function recordBossClear(s: DailyState, date: string, stars: number): DailyState {
+  const prev = s.boss ?? {};
+  if ((prev[date] ?? 0) >= stars) return s;
+  const boss = { ...prev, [date]: stars };
+  const cutoff = dayNumber(date) - KEEP_DAYS;
+  for (const k of Object.keys(boss)) if (dayNumber(k) < cutoff) delete boss[k];
+  return { ...s, boss };
+}
+
+/** Hints for beating the Sunday boss on the day, the first time. */
+export const BOSS_HINTS = 2;
+export function bossHintReward(before: DailyState, date: string, today: string = dateKey()): number {
+  return date === today && !(before.boss?.[date] ?? 0) ? BOSS_HINTS : 0;
 }
 
 /** Hints earned by a daily clear: 1 for the first clear of the day, 3 more for every 7-day streak. */

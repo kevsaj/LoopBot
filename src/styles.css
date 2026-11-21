@@ -2022,6 +2022,7 @@ button.set-row {
 
 /* --- Daily challenge --- */
 .daily-btn {
+  flex: 0 0 auto;
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -2125,12 +2126,90 @@ button.set-row {
   flex: 0 0 auto;
   margin: 2px 16px 8px;
 }
+.diff-boss {
+  color: #ffd27a;
+  background: rgba(242, 193, 78, 0.18);
+}
+/* Theme weeks: the rule on Wednesday to Friday, a heads-up on Monday and Tuesday. */
+.daily-theme {
+  padding-left: 34px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.daily-theme.soon {
+  color: var(--quiet);
+  font-weight: 600;
+}
+.daily-rule {
+  margin: 2px 0 0;
+  align-self: flex-start;
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: rgba(127, 242, 224, 0.12);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 700;
+}
+/* Sunday: the boss sits beside the daily button. */
+.daily-row {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+.daily-row > .daily-btn {
+  flex: 1 1 0;
+  min-width: 0;
+}
+.daily-boss {
+  flex: 0 0 74px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  padding: 4px 6px;
+  min-height: 56px;
+  color: #ffd27a;
+  background: linear-gradient(160deg, rgba(242, 193, 78, 0.3), rgba(60, 36, 80, 0.92));
+  border-color: rgba(242, 193, 78, 0.7);
+  font-size: 12px;
+  font-weight: 800;
+}
+.daily-boss .boss-crown {
+  font-size: 18px;
+  line-height: 1.1;
+}
+.daily-boss .daily-stars {
+  font-size: 10px;
+}
+.daily-boss.done {
+  background: rgba(35, 38, 58, 0.85);
+  border-color: var(--line);
+}
+.boss-cta {
+  align-self: center;
+  margin: 4px auto 0;
+  color: #ffd27a;
+  border-color: rgba(242, 193, 78, 0.7);
+  background: linear-gradient(100deg, rgba(242, 193, 78, 0.22), rgba(35, 38, 58, 0.9));
+  font-weight: 800;
+}
 .badge.streak {
   background: rgba(242, 193, 78, 0.18);
   color: var(--warn);
 }
 /* Reduce motion (the device setting or Settings > General): see src/a11y/motion.ts. */
 :root.reduce-motion .title-daily,
+:root.reduce-motion .daily-row.title-daily,
 :root.reduce-motion .daily-btn.shake {
   animation: none;
 }
@@ -3299,6 +3378,15 @@ button.set-row {
 }
 .archive-day.locked {
   opacity: 0.55;
+}
+.archive-day .ad-twist {
+  color: var(--accent);
+  font-weight: 800;
+}
+.archive-boss {
+  margin-bottom: 8px;
+  border-color: rgba(242, 193, 78, 0.5);
+  background: linear-gradient(100deg, rgba(242, 193, 78, 0.12), var(--panel) 60%);
 }
 .daily-archive-link {
   display: block;
