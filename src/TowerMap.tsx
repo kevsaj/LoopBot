@@ -27,6 +27,7 @@ import './twinspires.css';
 import './fractal.css';
 import './precinct.css';
 import { msg, t, t as tr, tn } from './i18n';
+import { flavourOf } from './colourful';
 
 interface Props {
   levels: LevelFile[];
@@ -443,7 +444,7 @@ export function TowerMap({ levels, tower, towers, onTowerPick, progress, current
         {bandsOf(levels)
           .reverse()
           .map((band) => (
-            <section key={band.key} className={`tower-section band-${band.key}`}>
+            <section key={band.key} className={`tower-section band-${band.key}`} data-flavour={flavourOf(band.key)}>
               <div className="tower-band">
                 {t(BAND_NAMES[band.key] ?? band.key)} · {t('Floors {first} to {last}', { first: band.first + 1, last: band.last + 1 })}
               </div>

@@ -36,6 +36,7 @@ import { announce } from '../a11y/announce';
 import { describeBrief } from '../a11y/describe';
 import { Medallion, TERRACE_INFO } from '../overflow/OverflowScreen';
 import { terraceOf } from '../overflow';
+import { flavourOf } from '../colourful';
 
 /** Keys typed into a text box (code editor, feedback, maker) are never play shortcuts. */
 function typingTarget(el: EventTarget | null): boolean {
@@ -646,7 +647,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
         </button>
       </header>
 
-      <section className={`board-wrap band-${level.band}`}>
+      <section className={`board-wrap band-${level.band}`} data-flavour={flavourOf(level.band)}>
         <Board update={board} rotateSignal={rotateSignal} band={level.band} />
         <div className="step-counter" aria-live="polite">
           <span>

@@ -1,6 +1,8 @@
 // A small, dependency-free confetti burst on a temporary full-screen canvas.
 // Used by the results card: a big burst for 3 stars, a few sparkles for 2.
 
+import { CANDY_CONFETTI, colourfulOn } from '../colourful';
+
 const COLORS = ['#f2c14e', '#7cc4ff', '#5ad1a4', '#e07a9a', '#8a6fe0', '#ffffff'];
 
 interface Piece {
@@ -113,6 +115,7 @@ export function burst(o: BurstOptions) {
   c.width = window.innerWidth * dpr;
   c.height = window.innerHeight * dpr;
   const spread = ((o.spread ?? 55) * Math.PI) / 180;
+  const palette = colourfulOn() ? CANDY_CONFETTI : COLORS;
   for (let i = 0; i < o.count; i++) {
     const a = -Math.PI / 2 + (Math.random() * 2 - 1) * spread;
     const v = o.power * (0.55 + Math.random() * 0.6);
@@ -125,7 +128,7 @@ export function burst(o: BurstOptions) {
       vr: (Math.random() - 0.5) * 0.3,
       w: o.sparkle ? 4 + Math.random() * 3 : 6 + Math.random() * 5,
       h: 4 + Math.random() * 6,
-      color: COLORS[Math.floor(Math.random() * COLORS.length)],
+      color: palette[Math.floor(Math.random() * palette.length)],
       wobble: Math.random() * 6,
       shape: o.sparkle ? 'star' : Math.random() < 0.2 ? 'star' : 'rect',
     });

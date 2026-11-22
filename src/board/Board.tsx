@@ -5,6 +5,7 @@ import { fx } from '../audio/feedback';
 import { t } from '../i18n';
 import type { World } from '../sim/types';
 import { describeBoard } from '../a11y/describe';
+import { onColourfulChange } from '../colourful';
 
 /** Twist's bands: their floors show a compass, for the turntables and the facing north sensor. */
 const COMPASS_BANDS = new Set(['ferry', 'garden', 'loom', 'lantern', 'pinnacle']);
@@ -83,6 +84,18 @@ export function Board({ update, rotateSignal, band }: Props) {
   useEffect(() => {
     scene.current?.show(update);
   }, [update]);
+
+  // Colourful mode can be switched from Settings while a floor is open: repaint in the new colours.
+  useEffect(
+    () =>
+      onColourfulChange(() => {
+        void preloadBoard().then(({ setBand }) => {
+          setBand(band);
+          scene.current?.repaint();
+        });
+      }),
+    [band],
+  );
 
   useEffect(() => {
     if (rotateSignal) scene.current?.rotate();
