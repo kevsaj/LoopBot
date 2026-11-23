@@ -30,6 +30,7 @@ import {
 import { TITLE_MAX, decodeFloor, encodeFloor } from './shareCode';
 import type { LevelFile } from '../sim/types';
 import { msg, t } from '../i18n';
+import { flavourOf } from '../colourful';
 
 interface Props {
   onBack(): void;
@@ -176,7 +177,7 @@ export function MakerScreen({ onBack, onPlay, draft, setDraft }: Props) {
           </div>
           {preview ? (
             previewLevel ? (
-              <div className={`board-wrap band-${draft.band} mk-preview`} key={draft.band}>
+              <div className={`board-wrap band-${draft.band} mk-preview`} data-flavour={flavourOf(draft.band)} key={draft.band}>
                 <Board update={{ world: createWorld(previewLevel), stepMs: 0 }} rotateSignal={0} band={draft.band} />
               </div>
             ) : (

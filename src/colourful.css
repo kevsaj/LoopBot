@@ -1,0 +1,226 @@
+/*
+ * Colourful mode (Settings > General, src/colourful.ts): LoopBot's own candy-shop look.
+ * Grape and bubblegum menus, glossy candy blocks, sugar-sprinkle skies in six flavours.
+ * Everything keys off :root.colourful, so with the switch off nothing here applies.
+ * No new animation lives here, so Reduce motion needs nothing extra.
+ * Text stays white on the dark grape panels, and dark ink sits on every bright candy fill
+ * (each pair at least 4.5:1, see colourful.test.ts).
+ */
+
+:root.colourful {
+  --bg: #2a0a4a;
+  --panel: #43127a;
+  --panel-2: #571b9a;
+  --line: #9055dc;
+  --ink: #ffffff;
+  --quiet: #f2dcff;
+  --accent: #ff5cb8;
+  --accent-ink: #3a0026;
+  --good: #3dffa0;
+  --bad: #ff5a7a;
+  --warn: #ffd21a;
+  --move: #2bb8ff;
+  --turn: #c56bff;
+  --hand: #ffa12a;
+  --act: #2ee886;
+  --flow: #ff58a8;
+  --fn: #ffe02a;
+  /* the dark ink printed on candy fills */
+  --candy-ink: #24063f;
+  /* a sugary shine laid over every candy button */
+  --gloss: linear-gradient(180deg, rgba(255, 255, 255, 0.42) 0%, rgba(255, 255, 255, 0.12) 46%, rgba(255, 255, 255, 0) 52%, rgba(0, 0, 0, 0.08) 100%);
+}
+
+:root.colourful,
+:root.colourful body,
+:root.colourful #root {
+  background: radial-gradient(ellipse 90% 60% at 50% 0%, #6a1aa8 0%, transparent 70%), linear-gradient(180deg, #3a0d66 0%, #2a0a4a 55%, #3d0a52 100%);
+  background-attachment: fixed;
+}
+
+/* --- buttons: glossy candy --- */
+:root.colourful .pill {
+  background-color: var(--panel-2);
+  border-color: var(--line);
+}
+:root.colourful .pill.primary {
+  background: var(--gloss), var(--accent);
+  color: var(--accent-ink);
+  border-color: #ffb0dc;
+  box-shadow: 0 4px 0 #c42c84, 0 6px 16px rgba(255, 92, 184, 0.35);
+}
+:root.colourful .pill.primary.on {
+  background: var(--gloss), var(--warn);
+  border-color: #fff09a;
+  box-shadow: 0 4px 0 #c79a00;
+  color: var(--candy-ink);
+}
+:root.colourful .icon-btn {
+  background: var(--panel-2);
+  border-color: var(--line);
+}
+
+/* --- the palette: every command is a candy of its colour --- */
+:root.colourful .palette {
+  background: rgba(30, 6, 56, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+:root.colourful .chip {
+  background: var(--gloss), var(--tone);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-bottom: 3px solid rgba(0, 0, 0, 0.28);
+  color: var(--candy-ink);
+  font-weight: 700;
+}
+:root.colourful .chip .glyph {
+  color: var(--candy-ink);
+}
+:root.colourful .chip.locked {
+  background: var(--panel-2);
+  color: var(--ink);
+  border-color: var(--line);
+}
+:root.colourful .chip.locked .glyph {
+  color: var(--ink);
+}
+/* the little shortcut number on a chip */
+:root.colourful .chip .key-hint {
+  color: rgba(36, 6, 63, 0.7);
+}
+
+/* --- program lines: a candy stripe tinted into the tile --- */
+:root.colourful .line-tile {
+  background: var(--panel-2);
+  background: color-mix(in srgb, var(--tone, var(--panel-2)) 24%, var(--panel-2));
+  border-color: rgba(255, 255, 255, 0.16);
+  border-left-width: 8px;
+}
+:root.colourful .glyph {
+  color: var(--tone, var(--ink));
+  filter: brightness(1.15);
+}
+:root.colourful .row.active .line-tile {
+  background: #7a2aa8;
+}
+:root.colourful .tab.on {
+  border-bottom-width: 3px;
+}
+
+/* --- the board's skies: one per flavour, in a contrasting candy so the jelly walls pop (tiles: src/colourful.ts) --- */
+:root.colourful .board-wrap[data-flavour] {
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 6px 22px rgba(255, 92, 184, 0.25);
+}
+:root.colourful .board-wrap[data-flavour='0'] {
+  background: radial-gradient(ellipse 60% 45% at 50% 62%, rgba(255, 255, 255, 0.55), transparent 70%), linear-gradient(180deg, #4fd8d2 0%, #a2eff3 48%, #ffe1f0 100%);
+}
+:root.colourful .board-wrap[data-flavour='1'] {
+  background: radial-gradient(ellipse 60% 45% at 50% 62%, rgba(255, 255, 255, 0.55), transparent 70%), linear-gradient(180deg, #ff8ab8 0%, #ffbf9c 50%, #ffeab0 100%);
+}
+:root.colourful .board-wrap[data-flavour='2'] {
+  background: radial-gradient(ellipse 60% 45% at 50% 62%, rgba(255, 255, 255, 0.55), transparent 70%), linear-gradient(180deg, #a77cff 0%, #d9b0ff 50%, #ffcfe6 100%);
+}
+:root.colourful .board-wrap[data-flavour='3'] {
+  background: radial-gradient(ellipse 60% 45% at 50% 62%, rgba(255, 255, 255, 0.5), transparent 70%), linear-gradient(180deg, #ffc93a 0%, #ffe486 48%, #ffe2f2 100%);
+}
+:root.colourful .board-wrap[data-flavour='4'] {
+  background: radial-gradient(ellipse 60% 45% at 50% 62%, rgba(255, 255, 255, 0.55), transparent 70%), linear-gradient(180deg, #4fa2ff 0%, #96ccff 48%, #e0d2ff 100%);
+}
+:root.colourful .board-wrap[data-flavour='5'] {
+  background: radial-gradient(ellipse 60% 45% at 50% 62%, rgba(255, 255, 255, 0.55), transparent 70%), linear-gradient(180deg, #ff6fb0 0%, #ffa6d0 48%, #ffd8ae 100%);
+}
+/* sugar sprinkles and fluffy candy-floss clouds instead of each band's silhouette */
+:root.colourful .board-wrap[data-flavour]::after {
+  height: 100%;
+  opacity: 1;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300' preserveAspectRatio='none'><g stroke-width='5' stroke-linecap='round' fill='none'><path stroke='%23ffffff' d='M30 30l10 4'/><path stroke='%23ff3d86' d='M96 58l4 10'/><path stroke='%23ffe02a' d='M160 22l10-3'/><path stroke='%233a7bff' d='M228 48l6 8'/><path stroke='%2314c8bd' d='M300 20l10 2'/><path stroke='%23a645ff' d='M362 62l3-10'/><path stroke='%23ffffff' d='M60 120l8-6'/><path stroke='%23ff8a1a' d='M350 140l10 3'/><path stroke='%232fcf4f' d='M24 190l4 9'/><path stroke='%23ff3d86' d='M378 210l-8 6'/></g><g fill='%23ffffff' fill-opacity='0.85'><circle cx='130' cy='96' r='3'/><circle cx='270' cy='90' r='3.5'/><circle cx='330' cy='96' r='2.5'/><circle cx='44' cy='70' r='2.5'/></g><g fill='%23ffffff' fill-opacity='0.55'><path d='M0 300v-34q18-22 40-8q14-22 40-6q20-18 42 2q10 10 0 46z'/><path d='M400 300v-40q-16-20-38-8q-16-22-42-4q-22-14-36 6q-10 14 2 46z'/></g></svg>") center / 100% 100% no-repeat;
+}
+/* dark labels on the bright sky */
+:root.colourful .step-counter {
+  color: var(--candy-ink);
+  font-weight: 700;
+}
+:root.colourful .board-wrap[data-flavour] .step-counter {
+  padding: 4px 8px;
+  margin: -2px 0 0 -4px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.7);
+}
+:root.colourful .rotate-btn {
+  background: rgba(255, 255, 255, 0.82);
+  border-color: rgba(255, 255, 255, 0.9);
+  color: var(--candy-ink);
+  font-weight: 700;
+}
+
+/* --- results card --- */
+:root.colourful .results {
+  background: radial-gradient(ellipse 80% 50% at 50% 0%, #7a2ac0 0%, transparent 70%), var(--panel);
+  border: 2px solid #ff9ad4;
+  box-shadow: 0 10px 40px rgba(255, 92, 184, 0.35);
+}
+
+/* --- tower map: each band's wall in its flavour --- */
+:root.colourful .tower-section[data-flavour] .tower-floors {
+  background: rgba(36, 6, 64, 0.55);
+  border-color: var(--flav);
+}
+:root.colourful .tower-section[data-flavour] .tower-band {
+  color: var(--flav);
+  font-weight: 700;
+}
+:root.colourful .tower-section[data-flavour='0'] {
+  --flav: #ff6aa8;
+}
+:root.colourful .tower-section[data-flavour='1'] {
+  --flav: #6aaeff;
+}
+:root.colourful .tower-section[data-flavour='2'] {
+  --flav: #5ae07a;
+}
+:root.colourful .tower-section[data-flavour='3'] {
+  --flav: #c48aff;
+}
+:root.colourful .tower-section[data-flavour='4'] {
+  --flav: #ffa64a;
+}
+:root.colourful .tower-section[data-flavour='5'] {
+  --flav: #3ee0d6;
+}
+:root.colourful .tower-floor {
+  background: var(--panel-2);
+}
+:root.colourful .tower-floor.cleared {
+  background: linear-gradient(90deg, #6a1f9e, #4a1690);
+  border-color: var(--flav, #ff9ad4);
+  box-shadow: 0 0 14px rgba(255, 154, 212, 0.25);
+}
+
+/* --- title screen: a candy sunset --- */
+:root.colourful .title-screen {
+  background: #3a0d66;
+}
+:root.colourful .title-sky {
+  background: linear-gradient(180deg, #3a0d66 0%, #7a1d9e 38%, #d8399e 70%, #ff7fb4 100%);
+}
+:root.colourful .title-sun {
+  background: radial-gradient(circle, rgba(255, 230, 140, 0.6), transparent 65%);
+}
+:root.colourful .title-skyline {
+  opacity: 0.5;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 310 100' preserveAspectRatio='none'><path fill='%235a137e' d='M0 100V62h18V40h14v22h10V30h16v32h12V52h20V18h10v-8h6v8h10v44h14V44h18v18h12V36h22v26h8V58h16V24h12v38h14V48h18v14h10V34h20v28h14V54h16v46z'/></svg>") bottom / 100% 100% no-repeat;
+}
+
+/* --- settings --- */
+:root.colourful .set-row {
+  background: var(--panel-2);
+}
+:root.colourful .set-switch:checked {
+  background: var(--gloss), var(--accent);
+}
+:root.colourful .results-backdrop:not(.settings-screen) {
+  background: rgba(30, 4, 50, 0.6);
+}
+:root.colourful .results-backdrop.settings-screen {
+  background: linear-gradient(180deg, #3a0d66 0%, #2a0a4a 60%, #3d0a52 100%);
+}

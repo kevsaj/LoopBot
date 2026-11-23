@@ -2,14 +2,17 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App';
 import './styles.css';
+import './colourful.css';
 import { restoreSaves } from './storage/persist';
 import { applyTextSize, readDeviceTextSize } from './textSize';
 import { applyMotion } from './a11y/motion';
+import { applyColourful } from './colourful';
 import { watchDialogs } from './a11y/dialogs';
 import { applyDisplay, devPcPreview } from './display';
 
 applyTextSize();
 applyMotion();
+applyColourful();
 applyDisplay(devPcPreview());
 watchDialogs();
 
@@ -18,6 +21,7 @@ watchDialogs();
 void Promise.allSettled([restoreSaves(), readDeviceTextSize()]).finally(() => {
   applyTextSize();
   applyMotion();
+  applyColourful();
   createRoot(document.getElementById('root')!).render(
     <StrictMode>
       <App />

@@ -10,6 +10,7 @@ import { ahead, isWalkable, surfaceHeight } from '../sim/world';
 import { webglRenderTargetsWork } from './webglProbe';
 import { onMotionChange, reducedMotion } from '../a11y/motion';
 import { boardRatio, FrameWatch, stepDown } from './quality';
+import { CANDY_LIGHTS, colourfulOn, FLAVOURS, flavourOf } from '../colourful';
 
 const TW = 64; // tile width on screen
 const TH = 32; // tile height on screen
@@ -635,10 +636,20 @@ let tipShape: TipShape = 'ball';
 /** A LoopBot Plus eye glows between its colour and this one (null for a steady eye). */
 let eyeGlow: { from: number; to: number; style: 'pulse' | 'shimmer' } | null = null;
 
+/** Colourful mode: the second pastel of the two-tone floor (null when the floor is one colour). */
+let floorTop2: number | null = null;
+/** Colourful mode: the dark shaft inside a gap, matched to the flavour. */
+let gapDeep = 0x1a1430;
+
 export function setBand(band: string) {
   // the player's chosen paint and eye colour ride on top of the band's palette
   const look = boardColors();
-  Object.assign(C, LOBBY, BANDS[band] ?? {}, { bot: look.bot, botL: look.botL, botR: look.botR, eye: look.eye });
+  // Colourful mode (src/colourful.ts) swaps the building for a candy flavour; LoopBot keeps its own look.
+  const candy = colourfulOn() ? FLAVOURS[flavourOf(band)] : null;
+  const { name: _name, floorTop2: top2, ...flavour } = candy ?? { name: '', floorTop2: null };
+  Object.assign(C, LOBBY, BANDS[band] ?? {}, candy ? { ...flavour, ...CANDY_LIGHTS } : {}, { bot: look.bot, botL: look.botL, botR: look.botR, eye: look.eye });
+  floorTop2 = top2;
+  gapDeep = candy ? mixColor(candy.void, 0x000000, 0.45) : 0x1a1430;
   tipShape = look.tip;
   eyeGlow = look.glow ? { from: look.eye, to: look.glow.to, style: look.glow.style } : null;
 }
@@ -787,6 +798,12 @@ export class BoardScene extends Phaser.Scene {
         resolve(null);
       }
     });
+  }
+
+  /** Redraw every tile (after setBand, when Colourful mode is switched mid-floor). */
+  repaint() {
+    this.drawnKey = '';
+    if (this.world) this.show({ world: this.world, stepMs: 0 });
   }
 
   /** Rotate the view 90 degrees (the board turns in 90-degree steps only). */
@@ -1091,7 +1108,7 @@ export class BoardScene extends Phaser.Scene {
           // a dark shaft with a sliver of the drop visible
           const { sx, sy } = this.screen(grid, 0);
           this.diamond(g, sx, sy + 6, C.void, 0.92, 0.9);
-          this.diamond(g, sx, sy + 12, 0x1a1430, 0.6, 0.9);
+          this.diamond(g, sx, sy + 12, gapDeep, 0.6, 0.9);
         } else if (t.type === 'wall') {
           const { sx, sy } = this.screen(grid, t.height + WALL_H);
           this.prism(g, sx, sy, (t.height + WALL_H) * HU + base, C.wallTop, C.wallL, C.wallR);
@@ -1099,7 +1116,9 @@ export class BoardScene extends Phaser.Scene {
           this.rim(g, sx, sy, C.wallCap);
         } else {
           const { sx, sy } = this.screen(grid, t.height);
-          this.prism(g, sx, sy, t.height * HU + base, C.floorTop, C.floorL, C.floorR);
+          // Colourful mode lays the floor in two pastels, like a sweet-shop tray (fixed to the tile, not the view)
+          const top = floorTop2 !== null && (x + y) % 2 === 1 ? floorTop2 : C.floorTop;
+          this.prism(g, sx, sy, t.height * HU + base, top, C.floorL, C.floorR);
           this.rim(g, sx, sy, C.floorEdge);
           // faint inset so the floor reads as laid stone
           g.lineStyle(1, C.floorL, 0.35);

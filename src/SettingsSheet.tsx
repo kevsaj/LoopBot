@@ -17,6 +17,7 @@ import { ownsSkyline } from './store/skyline';
 import { OVERFLOW_ON, TOWERS } from './levels/towers';
 import { bigTextOn, setBigText } from './textSize';
 import { deviceReducesMotion, reduceMotionPref, setReduceMotion } from './a11y/motion';
+import { colourfulOn, setColourful } from './colourful';
 import { version } from '../package.json';
 import { FeedbackSheet } from './FeedbackSheet';
 import { BackupRows } from './BackupRows';
@@ -100,6 +101,7 @@ export function SettingsSheet({ progress, setProgress, onClose, floor, floorTitl
   const [haptics, setHaptics] = useState(hapticsOn());
   const [bigText, setBigTextState] = useState(bigTextOn);
   const [calm, setCalm] = useState(reduceMotionPref);
+  const [colourful, setColourfulState] = useState(colourfulOn);
   const [stats, setStats] = useState(statsOn());
   const [feedback, setFeedback] = useState(false);
   if (feedback) return <FeedbackSheet floor={floor} floorTitle={floorTitle} onClose={() => setFeedback(false)} />;
@@ -154,6 +156,16 @@ export function SettingsSheet({ progress, setProgress, onClose, floor, floorTitl
             onChange={(on) => {
               setBigText(on);
               setBigTextState(on);
+              fx.tap();
+            }}
+          />
+          <Toggle
+            label={t('Colourful mode')}
+            caption={t('Bright candy colours for the skies, tiles and buttons')}
+            on={colourful}
+            onChange={(on) => {
+              setColourful(on);
+              setColourfulState(on);
               fx.tap();
             }}
           />
