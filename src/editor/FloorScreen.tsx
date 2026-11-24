@@ -22,6 +22,8 @@ import { towerOf } from '../levels/towers';
 import type { BoardUpdate } from '../board/BoardScene';
 import { BackButton, Icon } from '../ui/Icon';
 import { fx } from '../audio/feedback';
+import { bumpMs, landMs } from '../fx/feel';
+import { reducedMotion } from '../a11y/motion';
 import { SettingsSheet } from '../SettingsSheet';
 import type { Progress } from '../progress';
 import { recordClear, recordFail } from '../progress';
@@ -279,7 +281,8 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
     if (ev) {
       // Precinct 404: light up what both bots are running
       setActiveIds(new Set([ev.blockId, ...ev.callStack, ...(world.partner && ev.twin ? [ev.twin.blockId, ...ev.twin.callStack] : [])]));
-      if (ev.ok) fx.step(ev.action);
+      // A move that lands gets its footfall when LoopBot touches down (src/fx/feel.ts).
+      if (ev.ok) fx.step(ev.action, ev.action === 'forward' || ev.action === 'jump' ? landMs(SPEEDS[speed].ms) : 0);
       // Say what each step did. Turns get spelled out: they spin LoopBot without moving it,
       // which new players often miss when they only watch the board.
       if (world.partner) setTerminal(partnerLine(ev, world));
@@ -319,14 +322,18 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
         setTerminal(runError(o.error));
         // Screen readers: the terminal reads the error; then where LoopBot ended up.
         announce(describeBrief(world));
-        fx.crash();
-        fx.voice('uhoh', 0.35);
+        // Heard and felt when LoopBot bumps on the board, not when the step starts.
+        const bump = world.twin ? 0 : bumpMs(SPEEDS[speed].ms, ev?.action, reducedMotion());
+        fx.crash(bump);
+        fx.voice('uhoh', 0.35 + bump / 1000);
         fail();
       } else if (o.status === 'cleared') {
         const s = stars(level, countCommands(program), o.steps);
         setTerminal(tn(o.steps, '> floor cleared in {n} step', '> floor cleared in {n} steps'));
-        fx.win();
-        fx.voice('yay', 0.55);
+        // The fanfare waits for LoopBot to land on the lift.
+        const land = landMs(SPEEDS[speed].ms);
+        fx.win(land);
+        fx.voice('yay', 0.55 + land / 1000);
         if (customRef.current) {
           setPrevBest(0);
           setCustomNote(customRef.current.onClear(countCommands(program), o.steps, s) || null);
@@ -376,17 +383,19 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
   }, [playing, speed]);
 
   const run = () => {
-    fx.tap();
     if (playing) {
+      fx.tap();
       setPlaying(false); // Pause
       setTerminal(t('> paused'));
       return;
     }
     if (program.main.length === 0) {
+      fx.tap();
       setTerminal(t('> the program is empty. Tap a command below to add it.'));
       fx.denied();
       return;
     }
+    fx.run();
     if (!runner.current || runner.current.done) {
       reset(true);
       setTerminal(t('> running'));
