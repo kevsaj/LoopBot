@@ -1189,5 +1189,8 @@
  "Will you keep playing?": "Vas-tu continuer à jouer ?",
  "What would make it better? (optional)": "Qu'est-ce qui le rendrait meilleur ? (facultatif)",
  "Sent anonymously with the floor and app version. Please leave out your name and contact details.": "Envoyé anonymement, avec l'étage et la version de l'appli. N'écris pas ton nom ni tes coordonnées.",
- "Not now": "Pas maintenant"
+ "Not now": "Pas maintenant",
+ "▲ pick up grabs the crate in front of LoopBot.": "▲ ramasser prend la caisse devant LoopBot.",
+ "Show me the next step": "Montre-moi la prochaine étape",
+ "> added the next step: {command}. Press Run.": "> prochaine étape ajoutée : {command}. Appuie sur Lancer."
 }

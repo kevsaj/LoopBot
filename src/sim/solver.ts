@@ -6,10 +6,11 @@ import type { Action, LevelFile, World } from './types';
 import { applyAction, applyBoth, asTwin, cloneWorld, createWorld, goalsMet, parked, worldKey } from './world';
 import { STEP_LIMIT, TICK_LIMIT } from './interpreter';
 
-export function shortestActionPath(level: LevelFile, maxStates = 200_000): Action[] | null {
+export function shortestActionPath(level: LevelFile, maxStates = 200_000, from?: World): Action[] | null {
   // Counting never moves LoopBot or costs a step, so it is never part of a shortest path.
   const allowed = ACTIONS.filter((a) => level.commands.includes(a) && !FREE_ACTIONS.has(a));
-  const start = createWorld(level);
+  // `from`: search on from a world part way through (the first floors' "show me the next step").
+  const start = from ? cloneWorld(from) : createWorld(level);
   if (goalsMet(start)) return [];
   const seen = new Set([worldKey(start)]);
   let frontier = [{ world: start, path: [] as Action[] }];

@@ -43,6 +43,10 @@ on:
         description: Turn the store on (VITE_PLUS) - Plus, the Heatwave, Twist and Dockyard city packs and hint packs. Leave off until they are on sale.
         type: boolean
         default: false
+      shrink:
+        description: Shrink native code with R8 (smaller app). Test with the .apk before sending one to Play.
+        type: boolean
+        default: false
 
 jobs:
   bundle:
@@ -104,7 +108,7 @@ jobs:
             echo "keyPassword=$KEY_PASS"
           } > android/keystore.properties
           # The bundle goes to Play; the release APK is the same build, to sideload and check first.
-          node scripts/gradle.mjs bundleRelease assembleRelease --no-daemon
+          node scripts/gradle.mjs bundleRelease assembleRelease --no-daemon -PloopbotR8=${{ inputs.shrink }}
           rm -f android/keystore.properties "$RUNNER_TEMP/upload.jks"
           VERSION=$(node -p "require('./package.json').version")
           # Same formula as android/app/build.gradle: 1.0.0 run 6 -> 10000006. The run number only goes up,
@@ -115,9 +119,13 @@ jobs:
           mkdir -p out
           cp android/app/build/outputs/bundle/release/app-release.aab "out/loopbot-$VERSION-$CODE.aab"
           cp android/app/build/outputs/apk/release/app-release.apk "out/loopbot-$VERSION-$CODE.apk"
+          # With R8 on, keep the mapping so Play Console can turn crash traces back into real names.
+          MAP=android/app/build/outputs/mapping/release/mapping.txt
+          if [ -f "$MAP" ]; then cp "$MAP" "out/mapping-$CODE.txt"; echo "mapping=out/mapping-$CODE.txt" >> "$GITHUB_OUTPUT"; fi
           {
             echo "### LoopBot $VERSION (version code $CODE)"
-            echo "Plus preview: ${{ inputs.plus_preview }}, Plus store: ${{ inputs.plus_store }}"
+            echo "Plus preview: ${{ inputs.plus_preview }}, Plus store: ${{ inputs.plus_store }}, R8: ${{ inputs.shrink }}"
+            echo "Sizes: $(du -h "out/loopbot-$VERSION-$CODE.aab" | cut -f1) .aab, $(du -h "out/loopbot-$VERSION-$CODE.apk" | cut -f1) .apk"
             echo "Upload to Play: ${{ inputs.upload_to }}"
             echo "The .apk is the same build, to install on a phone first."
             echo ""
@@ -147,6 +155,7 @@ jobs:
           serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
           packageName: com.kisstudios.loopbot
           releaseFiles: ${{ steps.bundle.outputs.aab }}
+          mappingFile: ${{ steps.bundle.outputs.mapping }}
           track: ${{ inputs.upload_to == 'Internal testing' && 'internal' || 'alpha' }}
           status: ${{ inputs.release_status }}
           whatsNewDirectory: ${{ inputs.notes != '' && 'whatsnew' || '' }}
