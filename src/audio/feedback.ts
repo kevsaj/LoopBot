@@ -182,8 +182,13 @@ function tone(freq: number, dur: number, opts: { type?: OscillatorType; gain?: n
 
 type Buzz = 'light' | 'medium' | 'heavy' | 'success' | 'error';
 
-function buzz(kind: Buzz) {
+function buzz(kind: Buzz, delayMs = 0) {
   if (hapticsOff) return;
+  if (delayMs > 0) {
+    // Haptics have no schedule of their own: wait, so the buzz lands with the sound and the picture.
+    setTimeout(() => buzz(kind), delayMs);
+    return;
+  }
   if (Capacitor.isNativePlatform()) {
     if (kind === 'success') void Haptics.notification({ type: NotificationType.Success });
     else if (kind === 'error') void Haptics.notification({ type: NotificationType.Error });
@@ -216,7 +221,7 @@ function noiseBuffer(a: AudioContext, len: number): AudioBuffer {
   return buf;
 }
 
-function noise(dur: number, gain: number, freq: number) {
+function noise(dur: number, gain: number, freq: number, delay = 0) {
   const a = audio();
   if (!a) return;
   const buf = noiseBuffer(a, Math.floor(a.sampleRate * dur));
@@ -227,7 +232,7 @@ function noise(dur: number, gain: number, freq: number) {
   filter.frequency.value = freq;
   filter.Q.value = 1.2;
   const g = a.createGain();
-  const t0 = a.currentTime;
+  const t0 = a.currentTime + delay;
   g.gain.setValueAtTime(gain, t0);
   g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
   src.connect(filter).connect(g).connect(a.destination);
@@ -272,13 +277,33 @@ export const fx = {
     tone(160, 0.1, { type: 'square', gain: 0.05 });
     buzz('light');
   },
-  step(action: string) {
+  /**
+   * One step of a run. `landMs` is when LoopBot touches down after a move (src/fx/feel.ts): a walk
+   * gets a soft footfall there and a jump a thump and a light buzz, so the sound follows the board.
+   */
+  step(action: string, landMs = 0) {
     const f = { forward: 440, jump: 620, turn_left: 360, turn_right: 380, pick_up: 520, drop: 300, activate: 700, wait: 330, tally_up: 880, tally_down: 660 }[action] ?? 440;
     tone(f, 0.07, { type: 'triangle', gain: 0.08 });
+    if (landMs <= 0) return;
+    const at = landMs / 1000;
+    if (action === 'jump') {
+      tone(150, 0.09, { type: 'sine', gain: 0.12, slideTo: 90, delay: at });
+      buzz('light', landMs);
+    } else if (action === 'forward') {
+      tone(240, 0.035, { type: 'sine', gain: 0.045, delay: at });
+    }
   },
-  crash() {
-    tone(180, 0.3, { type: 'sawtooth', slideTo: 60, gain: 0.12 });
-    buzz('error');
+  /** Run pressed: a quick power-up sweep and a firm buzz, right on the tap. */
+  run() {
+    tone(420, 0.09, { type: 'triangle', slideTo: 840, gain: 0.07 });
+    buzz('medium');
+  },
+  /** A bump or an error. `delayMs` lines it up with LoopBot hitting the wall on the board. */
+  crash(delayMs = 0) {
+    const at = delayMs / 1000;
+    noise(0.08, 0.09, 600, at);
+    tone(180, 0.3, { type: 'sawtooth', slideTo: 60, gain: 0.12, delay: at });
+    buzz('error', delayMs);
   },
   /** A star landing on the results card; each one rings a step higher. */
   star(n: number) {
@@ -333,11 +358,13 @@ export const fx = {
       }
     }
   },
-  win() {
-    [523, 659, 784, 1047].forEach((f, i) => tone(f, 0.18, { gain: 0.1, delay: i * 0.09 }));
+  /** The floor is cleared. `delayMs` waits for LoopBot to land on the lift. */
+  win(delayMs = 0) {
+    const at = delayMs / 1000;
+    [523, 659, 784, 1047].forEach((f, i) => tone(f, 0.18, { gain: 0.1, delay: at + i * 0.09 }));
     // a low "lift" chord under the arpeggio
-    tone(262, 0.6, { type: 'sine', gain: 0.06, delay: 0.3 });
-    tone(392, 0.6, { type: 'sine', gain: 0.04, delay: 0.3 });
-    buzz('success');
+    tone(262, 0.6, { type: 'sine', gain: 0.06, delay: at + 0.3 });
+    tone(392, 0.6, { type: 'sine', gain: 0.04, delay: at + 0.3 });
+    buzz('success', delayMs);
   },
 };
