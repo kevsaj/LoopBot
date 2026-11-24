@@ -96,10 +96,10 @@
   border-color: rgba(255, 180, 102, 0.28);
   background: linear-gradient(135deg, rgba(255, 160, 80, 0.1), rgba(255, 200, 120, 0.03));
 }
-.pack-sheet.pack-heatwave .pill.plus-buy {
-  background: linear-gradient(180deg, #ffc861, #f08a3c);
-  border-color: #f5a04a;
-  color: #3a1d0c;
+.pack-sheet.pack-heatwave {
+  --pack-buy: linear-gradient(180deg, #ffc861, #f08a3c);
+  --pack-buy-line: #f5a04a;
+  --pack-buy-ink: #3a1d0c;
 }
 .pack-heatwave .plus-owned {
   color: #ffc861;

@@ -99,10 +99,10 @@
   border-color: rgba(201, 184, 255, 0.28);
   background: linear-gradient(135deg, rgba(170, 150, 255, 0.1), rgba(220, 210, 255, 0.03));
 }
-.pack-sheet.pack-twinspires .pill.plus-buy {
-  background: linear-gradient(180deg, #e6dcff, #9a84e8);
-  border-color: #b4a0f0;
-  color: #1a1030;
+.pack-sheet.pack-twinspires {
+  --pack-buy: linear-gradient(180deg, #e6dcff, #9a84e8);
+  --pack-buy-line: #b4a0f0;
+  --pack-buy-ink: #1a1030;
 }
 .pack-twinspires .plus-owned {
   color: #e6dcff;

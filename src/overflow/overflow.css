@@ -85,11 +85,11 @@
   width: 100%;
   height: auto;
   aspect-ratio: 1;
-  border-radius: 18px 18px 0 0;
+  border-radius: var(--r-lg) var(--r-lg) 0 0;
 }
 .ovf-frieze {
   height: 16px;
-  border-radius: 0 0 18px 18px;
+  border-radius: 0 0 var(--r-lg) var(--r-lg);
   background: var(--ovf-frieze) left center / auto 100% repeat-x;
 }
 .babel-bot {
@@ -605,7 +605,7 @@
 .tp-row.tp-overflow {
   margin-top: 6px;
   border-top: 1px solid var(--line);
-  border-radius: 0 0 10px 10px;
+  border-radius: 0 0 var(--r-md) var(--r-md);
   background: linear-gradient(90deg, rgba(27, 47, 102, 0.55), rgba(242, 196, 106, 0.08));
 }
 .tp-overflow .tp-badge {
@@ -695,8 +695,8 @@
   color: var(--ovf-gold-hi);
   letter-spacing: 0.06em;
 }
-.pack-sheet.pack-overflow .plus-buy {
-  background: var(--ovf-gold-grad);
-  border-color: #ffe6a0;
-  color: #3a2208;
+.pack-sheet.pack-overflow {
+  --pack-buy: var(--ovf-gold-grad);
+  --pack-buy-line: #ffe6a0;
+  --pack-buy-ink: #3a2208;
 }

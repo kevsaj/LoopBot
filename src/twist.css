@@ -166,10 +166,10 @@
   border-color: rgba(127, 214, 200, 0.28);
   background: linear-gradient(135deg, rgba(110, 200, 190, 0.1), rgba(160, 230, 220, 0.03));
 }
-.pack-sheet.pack-twist .pill.plus-buy {
-  background: linear-gradient(180deg, #a8f0e4, #4fb8aa);
-  border-color: #6fcfc2;
-  color: #0c2a28;
+.pack-sheet.pack-twist {
+  --pack-buy: linear-gradient(180deg, #a8f0e4, #4fb8aa);
+  --pack-buy-line: #6fcfc2;
+  --pack-buy-ink: #0c2a28;
 }
 .pack-twist .plus-owned {
   color: #a8f0e4;

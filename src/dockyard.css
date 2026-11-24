@@ -150,10 +150,10 @@
   border-color: rgba(255, 207, 110, 0.28);
   background: linear-gradient(135deg, rgba(255, 190, 90, 0.1), rgba(255, 220, 160, 0.03));
 }
-.pack-sheet.pack-dockyard .pill.plus-buy {
-  background: linear-gradient(180deg, #ffe3a0, #e8a33a);
-  border-color: #f0b85a;
-  color: #2a1a06;
+.pack-sheet.pack-dockyard {
+  --pack-buy: linear-gradient(180deg, #ffe3a0, #e8a33a);
+  --pack-buy-line: #f0b85a;
+  --pack-buy-ink: #2a1a06;
 }
 .pack-dockyard .plus-owned {
   color: #ffe3a0;
