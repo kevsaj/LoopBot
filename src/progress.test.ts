@@ -54,7 +54,12 @@ describe('first-run tutorial', () => {
   it('shows one overlay on Floor 2 and none after', () => {
     expect(tutorialStep({ ...base, floorId: 't1-f02' })).toBe('turn');
     expect(tutorialStep({ ...base, floorId: 't1-f02', program: parseReference('turn_left') })).toBeNull();
-    expect(tutorialStep({ ...base, floorId: 't1-f03' })).toBeNull();
+    expect(tutorialStep({ ...base, floorId: 't1-f04' })).toBeNull();
+  });
+  it('says where pick up reaches on Floor 3 until it is in the program', () => {
+    expect(tutorialStep({ ...base, floorId: 't1-f03' })).toBe('pick');
+    expect(tutorialStep({ ...base, floorId: 't1-f03', program: parseReference('pick_up') })).toBeNull();
+    expect(tutorialStep({ ...base, floorId: 't1-f03', hasRun: true, outcome: 'ended' })).toBeNull();
   });
   it('explains that a turn does not move LoopBot after a short run on Floor 2', () => {
     const p = parseReference('forward turn_right forward');

@@ -19,9 +19,13 @@ import { Board, snapshotBoard } from '../board/Board';
 import { shareImage } from '../share';
 import { canvasToBlob, drawShareCard } from '../shareImage';
 import { towerOf } from '../levels/towers';
+import { LEVELS } from '../levels';
+import { STEP_HELP_AFTER, introPalette, isIntroFloor, newCommands, nextStep, pathPreview } from './firstFloors';
 import type { BoardUpdate } from '../board/BoardScene';
 import { BackButton, Icon } from '../ui/Icon';
 import { fx } from '../audio/feedback';
+import { bumpMs, landMs } from '../fx/feel';
+import { reducedMotion } from '../a11y/motion';
 import { SettingsSheet } from '../SettingsSheet';
 import type { Progress } from '../progress';
 import { recordClear, recordFail } from '../progress';
@@ -228,6 +232,8 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
     };
   }, [level.id]);
   const [hasRun, setHasRun] = useState(false);
+  /** Failed runs this visit: after STEP_HELP_AFTER the first floors offer "Show me the next step". */
+  const [missed, setMissed] = useState(0);
   // The results card waits for the light-up wave; a reset or a new run cancels it.
   const resultsTimer = useRef<number | undefined>(undefined);
   useEffect(() => () => window.clearTimeout(resultsTimer.current), []);
@@ -279,7 +285,8 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
     if (ev) {
       // Precinct 404: light up what both bots are running
       setActiveIds(new Set([ev.blockId, ...ev.callStack, ...(world.partner && ev.twin ? [ev.twin.blockId, ...ev.twin.callStack] : [])]));
-      if (ev.ok) fx.step(ev.action);
+      // A move that lands gets its footfall when LoopBot touches down (src/fx/feel.ts).
+      if (ev.ok) fx.step(ev.action, ev.action === 'forward' || ev.action === 'jump' ? landMs(SPEEDS[speed].ms) : 0);
       // Say what each step did. Turns get spelled out: they spin LoopBot without moving it,
       // which new players often miss when they only watch the board.
       if (world.partner) setTerminal(partnerLine(ev, world));
@@ -319,14 +326,19 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
         setTerminal(runError(o.error));
         // Screen readers: the terminal reads the error; then where LoopBot ended up.
         announce(describeBrief(world));
-        fx.crash();
-        fx.voice('uhoh', 0.35);
+        // Heard and felt when LoopBot bumps on the board, not when the step starts.
+        const bump = world.twin ? 0 : bumpMs(SPEEDS[speed].ms, ev?.action, reducedMotion());
+        fx.crash(bump);
+        setMissed((n) => n + 1);
+        fx.voice('uhoh', 0.35 + bump / 1000);
         fail();
       } else if (o.status === 'cleared') {
         const s = stars(level, countCommands(program), o.steps);
         setTerminal(tn(o.steps, '> floor cleared in {n} step', '> floor cleared in {n} steps'));
-        fx.win();
-        fx.voice('yay', 0.55);
+        // The fanfare waits for LoopBot to land on the lift.
+        const land = landMs(SPEEDS[speed].ms);
+        fx.win(land);
+        fx.voice('yay', 0.55 + land / 1000);
         if (customRef.current) {
           setPrevBest(0);
           setCustomNote(customRef.current.onClear(countCommands(program), o.steps, s) || null);
@@ -359,6 +371,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
         );
         announce(describeBrief(world));
         fx.denied();
+        setMissed((n) => n + 1);
         fail();
       }
     } else if (!ev) {
@@ -376,17 +389,19 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
   }, [playing, speed]);
 
   const run = () => {
-    fx.tap();
     if (playing) {
+      fx.tap();
       setPlaying(false); // Pause
       setTerminal(t('> paused'));
       return;
     }
     if (program.main.length === 0) {
+      fx.tap();
       setTerminal(t('> the program is empty. Tap a command below to add it.'));
       fx.denied();
       return;
     }
+    fx.run();
     if (!runner.current || runner.current.done) {
       reset(true);
       setTerminal(t('> running'));
@@ -547,12 +562,13 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
-  const palette = [
+  // Floors 1 to 5 show only the commands they have (src/editor/firstFloors.ts).
+  const palette = introPalette(level, [
     ...PALETTE_ORDER,
     ...EXTRA_ORDER.filter((c) => level.commands.includes(c)),
     ...CONTROL_ORDER.filter((c) => level.commands.includes(c)),
     ...FUNCTION_NAMES.filter((f) => (level.slots[f] ?? 0) > 0 && !(partner && f === PARTNER_ROUTINE)),
-  ];
+  ]);
   undoRef.current.run = run;
   undoRef.current.step = step;
   undoRef.current.addNth = (n) => {
@@ -575,7 +591,34 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
   const tipKey = tut && `${level.id}:${tut}`;
   const showTip = !!tut && tipKey !== tipDismissed;
   const pulse = (cmd: PaletteCommand) =>
-    (tut === 'tap' && cmd === 'forward') || (tut === 'turn' && (cmd === 'turn_left' || cmd === 'turn_right'));
+    ((tut === 'tap' || tut === 'more') && cmd === 'forward') ||
+    (tut === 'turn' && (cmd === 'turn_left' || cmd === 'turn_right')) ||
+    (tut === 'pick' && cmd === 'pick_up');
+  // A command this intro floor brings in wears a "New" badge until the floor is cleared.
+  const clearedBefore = (progress.stars[level.id] ?? 0) > 0;
+  const fresh = useMemo(
+    () => (clearedBefore || custom || daily || overflow ? new Set<string>() : newCommands(level.id, (id) => LEVELS.find((l) => l.id === id)?.commands)),
+    [level.id, clearedBefore, custom, daily, overflow],
+  );
+  // Floors 1 to 5: after two misses, offer to add the next right command (src/editor/firstFloors.ts).
+  const helpStep = useMemo(
+    () => (!custom && !daily && !overflow && !playing && missed >= STEP_HELP_AFTER && isIntroFloor(level.id) ? nextStep(level, program) : null),
+    [custom, daily, overflow, playing, missed, level, program],
+  );
+  const applyHelpStep = () => {
+    if (!helpStep) return;
+    fx.snap();
+    editor.setProgram(helpStep.program);
+    setMissed(0);
+    const meta = COMMAND_META[helpStep.added];
+    setTerminal(t('> added the next step: {command}. Press Run.', { command: `${meta.glyph} ${t(meta.label)}` }));
+    track({ type: 'hint', floor: level.id, tier: 0, free: true });
+  };
+  // Floors 1 to 3: dotted footsteps show where the program will take LoopBot, until Run.
+  const preview = useMemo(
+    () => (progress.tutorial && !custom && !daily && !overflow && !playing && steps === 0 ? pathPreview(level, program) : null),
+    [progress.tutorial, custom, daily, overflow, playing, steps, level, program],
+  );
 
   return (
     <main className={`floor${tab === 'code' && typing ? ' typing-code' : ''}${overflow ? ' ovf-floor' : ''}`}>
@@ -647,7 +690,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
       </header>
 
       <section className={`board-wrap band-${level.band}`} data-flavour={flavourOf(level.band)}>
-        <Board update={board} rotateSignal={rotateSignal} band={level.band} />
+        <Board update={board} rotateSignal={rotateSignal} band={level.band} preview={preview} />
         <div className="step-counter" aria-live="polite">
           <span>
             {t('{used} / {slots} commands', { used: total, slots: Object.values(level.slots).reduce((a, b) => a + (b ?? 0), 0) })}
@@ -667,8 +710,13 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
         {/* The tutorial tip floats over the foot of the board, above PATCH's line, so it never takes
             room from the program (on short or zoomed-in phones that room is only a few lines). On those
             short screens the tip stands in for PATCH's line until it is tapped away or done. */}
-        <div className={`board-foot${showTip ? ' with-tip' : ''}`}>
-          {showTip && tut && (
+        <div className={`board-foot${showTip || helpStep ? ' with-tip' : ''}`}>
+          {helpStep && (
+            <button type="button" className="step-help" onClick={applyHelpStep}>
+              <Icon name="hint" size={18} /> {t('Show me the next step')}
+            </button>
+          )}
+          {showTip && tut && !helpStep && (
             // A tap anywhere on the tip hides it; the × is the button for keyboards and screen readers.
             <div className={`tutorial-bubble tut-${tut}`} role="status" onClick={() => (fx.tap(), setTipDismissed(tipKey))}>
               <span>{t(TUTORIAL_TEXT[tut])}</span>
@@ -687,6 +735,8 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
           <button type="button" className={`pill primary${playing ? ' on' : ''}${tut === 'run' ? ' pulse' : ''}`} onClick={run} aria-keyshortcuts="R" title={`${t('Run')} / ${t('Pause')} (R)`}>
             <Icon name={playing ? 'pause' : 'play'} size={18} />
             {playing ? t('Pause') : t('Run')}
+            {/* Floor 1 opens with forward already placed: the first thing to do is press Run. */}
+            {tut === 'run' && level.id === 't1-f01' && <TapHand />}
           </button>
           <button type="button" className="pill" onClick={step} aria-keyshortcuts="S" title={`${t('Step')} (S)`}>
             <Icon name="step" size={18} /> {t('Step')}
@@ -808,6 +858,9 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
                   {meta.glyph}
                 </span>
                 <span>{t(meta.label)}</span>
+                {fresh.has(cmd) && <span className="new-badge">{t('New')}</span>}
+                {/* Floor 1: a tapping finger on forward when the program is empty or a run stopped short. */}
+                {(tut === 'tap' || tut === 'more') && cmd === 'forward' && <TapHand />}
               </PaletteChip>
             );
           })}
@@ -897,5 +950,22 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
         />
       )}
     </main>
+  );
+}
+
+/** A finger that taps on the spot, drawn in SVG (still with Reduce motion: the CSS stops it moving). */
+function TapHand() {
+  return (
+    <span className="tap-hand" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="30" height="30">
+        <path
+          d="M9 11V5.5a1.5 1.5 0 0 1 3 0V10l4.6.9a2 2 0 0 1 1.6 2.2l-.6 4.6A3 3 0 0 1 14.6 20.3H11a3 3 0 0 1-2.4-1.2l-3.2-4.3a1.4 1.4 0 0 1 2.1-1.8L9 14.5z"
+          fill="#fff"
+          stroke="#1b1d2a"
+          strokeWidth="1.4"
+          strokeLinejoin="round"
+        />
+      </svg>
+    </span>
   );
 }

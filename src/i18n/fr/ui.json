@@ -1167,5 +1167,8 @@
  "For a new phone. Replaces the progress here.": "Pour un nouveau téléphone. Remplace la progression d'ici.",
  "Can't reach the store": "Impossible de joindre la boutique",
  "Check your connection, then try again.": "Vérifie ta connexion, puis réessaie.",
- "No floors yet": "Aucun étage pour l'instant"
+ "No floors yet": "Aucun étage pour l'instant",
+ "▲ pick up grabs the crate in front of LoopBot.": "▲ ramasser prend la caisse devant LoopBot.",
+ "Show me the next step": "Montre-moi la prochaine étape",
+ "> added the next step: {command}. Press Run.": "> prochaine étape ajoutée : {command}. Appuie sur Lancer."
 }

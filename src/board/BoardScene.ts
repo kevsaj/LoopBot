@@ -11,6 +11,7 @@ import { webglRenderTargetsWork } from './webglProbe';
 import { onMotionChange, reducedMotion } from '../a11y/motion';
 import { boardRatio, FrameWatch, stepDown } from './quality';
 import { CANDY_LIGHTS, colourfulOn, FLAVOURS, flavourOf } from '../colourful';
+import { arc, bumpMs, glide, moveMs } from '../fx/feel';
 
 const TW = 64; // tile width on screen
 const TH = 32; // tile height on screen
@@ -654,6 +655,13 @@ export function setBand(band: string) {
   eyeGlow = look.glow ? { from: look.eye, to: look.glow.to, style: look.glow.style } : null;
 }
 
+/** Tiles for the dotted path preview, and where the run would stop with an error. */
+export interface PathDots {
+  tiles: { x: number; y: number }[];
+  /** With `facing`, the cross sits on the edge LoopBot would bump into. */
+  crashAt: { x: number; y: number; facing?: Facing } | null;
+}
+
 export interface BoardUpdate {
   world: World;
   /** The action that produced this world, so the bot can animate it. */
@@ -812,6 +820,61 @@ export class BoardScene extends Phaser.Scene {
     if (this.world) this.show({ world: this.world, stepMs: 0 });
   }
 
+  /** The dotted path preview (first floors only): where the program would take LoopBot. */
+  private preview: PathDots | null = null;
+  private previewObjs: Phaser.GameObjects.Graphics[] = [];
+
+  setPreview(p: PathDots | null) {
+    this.preview = p;
+    if (this.ready && this.world) this.drawPreview(this.world);
+  }
+
+  private drawPreview(w: World) {
+    for (const o of this.previewObjs) if (o.scene) o.destroy();
+    this.previewObjs = [];
+    const p = this.preview;
+    if (!p || p.tiles.length === 0) return;
+    const at = (x: number, y: number) => {
+      const grid = this.toGrid(w, x, y);
+      const h = w.tiles[y]?.[x] ? surfaceHeight(w, { x, y }) : 0;
+      return { ...this.screen(grid, h), depth: (grid.rx + grid.ry) * 10 + 1 };
+    };
+    const dot = (sx: number, sy: number, depth: number, r: number, colour: number, alpha: number) => {
+      const g = this.add.graphics().setDepth(depth);
+      g.fillStyle(0x2b2440, alpha * 0.5);
+      g.fillEllipse(sx, sy + 1.4, r * 2.9, r * 1.7);
+      g.fillStyle(colour, alpha);
+      g.fillEllipse(sx, sy, r * 2.4, r * 1.4);
+      this.layer.add(g);
+      this.previewObjs.push(g);
+      return g;
+    };
+    for (let i = 1; i < p.tiles.length; i++) {
+      const a = at(p.tiles[i - 1].x, p.tiles[i - 1].y);
+      const b = at(p.tiles[i].x, p.tiles[i].y);
+      // a small dot at the edge between the tiles, a bigger one on the tile
+      dot((a.sx + b.sx) / 2, (a.sy + b.sy) / 2, Math.max(a.depth, b.depth), 3, C.eye, 0.6);
+      dot(b.sx, b.sy, b.depth, i === p.tiles.length - 1 ? 5.6 : 4.4, C.eye, 0.9);
+    }
+    if (p.crashAt) {
+      const c = at(p.crashAt.x, p.crashAt.y);
+      const edge = p.crashAt.facing ? this.screenFacing(p.crashAt.facing) : { fx: 0, fy: 0 };
+      const cx = c.sx + edge.fx * 0.75;
+      const cy = c.sy + edge.fy * 0.75;
+      // above the wall it would hit (one tile further back), so the cross is never hidden
+      const g = this.add.graphics().setDepth(c.depth + 15);
+      g.lineStyle(5.5, 0x2b2440, 0.5);
+      g.lineBetween(cx - 6, cy - 3.5, cx + 6, cy + 3.5);
+      g.lineBetween(cx - 6, cy + 3.5, cx + 6, cy - 3.5);
+      g.lineStyle(3.5, C.crash, 1);
+      g.lineBetween(cx - 6, cy - 3.5, cx + 6, cy + 3.5);
+      g.lineBetween(cx - 6, cy + 3.5, cx + 6, cy - 3.5);
+      this.layer.add(g);
+      this.previewObjs.push(g);
+    }
+    this.layer.sort('depth');
+  }
+
   show(u: BoardUpdate) {
     if (!this.ready) {
       this.pending = u;
@@ -827,6 +890,7 @@ export class BoardScene extends Phaser.Scene {
       this.drawnTiles = u.world.tiles;
     }
     this.fit();
+    this.drawPreview(u.world);
     // Twin Spires: only the bot that crashed looks crashed
     this.moveBot(prev, u.crashWho === 'twin' ? { ...u, crashed: false } : u);
     this.moveEcho(prev, u);
@@ -1589,20 +1653,26 @@ export class BoardScene extends Phaser.Scene {
     const w = u.world;
     const to = this.botPos(w);
     const fresh = !prev || u.stepMs === 0;
-    this.mood = u.crashed ? 'crash' : u.cleared ? 'happy' : this.atLedge(w) ? 'nervous' : 'idle';
+    const moved = prev && (prev.bot.x !== w.bot.x || prev.bot.y !== w.bot.y);
+    // A blocked forward or jump turns red at the bump, not as it sets off (src/fx/feel.ts).
+    const bump = u.crashed ? bumpMs(u.stepMs, moved || fresh ? undefined : u.action, this.reduced) : 0;
+    const hurt = !!u.crashed && bump === 0;
+    this.mood = hurt ? 'crash' : u.cleared ? 'happy' : this.atLedge(w) && !u.crashed ? 'nervous' : 'idle';
     this.tweens.killTweensOf(this.botPose);
-    this.botPose.setPosition(0, 0).setAngle(0);
+    this.botPose.setPosition(0, 0).setAngle(0).setScale(1);
+    this.tweens.killTweensOf(this.botShadow);
     this.botShadow.setScale(1);
     if (fresh) this.look = 0;
     this.tweens.killTweensOf(this.turnRing);
     this.turnRing.clear();
-    this.drawBot(w, !!u.crashed);
+    this.drawBot(w, hurt);
     this.tweens.killTweensOf(this.bot);
-    const dur = Math.max(0, u.stepMs * 0.8);
+    this.bot.setScale(1);
+    const dur = moveMs(u.stepMs);
+    const lively = !this.reduced && dur > 0;
     if (prev && !fresh && (u.action === 'turn_left' || u.action === 'turn_right') && prev.bot.facing !== w.bot.facing) {
       this.animateTurn(w, !!u.crashed, FACINGS.indexOf(prev.bot.facing), u.action === 'turn_right' ? 1 : -1, dur);
     }
-    const moved = prev && (prev.bot.x !== w.bot.x || prev.bot.y !== w.bot.y);
     // A turntable (Twist) turned LoopBot as it arrived: walk in still facing the old way, then swing round.
     if (prev && !fresh && moved && prev.bot.facing !== w.bot.facing && w.tiles[w.bot.y][w.bot.x].type === 'spinner') {
       const from = FACINGS.indexOf(prev.bot.facing);
@@ -1619,10 +1689,13 @@ export class BoardScene extends Phaser.Scene {
       this.bot.setPosition(from.sx, from.sy);
       // More than one tile in one step means LoopBot slid on ice: a flat, steady glide.
       const slid = Math.abs(prev.bot.x - w.bot.x) + Math.abs(prev.bot.y - w.bot.y) > 1;
-      const lift = slid ? 0 : u.action === 'jump' ? 22 : 4;
+      const jumped = !slid && u.action === 'jump';
+      const lift = slid ? 0 : jumped ? 22 : 4;
       // The antenna lags behind the move, then springs back.
-      this.wiggleAntenna(to.sx > from.sx ? -16 : to.sx < from.sx ? 16 : u.action === 'jump' ? 20 : 8);
-      this.tweens.add({ targets: this.bot, x: to.sx, duration: dur, ease: slid ? 'Quad.easeOut' : 'Sine.easeInOut' });
+      this.wiggleAntenna(to.sx > from.sx ? -16 : to.sx < from.sx ? 16 : jumped ? 20 : 8);
+      // One eased value moves both screen x and y, so the path across the diamond stays straight
+      // (easing x alone bent every step into a slight S). The hop lifts the body, not the shadow,
+      // and the shadow shrinks while LoopBot is in the air.
       this.tweens.addCounter({
         from: 0,
         to: 1,
@@ -1630,7 +1703,22 @@ export class BoardScene extends Phaser.Scene {
         ease: slid ? 'Quad.easeOut' : 'Linear',
         onUpdate: (tw) => {
           const t = tw.getValue() ?? 0;
-          this.bot.y = from.sy + (to.sy - from.sy) * t - Math.sin(Math.PI * t) * lift;
+          const g = slid ? t : glide(t);
+          this.bot.x = from.sx + (to.sx - from.sx) * g;
+          this.bot.y = from.sy + (to.sy - from.sy) * g;
+          const up = lift ? arc(t) : 0;
+          this.botPose.y = -up * lift;
+          this.botShadow.setScale(1 - up * (jumped ? 0.35 : 0.08));
+          if (lively && jumped) {
+            // crouch before take-off, stretch tall in the air
+            const crouch = t < 0.16 ? Math.sin((t / 0.16) * Math.PI) : 0;
+            this.botPose.setScale(1 + crouch * 0.08 - up * 0.04, 1 - crouch * 0.14 + up * 0.08);
+          }
+        },
+        onComplete: () => {
+          this.botPose.y = 0;
+          this.botShadow.setScale(1);
+          if (lively && !slid) this.land(jumped ? 1 : 0.45, to.sx, to.sy);
         },
       });
     }
@@ -1639,20 +1727,50 @@ export class BoardScene extends Phaser.Scene {
     this.layer.sort('depth');
 
     if (u.crashed) {
-      this.cameras.main.shake(180, 0.006);
-      this.tweens.add({ targets: this.bot, x: to.sx + 3, yoyo: true, repeat: 3, duration: 40, delay: dur });
-      // a dizzy wobble after the bump
-      if (!this.reduced) {
+      // A blocked forward or jump: LoopBot leans into the tile it wanted, bumps, and springs back.
+      // The bump, the shake, the crash sound and the buzz all happen at bumpMs (src/fx/feel.ts).
+      if (bump > 0) {
+        this.time.delayedCall(bump, () => {
+          if (this.world !== w) return;
+          this.drawBot(w, true);
+          this.setMood('crash');
+        });
+        // fx, fy reach the middle of the tile's edge, so 0.6 leans 30% of the way into the next tile
+        const { fx: ax, fy: ay } = this.screenFacing(w.bot.facing);
+        const reach = u.action === 'jump' ? 0.5 : 0.6;
+        this.tweens.chain({
+          targets: this.bot,
+          tweens: [
+            { x: to.sx + ax * reach, y: to.sy + ay * reach - (u.action === 'jump' ? 6 : 0), duration: bump, ease: 'Quad.easeIn' },
+            { x: to.sx, y: to.sy, duration: 160, ease: 'Back.easeOut' },
+          ],
+        });
         this.tweens.chain({
           targets: this.botPose,
           tweens: [
-            { angle: -12, duration: 90, delay: dur + 120 },
+            { scaleX: 0.86, scaleY: 1.1, duration: 50, delay: bump, ease: 'Quad.easeOut' },
+            { scaleX: 1, scaleY: 1, duration: 200, ease: 'Back.easeOut' },
+          ],
+        });
+      }
+      this.time.delayedCall(bump, () => {
+        if (this.world !== w) return;
+        this.cameras.main.shake(180, 0.006);
+        this.tweens.add({ targets: this.bot, x: to.sx + 3, yoyo: true, repeat: 3, duration: 40, delay: bump > 0 ? 160 : 0 });
+      });
+      // a dizzy wobble after the bump
+      if (!this.reduced) {
+        const after = Math.max(bump + 200, bump > 0 ? 0 : dur);
+        this.tweens.chain({
+          targets: this.botPose,
+          tweens: [
+            { angle: -12, duration: 90, delay: after + 120 },
             { angle: 9, duration: 120 },
             { angle: -5, duration: 120 },
             { angle: 0, duration: 140 },
           ],
         });
-        this.time.delayedCall(dur + 120, () => this.wiggleAntenna(24));
+        this.time.delayedCall(after + 120, () => this.wiggleAntenna(24));
       }
     } else if (u.cleared) {
       const n = u.stars ?? 1;
@@ -1663,8 +1781,44 @@ export class BoardScene extends Phaser.Scene {
       this.time.delayedCall(dur + 200, () => this.wiggleAntenna(22));
       this.lightUp(w, dur);
     } else if (u.action === 'turn_left' || u.action === 'turn_right' || u.action === 'pick_up' || u.action === 'drop' || u.action === 'activate' || u.action === 'wait') {
-      this.tweens.add({ targets: this.bot, scaleY: 0.88, yoyo: true, duration: Math.min(90, dur / 2 || 90) });
+      // a little dip for an action done on the spot
+      if (!this.reduced) this.tweens.add({ targets: this.botPose, scaleY: 0.9, scaleX: 1.05, yoyo: true, duration: Math.min(90, dur / 2 || 90), ease: 'Quad.easeOut' });
     }
+  }
+
+  /**
+   * Touching down after a move: a quick squash that springs back, and for a jump a puff of dust.
+   * `force` is 1 for a jump and smaller for a walk. Not called with Reduce motion.
+   */
+  private land(force: number, sx: number, sy: number) {
+    this.tweens.chain({
+      targets: this.botPose,
+      tweens: [
+        { scaleX: 1 + 0.12 * force, scaleY: 1 - 0.16 * force, duration: 55, ease: 'Quad.easeOut' },
+        { scaleX: 1, scaleY: 1, duration: 170 + 60 * force, ease: 'Back.easeOut' },
+      ],
+    });
+    if (force < 1) return;
+    const dust = this.add.graphics().setPosition(sx, sy).setDepth(this.bot.depth - 1);
+    this.layer.add(dust);
+    this.layer.sort('depth');
+    const puff = { t: 0 };
+    this.tweens.add({
+      targets: puff,
+      t: 1,
+      duration: 360,
+      ease: 'Quad.easeOut',
+      onUpdate: () => {
+        dust.clear();
+        const r = TW * (0.16 + 0.22 * puff.t);
+        dust.fillStyle(0xffffff, 0.35 * (1 - puff.t));
+        for (const side of [-1, 1]) {
+          dust.fillEllipse(side * r, -2 * puff.t, 7 * (1 - puff.t * 0.4), 4 * (1 - puff.t * 0.4));
+          dust.fillEllipse(side * r * 0.55, TH * 0.12 * puff.t, 5, 3);
+        }
+      },
+      onComplete: () => dust.destroy(),
+    });
   }
 
   /**
@@ -1733,7 +1887,7 @@ export class BoardScene extends Phaser.Scene {
     const to = this.botPos(view);
     const before = prev?.twin ? echoView(prev) : null;
     const fresh = !before || u.stepMs === 0;
-    const dur = Math.max(0, u.stepMs * 0.8);
+    const dur = moveMs(u.stepMs);
     const angle = FACINGS.indexOf(w.twin.facing);
     this.drawEcho(view, crashed, angle);
     if (!fresh && before!.bot.facing !== w.twin.facing && !this.reduced && dur > 0) {
