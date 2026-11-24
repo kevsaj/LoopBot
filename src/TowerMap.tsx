@@ -29,6 +29,8 @@ import './fractal.css';
 import './precinct.css';
 import { msg, t, t as tr, tn } from './i18n';
 import { flavourOf } from './colourful';
+import { GIFT_FLOOR, giftOpened } from './rewards/gift';
+import './goals.css';
 
 interface Props {
   levels: LevelFile[];
@@ -95,6 +97,14 @@ const BAND_NAMES: Record<string, string> = {
   briefing: msg('Briefing Room'),
   cells: msg('Holding Cells'),
   watchtower: msg('The Watchtower'),
+};
+
+/** What each of Tower 1's bands teaches, shown on the next band's sign so there's always something to climb toward. */
+const BAND_NEW: Record<string, string> = {
+  maintenance: msg('New: loops'),
+  workshop: msg('New: functions'),
+  control: msg('New: if and while'),
+  rooftop: msg('New: typed code'),
 };
 
 /** What lies under each tower, shown at the foot of its map. */
@@ -354,6 +364,13 @@ export function TowerMap({ levels, tower, towers, onTowerPick, progress, current
   // The furthest open floor you haven't cleared yet: what "Continue" plays.
   const firstOpen = ids.findIndex((id, i) => isUnlocked(progress, ids, i) && !(progress.stars[id] ?? 0));
   const target = firstOpen === -1 ? current : firstOpen;
+  const bands = bandsOf(levels);
+  // The band after the one you're climbing glows, with what it teaches: the next thing to reach.
+  const hereBand = bands.findIndex((b) => target >= b.first && target <= b.last);
+  const nextBand = firstOpen === -1 || hereBand === -1 ? null : (bands[hereBand + 1]?.key ?? null);
+  // Once a tower is cleared, the roof points at the next one.
+  const nextTower = cleared === ids.length ? pickable(towers).find((x) => x.n > tower) : undefined;
+  const gift = tower === 1 && !giftOpened() && !(progress.stars[ids[GIFT_FLOOR - 1]] ?? 0) ? GIFT_FLOOR - 1 : -1;
 
   // Floors opened since the last visit get an unlock animation, once.
   const [seen] = useState(() => readSeen(tower));
@@ -448,14 +465,34 @@ export function TowerMap({ levels, tower, towers, onTowerPick, progress, current
         </button>
       )}
       <div className="tower-scroll">
+        {tower === 1 && cleared < ids.length && !DEMO && (
+          <p className="roof-sign roof-vanta">
+            <span className="roof-vanta-eye" aria-hidden="true" />
+            {t('VANTA is waiting on the roof')}
+          </p>
+        )}
+        {nextTower && (
+          <button
+            type="button"
+            className="roof-sign roof-next"
+            style={lightVars(TOWER_LIGHT[nextTower.n] ?? TOWER_LIGHT[1])}
+            onClick={() => {
+              if (!towerUnlocked(nextTower)) return lockedTower(nextTower);
+              fx.tap();
+              onTowerPick(nextTower.n);
+            }}
+          >
+            {t('Next tower: {name}', { name: tr(nextTower.name) })} <Icon name="chevron" size={16} />
+          </button>
+        )}
         <div className="tower-roof" aria-hidden="true">
           <span className="beacon" />
         </div>
         {DEMO && <div className="tower-band demo-more">{t('Floors 11 to 50 · in the full game')}</div>}
-        {bandsOf(levels)
+        {[...bands]
           .reverse()
           .map((band) => (
-            <section key={band.key} className={`tower-section band-${band.key}`} data-flavour={flavourOf(band.key)}>
+            <section key={band.key} className={`tower-section band-${band.key}${band.key === nextBand ? ' next-band' : ''}`} data-flavour={flavourOf(band.key)}>
               <div className="tower-band">
                 {t(BAND_NAMES[band.key] ?? band.key)} · {t('Floors {first} to {last}', { first: band.first + 1, last: band.last + 1 })}
               </div>
@@ -477,6 +514,8 @@ export function TowerMap({ levels, tower, towers, onTowerPick, progress, current
                       boss ? 'boss' : '',
                       here ? 'current' : '',
                       open && fresh(i) ? 'fresh' : '',
+                      open && !stars && i === target ? 'next-up' : '',
+                      i === gift ? 'gift-floor' : '',
                       shaking === i ? 'shake' : '',
                     ]
                       .filter(Boolean)
@@ -493,16 +532,21 @@ export function TowerMap({ levels, tower, towers, onTowerPick, progress, current
                             onPick(i);
                           }}
                           aria-label={
-                            open
+                            (open
                               ? here
                                 ? tn(stars, 'Floor {floor}, {title}, {n} star, you are here', 'Floor {floor}, {title}, {n} stars, you are here', { floor: i + 1, title: l.title })
                                 : tn(stars, 'Floor {floor}, {title}, {n} star', 'Floor {floor}, {title}, {n} stars', { floor: i + 1, title: l.title })
-                              : t('Floor {n}, locked', { n: i + 1 })
+                              : t('Floor {n}, locked', { n: i + 1 })) + (i === gift ? `. ${t('Clear it to unlock a gift from PATCH')}` : '')
                           }
                         >
                           <span className="tf-num">{i + 1}</span>
                           {here && <MiniBot />}
                           <span className="tf-title">{open ? l.title : t('Locked')}</span>
+                          {i === gift && (
+                            <span className="tf-gift" aria-hidden="true">
+                              <Icon name="gift" size={18} />
+                            </span>
+                          )}
                           {open ? (
                             <span className="tf-stars" aria-hidden="true">
                               {[1, 2, 3].map((s) => (
@@ -522,6 +566,13 @@ export function TowerMap({ levels, tower, towers, onTowerPick, progress, current
                     );
                   })}
               </ol>
+              {band.key === nextBand && (
+                <p className="next-gate">
+                  <span className="next-chip">{t('Up next')}</span>
+                  <span className="next-name">{t(BAND_NAMES[band.key] ?? band.key)}</span>
+                  {tower === 1 && BAND_NEW[band.key] && <span className="next-new">{t(BAND_NEW[band.key])}</span>}
+                </p>
+              )}
             </section>
           ))}
         <div className="tower-ground">{t(GROUND[tower] ?? GROUND[1])}</div>

@@ -10,6 +10,7 @@ import { burst, reducedMotion, stop } from '../fx/confetti';
 import { DEMO } from '../demo';
 import { shortDate } from '../daily';
 import { msg, t, tn } from '../i18n';
+import { earlyGoal } from '../rewards/gift';
 
 interface Props {
   floorNumber: number;
@@ -110,6 +111,8 @@ export function ResultsCard({ floorNumber, tower = 1, floorCount, earned, prevBe
     setReminderNote(on ? t('Reminder set for {time}. Change it in Settings.', { time: hourLabel(DEFAULT_HOUR) }) : t('Notifications are off for LoopBot. You can allow them in your phone settings.'));
   };
   const title = custom ? t('Your floor') : overflow ? t('Overflow · Floor {n}', { n: overflow.floor }) : daily ? (daily.boss ? t('Sunday boss · {date}', { date: shortDate(daily.date) }) : t('Daily · {date}', { date: shortDate(daily.date) })) : t('Floor {n}', { n: floorNumber });
+  // Tower 1's first floors point at the next thing to aim for: a gift, PATCH's call, loops.
+  const goal = !daily && !custom && !overflow ? earlyGoal(tower, floorNumber, prevBest === 0, DEMO) : null;
   const tip =
     earned === 3
       ? null
@@ -173,6 +176,12 @@ export function ResultsCard({ floorNumber, tower = 1, floorCount, earned, prevBe
         </div>
         {tip && !custom?.note && <p className="tip">{tip}</p>}
         {outro && <p className="story">{outro}</p>}
+        {goal && (
+          <p className={`results-goal goal-${goal.icon}${shown >= 3 ? ' in' : ''}`}>
+            <Icon name={goal.icon} size={20} />
+            <span>{t(goal.text, goal.vars)}</span>
+          </p>
+        )}
         {!daily && shared && <p className="tip">{shared}</p>}
         {custom?.note && <p className="tip">{custom.note}</p>}
         {daily && <p className="tip">{shared ?? reminderNote ?? (daily.boss ? t('Same boss for everyone this Sunday. A new one arrives next week.') : t('Same puzzle for everyone today. A new one arrives at midnight.'))}</p>}

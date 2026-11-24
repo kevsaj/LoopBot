@@ -143,7 +143,7 @@ describe('in French', () => {
   it('translates tower names and the story', () => {
     setLangForTest('fr');
     expect(t(TOWERS[0].name)).toBe('Flèche Meridian');
-    const radio = INTERLUDES[10];
+    const radio = INTERLUDES[5];
     if (radio.kind !== 'radio') throw new Error('expected a radio call');
     expect(t(radio.lines[0].text)).toMatch(/^LoopBot, tu m'entends/);
   });

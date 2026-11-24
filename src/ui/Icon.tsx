@@ -137,6 +137,20 @@ const PATHS = {
       <path d="M16.5 13.5v6M13.5 16.5h6" />
     </>
   ),
+  gift: (
+    <>
+      <rect x="4" y="9" width="16" height="11" rx="2" />
+      <path d="M3 9h18M12 9v11" />
+      <path d="M12 9c-1.5-3.5-5.5-4.5-6-2s3.5 2 6 2c2.5 0 6.5.5 6-2s-4.5-1.5-6 2" />
+    </>
+  ),
+  radio: (
+    <>
+      <rect x="3.5" y="9" width="17" height="11" rx="2.5" />
+      <path d="M7 9l9-5M7.5 16.5h4M7.5 13h4" />
+      <circle cx="16" cy="14.5" r="2" />
+    </>
+  ),
 } as const;
 
 export type IconName = keyof typeof PATHS;

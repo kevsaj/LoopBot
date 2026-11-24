@@ -12,7 +12,9 @@ import { initMusic, setMusicTheme, themeForFloor, themeForOverflow } from './aud
 import { useRewards } from './rewards/useRewards';
 import { Locker } from './rewards/Locker';
 import { Toasts } from './rewards/Toasts';
-import { applyLookCss, loadLook } from './rewards/looks';
+import { GiftCard } from './rewards/GiftCard';
+import { giftDue, markGiftOpened } from './rewards/gift';
+import { applyLookCss, loadLook, saveLook } from './rewards/looks';
 import type { Look } from './rewards/looks';
 import { refreshReminders } from './reminder';
 import { reducedMotion } from './fx/confetti';
@@ -296,9 +298,12 @@ export default function App() {
   const level = levels[safeIndex];
   /** Leaving a tower floor: play the band's story beat first if it's due. */
   const leaveFloor = (next: () => void) => {
-    const due = interludeAfter(safeIndex + 1, (progress.stars[level.id] ?? 0) > 0, undefined, tower);
-    if (due) setBeat({ beat: due, then: next });
-    else next();
+    const cleared = (progress.stars[level.id] ?? 0) > 0;
+    // PATCH's first gift opens after Floor 3 (and after any story beat, though Floor 3 has none)
+    const then = giftDue(tower, safeIndex + 1, cleared) ? () => setGift({ then: next }) : next;
+    const due = interludeAfter(safeIndex + 1, cleared, undefined, tower);
+    if (due) setBeat({ beat: due, then });
+    else then();
   };
   // Achievements, unlocked looks and the toasts for anything new.
   const rewards = useRewards(t1ids, progress, daily);
@@ -306,6 +311,8 @@ export default function App() {
   const [locker, setLocker] = useState(false);
   // A story beat waiting to play before the next screen (PATCH's radio call, or the ending).
   const [beat, setBeat] = useState<{ beat: Beat; then: () => void } | null>(null);
+  // The Floor 3 gift card, waiting to show before the next screen.
+  const [gift, setGift] = useState<{ then: () => void } | null>(null);
   useEffect(() => applyLookCss(look), [look]);
   const openLocker = () => {
     setLocker(true);
@@ -321,6 +328,20 @@ export default function App() {
             markInterludeSeen(beat.beat.id);
             setBeat(null);
             beat.then();
+          }}
+        />
+      )}
+      {gift && (
+        <GiftCard
+          look={look}
+          onWear={(l) => {
+            saveLook(l);
+            setLook(l);
+          }}
+          onDone={() => {
+            markGiftOpened();
+            setGift(null);
+            gift.then();
           }}
         />
       )}
