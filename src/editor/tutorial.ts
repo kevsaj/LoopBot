@@ -6,7 +6,7 @@ import type { RunStatus, StepEvent } from '../sim/interpreter';
 import { msg, t } from '../i18n';
 import { COMMAND_META } from './commands';
 
-export type TutorialStep = 'tap' | 'run' | 'more' | 'turn' | 'spin' | 'cancel';
+export type TutorialStep = 'tap' | 'run' | 'more' | 'turn' | 'spin' | 'cancel' | 'pick';
 
 export const TUTORIAL_TEXT: Record<TutorialStep, string> = {
   tap: msg('Tap a command to add it to your program.'),
@@ -15,6 +15,7 @@ export const TUTORIAL_TEXT: Record<TutorialStep, string> = {
   turn: msg('↺ ↻ Turns spin LoopBot in place. Use them to go round corners.'),
   spin: msg('↻ A turn spins LoopBot in place without moving it. After it, ↑ forward goes the new way.'),
   cancel: msg('↻ then ↺ cancel out: LoopBot ends up facing the same way. Keep just one turn.'),
+  pick: msg('▲ pick up grabs the crate in front of LoopBot.'),
 };
 
 /** Turn tips (spin, cancel) show on the Lobby floors, where turning is still new. */
@@ -79,6 +80,8 @@ export function tutorialStep(s: {
     // A run that stopped short: turning in place is the usual surprise here.
     if (s.outcome === 'ended' || s.outcome === 'crashed') return 'spin';
   }
+  // Floor 3, the first crate: one line on where pick up reaches, until it's in the program.
+  if (s.floorId === 't1-f03' && !s.hasRun && !s.program.main.some((b) => b.kind === 'action' && b.action === 'pick_up')) return 'pick';
   return null;
 }
 

@@ -654,6 +654,13 @@ export function setBand(band: string) {
   eyeGlow = look.glow ? { from: look.eye, to: look.glow.to, style: look.glow.style } : null;
 }
 
+/** Tiles for the dotted path preview, and where the run would stop with an error. */
+export interface PathDots {
+  tiles: { x: number; y: number }[];
+  /** With `facing`, the cross sits on the edge LoopBot would bump into. */
+  crashAt: { x: number; y: number; facing?: Facing } | null;
+}
+
 export interface BoardUpdate {
   world: World;
   /** The action that produced this world, so the bot can animate it. */
@@ -812,6 +819,61 @@ export class BoardScene extends Phaser.Scene {
     if (this.world) this.show({ world: this.world, stepMs: 0 });
   }
 
+  /** The dotted path preview (first floors only): where the program would take LoopBot. */
+  private preview: PathDots | null = null;
+  private previewObjs: Phaser.GameObjects.Graphics[] = [];
+
+  setPreview(p: PathDots | null) {
+    this.preview = p;
+    if (this.ready && this.world) this.drawPreview(this.world);
+  }
+
+  private drawPreview(w: World) {
+    for (const o of this.previewObjs) if (o.scene) o.destroy();
+    this.previewObjs = [];
+    const p = this.preview;
+    if (!p || p.tiles.length === 0) return;
+    const at = (x: number, y: number) => {
+      const grid = this.toGrid(w, x, y);
+      const h = w.tiles[y]?.[x] ? surfaceHeight(w, { x, y }) : 0;
+      return { ...this.screen(grid, h), depth: (grid.rx + grid.ry) * 10 + 1 };
+    };
+    const dot = (sx: number, sy: number, depth: number, r: number, colour: number, alpha: number) => {
+      const g = this.add.graphics().setDepth(depth);
+      g.fillStyle(0x2b2440, alpha * 0.5);
+      g.fillEllipse(sx, sy + 1.4, r * 2.9, r * 1.7);
+      g.fillStyle(colour, alpha);
+      g.fillEllipse(sx, sy, r * 2.4, r * 1.4);
+      this.layer.add(g);
+      this.previewObjs.push(g);
+      return g;
+    };
+    for (let i = 1; i < p.tiles.length; i++) {
+      const a = at(p.tiles[i - 1].x, p.tiles[i - 1].y);
+      const b = at(p.tiles[i].x, p.tiles[i].y);
+      // a small dot at the edge between the tiles, a bigger one on the tile
+      dot((a.sx + b.sx) / 2, (a.sy + b.sy) / 2, Math.max(a.depth, b.depth), 3, C.eye, 0.6);
+      dot(b.sx, b.sy, b.depth, i === p.tiles.length - 1 ? 5.6 : 4.4, C.eye, 0.9);
+    }
+    if (p.crashAt) {
+      const c = at(p.crashAt.x, p.crashAt.y);
+      const edge = p.crashAt.facing ? this.screenFacing(p.crashAt.facing) : { fx: 0, fy: 0 };
+      const cx = c.sx + edge.fx * 0.75;
+      const cy = c.sy + edge.fy * 0.75;
+      // above the wall it would hit (one tile further back), so the cross is never hidden
+      const g = this.add.graphics().setDepth(c.depth + 15);
+      g.lineStyle(5.5, 0x2b2440, 0.5);
+      g.lineBetween(cx - 6, cy - 3.5, cx + 6, cy + 3.5);
+      g.lineBetween(cx - 6, cy + 3.5, cx + 6, cy - 3.5);
+      g.lineStyle(3.5, C.crash, 1);
+      g.lineBetween(cx - 6, cy - 3.5, cx + 6, cy + 3.5);
+      g.lineBetween(cx - 6, cy + 3.5, cx + 6, cy - 3.5);
+      this.layer.add(g);
+      this.previewObjs.push(g);
+    }
+    this.layer.sort('depth');
+  }
+
   show(u: BoardUpdate) {
     if (!this.ready) {
       this.pending = u;
@@ -827,6 +889,7 @@ export class BoardScene extends Phaser.Scene {
       this.drawnTiles = u.world.tiles;
     }
     this.fit();
+    this.drawPreview(u.world);
     // Twin Spires: only the bot that crashed looks crashed
     this.moveBot(prev, u.crashWho === 'twin' ? { ...u, crashed: false } : u);
     this.moveEcho(prev, u);

@@ -19,6 +19,8 @@ import { Board, snapshotBoard } from '../board/Board';
 import { shareImage } from '../share';
 import { canvasToBlob, drawShareCard } from '../shareImage';
 import { towerOf } from '../levels/towers';
+import { LEVELS } from '../levels';
+import { introPalette, newCommands, pathPreview } from './firstFloors';
 import type { BoardUpdate } from '../board/BoardScene';
 import { BackButton, Icon } from '../ui/Icon';
 import { fx } from '../audio/feedback';
@@ -547,12 +549,13 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
-  const palette = [
+  // Floors 1 to 5 show only the commands they have (src/editor/firstFloors.ts).
+  const palette = introPalette(level, [
     ...PALETTE_ORDER,
     ...EXTRA_ORDER.filter((c) => level.commands.includes(c)),
     ...CONTROL_ORDER.filter((c) => level.commands.includes(c)),
     ...FUNCTION_NAMES.filter((f) => (level.slots[f] ?? 0) > 0 && !(partner && f === PARTNER_ROUTINE)),
-  ];
+  ]);
   undoRef.current.run = run;
   undoRef.current.step = step;
   undoRef.current.addNth = (n) => {
@@ -575,7 +578,20 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
   const tipKey = tut && `${level.id}:${tut}`;
   const showTip = !!tut && tipKey !== tipDismissed;
   const pulse = (cmd: PaletteCommand) =>
-    (tut === 'tap' && cmd === 'forward') || (tut === 'turn' && (cmd === 'turn_left' || cmd === 'turn_right'));
+    ((tut === 'tap' || tut === 'more') && cmd === 'forward') ||
+    (tut === 'turn' && (cmd === 'turn_left' || cmd === 'turn_right')) ||
+    (tut === 'pick' && cmd === 'pick_up');
+  // A command this intro floor brings in wears a "New" badge until the floor is cleared.
+  const clearedBefore = (progress.stars[level.id] ?? 0) > 0;
+  const fresh = useMemo(
+    () => (clearedBefore || custom || daily || overflow ? new Set<string>() : newCommands(level.id, (id) => LEVELS.find((l) => l.id === id)?.commands)),
+    [level.id, clearedBefore, custom, daily, overflow],
+  );
+  // Floors 1 to 3: dotted footsteps show where the program will take LoopBot, until Run.
+  const preview = useMemo(
+    () => (progress.tutorial && !custom && !daily && !overflow && !playing && steps === 0 ? pathPreview(level, program) : null),
+    [progress.tutorial, custom, daily, overflow, playing, steps, level, program],
+  );
 
   return (
     <main className={`floor${tab === 'code' && typing ? ' typing-code' : ''}${overflow ? ' ovf-floor' : ''}`}>
@@ -647,7 +663,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
       </header>
 
       <section className={`board-wrap band-${level.band}`} data-flavour={flavourOf(level.band)}>
-        <Board update={board} rotateSignal={rotateSignal} band={level.band} />
+        <Board update={board} rotateSignal={rotateSignal} band={level.band} preview={preview} />
         <div className="step-counter" aria-live="polite">
           <span>
             {t('{used} / {slots} commands', { used: total, slots: Object.values(level.slots).reduce((a, b) => a + (b ?? 0), 0) })}
@@ -808,6 +824,9 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
                   {meta.glyph}
                 </span>
                 <span>{t(meta.label)}</span>
+                {fresh.has(cmd) && <span className="new-badge">{t('New')}</span>}
+                {/* Floor 1, empty program: a tapping finger shows where to start. */}
+                {tut === 'tap' && cmd === 'forward' && <TapHand />}
               </PaletteChip>
             );
           })}
@@ -897,5 +916,22 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
         />
       )}
     </main>
+  );
+}
+
+/** A finger that taps on the spot, drawn in SVG (still with Reduce motion: the CSS stops it moving). */
+function TapHand() {
+  return (
+    <span className="tap-hand" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="30" height="30">
+        <path
+          d="M9 11V5.5a1.5 1.5 0 0 1 3 0V10l4.6.9a2 2 0 0 1 1.6 2.2l-.6 4.6A3 3 0 0 1 14.6 20.3H11a3 3 0 0 1-2.4-1.2l-3.2-4.3a1.4 1.4 0 0 1 2.1-1.8L9 14.5z"
+          fill="#fff"
+          stroke="#1b1d2a"
+          strokeWidth="1.4"
+          strokeLinejoin="round"
+        />
+      </svg>
+    </span>
   );
 }
