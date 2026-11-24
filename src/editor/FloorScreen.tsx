@@ -31,6 +31,8 @@ import { ResultsCard } from './ResultsCard';
 import { cancellingTurns, partnerLine, spinNote, stepLine, twinNote, tutorialStep, TUTORIAL_TEXT } from './tutorial';
 import { track } from '../telemetry';
 import { FeedbackSheet } from '../FeedbackSheet';
+import { markSurveyDone, surveyDue } from '../survey';
+import { SurveySheet } from '../survey/SurveyCards';
 import { DIFFICULTY_LABEL, TWIST_ICON, TWIST_RULE, difficultyOn, shareText, shortDate, twistOn } from '../daily';
 import { msg, t, tn } from '../i18n';
 import { announce } from '../a11y/announce';
@@ -216,7 +218,9 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
     if (!customRef.current && !overflowRef.current) setProgress((p) => recordFail(p, level.id));
   }, [setProgress, level.id]);
   const [rotateSignal, setRotateSignal] = useState(0);
-  const [sheet, setSheet] = useState<'hints' | 'settings' | 'feedback' | null>(null);
+  const [sheet, setSheet] = useState<'hints' | 'settings' | 'feedback' | 'survey' | null>(null);
+  // The player survey link on the results card (Tower 1 Floor 5 on, until answered once).
+  const [offerSurvey, setOfferSurvey] = useState(() => !daily && !custom && !overflow && surveyDue(level.id));
   // Anonymous play stats for this visit to the floor (see src/telemetry.ts).
   const visit = useRef({ start: Date.now(), runs: 0, hints: 0, cleared: false });
   useEffect(() => {
@@ -834,6 +838,14 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
       )}
 
       {sheet === 'feedback' && <FeedbackSheet floor={level.id} floorTitle={level.title} onClose={() => setSheet(null)} />}
+      {sheet === 'survey' && (
+        <SurveySheet
+          floor={level.id}
+          floorTitle={level.title}
+          onSent={() => (markSurveyDone(), setOfferSurvey(false))}
+          onClose={() => setSheet(null)}
+        />
+      )}
 
       {showResults && outcome?.status === 'cleared' && (
         <ResultsCard
@@ -850,6 +862,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
           onRetry={reset}
           onNext={() => onGo(floorNumber)}
           onTower={onTower}
+          onSurvey={offerSurvey ? () => setSheet('survey') : undefined}
           custom={custom && { note: customNote, noPar: custom.noPar }}
           overflow={overflow && { floor: overflow.floor, record: !!climbNote?.record, brick: !!climbNote?.brick, streak: climbNote?.brick ? 3 : earned >= 3 ? Math.min(2, overflow.perfect + 1) : 0 }}
           onShareImage={

@@ -35,12 +35,14 @@ interface Props {
   overflow?: { floor: number; record: boolean; brick: boolean; streak: number };
   /** Share a picture: the solved board and program on tower floors, a spoiler-free card on the daily. */
   onShareImage?(): Promise<ShareResult>;
+  /** From Floor 5 on, until answered: a link to the three-tap player survey (src/survey). */
+  onSurvey?(): void;
 }
 
 const STAR_MS = 420;
 const HEADLINE = ['', msg('Floor cleared'), msg('Nice work!'), msg('Perfect run!')];
 
-export function ResultsCard({ floorNumber, tower = 1, floorCount, earned, prevBest, commands, steps, par, outro, onClose, onRetry, onNext, onTower, daily, custom, overflow, onShareImage }: Props) {
+export function ResultsCard({ floorNumber, tower = 1, floorCount, earned, prevBest, commands, steps, par, outro, onClose, onRetry, onNext, onTower, daily, custom, overflow, onShareImage, onSurvey }: Props) {
   const calm = reducedMotion();
   const [shown, setShown] = useState(calm ? 3 : 0);
   const starsRef = useRef<HTMLDivElement>(null);
@@ -268,6 +270,11 @@ export function ResultsCard({ floorNumber, tower = 1, floorCount, earned, prevBe
             </button>
             {!custom && (daily || onShareImage) && <ShareButton busy={sharing} onClick={share} />}
           </div>
+          {onSurvey && shown >= 3 && (
+            <button type="button" className="link-btn survey-link" onClick={() => (fx.tap(), onSurvey())}>
+              {t('Help shape LoopBot?')}
+            </button>
+          )}
         </div>
       </div>
     </div>
