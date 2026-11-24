@@ -15,6 +15,7 @@
   "goals": ["bot_on_exit"],
   "commands": ["forward"],
   "slots": { "main": 5 },
+  "starter": "forward",
   "par": { "commands": 3, "steps": 3 },
   "reference": "forward forward forward",
   "hints": [],

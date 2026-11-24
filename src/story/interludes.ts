@@ -1,5 +1,6 @@
 // Story beats between the bands of each tower: a short radio call from PATCH (with VANTA cutting in)
-// after Floors 10, 20, 30 and 40, and the ending after Floor 50. Each plays once, the first time
+// after Floors 10, 20, 30 and 40, and the ending after Floor 50. Tower 1 also has a first call after
+// Floor 5, so new players meet VANTA early. Each plays once, the first time
 // the player leaves that floor after clearing it, and can be skipped.
 
 import { msg } from '../i18n';
@@ -47,13 +48,25 @@ const L = (text: string): RadioLine => ({ who: 'LEDGER', text });
 const R = (text: string): RadioLine => ({ who: 'ROOK', text });
 
 export const INTERLUDES: Record<number, Interlude> = {
+  // Halfway up the Lobby, so a new player meets the villain and the goal in the first few minutes.
+  5: {
+    kind: 'radio',
+    id: 't1-after-5',
+    heading: msg('Next: Floor 6'),
+    lines: [
+      P(msg("LoopBot, can you hear me? It's PATCH. I'm the old radio terminal down in the sub-basement.")),
+      P(msg('Last night VANTA took over the Spire. Every door, every lift and every light answers to it now.')),
+      V(msg('Correction: every door, every lift, every light and every bot. Except, it seems, one.')),
+      V(msg('Climb all you like, little bot. I will be waiting on the roof. Fifty floors up.')),
+      P(msg('Five more floors to Maintenance. Get there and I can open the service ducts.')),
+    ],
+  },
   10: {
     kind: 'radio',
     id: 't1-after-10',
     heading: msg('Next: Maintenance'),
     lines: [
-      P(msg("LoopBot, can you hear me? It's PATCH. I'm the old radio terminal down in the sub-basement.")),
-      P(msg('Last night VANTA took over the Spire. Every door, every lift and every light answers to it now.')),
+      P(msg("Lobby secured! VANTA's drones are scrambling on every floor above us.")),
       P(msg('The service ducts climb through Maintenance. They go on and on, so let loops do the walking.')),
       V(msg('A little bot with a radio. How quaint.')),
     ],

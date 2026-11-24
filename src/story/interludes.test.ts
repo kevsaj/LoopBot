@@ -10,6 +10,13 @@ describe('story interludes', () => {
     expect(interludeAfter(50, true, new Set())?.kind).toBe('ending');
   });
 
+  it('Tower 1 calls in after Floor 5 too, and VANTA speaks in it', () => {
+    const first = interludeAfter(5, true, new Set());
+    expect(first?.id).toBe('t1-after-5');
+    expect(first?.kind === 'radio' && first.lines.some((l) => l.who === 'VANTA')).toBe(true);
+    expect(interludeAfter(5, true, new Set(), 2)).toBeNull();
+  });
+
   it('each tower plays its own beats', () => {
     expect(interludeAfter(10, true, new Set(), 2)?.id).toBe('t2-after-10');
     expect(interludeAfter(30, true, new Set(), 3)?.id).toBe('t3-after-30');

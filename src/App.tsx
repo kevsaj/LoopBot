@@ -12,7 +12,9 @@ import { initMusic, setMusicTheme, themeForFloor, themeForOverflow } from './aud
 import { useRewards } from './rewards/useRewards';
 import { Locker } from './rewards/Locker';
 import { Toasts } from './rewards/Toasts';
-import { applyLookCss, loadLook } from './rewards/looks';
+import { GiftCard } from './rewards/GiftCard';
+import { giftDue, markGiftOpened } from './rewards/gift';
+import { applyLookCss, loadLook, saveLook } from './rewards/looks';
 import type { Look } from './rewards/looks';
 import { refreshReminders } from './reminder';
 import { reducedMotion } from './fx/confetti';
@@ -40,6 +42,8 @@ import { packUnlocked } from './store/purchases';
 import { loadComeback, noteFirstDay, onNudgeTapped, recordWarmupClear, refreshNudge, saveComeback, warmupOpen, warmupTierFor } from './comeback';
 import type { ComebackState } from './comeback';
 import { warmupLevel } from './daily/warmup';
+import { exitAskDue, markExitAsked } from './survey';
+import { ExitCard } from './survey/SurveyCards';
 
 /** How deep each screen sits, for the direction of the slide between them. */
 const SCREEN_DEPTH = { title: 0, map: 1, maker: 1, overflow: 2, floor: 2, daily: 2, warmup: 2, custom: 2, climb: 3 } as const;
@@ -347,16 +351,34 @@ export default function App() {
   const level = levels[safeIndex];
   /** Leaving a tower floor: play the band's story beat first if it's due. */
   const leaveFloor = (next: () => void) => {
-    const due = interludeAfter(safeIndex + 1, (progress.stars[level.id] ?? 0) > 0, undefined, tower);
-    if (due) setBeat({ beat: due, then: next });
-    else next();
+    const cleared = (progress.stars[level.id] ?? 0) > 0;
+    // PATCH's first gift opens after Floor 3 (and after any story beat, though Floor 3 has none)
+    const then = giftDue(tower, safeIndex + 1, cleared) ? () => setGift({ then: next }) : next;
+    const due = interludeAfter(safeIndex + 1, cleared, undefined, tower);
+    if (due) setBeat({ beat: due, then });
+    else then();
   };
+  // Leaving one of the first floors for the map without ever clearing it asks, once, what stopped
+  // them (src/survey). Only right as they leave, by the button or Android Back; never on a later launch.
+  const [whyStop, setWhyStop] = useState<{ floor: string; title: string } | null>(null);
+  const prevScreen = useRef(screen);
+  useEffect(() => {
+    const from = prevScreen.current;
+    prevScreen.current = screen;
+    if (from === 'floor' && screen === 'map' && exitAskDue(level.id, (progress.stars[level.id] ?? 0) > 0)) {
+      markExitAsked();
+      setWhyStop({ floor: level.id, title: level.title });
+    } else if (screen !== 'map') setWhyStop(null);
+  }, [screen]); // eslint-disable-line react-hooks/exhaustive-deps
+  const closeWhyStop = useCallback(() => setWhyStop(null), []);
   // Achievements, unlocked looks and the toasts for anything new.
   const rewards = useRewards(t1ids, progress, daily);
   const [look, setLook] = useState<Look>(loadLook);
   const [locker, setLocker] = useState(false);
   // A story beat waiting to play before the next screen (PATCH's radio call, or the ending).
   const [beat, setBeat] = useState<{ beat: Beat; then: () => void } | null>(null);
+  // The Floor 3 gift card, waiting to show before the next screen.
+  const [gift, setGift] = useState<{ then: () => void } | null>(null);
   useEffect(() => applyLookCss(look), [look]);
   const openLocker = () => {
     setLocker(true);
@@ -372,6 +394,20 @@ export default function App() {
             markInterludeSeen(beat.beat.id);
             setBeat(null);
             beat.then();
+          }}
+        />
+      )}
+      {gift && (
+        <GiftCard
+          look={look}
+          onWear={(l) => {
+            saveLook(l);
+            setLook(l);
+          }}
+          onDone={() => {
+            markGiftOpened();
+            setGift(null);
+            gift.then();
           }}
         />
       )}
@@ -479,6 +515,7 @@ export default function App() {
           overflow={OVERFLOW_ON ? { best: overflow.best, locked: !packUnlocked('overflow'), onOpen: () => setScreen('overflow') } : undefined}
         />
         {settings && <SettingsSheet progress={progress} setProgress={setProgress} onClose={() => setSettings(false)} />}
+        {whyStop && !beat && <ExitCard floor={whyStop.floor} floorTitle={whyStop.title} onDone={closeWhyStop} />}
         {overlays}
         {elevator}
       </>

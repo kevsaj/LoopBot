@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import type Phaser from 'phaser';
-import type { BoardScene, BoardUpdate } from './BoardScene';
+import type { BoardScene, BoardUpdate, PathDots } from './BoardScene';
 import { fx } from '../audio/feedback';
 import { t } from '../i18n';
 import type { World } from '../sim/types';
@@ -32,6 +32,8 @@ interface Props {
   rotateSignal: number;
   /** The floor's band, which picks the board's palette. */
   band: string;
+  /** First floors: the dotted path the program would take, shown before a run. */
+  preview?: PathDots | null;
 }
 
 /** The board on screen now (there is only ever one), for the share image. */
@@ -41,11 +43,13 @@ export function snapshotBoard(): Promise<HTMLImageElement | null> {
 }
 
 /** Mounts the Phaser board inside React and pushes simulation snapshots into it. */
-export function Board({ update, rotateSignal, band }: Props) {
+export function Board({ update, rotateSignal, band, preview = null }: Props) {
   const host = useRef<HTMLDivElement>(null);
   const scene = useRef<BoardScene | null>(null);
   const latest = useRef(update);
   latest.current = update;
+  const latestPreview = useRef(preview);
+  latestPreview.current = preview;
 
   useEffect(() => {
     const el = host.current!;
@@ -66,6 +70,7 @@ export function Board({ update, rotateSignal, band }: Props) {
       game = createBoard(el, (s) => {
         scene.current = s;
         active = s;
+        s.setPreview(latestPreview.current);
         s.show(latest.current);
       });
       ro.observe(el);
@@ -84,6 +89,10 @@ export function Board({ update, rotateSignal, band }: Props) {
   useEffect(() => {
     scene.current?.show(update);
   }, [update]);
+
+  useEffect(() => {
+    scene.current?.setPreview(preview);
+  }, [preview]);
 
   // Colourful mode can be switched from Settings while a floor is open: repaint in the new colours.
   useEffect(

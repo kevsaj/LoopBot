@@ -10,6 +10,7 @@ import { burst, reducedMotion, stop } from '../fx/confetti';
 import { DEMO } from '../demo';
 import { shortDate } from '../daily';
 import { msg, t, tn } from '../i18n';
+import { earlyGoal } from '../rewards/gift';
 
 interface Props {
   floorNumber: number;
@@ -37,12 +38,14 @@ interface Props {
   overflow?: { floor: number; record: boolean; brick: boolean; streak: number };
   /** Share a picture: the solved board and program on tower floors, a spoiler-free card on the daily. */
   onShareImage?(): Promise<ShareResult>;
+  /** From Floor 5 on, until answered: a link to the three-tap player survey (src/survey). */
+  onSurvey?(): void;
 }
 
 const STAR_MS = 420;
 const HEADLINE = ['', msg('Floor cleared'), msg('Nice work!'), msg('Perfect run!')];
 
-export function ResultsCard({ floorNumber, tower = 1, floorCount, earned, prevBest, commands, steps, par, outro, onClose, onRetry, onNext, onTower, daily, custom, overflow, nudge, onShareImage }: Props) {
+export function ResultsCard({ floorNumber, tower = 1, floorCount, earned, prevBest, commands, steps, par, outro, onClose, onRetry, onNext, onTower, daily, custom, overflow, nudge, onShareImage, onSurvey }: Props) {
   const calm = reducedMotion();
   const [shown, setShown] = useState(calm ? 3 : 0);
   const starsRef = useRef<HTMLDivElement>(null);
@@ -121,6 +124,8 @@ export function ResultsCard({ floorNumber, tower = 1, floorCount, earned, prevBe
     if (yes) setNudgeNote(on ? t("Deal. If you don't drop by tomorrow, I'll send one reminder. Just one.") : t('Notifications are off for LoopBot. You can allow them in your phone settings.'));
   };
   const title = custom ? (custom.title ?? t('Your floor')) : overflow ? t('Overflow · Floor {n}', { n: overflow.floor }) : daily ? (daily.boss ? t('Sunday boss · {date}', { date: shortDate(daily.date) }) : t('Daily · {date}', { date: shortDate(daily.date) })) : t('Floor {n}', { n: floorNumber });
+  // Tower 1's first floors point at the next thing to aim for: a gift, PATCH's call, loops.
+  const goal = !daily && !custom && !overflow ? earlyGoal(tower, floorNumber, prevBest === 0, DEMO) : null;
   const tip =
     earned === 3
       ? null
@@ -184,6 +189,12 @@ export function ResultsCard({ floorNumber, tower = 1, floorCount, earned, prevBe
         </div>
         {tip && !custom?.note && <p className="tip">{tip}</p>}
         {outro && <p className="story">{outro}</p>}
+        {goal && (
+          <p className={`results-goal goal-${goal.icon}${shown >= 3 ? ' in' : ''}`}>
+            <Icon name={goal.icon} size={20} />
+            <span>{t(goal.text, goal.vars)}</span>
+          </p>
+        )}
         {!daily && shared && <p className="tip">{shared}</p>}
         {custom?.note && <p className="tip">{custom.note}</p>}
         {daily && <p className="tip">{shared ?? reminderNote ?? (daily.boss ? t('Same boss for everyone this Sunday. A new one arrives next week.') : t('Same puzzle for everyone today. A new one arrives at midnight.'))}</p>}
@@ -293,6 +304,11 @@ export function ResultsCard({ floorNumber, tower = 1, floorCount, earned, prevBe
             </button>
             {!custom && (daily || onShareImage) && <ShareButton busy={sharing} onClick={share} />}
           </div>
+          {onSurvey && shown >= 3 && (
+            <button type="button" className="link-btn survey-link" onClick={() => (fx.tap(), onSurvey())}>
+              {t('Help shape LoopBot?')}
+            </button>
+          )}
         </div>
       </div>
     </div>
