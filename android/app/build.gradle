@@ -18,6 +18,8 @@ def keystorePropsFile = rootProject.file('keystore.properties')
 def keystoreProps = new Properties()
 if (keystorePropsFile.exists()) keystorePropsFile.withInputStream { keystoreProps.load(it) }
 
+def useR8 = ((project.findProperty('loopbotR8') ?: System.getenv('LOOPBOT_R8')) ?: 'false').toString().toBoolean()
+
 android {
     namespace = "com.kisstudios.loopbot"
     compileSdk = rootProject.ext.compileSdkVersion
@@ -47,8 +49,14 @@ android {
     buildTypes {
         release {
             if (keystorePropsFile.exists()) signingConfig signingConfigs.release
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            // R8 (shrink + obfuscate the native Java/Kotlin code) is OFF unless asked for, so normal
+            // release builds stay exactly as they were. Turn it on with -PloopbotR8=true or the
+            // environment variable LOOPBOT_R8=true (CI does, to prove it builds; the Android release
+            // workflow has a "Shrink native code" box). Keep rules: proguard-rules.pro, plus the rules
+            // Capacitor, RevenueCat and the AndroidX libraries ship with themselves.
+            minifyEnabled useR8
+            shrinkResources useR8
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 }

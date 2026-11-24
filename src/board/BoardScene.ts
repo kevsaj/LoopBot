@@ -1848,6 +1848,11 @@ export function createBoard(parent: HTMLElement, onReady: (scene: BoardScene) =>
       scene,
       banner: false,
       render: { antialias: true },
+      // The board never uses Phaser's built-in FX (glow, blur, bloom...). Phaser would otherwise
+      // compile all of their shaders every time a floor opens, which is the slowest part of opening
+      // a floor on a cheap phone's GPU.
+      disablePreFX: true,
+      disablePostFX: true,
       // 30 frames a second is plenty for a turn-based board and about halves the CPU (and battery) it uses.
       // The limit is set a touch above 30 on purpose. Phaser draws a frame once 1000/limit ms have
       // passed, counted in whole screen refreshes: with exactly 30, two refreshes of a 60 Hz screen
