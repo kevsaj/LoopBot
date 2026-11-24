@@ -1322,6 +1322,28 @@ select:focus-visible {
 :root.reduce-motion .tap-hand {
   animation: none;
 }
+/* Floor 1's Run button carries the tapping finger before the first run. */
+.run-controls .pill.primary {
+  position: relative;
+}
+/* "Show me the next step" (Floors 1 to 5, after two misses): sits where the tutorial tip goes. */
+.step-help {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  width: 100%;
+  min-height: var(--tap);
+  padding: var(--sp-1) var(--sp-3);
+  border: 0;
+  border-radius: var(--r-md);
+  background: var(--warn);
+  color: #1b1d2a;
+  font-weight: 700;
+  font-size: var(--fs-sm);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  animation: bubble-in 0.3s ease-out;
+}
 
 /* --- tower map --- */
 .tower {

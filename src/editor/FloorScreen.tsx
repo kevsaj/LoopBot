@@ -20,7 +20,7 @@ import { shareImage } from '../share';
 import { canvasToBlob, drawShareCard } from '../shareImage';
 import { towerOf } from '../levels/towers';
 import { LEVELS } from '../levels';
-import { introPalette, newCommands, pathPreview } from './firstFloors';
+import { STEP_HELP_AFTER, introPalette, isIntroFloor, newCommands, nextStep, pathPreview } from './firstFloors';
 import type { BoardUpdate } from '../board/BoardScene';
 import { BackButton, Icon } from '../ui/Icon';
 import { fx } from '../audio/feedback';
@@ -230,6 +230,8 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
     };
   }, [level.id]);
   const [hasRun, setHasRun] = useState(false);
+  /** Failed runs this visit: after STEP_HELP_AFTER the first floors offer "Show me the next step". */
+  const [missed, setMissed] = useState(0);
   // The results card waits for the light-up wave; a reset or a new run cancels it.
   const resultsTimer = useRef<number | undefined>(undefined);
   useEffect(() => () => window.clearTimeout(resultsTimer.current), []);
@@ -322,6 +324,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
         // Screen readers: the terminal reads the error; then where LoopBot ended up.
         announce(describeBrief(world));
         fx.crash();
+        setMissed((n) => n + 1);
         fx.voice('uhoh', 0.35);
         fail();
       } else if (o.status === 'cleared') {
@@ -361,6 +364,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
         );
         announce(describeBrief(world));
         fx.denied();
+        setMissed((n) => n + 1);
         fail();
       }
     } else if (!ev) {
@@ -587,6 +591,20 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
     () => (clearedBefore || custom || daily || overflow ? new Set<string>() : newCommands(level.id, (id) => LEVELS.find((l) => l.id === id)?.commands)),
     [level.id, clearedBefore, custom, daily, overflow],
   );
+  // Floors 1 to 5: after two misses, offer to add the next right command (src/editor/firstFloors.ts).
+  const helpStep = useMemo(
+    () => (!custom && !daily && !overflow && !playing && missed >= STEP_HELP_AFTER && isIntroFloor(level.id) ? nextStep(level, program) : null),
+    [custom, daily, overflow, playing, missed, level, program],
+  );
+  const applyHelpStep = () => {
+    if (!helpStep) return;
+    fx.snap();
+    editor.setProgram(helpStep.program);
+    setMissed(0);
+    const meta = COMMAND_META[helpStep.added];
+    setTerminal(t('> added the next step: {command}. Press Run.', { command: `${meta.glyph} ${t(meta.label)}` }));
+    track({ type: 'hint', floor: level.id, tier: 0, free: true });
+  };
   // Floors 1 to 3: dotted footsteps show where the program will take LoopBot, until Run.
   const preview = useMemo(
     () => (progress.tutorial && !custom && !daily && !overflow && !playing && steps === 0 ? pathPreview(level, program) : null),
@@ -683,8 +701,13 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
         {/* The tutorial tip floats over the foot of the board, above PATCH's line, so it never takes
             room from the program (on short or zoomed-in phones that room is only a few lines). On those
             short screens the tip stands in for PATCH's line until it is tapped away or done. */}
-        <div className={`board-foot${showTip ? ' with-tip' : ''}`}>
-          {showTip && tut && (
+        <div className={`board-foot${showTip || helpStep ? ' with-tip' : ''}`}>
+          {helpStep && (
+            <button type="button" className="step-help" onClick={applyHelpStep}>
+              <Icon name="hint" size={18} /> {t('Show me the next step')}
+            </button>
+          )}
+          {showTip && tut && !helpStep && (
             // A tap anywhere on the tip hides it; the × is the button for keyboards and screen readers.
             <div className={`tutorial-bubble tut-${tut}`} role="status" onClick={() => (fx.tap(), setTipDismissed(tipKey))}>
               <span>{t(TUTORIAL_TEXT[tut])}</span>
@@ -703,6 +726,8 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
           <button type="button" className={`pill primary${playing ? ' on' : ''}${tut === 'run' ? ' pulse' : ''}`} onClick={run} aria-keyshortcuts="R" title={`${t('Run')} / ${t('Pause')} (R)`}>
             <Icon name={playing ? 'pause' : 'play'} size={18} />
             {playing ? t('Pause') : t('Run')}
+            {/* Floor 1 opens with forward already placed: the first thing to do is press Run. */}
+            {tut === 'run' && level.id === 't1-f01' && <TapHand />}
           </button>
           <button type="button" className="pill" onClick={step} aria-keyshortcuts="S" title={`${t('Step')} (S)`}>
             <Icon name="step" size={18} /> {t('Step')}
@@ -825,8 +850,8 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
                 </span>
                 <span>{t(meta.label)}</span>
                 {fresh.has(cmd) && <span className="new-badge">{t('New')}</span>}
-                {/* Floor 1, empty program: a tapping finger shows where to start. */}
-                {tut === 'tap' && cmd === 'forward' && <TapHand />}
+                {/* Floor 1: a tapping finger on forward when the program is empty or a run stopped short. */}
+                {(tut === 'tap' || tut === 'more') && cmd === 'forward' && <TapHand />}
               </PaletteChip>
             );
           })}

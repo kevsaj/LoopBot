@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { LEVELS } from '../levels';
 import { parseReference } from '../sim/program';
-import { introPalette, isIntroFloor, newCommands, pathPreview } from './firstFloors';
+import { introPalette, isIntroFloor, newCommands, nextStep, pathPreview } from './firstFloors';
 import { PALETTE_ORDER } from './commands';
 import type { LevelFile } from '../sim/types';
 
@@ -46,5 +46,39 @@ describe('first floors', () => {
   it('shows nothing for an empty program or after Floor 3', () => {
     expect(pathPreview(level('t1-f01'), { main: [] } as never)).toBeNull();
     expect(pathPreview(level('t1-f04'), prog('t1-f04', 'forward'))).toBeNull();
+  });
+
+  const acts = (p: { main: { kind: string; action?: string }[] }) => p.main.map((b) => b.action).join(' ');
+
+  it('adds the next right command after a working start', () => {
+    const n = nextStep(level('t1-f02'), prog('t1-f02', 'forward forward'));
+    expect(n?.kept).toBe(2);
+    expect(acts(n!.program)).toBe('forward forward turn_right');
+  });
+
+  it("drops the commands after the player's last good one", () => {
+    // the third forward walks into the wall: keep the two good moves, then the turn
+    const n = nextStep(level('t1-f02'), prog('t1-f02', 'forward forward forward forward'));
+    expect(acts(n!.program)).toBe('forward forward turn_right');
+  });
+
+  it('has nothing to add when the program already clears', () => {
+    expect(nextStep(level('t1-f01'), prog('t1-f01', 'forward forward forward'))).toBeNull();
+    expect(nextStep(level('t1-f01'), prog('t1-f01', 'forward forward forward forward forward'))).toBeNull();
+  });
+
+  it('keeps nothing when the first command is already wrong', () => {
+    const n = nextStep(level('t1-f02'), prog('t1-f02', 'turn_left forward'));
+    expect(n?.kept).toBe(0);
+    expect(acts(n!.program)).toBe('forward');
+  });
+
+  it('works on the empty program and on the crate floors', () => {
+    expect(acts(nextStep(level('t1-f01'), { main: [] } as never)!.program)).toBe('forward');
+    expect(acts(nextStep(level('t1-f03'), prog('t1-f03', 'forward'))!.program)).toBe('pick_up');
+  });
+
+  it('is only offered on the first floors', () => {
+    expect(nextStep(level('t1-f06'), prog('t1-f06', 'forward'))).toBeNull();
   });
 });

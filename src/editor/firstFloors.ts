@@ -7,8 +7,11 @@
 // - a command the floor brings in for the first time wears a "New" badge,
 // - a dotted path on the board previews where the program will take LoopBot (Floors 1 to 3).
 
-import type { Facing, LevelFile, PaletteCommand, Program, World } from '../sim/types';
+import type { Action, Facing, LevelFile, PaletteCommand, Program, World } from '../sim/types';
 import { Runner } from '../sim/interpreter';
+import { shortestActionPath } from '../sim/solver';
+import { applyAction, cloneWorld, createWorld, goalsMet } from '../sim/world';
+import { makeBlock } from '../sim/program';
 
 /** Tower 1's opening floors, in order. */
 export const INTRO_FLOORS = ['t1-f01', 't1-f02', 't1-f03', 't1-f04', 't1-f05'];
@@ -70,4 +73,50 @@ export function pathPreview(level: LevelFile, program: Program, maxSteps = 60): 
     crashAt = { x: w.bot.x, y: w.bot.y, facing: w.bot.facing };
   }
   return { tiles, crashAt, clears: o?.status === 'cleared' };
+}
+
+/** Failed runs in one visit before the floor offers to show the next step. */
+export const STEP_HELP_AFTER = 2;
+
+export interface NextStep {
+  /** The program with the player's working start kept, anything after it dropped, and one right command added. */
+  program: Program;
+  /** The command that was added. */
+  added: Action;
+  /** How many of the player's commands were kept. */
+  kept: number;
+}
+
+/**
+ * "Show me the next step" on the first floors: keep as much of the player's own program as is
+ * still on a shortest way to the clear, drop the rest, and add the one command that comes
+ * next on the shortest way from there. Only for the intro floors, whose programs are plain lists of
+ * commands. Null when there's nothing to add (the program already clears) or no way on.
+ */
+export function nextStep(level: LevelFile, program: Program): NextStep | null {
+  if (!isIntroFloor(level.id)) return null;
+  const main = program.main;
+  if (main.some((b) => b.kind !== 'action')) return null;
+  const actions = main.map((b) => (b as Extract<typeof b, { kind: 'action' }>).action);
+  const slots = level.slots.main ?? 0;
+  // Worlds after each working prefix: prefix k = the player's first k commands, run without an error.
+  const worlds: World[] = [createWorld(level)];
+  for (const a of actions) {
+    const w = cloneWorld(worlds[worlds.length - 1]);
+    if (!applyAction(w, a).ok) break;
+    // The run would clear here, so there is nothing to show.
+    if (goalsMet(w)) return null;
+    worlds.push(w);
+  }
+  // Keep the player's start only while it is still on a shortest way through. A start that could
+  // still finish in the slots but only by undoing itself (turn left, then turn right) is not kept,
+  // so the help never teaches a wasted move.
+  const best = shortestActionPath(level, 20_000)?.length ?? Infinity;
+  for (let k = worlds.length - 1; k >= 0; k--) {
+    const rest = shortestActionPath(level, 20_000, worlds[k]);
+    if (!rest || rest.length === 0 || k + rest.length > Math.min(slots, best)) continue;
+    const added = rest[0];
+    return { program: { ...program, main: [...main.slice(0, k), makeBlock(added)] }, added, kept: k };
+  }
+  return null;
 }
