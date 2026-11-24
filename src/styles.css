@@ -17,6 +17,43 @@
   --flow: #e07a9a;
   --fn: #c9b458;
   --row-h: 48px;
+
+  /* --- design tokens: every screen draws its sizes from these --- */
+  /* type scale */
+  --fs-2xs: 11px; /* tags, kickers, tiny counts */
+  --fs-xs: 12px; /* captions, meta lines */
+  --fs-sm: 13px; /* secondary text */
+  --fs-md: 14px; /* small buttons, chips */
+  --fs-base: 15px; /* body text */
+  --fs-input: 16px; /* text inputs (16px or more, so iOS never zooms on focus) */
+  --fs-lg: 17px; /* row labels, screen titles */
+  --fs-xl: 18px; /* main buttons */
+  --fs-2xl: 20px; /* section headings, dialog titles */
+  --fs-3xl: 24px; /* big numbers, icons */
+  --fs-4xl: 26px; /* full-screen titles */
+  /* spacing scale */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+  /* corner radii */
+  --r-xs: 4px; /* tags */
+  --r-sm: 8px; /* small tiles, inputs */
+  --r-md: 12px; /* rows, program lines */
+  --r-lg: 16px; /* cards, the board frame */
+  --r-xl: 20px; /* dialogs, hero cards */
+  --r-pill: 999px; /* buttons, chips, toasts */
+  /* sizes */
+  --tap: 44px; /* the smallest touch target */
+  --header-h: 56px;
+  /* surfaces */
+  --card: var(--panel);
+  --card-line: rgba(255, 255, 255, 0.06);
+  --scrim: rgba(8, 9, 18, 0.6);
+  --ease-out: cubic-bezier(0.2, 1, 0.3, 1);
+
   color-scheme: dark;
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   -webkit-tap-highlight-color: transparent;
@@ -80,24 +117,69 @@ select:focus-visible {
   background: transparent;
   color: var(--quiet);
   border: 0;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   padding: 0;
   width: max-content;
 }
 .floor-name {
   margin: 0;
   font-weight: 700;
-  font-size: 17px;
+  font-size: var(--fs-lg);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .icon-btn {
-  width: 44px;
-  height: 44px;
-  border-radius: 22px;
+  position: relative;
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: var(--tap);
+  height: var(--tap);
+  padding: 0;
+  border-radius: var(--r-pill);
   border: 1px solid var(--line);
   background: var(--panel);
+  color: var(--ink);
+}
+.icon-btn:active {
+  transform: scale(0.94);
+}
+
+/* --- the shared icon set (src/ui/Icon.tsx) --- */
+.icon {
+  flex: none;
+  display: inline-block;
+  vertical-align: -0.2em;
+}
+/* Buttons that pair an icon with a word keep them on one line, centred together. */
+.pill,
+.hint-btn,
+.rotate-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+/* --- one header for every screen: round back button, a context line, the title, actions --- */
+.topbar .back-round {
+  margin-left: -4px;
+}
+.back-round .icon {
+  margin-left: -2px; /* the chevron's weight sits left of its box */
+}
+.screen-kicker {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  color: var(--quiet);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* --- board --- */
@@ -106,7 +188,7 @@ select:focus-visible {
   flex: 0 0 36%;
   min-height: 170px;
   margin: 0 12px;
-  border-radius: 14px;
+  border-radius: var(--r-lg);
   overflow: hidden;
   /* Lobby dusk: violet sky fading to a warm glow, with a soft sun behind the board */
   background:
@@ -191,7 +273,7 @@ select:focus-visible {
   position: absolute;
   top: 8px;
   left: 10px;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--quiet);
   font-variant-numeric: tabular-nums;
 }
@@ -202,10 +284,10 @@ select:focus-visible {
   right: 6px;
   min-height: 36px;
   padding: 0 12px;
-  border-radius: 18px;
+  border-radius: var(--r-pill);
   border: 1px solid var(--line);
   background: rgba(35, 38, 58, 0.85);
-  font-size: 12px;
+  font-size: var(--fs-xs);
 }
 /* The foot of the board: the tutorial tip (when there is one) stacked over the terminal line. */
 .board-foot {
@@ -220,10 +302,10 @@ select:focus-visible {
 }
 .terminal {
   padding: 6px 10px;
-  border-radius: 8px;
+  border-radius: var(--r-sm);
   background: rgba(8, 9, 14, 0.78);
   font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
-  font-size: 12.5px;
+  font-size: var(--fs-xs);
   color: #b8f5d8;
   min-height: 30px;
 }
@@ -250,7 +332,7 @@ select:focus-visible {
 .pill {
   flex: 1;
   min-height: 48px;
-  border-radius: 24px;
+  border-radius: var(--r-pill);
   border: 1px solid var(--line);
   background: var(--panel);
   font-weight: 600;
@@ -302,13 +384,13 @@ select:focus-visible {
   min-height: 40px;
   min-width: 44px;
   padding: 0 8px;
-  border-radius: 10px;
+  border-radius: var(--r-md);
   border: 0;
   background: transparent;
-  font-size: 18px;
+  font-size: var(--fs-xl);
 }
 .tab-tool.clear {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--quiet);
 }
 .tab-tool.clear.confirm {
@@ -339,7 +421,7 @@ select:focus-visible {
 .row {
   position: relative;
   height: var(--row-h);
-  border-radius: 10px;
+  border-radius: var(--r-md);
   touch-action: pan-y;
 }
 .row-btn {
@@ -352,19 +434,19 @@ select:focus-visible {
   padding: 0;
   background: transparent;
   text-align: left;
-  border-radius: 10px;
+  border-radius: var(--r-md);
 }
 .swipe-bg {
   position: absolute;
   inset: 0;
-  border-radius: 10px;
+  border-radius: var(--r-md);
   background: #5a2a32;
   color: #ffb3b3;
   display: flex;
   align-items: center;
   justify-content: flex-end;
   padding-right: 16px;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   font-weight: 600;
 }
 .swipe-bg.armed {
@@ -377,7 +459,7 @@ select:focus-visible {
   gap: 10px;
   height: 100%;
   padding: 0 12px;
-  border-radius: 10px;
+  border-radius: var(--r-md);
   background: var(--panel-2);
   border: 1px solid var(--line);
   border-left: 6px solid var(--tone, var(--line));
@@ -390,14 +472,14 @@ select:focus-visible {
 }
 .line-no {
   width: 18px;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--quiet);
   font-variant-numeric: tabular-nums;
 }
 .glyph {
   width: 22px;
   text-align: center;
-  font-size: 18px;
+  font-size: var(--fs-xl);
   color: var(--tone, var(--ink));
 }
 .line-label {
@@ -423,10 +505,10 @@ select:focus-visible {
   content: attr(data-cancel);
   margin-left: auto;
   padding: 2px 8px;
-  border-radius: 8px;
+  border-radius: var(--r-sm);
   background: rgba(242, 193, 78, 0.16);
   color: var(--warn);
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   letter-spacing: 1px;
 }
@@ -487,7 +569,7 @@ select:focus-visible {
   align-items: center;
   gap: 2px;
   background: #4a2030;
-  border-radius: 999px;
+  border-radius: var(--r-pill);
   padding: 2px;
   touch-action: manipulation;
 }
@@ -498,7 +580,7 @@ select:focus-visible {
   border: 0;
   background: #6a2a36;
   color: var(--ink);
-  font-size: 18px;
+  font-size: var(--fs-xl);
   font-weight: 700;
 }
 .times button:disabled {
@@ -520,18 +602,18 @@ select:focus-visible {
   align-items: center;
   gap: 4px;
   background: #4a2030;
-  border-radius: 999px;
+  border-radius: var(--r-pill);
   padding: 2px;
   touch-action: manipulation;
 }
 .cond button {
   height: 34px;
-  border-radius: 999px;
+  border-radius: var(--r-pill);
   border: 0;
   background: #6a2a36;
   color: var(--ink);
   font-weight: 700;
-  font-size: 14px;
+  font-size: var(--fs-md);
   padding: 0 12px;
 }
 .cond .cond-not {
@@ -550,12 +632,12 @@ select:focus-visible {
   height: 30px;
 }
 .row.else-row .row-btn {
-  border-radius: 4px;
+  border-radius: var(--r-xs);
   background: #4a2030;
   border-left: 6px solid var(--flow);
   color: #e9b9c6;
   font-weight: 800;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   letter-spacing: 0.06em;
   text-transform: uppercase;
   text-align: left;
@@ -569,7 +651,7 @@ select:focus-visible {
   background: #4a2030;
   border-left: 6px solid var(--flow);
   color: #e9b9c6;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   padding-left: 10px;
 }
 .row.loop-foot.empty {
@@ -579,7 +661,7 @@ select:focus-visible {
 .row.loop-foot.empty .row-btn {
   border: 1.5px dashed var(--flow);
   background: transparent;
-  border-radius: 10px;
+  border-radius: var(--r-md);
 }
 /* Short phones: slimmer rows so a loop and its body fit in the program box. */
 @media (max-height: 820px) {
@@ -638,16 +720,16 @@ select:focus-visible {
   align-items: center;
   gap: 12px;
   padding: 6px 6px 6px 14px;
-  border-radius: 24px;
+  border-radius: var(--r-pill);
   background: #0e1018;
   border: 1px solid var(--line);
-  font-size: 13px;
+  font-size: var(--fs-sm);
   z-index: 3;
 }
 .undo-toast button {
   min-height: 40px;
   padding: 0 16px;
-  border-radius: 20px;
+  border-radius: var(--r-pill);
   border: 0;
   background: var(--accent);
   color: var(--accent-ink);
@@ -658,7 +740,7 @@ select:focus-visible {
   margin: 0;
   padding: 8px 0;
   font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
-  font-size: 14px;
+  font-size: var(--fs-md);
   line-height: 1.7;
 }
 .type-btn {
@@ -672,7 +754,7 @@ select:focus-visible {
 .code-edit-area {
   display: flex;
   border: 1px solid #3a4266;
-  border-radius: 10px;
+  border-radius: var(--r-md);
   background: #11142a;
   overflow: auto;
   max-height: calc(46vh / var(--z, 1));
@@ -682,7 +764,7 @@ select:focus-visible {
   margin: 0;
   padding: 8px 0;
   font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
-  font-size: 14px;
+  font-size: var(--fs-md);
   line-height: 1.7;
 }
 .code-gutter {
@@ -713,7 +795,7 @@ select:focus-visible {
 .code-error {
   margin: 8px 4px 0;
   color: #ff9a9a;
-  font-size: 14px;
+  font-size: var(--fs-md);
 }
 .code-actions {
   display: flex;
@@ -723,7 +805,7 @@ select:focus-visible {
 }
 .code-line {
   padding: 0 8px;
-  border-radius: 6px;
+  border-radius: var(--r-sm);
   white-space: pre;
 }
 .code-no {
@@ -745,7 +827,7 @@ select:focus-visible {
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 6px;
   padding: 8px;
-  border-radius: 12px;
+  border-radius: var(--r-md);
   background: var(--panel);
 }
 .chip {
@@ -756,11 +838,11 @@ select:focus-visible {
   align-items: center;
   justify-content: center;
   gap: 0;
-  border-radius: 10px;
+  border-radius: var(--r-md);
   border: 1px solid var(--line);
   border-bottom: 3px solid var(--tone);
   background: var(--panel-2);
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-weight: 600;
   padding: 2px;
   white-space: nowrap;
@@ -803,7 +885,7 @@ select:focus-visible {
   width: min(360px, 100%);
   background: var(--panel);
   border: 1px solid var(--line);
-  border-radius: 18px;
+  border-radius: var(--r-xl);
   padding: 20px;
   text-align: center;
   animation: pop 0.25s cubic-bezier(0.2, 1.4, 0.4, 1);
@@ -816,7 +898,7 @@ select:focus-visible {
 }
 .results h2 {
   margin: 0 0 8px;
-  font-size: 20px;
+  font-size: var(--fs-2xl);
 }
 .results {
   position: relative;
@@ -828,7 +910,7 @@ select:focus-visible {
 .results-floor {
   margin: 0;
   color: var(--quiet);
-  font-size: 12px;
+  font-size: var(--fs-xs);
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
@@ -932,8 +1014,8 @@ select:focus-visible {
   min-height: 24px;
   max-width: 100%;
   padding: 3px 10px;
-  border-radius: 12px;
-  font-size: 12px;
+  border-radius: var(--r-pill);
+  font-size: var(--fs-xs);
   font-weight: 700;
   /* Leading is split evenly above and below, so this stays centred; it only spaces the lines
      when a long badge (French, big system font) has to wrap inside itself. */
@@ -947,11 +1029,6 @@ select:focus-visible {
 .badge.first {
   background: var(--panel-2);
   color: var(--accent);
-}
-.score .tick {
-  width: 18px;
-  color: var(--good);
-  font-weight: 800;
 }
 .pill.nudge {
   animation: nudge 1.6s ease-in-out 0.6s infinite;
@@ -973,33 +1050,74 @@ select:focus-visible {
   pointer-events: none;
   z-index: 20;
 }
+/* Commands and steps: two compact chips, green when par is met. */
 .score {
-  margin: 10px auto;
-  border-collapse: collapse;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  margin: var(--sp-3) 0 var(--sp-2);
   font-variant-numeric: tabular-nums;
 }
-.score td {
-  padding: 4px 10px;
+.score-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  min-height: 32px;
+  padding: 6px 12px;
+  border-radius: var(--r-pill);
+  background: rgba(255, 255, 255, 0.06);
+  font-size: var(--fs-sm);
 }
-.score .par {
+.score-chip.met {
+  background: rgba(90, 209, 164, 0.14);
+}
+.score-label {
   color: var(--quiet);
+}
+.score-n {
+  font-weight: 800;
+  font-size: var(--fs-base);
+}
+.score-par {
+  color: var(--quiet);
+  font-size: var(--fs-xs);
+}
+.score-tick {
+  align-self: center;
+  color: var(--good);
 }
 .tip,
 .story {
   color: var(--quiet);
-  font-size: 13px;
+  font-size: var(--fs-sm);
 }
 .results-actions {
   display: flex;
-  gap: 8px;
-  margin-top: 12px;
+  gap: var(--sp-2);
+  margin-top: var(--sp-3);
 }
 .results-actions .pill {
   white-space: nowrap;
-  padding: 0 10px;
+  padding: 0 var(--sp-3);
 }
-.results-actions .pill.primary {
-  flex: 1.5;
+/* The results card: one big main action (Next floor / Done), then the smaller ones under it. */
+.results:not(.sheet) > .results-actions {
+  flex-direction: column;
+}
+.results-main {
+  flex: none;
+  width: 100%;
+  min-height: 52px;
+  font-size: var(--fs-xl);
+}
+.results-more {
+  display: flex;
+  gap: var(--sp-2);
+}
+.results-more .pill {
+  min-height: 44px;
+  font-size: var(--fs-md);
 }
 
 /* Landscape and tablet: board left, program right */
@@ -1027,11 +1145,11 @@ select:focus-visible {
 /* --- hints, settings, tutorial --- */
 .hint-btn {
   min-height: 44px;
-  padding: 0 12px;
-  border-radius: 22px;
+  padding: 0 10px 0 8px;
+  border-radius: var(--r-pill);
   border: 1px solid var(--line);
   background: var(--panel);
-  font-size: 13px;
+  font-size: var(--fs-sm);
   font-weight: 600;
   display: flex;
   align-items: center;
@@ -1040,10 +1158,10 @@ select:focus-visible {
 .hint-count {
   min-width: 20px;
   height: 20px;
-  border-radius: 10px;
+  border-radius: var(--r-pill);
   background: var(--warn);
   color: #2a1f00;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   line-height: 20px;
 }
 .sheet {
@@ -1065,18 +1183,18 @@ select:focus-visible {
   flex-direction: column;
   gap: 2px;
   padding: 10px 12px;
-  border-radius: 10px;
+  border-radius: var(--r-md);
   background: var(--panel-2);
 }
 .hint-tier {
-  font-size: 11px;
+  font-size: var(--fs-2xs);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--warn);
 }
 .hint-text.code {
   font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
-  font-size: 13px;
+  font-size: var(--fs-sm);
 }
 .sheet .pill:disabled {
   opacity: 0.4;
@@ -1106,11 +1224,11 @@ select:focus-visible {
   margin: 0;
   padding: 7px 8px 7px 12px;
   border: 0;
-  border-radius: 10px;
+  border-radius: var(--r-md);
   background: var(--accent);
   color: var(--accent-ink);
   font-weight: 600;
-  font-size: 13.5px;
+  font-size: var(--fs-sm);
   line-height: 1.3;
   text-align: left;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
@@ -1128,7 +1246,7 @@ select:focus-visible {
   border: 0;
   background: transparent;
   color: inherit;
-  font-size: 17px;
+  font-size: var(--fs-lg);
   line-height: 1.1;
   opacity: 0.65;
 }
@@ -1169,7 +1287,7 @@ select:focus-visible {
 .tower-stars {
   color: var(--warn);
   font-weight: 700;
-  font-size: 14px;
+  font-size: var(--fs-md);
 }
 .tower-scroll {
   flex: 1;
@@ -1179,7 +1297,7 @@ select:focus-visible {
 .tower-band {
   text-align: center;
   color: var(--quiet);
-  font-size: 12px;
+  font-size: var(--fs-xs);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   margin: 8px 0 12px;
@@ -1203,7 +1321,7 @@ select:focus-visible {
   align-items: center;
   gap: 12px;
   padding: 0 14px;
-  border-radius: 10px;
+  border-radius: var(--r-md);
   border: 1px solid var(--line);
   background: var(--panel);
   text-align: left;
@@ -1319,7 +1437,7 @@ select:focus-visible {
   align-items: center;
   gap: 10px;
   padding: 0 16px 6px;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--quiet);
 }
 .tower-progress-bar {
@@ -1371,13 +1489,13 @@ select:focus-visible {
   width: 100%;
   max-width: 360px;
   min-height: 48px;
-  font-size: 16px;
+  font-size: var(--fs-input);
   box-shadow: 0 6px 20px rgba(124, 196, 255, 0.25);
 }
 .tower-note {
   margin: 0;
   color: var(--warn);
-  font-size: 14px;
+  font-size: var(--fs-md);
   animation: headline 0.3s ease;
 }
 
@@ -1428,7 +1546,7 @@ select:focus-visible {
 .tower-floor.boss .tf-title::after {
   content: ' · boss';
   color: var(--bad);
-  font-size: 12px;
+  font-size: var(--fs-xs);
 }
 .tf-num {
   width: 26px;
@@ -1504,16 +1622,7 @@ select:focus-visible {
   border-radius: 0 0 12px 12px;
   background: #121320;
   color: var(--quiet);
-  font-size: 12px;
-}
-.back-btn {
-  background: transparent;
-  border: 0;
-  padding: 0;
-  color: var(--quiet);
-  font-size: 12px;
-  text-align: left;
-  min-height: 24px;
+  font-size: var(--fs-xs);
 }
 
 /* --- story lines --- */
@@ -1528,8 +1637,8 @@ select:focus-visible {
   margin-right: 8px;
   /* Letter spacing also trails the last letter, so the right side gives that back. */
   padding: 0 calc(6px - 0.06em) 0 6px;
-  border-radius: 4px;
-  font-size: 11px;
+  border-radius: var(--r-xs);
+  font-size: var(--fs-2xs);
   font-weight: 700;
   letter-spacing: 0.06em;
   line-height: 16px;
@@ -1563,16 +1672,16 @@ select:focus-visible {
 /* Web demo */
 .tower-band.demo-more {
   border: 1px dashed var(--line);
-  border-radius: 10px;
+  border-radius: var(--r-md);
   padding: 18px 8px;
   margin: 4px 12px 14px;
 }
 .demo-end {
   margin: 10px 0 0;
   padding: 10px 12px;
-  border-radius: 10px;
+  border-radius: var(--r-md);
   background: rgba(63, 214, 193, 0.12);
-  font-size: 14px;
+  font-size: var(--fs-md);
   line-height: 1.4;
 }
 
@@ -1626,7 +1735,7 @@ select:focus-visible {
   top: calc(10px + env(safe-area-inset-top));
   right: calc(64px + env(safe-area-inset-right));
   z-index: 2;
-  font-size: 20px;
+  font-size: var(--fs-2xl);
   animation: title-fade 0.3s ease 1.3s both;
 }
 :root .icon-btn.title-candy.on {
@@ -1699,7 +1808,7 @@ select:focus-visible {
 .title-sub {
   margin: 0;
   color: #e3dcf2;
-  font-size: 15px;
+  font-size: var(--fs-base);
   opacity: 0.85;
   animation: title-up 0.45s cubic-bezier(0.2, 1, 0.3, 1) 1.05s both;
 }
@@ -1720,13 +1829,13 @@ select:focus-visible {
   gap: 2px;
   padding: 8px 16px;
   min-height: 64px;
-  font-size: 20px;
+  font-size: var(--fs-2xl);
   font-weight: 800;
   box-shadow: 0 8px 26px rgba(124, 196, 255, 0.35);
   animation: title-pop 0.4s cubic-bezier(0.3, 1.5, 0.5, 1) 1.2s both;
 }
 .title-play-floor {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   font-weight: 600;
   opacity: 0.75;
 }
@@ -1737,7 +1846,7 @@ select:focus-visible {
 }
 .title-stats {
   color: var(--warn);
-  font-size: 13px;
+  font-size: var(--fs-sm);
   margin-left: 6px;
 }
 /* Tapped during the intro, or already played this session: everything in place at once. */
@@ -1854,7 +1963,7 @@ select:focus-visible {
 }
 .settings-head h2 {
   margin: 0;
-  font-size: 26px;
+  font-size: var(--fs-4xl);
   font-weight: 800;
   letter-spacing: -0.01em;
 }
@@ -1864,9 +1973,11 @@ select:focus-visible {
   width: 48px;
   height: 48px;
   border: 0;
+  display: grid;
+  place-items: center;
   border-radius: 50%;
   background: none;
-  font-size: 22px;
+  color: var(--ink);
 }
 .settings-close:active {
   background: var(--panel);
@@ -1878,7 +1989,7 @@ select:focus-visible {
 }
 .set-section {
   margin: 20px 4px 10px;
-  font-size: 20px;
+  font-size: var(--fs-2xl);
   font-weight: 800;
 }
 .set-item {
@@ -1890,38 +2001,38 @@ select:focus-visible {
   gap: 12px;
   min-height: 56px;
   padding: 0 16px;
-  border-radius: 14px;
+  border-radius: var(--r-lg);
   background: var(--panel);
   color: var(--ink);
   text-decoration: none;
-  font-size: 17px;
+  font-size: var(--fs-lg);
 }
 .set-label {
   flex: 1;
 }
 .set-value {
   color: var(--quiet);
-  font-size: 15px;
+  font-size: var(--fs-base);
 }
 .set-link:active {
   background: var(--panel-2);
 }
 .set-chevron {
   color: var(--quiet);
-  font-size: 26px;
+  font-size: var(--fs-4xl);
   line-height: 1;
   margin-top: -3px;
 }
 .set-caption {
   margin: 8px 16px 0;
   color: var(--quiet);
-  font-size: 14px;
+  font-size: var(--fs-md);
   line-height: 1.35;
 }
 /* Collapsible groups: a header card per group (icon, name, what's inside), rows tucked under it. */
 .set-group {
   margin-bottom: 10px;
-  border-radius: 16px;
+  border-radius: var(--r-lg);
   background: var(--panel);
 }
 .set-group-title {
@@ -1936,7 +2047,7 @@ select:focus-visible {
   min-height: 64px;
   padding: 10px 16px;
   border: 0;
-  border-radius: 16px;
+  border-radius: var(--r-lg);
   background: none;
   color: var(--ink);
   font: inherit;
@@ -1956,10 +2067,18 @@ select:focus-visible {
   place-items: center;
   width: 40px;
   height: 40px;
-  border-radius: 12px;
+  border-radius: var(--r-md);
   background: var(--panel-2);
-  font-size: 20px;
+  color: #fff;
 }
+/* Each group has its own tint, so the list reads at a glance. */
+.set-group-icon.icon-sound { background: #d9577a; }
+.set-group-icon.icon-look { background: #8a6fe0; }
+.set-group-icon.icon-play { background: #3f9e7b; }
+.set-group-icon.icon-shop { background: #c98a2e; }
+.set-group-icon.icon-progress { background: #4f8fdc; }
+.set-group-icon.icon-privacy { background: #5d6585; }
+.set-group-icon.icon-help { background: #2e9cb3; }
 .set-group-text {
   flex: 1;
   min-width: 0;
@@ -1968,19 +2087,18 @@ select:focus-visible {
   gap: 2px;
 }
 .set-group-name {
-  font-size: 18px;
+  font-size: var(--fs-xl);
   font-weight: 800;
 }
 .set-group-sub {
   color: var(--quiet);
-  font-size: 14px;
+  font-size: var(--fs-md);
   line-height: 1.3;
 }
 .set-group-chevron {
   flex: none;
+  display: grid;
   color: var(--quiet);
-  font-size: 26px;
-  line-height: 1;
   transition: transform 0.18s ease;
 }
 .set-group.open .set-group-chevron {
@@ -2009,12 +2127,12 @@ select:focus-visible {
 .set-label-sub {
   display: block;
   color: var(--quiet);
-  font-size: 13px;
+  font-size: var(--fs-sm);
 }
 .settings-version {
   margin: 18px 0 0;
   color: var(--quiet);
-  font-size: 14px;
+  font-size: var(--fs-md);
   text-align: center;
 }
 @keyframes set-group-in {
@@ -2038,7 +2156,7 @@ select:focus-visible {
   width: 52px;
   height: 30px;
   margin: 0;
-  border-radius: 15px;
+  border-radius: var(--r-pill);
   background: var(--line);
   cursor: pointer;
   transition: background 0.18s ease;
@@ -2096,11 +2214,11 @@ select:focus-visible {
 .fb-mood {
   min-height: 40px;
   padding: 0 12px;
-  border-radius: 20px;
+  border-radius: var(--r-pill);
   border: 1px solid var(--line);
   background: var(--panel-2);
   color: var(--ink);
-  font-size: 14px;
+  font-size: var(--fs-md);
   font-weight: 600;
 }
 .fb-mood.on {
@@ -2112,17 +2230,17 @@ select:focus-visible {
   width: 100%;
   box-sizing: border-box;
   padding: 10px 12px;
-  border-radius: 12px;
+  border-radius: var(--r-md);
   border: 1px solid var(--line);
   background: var(--panel-2);
   color: var(--ink);
   font: inherit;
-  font-size: 16px; /* 16px stops mobile browsers zooming in on focus */
+  font-size: var(--fs-input); /* 16px stops mobile browsers zooming in on focus */
   resize: vertical;
 }
 .fb-note {
   margin: 8px 2px 0;
-  font-size: 12px;
+  font-size: var(--fs-xs);
 }
 .fb-note a,
 .fb-error a {
@@ -2148,7 +2266,7 @@ button.set-row {
   width: 100%;
   border: 0;
   font: inherit;
-  font-size: 17px;
+  font-size: var(--fs-lg);
   text-align: left;
 }
 
@@ -2171,8 +2289,11 @@ button.set-row {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 15px;
+  font-size: var(--fs-base);
   font-weight: 800;
+}
+.daily-sub:empty {
+  display: none;
 }
 .daily-sub {
   display: flex;
@@ -2180,19 +2301,19 @@ button.set-row {
   justify-content: space-between;
   gap: 8px;
   padding-left: 34px;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-weight: 600;
   color: var(--quiet);
 }
 .daily-cal {
   flex: 0 0 26px;
   height: 26px;
-  border-radius: 6px;
+  border-radius: var(--r-sm);
   display: grid;
   place-items: center;
   background: #f6f1e6;
   color: #221f38;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   font-weight: 800;
   box-shadow: inset 0 5px 0 var(--bad);
   padding-top: 4px;
@@ -2200,13 +2321,22 @@ button.set-row {
 .daily-diff {
   margin-left: auto;
   padding: 1px 8px;
-  border-radius: 999px;
-  font-size: 11px;
+  border-radius: var(--r-pill);
+  font-size: var(--fs-2xs);
   font-weight: 700;
   background: var(--panel-2);
 }
-.floor-name .daily-diff {
-  margin-left: 8px;
+.screen-kicker > span:first-child {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.screen-kicker .daily-diff {
+  flex: none;
+  margin-left: 6px;
+  padding: 0 6px;
+  font-size: var(--fs-2xs);
+  line-height: 15px;
   vertical-align: 1px;
 }
 .diff-easy {
@@ -2265,7 +2395,7 @@ button.set-row {
 /* Theme weeks: the rule on Wednesday to Friday, a heads-up on Monday and Tuesday. */
 .daily-theme {
   padding-left: 34px;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   color: var(--accent);
   white-space: nowrap;
@@ -2284,10 +2414,10 @@ button.set-row {
   align-items: center;
   gap: 6px;
   padding: 2px 10px;
-  border-radius: 999px;
+  border-radius: var(--r-pill);
   background: rgba(127, 242, 224, 0.12);
   color: var(--accent);
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-weight: 700;
 }
 /* Sunday: the boss sits beside the daily button. */
@@ -2313,15 +2443,15 @@ button.set-row {
   color: #ffd27a;
   background: linear-gradient(160deg, rgba(242, 193, 78, 0.3), rgba(60, 36, 80, 0.92));
   border-color: rgba(242, 193, 78, 0.7);
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-weight: 800;
 }
 .daily-boss .boss-crown {
-  font-size: 18px;
+  font-size: var(--fs-xl);
   line-height: 1.1;
 }
 .daily-boss .daily-stars {
-  font-size: 10px;
+  font-size: var(--fs-2xs);
 }
 .daily-boss.done {
   background: rgba(35, 38, 58, 0.85);
@@ -2350,7 +2480,7 @@ button.set-row {
 .backup-code {
   margin-top: 8px;
   font-family: ui-monospace, 'SF Mono', Menlo, monospace;
-  font-size: 16px; /* 16px stops iOS zooming in on focus */
+  font-size: var(--fs-input); /* 16px stops iOS zooming in on focus */
   word-break: break-all;
 }
 .backup-restore {
@@ -2373,7 +2503,7 @@ button.set-row {
   top: calc(10px + env(safe-area-inset-top));
   left: calc(12px + env(safe-area-inset-left));
   z-index: 2;
-  font-size: 20px;
+  font-size: var(--fs-2xl);
   animation: title-fade 0.3s ease 1.3s both;
 }
 .title-screen.settled .title-locker {
@@ -2381,7 +2511,7 @@ button.set-row {
 }
 .map-locker {
   position: relative; /* for the new-dot; the title screen's buttons are absolutely placed */
-  font-size: 18px;
+  font-size: var(--fs-xl);
   margin-right: 8px;
 }
 .new-dot {
@@ -2414,13 +2544,13 @@ button.set-row {
   gap: 4px;
   margin: 12px 0 0;
   padding: 4px;
-  border-radius: 14px;
+  border-radius: var(--r-lg);
   background: var(--panel);
 }
 .locker-tabs button {
   min-height: 40px;
   border: 0;
-  border-radius: 10px;
+  border-radius: var(--r-md);
   background: none;
   color: var(--quiet);
   font: inherit;
@@ -2443,7 +2573,7 @@ button.set-row {
   min-height: 96px;
   padding: 10px 6px 8px;
   border: 2px solid transparent;
-  border-radius: 14px;
+  border-radius: var(--r-lg);
   background: var(--panel);
   color: var(--ink);
   font: inherit;
@@ -2462,14 +2592,42 @@ button.set-row {
   height: 52px;
 }
 .swatch-name {
-  font-size: 14px;
+  font-size: var(--fs-md);
   font-weight: 700;
 }
-.swatch-lock {
+.swatch {
+  position: relative;
+}
+/* A corner badge says what a tile is at a glance: a tick on the one you wear, a lock on the rest. */
+.swatch-badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--panel-2);
   color: var(--quiet);
-  font-size: 11.5px;
-  line-height: 1.2;
+}
+.swatch-badge.on {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+.swatch-lock {
+  max-width: 100%;
+  padding: 1px 8px;
+  border-radius: var(--r-pill);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--quiet);
+  font-size: var(--fs-2xs);
+  font-weight: 700;
+  line-height: 1.5;
   text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .eye-dot {
   width: 34px;
@@ -2573,11 +2731,11 @@ button.set-row {
   align-items: center;
   gap: 12px;
   padding: 12px 14px;
-  border-radius: 14px;
+  border-radius: var(--r-lg);
   background: var(--panel);
 }
 .ach-icon {
-  font-size: 26px;
+  font-size: var(--fs-4xl);
   filter: grayscale(1);
   opacity: 0.45;
 }
@@ -2595,7 +2753,7 @@ button.set-row {
 }
 .ach-how {
   color: var(--quiet);
-  font-size: 13.5px;
+  font-size: var(--fs-sm);
 }
 .ach-bar {
   height: 6px;
@@ -2611,12 +2769,12 @@ button.set-row {
 }
 .ach-state {
   color: var(--quiet);
-  font-size: 13px;
+  font-size: var(--fs-sm);
   font-weight: 700;
 }
 .ach.done .ach-state {
   color: var(--accent);
-  font-size: 20px;
+  font-size: var(--fs-2xl);
 }
 .reward-toast {
   position: fixed;
@@ -2628,7 +2786,7 @@ button.set-row {
   gap: 10px;
   max-width: calc(calc(100vw / var(--z, 1)) - 32px);
   padding: 10px 18px 10px 12px;
-  border-radius: 24px;
+  border-radius: var(--r-pill);
   background: rgba(30, 27, 48, 0.96);
   border: 1px solid var(--accent);
   color: var(--ink);
@@ -2638,7 +2796,7 @@ button.set-row {
   animation: toast-in 0.35s cubic-bezier(0.3, 1.5, 0.5, 1) both;
 }
 .reward-toast-icon {
-  font-size: 22px;
+  font-size: var(--fs-3xl);
 }
 @keyframes toast-in {
   from {
@@ -2659,6 +2817,11 @@ button.set-row {
 .daily-freeze {
   white-space: nowrap;
 }
+/* The streak and freeze counts keep to the right, even on a line of their own. */
+.daily-sub > .daily-streak:first-child,
+.daily-sub > .daily-freeze:first-child {
+  margin-left: auto;
+}
 .badge.freeze {
   background: rgba(143, 211, 255, 0.18);
   color: #8fd3ff;
@@ -2672,17 +2835,17 @@ button.set-row {
   appearance: none;
   -webkit-appearance: none;
   padding: 6px 28px 6px 12px;
-  border-radius: 10px;
+  border-radius: var(--r-md);
   border: 1px solid var(--line);
   background: var(--panel-2) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23999'/%3E%3C/svg%3E") no-repeat right 10px center;
   color: var(--ink);
   font: inherit;
-  font-size: 16px;
+  font-size: var(--fs-input);
 }
 .reminder-ask {
   margin: 10px 0 4px;
   padding: 12px;
-  border-radius: 14px;
+  border-radius: var(--r-lg);
   background: var(--panel-2);
   text-align: center;
 }
@@ -2707,28 +2870,28 @@ button.set-row {
     padding: 10px 12px;
   }
   .floor-name {
-    font-size: 21px;
+    font-size: var(--fs-2xl);
   }
   .board-wrap {
     flex: 0 0 40%;
   }
   .terminal {
-    font-size: 15px;
+    font-size: var(--fs-base);
   }
   .pill {
     min-height: 54px;
-    font-size: 17px;
+    font-size: var(--fs-lg);
   }
   .tab {
     min-height: 48px;
-    font-size: 16px;
+    font-size: var(--fs-input);
   }
   .line-tile {
-    font-size: 17px;
+    font-size: var(--fs-lg);
   }
   .chip {
     min-height: 62px;
-    font-size: 14px;
+    font-size: var(--fs-md);
   }
   .palette {
     gap: 8px;
@@ -2742,7 +2905,7 @@ button.set-row {
     font-size: 88px;
   }
   .title-sub {
-    font-size: 18px;
+    font-size: var(--fs-xl);
   }
   .title-actions {
     max-width: 480px;
@@ -2750,14 +2913,14 @@ button.set-row {
   }
   .title-play {
     min-height: 76px;
-    font-size: 24px;
+    font-size: var(--fs-3xl);
   }
   .title-play-floor {
-    font-size: 15px;
+    font-size: var(--fs-base);
   }
   .title-map {
     min-height: 56px;
-    font-size: 18px;
+    font-size: var(--fs-xl);
   }
   /* tower map: a wider tower with taller floors */
   .tower {
@@ -2765,21 +2928,21 @@ button.set-row {
   }
   .tower-floor {
     min-height: 64px;
-    font-size: 18px;
+    font-size: var(--fs-xl);
   }
   .tf-title {
-    font-size: 18px;
+    font-size: var(--fs-xl);
   }
   .tower-footer .continue {
     max-width: 460px;
     min-height: 56px;
-    font-size: 18px;
+    font-size: var(--fs-xl);
   }
   /* results card */
   .results {
     width: min(460px, 100%);
     padding: 28px;
-    font-size: 17px;
+    font-size: var(--fs-lg);
   }
 }
 
@@ -2823,7 +2986,7 @@ button.set-row {
   right: 12px;
   min-height: 40px;
   padding: 0 16px;
-  border-radius: 20px;
+  border-radius: var(--r-pill);
   border: 1px solid var(--line);
   background: rgba(35, 38, 58, 0.8);
   color: var(--quiet);
@@ -2840,7 +3003,7 @@ button.set-row {
   align-items: center;
   gap: 10px;
   color: #9fd2ff;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -2888,10 +3051,10 @@ button.set-row {
   gap: 12px;
   align-items: flex-start;
   padding: 12px 14px;
-  border-radius: 14px;
+  border-radius: var(--r-lg);
   background: var(--panel);
   border: 1px solid var(--line);
-  font-size: 16px;
+  font-size: var(--fs-input);
   line-height: 1.45;
   color: #e6e9ff;
   animation: title-up 0.3s cubic-bezier(0.2, 1, 0.3, 1) both;
@@ -2914,7 +3077,7 @@ button.set-row {
   margin: 0;
   min-height: 1.2em;
   color: var(--quiet);
-  font-size: 13px;
+  font-size: var(--fs-sm);
 }
 .interlude-dots {
   display: flex;
@@ -2942,7 +3105,7 @@ button.set-row {
   position: relative;
   width: 100%;
   aspect-ratio: 200 / 140;
-  border-radius: 16px;
+  border-radius: var(--r-lg);
   overflow: hidden;
 }
 .ending-scene svg {
@@ -3029,7 +3192,7 @@ button.set-row {
   margin: 0;
   min-height: 3.2em;
   text-align: center;
-  font-size: 18px;
+  font-size: var(--fs-xl);
   line-height: 1.45;
   color: #eef0ff;
 }
@@ -3060,42 +3223,42 @@ button.set-row {
 
 /* Settings > Larger text: the reading text grows about 15 to 20 percent. */
 .big-text .terminal {
-  font-size: 15px;
+  font-size: var(--fs-base);
 }
 .big-text .line-tile,
 .big-text .tf-title,
 .big-text .radio-line,
 .big-text .ending-caption {
-  font-size: 19px;
+  font-size: var(--fs-xl);
 }
 .big-text .chip {
-  font-size: 14.5px;
+  font-size: var(--fs-md);
 }
 .big-text .tab,
 .big-text .pill {
-  font-size: 17px;
+  font-size: var(--fs-lg);
 }
 .big-text .floor-name {
-  font-size: 20px;
+  font-size: var(--fs-2xl);
 }
 .big-text .set-group-name {
-  font-size: 20px;
+  font-size: var(--fs-2xl);
 }
 .big-text .set-group-sub {
-  font-size: 15.5px;
+  font-size: var(--fs-base);
 }
 .big-text .set-label,
 .big-text .results,
 .big-text .hint-text,
 .big-text .tip,
 .big-text .story {
-  font-size: 17px;
+  font-size: var(--fs-lg);
 }
 .big-text .set-caption,
 .big-text .ach-how,
-.big-text .back-btn,
+.big-text .screen-kicker,
 .big-text .tower-band {
-  font-size: 14px;
+  font-size: var(--fs-md);
 }
 
 /* --- LoopBot Plus --- */
@@ -3105,7 +3268,7 @@ button.set-row {
 .plus-lede {
   margin: 4px 0 14px;
   color: var(--ink);
-  font-size: 16px;
+  font-size: var(--fs-input);
 }
 .plus-perks {
   list-style: none;
@@ -3120,35 +3283,52 @@ button.set-row {
   gap: 12px;
   align-items: flex-start;
   padding: 12px 14px;
-  border-radius: 14px;
+  border-radius: var(--r-lg);
   background: var(--panel-2);
 }
 .plus-icon {
-  font-size: 24px;
+  font-size: var(--fs-3xl);
   line-height: 1;
 }
 .plus-text {
   display: block;
   margin-top: 2px;
   color: var(--quiet);
-  font-size: 14px;
+  font-size: var(--fs-md);
 }
 .plus-buy {
   width: 100%;
-  margin-top: 12px;
   min-height: 54px;
-  font-size: 18px;
+  font-size: var(--fs-xl);
+}
+/* The buy button stays in reach at the foot of every store sheet, with Restore under it;
+   the sheet's perks scroll above. */
+.store-cta {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: var(--sp-3) var(--sp-4) var(--sp-2);
+  border-top: 1px solid var(--card-line);
+  background: linear-gradient(180deg, rgba(27, 29, 42, 0.92), var(--bg));
+}
+.store-cta .plus-restore {
+  margin-top: var(--sp-1);
 }
 .plus-owned {
-  margin: 14px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: var(--sp-2) 0;
   text-align: center;
   color: var(--good, #7ff2a0);
   font-weight: 700;
-  font-size: 17px;
+  font-size: var(--fs-lg);
 }
 .plus-restore {
   display: block;
-  margin: 14px auto 0;
+  margin: var(--sp-3) auto 0;
   min-height: 44px;
   padding: 0 16px;
   border: 0;
@@ -3201,7 +3381,7 @@ button.set-row {
   min-height: 56px;
   padding: 8px 10px 8px 10px;
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: var(--r-lg);
   background: var(--panel);
   box-shadow: 0 2px 0 rgba(0, 0, 0, 0.25);
   transition: border-color 0.15s, background 0.15s, box-shadow 0.15s, transform 0.08s;
@@ -3221,12 +3401,12 @@ button.set-row {
   place-items: center;
   width: 34px;
   height: 34px;
-  border-radius: 10px;
+  border-radius: var(--r-md);
   background: var(--tp-soft);
   border: 1px solid var(--tp-glow);
   color: var(--tp-light);
   font-weight: 700;
-  font-size: 16px;
+  font-size: var(--fs-input);
 }
 .tp-text {
   flex: 1;
@@ -3241,16 +3421,16 @@ button.set-row {
   white-space: nowrap;
   text-overflow: ellipsis;
   color: var(--quiet);
-  font-size: 12px;
+  font-size: var(--fs-xs);
 }
 .tp-kicker {
-  font-size: 11px;
+  font-size: var(--fs-2xs);
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
 .tp-name {
   color: var(--ink);
-  font-size: 16px;
+  font-size: var(--fs-input);
   font-weight: 700;
   line-height: 1.2;
   overflow-wrap: anywhere;
@@ -3263,11 +3443,11 @@ button.set-row {
   gap: 4px;
   min-height: 32px;
   padding: 0 8px 0 10px;
-  border-radius: 999px;
+  border-radius: var(--r-pill);
   background: var(--panel-2);
   border: 1px solid var(--line);
   color: var(--ink);
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-weight: 600;
 }
 .tower-picker.open .tp-change {
@@ -3292,7 +3472,7 @@ button.set-row {
   overflow-y: auto;
   padding: 6px;
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: var(--r-lg);
   background: var(--panel);
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
   animation: tp-drop 0.16s ease-out;
@@ -3301,7 +3481,7 @@ button.set-row {
   min-height: 56px;
   padding: 8px 10px;
   border: 0;
-  border-radius: 10px;
+  border-radius: var(--r-md);
   background: transparent;
 }
 .tp-row + .tp-row {
@@ -3341,16 +3521,16 @@ button.set-row {
   height: 18px;
 }
 .tp-go {
-  font-size: 22px;
+  font-size: var(--fs-3xl);
   line-height: 1;
 }
 .big-text .tp-name {
-  font-size: 18px;
+  font-size: var(--fs-xl);
 }
 .big-text .tp-kicker,
 .big-text .tp-sub,
 .big-text .tp-change {
-  font-size: 14px;
+  font-size: var(--fs-md);
 }
 @keyframes tp-drop {
   from {
@@ -3476,7 +3656,12 @@ button.set-row {
   width: 100%;
   min-height: 54px;
   padding: 0 18px;
-  font-size: 17px;
+  font-size: var(--fs-lg);
+}
+.hp-count {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
 }
 .hint-pack .hp-price {
   font-weight: 700;
@@ -3488,13 +3673,13 @@ button.set-row {
 
 /* --- Plus looks in the locker: a frosty edge, and the lock reads "Plus" in gold --- */
 .swatch.plus {
-  border-color: rgba(159, 216, 255, 0.45);
   background: linear-gradient(160deg, rgba(159, 216, 255, 0.1), transparent 60%), var(--panel);
 }
 .swatch.plus.on {
   border-color: #9fd8ff;
 }
 .swatch.plus.locked .swatch-lock {
+  background: rgba(242, 193, 78, 0.16);
   color: var(--warn);
 }
 
@@ -3518,7 +3703,7 @@ button.set-row {
   gap: 10px;
   padding: 8px 14px;
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: var(--r-md);
   background: var(--panel);
   color: var(--ink);
   text-align: left;
@@ -3551,10 +3736,13 @@ button.set-row {
   background: linear-gradient(100deg, rgba(242, 193, 78, 0.12), var(--panel) 60%);
 }
 .daily-archive-link {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: max-content;
   margin: -2px auto 8px;
   color: var(--accent);
-  font-size: 14px;
+  font-size: var(--fs-md);
 }
 
 /* Phones turned sideways: the screen is short, so the title moves above the board on the left
@@ -3581,7 +3769,7 @@ button.set-row {
     height: 38px;
   }
   .floor-name {
-    font-size: 15px;
+    font-size: var(--fs-base);
   }
   .board-wrap,
   .floor.typing-code .board-wrap {
@@ -3610,7 +3798,7 @@ button.set-row {
   }
   .chip {
     min-height: 40px;
-    font-size: 11px;
+    font-size: var(--fs-2xs);
   }
 }
 
@@ -3625,7 +3813,7 @@ button.set-row {
   flex: none;
   min-height: 40px;
   padding: 0 14px;
-  font-size: 14px;
+  font-size: var(--fs-md);
 }
 .maker-body {
   display: flex;
@@ -3654,7 +3842,7 @@ button.set-row {
 .maker-input,
 .maker-rules select {
   width: 100%;
-  border-radius: 10px;
+  border-radius: var(--r-md);
   border: 1px solid var(--line);
   background: var(--panel-2);
   color: inherit;
@@ -3668,7 +3856,7 @@ button.set-row {
 .maker-name input {
   text-align: center;
   font-weight: 700;
-  font-size: 17px;
+  font-size: var(--fs-lg);
 }
 .maker-input {
   font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
@@ -3678,18 +3866,18 @@ button.set-row {
   display: grid;
   gap: 3px;
   padding: 8px;
-  border-radius: 12px;
+  border-radius: var(--r-md);
   background: #151724;
 }
 .mk-cell {
   position: relative;
   border: 0;
-  border-radius: 6px;
+  border-radius: var(--r-sm);
   padding: 0;
   background: #c9c3b6;
   color: #1b1d2b;
   font-weight: 700;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -3761,18 +3949,18 @@ button.set-row {
   position: absolute;
   top: 1px;
   left: 4px;
-  font-size: 10px;
+  font-size: var(--fs-2xs);
   opacity: 0.75;
 }
 .mk-box {
   color: #7a4a1c;
-  font-size: 15px;
+  font-size: var(--fs-base);
 }
 .mk-target {
   position: absolute;
   bottom: 2px;
   right: 3px;
-  font-size: 11px;
+  font-size: var(--fs-2xs);
   color: #1d6b55;
 }
 .mk-bot {
@@ -3784,7 +3972,7 @@ button.set-row {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
 }
 .maker-tools {
@@ -3797,10 +3985,10 @@ button.set-row {
 .mk-tool {
   min-height: 36px;
   padding: 0 10px;
-  border-radius: 18px;
+  border-radius: var(--r-pill);
   border: 1px solid var(--line);
   background: var(--panel-2);
-  font-size: 13px;
+  font-size: var(--fs-sm);
   font-weight: 600;
   color: inherit;
 }
@@ -3824,14 +4012,14 @@ button.set-row {
   max-width: 380px;
   text-align: center;
   color: var(--quiet);
-  font-size: 13px;
+  font-size: var(--fs-sm);
 }
 .maker-rules {
   display: flex;
   flex-direction: column;
   gap: 12px;
   padding: 14px;
-  border-radius: 14px;
+  border-radius: var(--r-lg);
   background: var(--panel);
 }
 .mk-row,
@@ -3844,14 +4032,14 @@ button.set-row {
 .mk-row > span:first-child,
 .mk-group > span:first-child {
   flex: 0 0 100%;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--quiet);
 }
 .mk-group em {
   color: var(--quiet);
-  font-size: 13px;
+  font-size: var(--fs-sm);
 }
 .mk-x {
   color: var(--quiet);
@@ -3860,18 +4048,18 @@ button.set-row {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  border-radius: 20px;
+  border-radius: var(--r-pill);
   background: var(--panel-2);
   padding: 2px;
 }
 .mk-stepper button {
   width: 36px;
   height: 36px;
-  border-radius: 18px;
+  border-radius: var(--r-pill);
   border: 0;
   background: transparent;
   color: inherit;
-  font-size: 18px;
+  font-size: var(--fs-xl);
 }
 .mk-stepper button:disabled {
   opacity: 0.3;
@@ -3884,11 +4072,11 @@ button.set-row {
 .mk-chip {
   min-height: 34px;
   padding: 0 12px;
-  border-radius: 17px;
+  border-radius: var(--r-pill);
   border: 1px solid var(--line);
   background: transparent;
   color: var(--quiet);
-  font-size: 13px;
+  font-size: var(--fs-sm);
   font-weight: 600;
   display: inline-flex;
   align-items: center;
@@ -3905,17 +4093,17 @@ button.set-row {
 .maker-issues {
   margin: 0;
   padding: 10px 12px 10px 28px;
-  border-radius: 10px;
+  border-radius: var(--r-md);
   background: rgba(242, 193, 78, 0.12);
   color: var(--warn);
-  font-size: 13px;
+  font-size: var(--fs-sm);
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 .maker-status {
   margin: 0;
-  font-size: 14px;
+  font-size: var(--fs-md);
 }
 .maker-actions {
   display: flex;
@@ -3926,18 +4114,18 @@ button.set-row {
 }
 .maker-code {
   font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
-  font-size: 14px;
+  font-size: var(--fs-md);
   line-height: 1.5;
   word-break: break-all;
   user-select: all;
   -webkit-user-select: all;
   padding: 10px 12px;
-  border-radius: 10px;
+  border-radius: var(--r-md);
   background: var(--panel-2);
 }
 .maker-error {
   color: var(--warn);
-  font-size: 13px;
+  font-size: var(--fs-sm);
 }
 .title-maker {
   min-height: 44px;
@@ -3975,7 +4163,7 @@ button.set-row {
   flex-direction: column;
   gap: 8px;
   padding: 10px 12px;
-  border-radius: 10px;
+  border-radius: var(--r-md);
   background: var(--panel-2);
 }
 .mk-list-name {
@@ -3984,7 +4172,7 @@ button.set-row {
 }
 .mk-list-name span {
   color: var(--quiet);
-  font-size: 12px;
+  font-size: var(--fs-xs);
 }
 .mk-list-actions {
   display: flex;
@@ -4003,17 +4191,11 @@ button.set-row {
   white-space: normal;
   line-height: 1.1;
   text-align: center;
-  font-size: 11px;
+  font-size: var(--fs-2xs);
 }
 :lang(fr) .run-controls .pill {
   white-space: nowrap;
   padding: 0 4px;
-}
-:lang(fr) .results-actions {
-  flex-wrap: wrap;
-}
-:lang(fr) .results-actions .pill.primary {
-  flex-basis: 100%;
 }
 :lang(fr) .row.cancels .line-tile::after {
   white-space: nowrap;
@@ -4022,7 +4204,6 @@ button.set-row {
 /* --- accessibility pass --- */
 /* Touch areas of at least 44 x 44 for small buttons, without moving anything: an invisible margin
    around each one takes the tap (Apple asks for 44 pt, Android 48 dp). */
-.back-btn,
 .tab,
 .tab-tool,
 .daily-archive-link,
@@ -4030,7 +4211,6 @@ button.set-row {
 .cond button {
   position: relative;
 }
-.back-btn::after,
 .rotate-btn::after,
 .tab::after,
 .tab-tool::after,
@@ -4039,9 +4219,6 @@ button.set-row {
 .cond button::after {
   content: '';
   position: absolute;
-}
-.back-btn::after {
-  inset: -10px -6px;
 }
 .rotate-btn::after,
 .tab::after,
@@ -4070,7 +4247,7 @@ textarea:focus-visible,
 }
 .board-canvas:focus-visible {
   outline-offset: -3px;
-  border-radius: 12px;
+  border-radius: var(--r-md);
 }
 .locker-tabs button,
 .loop-foot .row-btn {
@@ -4173,12 +4350,95 @@ textarea:focus-visible,
   .run-controls .pill {
     white-space: nowrap;
     padding: 0 4px;
-    font-size: 15px;
+    font-size: var(--fs-base);
   }
   .run-controls .pill.speed {
     flex-basis: 50px;
   }
   .big-text .run-controls .pill {
-    font-size: 16px;
+    font-size: var(--fs-input);
   }
+}
+
+/* --- empty and error states (src/ui/StatusCard.tsx) --- */
+.status-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-1);
+  margin: var(--sp-4) 0;
+  padding: var(--sp-5) var(--sp-4);
+  border-radius: var(--r-lg);
+  background: var(--card);
+  border: 1px solid var(--card-line);
+  text-align: center;
+}
+.status-icon {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  margin-bottom: var(--sp-2);
+  border-radius: 50%;
+  background: var(--panel-2);
+  color: var(--accent);
+}
+.status-card.error .status-icon {
+  color: var(--warn);
+}
+.status-title {
+  margin: 0;
+  font-size: var(--fs-lg);
+  font-weight: 700;
+}
+.status-text {
+  margin: 0;
+  max-width: 30ch;
+  color: var(--quiet);
+  font-size: var(--fs-sm);
+  line-height: 1.4;
+}
+.status-action {
+  flex: none;
+  margin-top: var(--sp-3);
+  min-width: 160px;
+  padding: 0 var(--sp-5);
+}
+.big-text .status-text {
+  font-size: var(--fs-base);
+}
+
+/* --- moving between screens: a short slide and fade from the side you're heading --- */
+:root[data-nav] .title-screen.settled,
+:root[data-nav] .tower,
+:root[data-nav] .maker,
+:root[data-nav] .ovf-hub,
+:root[data-nav] main.floor {
+  animation: screen-in 0.26s var(--ease-out) backwards;
+}
+:root[data-nav='out'] .title-screen.settled,
+:root[data-nav='out'] .tower,
+:root[data-nav='out'] .maker,
+:root[data-nav='out'] .ovf-hub,
+:root[data-nav='out'] main.floor {
+  animation-name: screen-back;
+}
+@keyframes screen-in {
+  from {
+    opacity: 0;
+    transform: translateX(28px);
+  }
+}
+@keyframes screen-back {
+  from {
+    opacity: 0;
+    transform: translateX(-28px);
+  }
+}
+:root.reduce-motion[data-nav] .title-screen.settled,
+:root.reduce-motion[data-nav] .tower,
+:root.reduce-motion[data-nav] .maker,
+:root.reduce-motion[data-nav] .ovf-hub,
+:root.reduce-motion[data-nav] main.floor {
+  animation: none;
 }

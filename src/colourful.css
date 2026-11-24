@@ -143,7 +143,7 @@
 :root.colourful .board-wrap[data-flavour] .step-counter {
   padding: 4px 8px;
   margin: -2px 0 0 -4px;
-  border-radius: 10px;
+  border-radius: var(--r-md);
   background: rgba(255, 255, 255, 0.7);
 }
 :root.colourful .rotate-btn {

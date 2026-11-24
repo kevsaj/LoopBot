@@ -1,6 +1,7 @@
 // The daily archive (LoopBot Plus): the last 30 days of daily puzzles, to replay any you missed.
 // Archive clears keep their stars but never change the streak; that belongs to playing on the day.
 
+import { Icon } from '../ui/Icon';
 import { useState } from 'react';
 import { fx } from '../audio/feedback';
 import type { DailyState } from './index';
@@ -27,7 +28,7 @@ export function DailyArchive({ daily, onPlay, onClose }: Props) {
       <div className="settings daily-archive" role="dialog" aria-label={t('Daily archive')} onClick={(e) => e.stopPropagation()}>
         <header className="settings-head">
           <button type="button" className="settings-close" aria-label={t('Close')} onClick={() => (fx.tap(), onClose())}>
-            ✕
+            <Icon name="close" size={24} />
           </button>
           <h2>{t('Daily archive')}</h2>
         </header>

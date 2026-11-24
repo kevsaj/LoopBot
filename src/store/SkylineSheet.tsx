@@ -1,7 +1,9 @@
 // The Skyline Pass store screen: every tower and mode in one lifetime purchase, with honest
 // wording for players who already own some of it (store/skyline.ts passDeal).
 
-import { useEffect, useState } from 'react';
+import { Icon } from '../ui/Icon';
+import { useState } from 'react';
+import { StoreOffline, useStoreLoad } from '../ui/StatusCard';
 import { fx } from '../audio/feedback';
 import { buySkyline, getSkylineOffer, hasPlus, restorePurchases } from './purchases';
 import type { SkylineOffer } from './purchases';
@@ -94,22 +96,14 @@ export function SkylineSheet({ onClose }: { onClose(): void }) {
   const pieces = passPieces();
   const [have, setHave] = useState(ownsSkyline);
   const [owned, setOwned] = useState(() => pieces.filter((p) => ownsPiece(p.id)).map((p) => p.id));
-  const [offer, setOffer] = useState<SkylineOffer | null | 'loading'>('loading');
+  // (The pieces are fixed for the life of the app.)
+  const { value: offer, retry } = useStoreLoad<SkylineOffer | null>(() => getSkylineOffer(pieces.map((p) => p.id)));
   const [busy, setBusy] = useState(false);
   const [note, setNote] = useState<string | null>(null);
   const refresh = () => {
     setHave(ownsSkyline());
     setOwned(pieces.filter((p) => ownsPiece(p.id)).map((p) => p.id));
   };
-
-  useEffect(() => {
-    let live = true;
-    void getSkylineOffer(pieces.map((p) => p.id)).then((o) => live && setOffer(o));
-    return () => {
-      live = false;
-    };
-    // The pieces are fixed for the life of the app.
-  }, []);
 
   const o = offer && offer !== 'loading' ? offer : null;
   const money = (n: number) => (o ? formatPrice(n, o.currency, lang() === 'fr' ? 'fr-CA' : 'en') : '');
@@ -151,7 +145,7 @@ export function SkylineSheet({ onClose }: { onClose(): void }) {
       <div className="settings plus-sheet skyline-sheet" role="dialog" aria-label={t('Skyline Pass')} onClick={(e) => e.stopPropagation()}>
         <header className="settings-head">
           <button type="button" className="settings-close" aria-label={t('Close')} onClick={() => (fx.tap(), onClose())}>
-            ✕
+            <Icon name="close" size={24} />
           </button>
           <h2>
             {t('Skyline Pass')}
@@ -220,24 +214,31 @@ export function SkylineSheet({ onClose }: { onClose(): void }) {
 
           <p className="set-caption">{owned.length && !have ? t('Stores charge everyone the same price for the pass. What you already bought stays yours.') : t('No subscription and no ads. Tower 1 and the daily challenge stay free for everyone.')}</p>
 
-          {have ? (
-            <p className="plus-owned">✓ {t('You have the Skyline Pass. Every tower is open.')}</p>
-          ) : (
-            <button type="button" className={`pill plus-buy sky-buy${quiet ? ' quiet' : ' primary'}`} disabled={busy || !o} onClick={buy}>
-              {offer === 'loading' ? t('Loading price…') : o ? t('Get the Skyline Pass · {price}', { price: o.price }) : t('Store unavailable')}
-            </button>
-          )}
+          {!have && offer === null && <StoreOffline onRetry={retry} />}
           {note && (
             <p className="tip" role="status">
               {note}
             </p>
           )}
-          {!have && (
-            <button type="button" className="plus-restore" onClick={restore} disabled={busy}>
-              {t('Restore purchases')}
-            </button>
-          )}
         </div>
+        <footer className="store-cta">
+          {have ? (
+            <p className="plus-owned">
+              <Icon name="check" size={20} /> {t('You have the Skyline Pass. Every tower is open.')}
+            </p>
+          ) : (
+            <>
+              {offer !== null && (
+                <button type="button" className={`pill plus-buy sky-buy${quiet ? ' quiet' : ' primary'}`} disabled={busy || !o} onClick={buy}>
+                  {offer === 'loading' ? t('Loading price…') : o ? t('Get the Skyline Pass · {price}', { price: o.price }) : t('Store unavailable')}
+                </button>
+              )}
+              <button type="button" className="plus-restore" onClick={restore} disabled={busy}>
+                {t('Restore purchases')}
+              </button>
+            </>
+          )}
+        </footer>
       </div>
     </div>
   );

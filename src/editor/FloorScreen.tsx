@@ -20,6 +20,7 @@ import { shareImage } from '../share';
 import { canvasToBlob, drawShareCard } from '../shareImage';
 import { towerOf } from '../levels/towers';
 import type { BoardUpdate } from '../board/BoardScene';
+import { BackButton, Icon } from '../ui/Icon';
 import { fx } from '../audio/feedback';
 import { SettingsSheet } from '../SettingsSheet';
 import type { Progress } from '../progress';
@@ -579,34 +580,36 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
   return (
     <main className={`floor${tab === 'code' && typing ? ' typing-code' : ''}${overflow ? ' ovf-floor' : ''}`}>
       <header className="topbar">
+        <BackButton
+          onClick={() => (fx.tap(), onTower())}
+          label={
+            custom
+              ? t('{place}: back', { place: custom.back })
+              : overflow
+                ? t('{place}: back', { place: t('Overflow · Floor {n}', { n: overflow.floor }) })
+                : daily
+                  ? t('{place}: back', { place: daily.boss ? t('Sunday boss · {date}', { date: shortDate(daily.date) }) : t('Daily · {date}', { date: shortDate(daily.date) }) })
+                  : t('Tower · Floor {n}: back to the tower map', { n: floorNumber })
+          }
+        />
         <div className="floor-title">
-          {custom ? (
-            <button type="button" className="back-btn" onClick={() => (fx.tap(), onTower())} aria-label={t('{place}: back', { place: custom.back })}>
-              ‹ {custom.back}
-            </button>
-          ) : overflow ? (
+          {overflow ? (
             <div className="ovf-line">
-              <button type="button" className="back-btn" onClick={() => (fx.tap(), onTower())} aria-label={t('{place}: back', { place: t('Overflow · Floor {n}', { n: overflow.floor }) })}>
-                ‹ {t('Floor {n}', { n: overflow.floor })}
-              </button>
+              <span className="screen-kicker">{t('Overflow · Floor {n}', { n: overflow.floor })}</span>
               <span className="ovf-bricks" role="img" aria-label={tn(overflow.bricks, '{n} brick left', '{n} bricks left')}>
                 {[0, 1, 2].map((i) => (
                   <span key={i} className={`ovf-brick${i < overflow.bricks ? ' on' : ''}`} aria-hidden="true" />
                 ))}
               </span>
             </div>
-          ) : daily ? (
-            <button type="button" className="back-btn" onClick={() => (fx.tap(), onTower())} aria-label={t('{place}: back', { place: daily.boss ? t('Sunday boss · {date}', { date: shortDate(daily.date) }) : t('Daily · {date}', { date: shortDate(daily.date) }) })}>
-              ‹ {daily.boss ? t('Sunday boss · {date}', { date: shortDate(daily.date) }) : t('Daily · {date}', { date: shortDate(daily.date) })}
-            </button>
           ) : (
-            <button type="button" className="back-btn" onClick={() => (fx.tap(), onTower())} aria-label={t('Tower · Floor {n}: back to the tower map', { n: floorNumber })}>
-              ‹ {t('Tower · Floor {n}', { n: floorNumber })}
-            </button>
+            <span className="screen-kicker">
+              <span aria-hidden="true">{custom ? custom.back : daily ? (daily.boss ? t('Sunday boss · {date}', { date: shortDate(daily.date) }) : t('Daily · {date}', { date: shortDate(daily.date) })) : t('Floor {n}', { n: floorNumber })}</span>
+              {daily && (daily.boss ? <span className="daily-diff diff-boss">👑 {t('Boss')}</span> : <span className={`daily-diff diff-${difficultyOn(daily.date)}`}>{t(DIFFICULTY_LABEL[difficultyOn(daily.date)])}</span>)}
+            </span>
           )}
           <h1 className="floor-name">
             {level.title}
-            {daily && (daily.boss ? <span className="daily-diff diff-boss">👑 {t('Boss')}</span> : <span className={`daily-diff diff-${difficultyOn(daily.date)}`}>{t(DIFFICULTY_LABEL[difficultyOn(daily.date)])}</span>)}
           </h1>
           {daily && !daily.boss && twistOn(daily.date) && (
             <p className="daily-rule">
@@ -631,19 +634,15 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
         )}
         {level.hints.length > 0 && (
           <button type="button" className="hint-btn" onClick={() => (fx.tap(), setSheet('hints'))} aria-label={t('Hint, {n} left', { n: progress.hints })}>
-            {t('Hint')} <span className="hint-count">{progress.hints}</span>
+            <Icon name="hint" size={20} />
+            <span className="hint-count">{progress.hints}</span>
           </button>
         )}
         <button type="button" className="icon-btn fb-btn" aria-label={t('Send feedback about this floor')} onClick={() => (fx.tap(), setSheet('feedback'))}>
-          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
-            <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H10l-4.5 4v-4A2.5 2.5 0 0 1 4 13.5z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
-            <circle cx="8.5" cy="9.5" r="1.2" fill="currentColor" />
-            <circle cx="12" cy="9.5" r="1.2" fill="currentColor" />
-            <circle cx="15.5" cy="9.5" r="1.2" fill="currentColor" />
-          </svg>
+          <Icon name="chat" />
         </button>
         <button type="button" className="icon-btn" aria-label={t('Settings')} onClick={() => (fx.tap(), setSheet('settings'))}>
-          ⚙
+          <Icon name="settings" />
         </button>
       </header>
 
@@ -663,7 +662,7 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
           </span>
         )}
         <button type="button" className="rotate-btn" onClick={() => (fx.tap(), setRotateSignal((n) => n + 1))} aria-label={t('Rotate view: turn the camera a quarter turn. LoopBot does not move.')}>
-          ⟲ {t('Rotate view')}
+          <Icon name="rotate" size={16} /> {t('Rotate view')}
         </button>
         {/* The tutorial tip floats over the foot of the board, above PATCH's line, so it never takes
             room from the program (on short or zoomed-in phones that room is only a few lines). On those
@@ -686,13 +685,14 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
         <EditorDnd blocks={list} canAdd={canAdd} onDrop={drop} onMove={(id, to) => (editor.move(routine, id, to), fx.snap())}>
         <div className="run-controls">
           <button type="button" className={`pill primary${playing ? ' on' : ''}${tut === 'run' ? ' pulse' : ''}`} onClick={run} aria-keyshortcuts="R" title={`${t('Run')} / ${t('Pause')} (R)`}>
-            {playing ? `❚❚ ${t('Pause')}` : `▶ ${t('Run')}`}
+            <Icon name={playing ? 'pause' : 'play'} size={18} />
+            {playing ? t('Pause') : t('Run')}
           </button>
           <button type="button" className="pill" onClick={step} aria-keyshortcuts="S" title={`${t('Step')} (S)`}>
-            ⏭ {t('Step')}
+            <Icon name="step" size={18} /> {t('Step')}
           </button>
           <button type="button" className="pill" onClick={() => (fx.tap(), reset())}>
-            ⟲ {t('Reset')}
+            <Icon name="reset" size={18} /> {t('Reset')}
           </button>
           <button type="button" className="pill speed" onClick={() => (fx.tap(), setSpeed((s) => (s + 1) % SPEEDS.length))} aria-label={t('Speed {speed}', { speed: SPEEDS[speed].label })}>
             {SPEEDS[speed].label}

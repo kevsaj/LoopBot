@@ -24,6 +24,23 @@ export function uiZoom(w: number, h: number): number {
   return Math.max(1, Math.min(MAX_ZOOM, Math.floor(z * 10) / 10));
 }
 
+/** Portrait tablets: the phone layout, scaled so it fills the screen instead of floating small in it. */
+const PHONE_W = 620;
+const PHONE_H = 920;
+const MAX_TABLET_ZOOM = 1.5;
+
+/**
+ * How much to scale the interface on a touch screen this size. Phones stay at 1; a portrait tablet
+ * (short side 700+ CSS px) scales up, about 1.2 on an 11" iPad; a landscape tablet uses the wide
+ * layout's own sizing, as the PC does.
+ */
+export function tabletZoom(w: number, h: number): number {
+  if (Math.min(w, h) < 700) return 1;
+  if (w > h) return uiZoom(w, h);
+  const z = Math.min(w / PHONE_W, h / PHONE_H, MAX_TABLET_ZOOM);
+  return Math.max(1, Math.floor(z * 10) / 10);
+}
+
 function apply() {
   if (typeof document === 'undefined') return;
   const root = document.documentElement;
@@ -31,7 +48,9 @@ function apply() {
   root.classList.toggle('mouse', pc || fine);
   root.classList.toggle('pc', pc);
   // (CSS zoom doesn't change innerWidth/innerHeight, so these are the window's real CSS size.)
-  const z = pc ? uiZoom(window.innerWidth, window.innerHeight) : 1;
+  // Touch screens only, so a desktop browser keeps the sizes it has always had.
+  const touch = typeof matchMedia === 'function' && matchMedia('(pointer: coarse)').matches;
+  const z = pc ? uiZoom(window.innerWidth, window.innerHeight) : touch ? tabletZoom(window.innerWidth, window.innerHeight) : 1;
   root.style.setProperty('--z', String(z));
   root.style.zoom = z === 1 ? '' : String(z);
 }

@@ -80,15 +80,10 @@ export function DailyButton({ className, progress, daily, onOpen }: Props) {
               </span>
             ))}
           </span>
-        ) : (
-          <span>
-            {needsFreeze
-              ? t('A freeze is holding your streak')
-              : atRisk
-                ? t('Keep your streak alive')
-                : t('New puzzle today')}
-          </span>
-        )}
+        ) : needsFreeze || atRisk || !(tw || coming) ? (
+          // (On a theme week the theme line below says what's new, so "New puzzle today" steps aside.)
+          <span>{needsFreeze ? t('A freeze is holding your streak') : atRisk ? t('Keep your streak alive') : t('New puzzle today')}</span>
+        ) : null}
         {streak > 0 && <span className="daily-streak">🔥 {streak}</span>}
         {(daily.freezes ?? 0) > 0 && (
           <span className="daily-freeze" title={t('Streak freezes: each one covers a missed day')}>

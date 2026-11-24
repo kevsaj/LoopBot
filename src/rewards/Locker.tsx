@@ -1,6 +1,7 @@
 // LoopBot's locker: pick paint, eye colour and antenna tip, and see every achievement.
 // Opened from the title screen and the tower map. Locked items say how to earn them.
 
+import { Icon } from '../ui/Icon';
 import { useState } from 'react';
 import { fx } from '../audio/feedback';
 import type { Stats } from './achievements';
@@ -57,7 +58,19 @@ function Swatch({ label, unlock, unlocked, on, onPick, onPlus, children }: { lab
     >
       <span className="swatch-art">{children}</span>
       <span className="swatch-name">{t(label)}</span>
-      {!unlocked && <span className="swatch-lock">🔒 {unlockLabel(unlock)}</span>}
+      {on && (
+        <span className="swatch-badge on" aria-hidden="true">
+          <Icon name="check" size={14} />
+        </span>
+      )}
+      {!unlocked && (
+        <>
+          <span className="swatch-badge" aria-hidden="true">
+            <Icon name="lock" size={13} />
+          </span>
+          <span className="swatch-lock">{unlockLabel(unlock)}</span>
+        </>
+      )}
     </button>
   );
 }
@@ -85,14 +98,16 @@ export function Locker({ stats, earned, look, onLook, onClose }: Props) {
       <div className="settings locker" role="dialog" aria-label={tr("LoopBot's locker")} onClick={(e) => e.stopPropagation()}>
         <header className="settings-head">
           <button type="button" className="settings-close" aria-label={tr('Close the locker')} onClick={() => (fx.tap(), onClose())}>
-            ✕
+            <Icon name="close" size={24} />
           </button>
           <h2>{tr('Locker')}</h2>
         </header>
         <div className="settings-body">
           <div className="locker-preview">
             <LookBot top={paint.top} left={paint.left} right={paint.right} eye={eyeFill} tip={look.tip} size={110} />
-            <p className="locker-stars">★ {tn(stars, '{n} star', '{n} stars')} · 🏆 {got} / {ACHIEVEMENTS.length}</p>
+            <p className="locker-stars">
+              ★ {tn(stars, '{n} star', '{n} stars')} · <Icon name="trophy" size={16} /> {got} / {ACHIEVEMENTS.length}
+            </p>
           </div>
           <div className="locker-tabs" role="tablist">
             <button type="button" role="tab" aria-selected={tab === 'looks'} className={tab === 'looks' ? 'on' : ''} onClick={() => (fx.tap(), setTab('looks'))}>

@@ -5,8 +5,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
     <meta name="theme-color" content="#1b1d2a" />
     <title>LoopBot</title>
+    <style>
+      /* The splash: the same dusk sky, LoopBot and wordmark as the native launch screen, drawn before
+         any code loads, so the hand-off from the phone's splash to the game has no blank moment. */
+      html, body { margin: 0; height: 100%; background: #2b2546; }
+      #splash {
+        position: fixed; inset: 0; z-index: 9999;
+        display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px;
+        background: linear-gradient(180deg, #2a2445 0%, #3b2e58 45%, #4d3a6a 62%, #a46a76 100%);
+        transition: opacity 0.35s ease;
+        pointer-events: none;
+      }
+      #splash.gone { opacity: 0; }
+      .reduce-motion #splash { transition: none; }
+      #splash svg { width: 30vmin; max-width: 170px; height: auto; }
+      #splash p {
+        margin: 0; font: 800 clamp(40px, 11vmin, 72px) / 1 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+        letter-spacing: -0.02em; color: #f6f1e6;
+      }
+      #splash p span { color: #7ff2e0; }
+    </style>
   </head>
   <body>
+    <div id="splash" aria-hidden="true">
+      <svg viewBox="-60 -70 120 140">
+        <rect x="-2.5" y="-58" width="5" height="18" rx="2.5" fill="#d9d2c4" />
+        <circle cx="0" cy="-60" r="7" fill="#7ff2e0" />
+        <rect x="-44" y="12" width="88" height="54" rx="12" fill="#bdb5a6" />
+        <rect x="-44" y="12" width="88" height="46" rx="12" fill="#f7f3ea" opacity=".94" />
+        <circle cx="-20" cy="38" r="5" fill="#f2a93b" />
+        <rect x="-54" y="-42" width="108" height="60" rx="14" fill="#d9d2c4" />
+        <rect x="-54" y="-42" width="108" height="53" rx="14" fill="#f7f3ea" />
+        <rect x="-38" y="-30" width="76" height="30" rx="15" fill="#221f38" />
+        <ellipse cx="5" cy="-15" rx="16" ry="9.5" fill="#7ff2e0" />
+      </svg>
+      <p>Loop<span>Bot</span></p>
+    </div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

@@ -2,6 +2,8 @@
 // Privacy, Help & about). Each header says what's inside; the rows under it are rounded cards, most with
 // no caption or a short one. Links open on the KIS Studios site, in the phone's browser on Android.
 
+import { Icon } from './ui/Icon';
+import type { IconName } from './ui/Icon';
 import { useId, useState } from 'react';
 import type { ReactNode } from 'react';
 import type { Progress } from './progress';
@@ -105,7 +107,7 @@ const openSections = new Set<string>();
  * One collapsible group: a header row with an icon, the group's name and what's inside, and the rows
  * under it when open. A real button with aria-expanded, so keyboards and screen readers can open it.
  */
-function Section({ id, icon, title, sub, children }: { id: string; icon: string; title: string; sub: string; children: ReactNode }) {
+function Section({ id, icon, title, sub, children }: { id: string; icon: IconName; title: string; sub: string; children: ReactNode }) {
   const [open, setOpen] = useState(() => openSections.has(id));
   const bodyId = useId();
   const headId = useId();
@@ -119,15 +121,15 @@ function Section({ id, icon, title, sub, children }: { id: string; icon: string;
     <section className={`set-group${open ? ' open' : ''}`}>
       <h3 className="set-group-title">
         <button type="button" id={headId} className="set-group-head" aria-expanded={open} aria-controls={bodyId} onClick={toggle}>
-          <span className="set-group-icon" aria-hidden="true">
-            {icon}
+          <span className={`set-group-icon icon-${id}`} aria-hidden="true">
+            <Icon name={icon} size={20} />
           </span>
           <span className="set-group-text">
             <span className="set-group-name">{title}</span>
             <span className="set-group-sub">{sub}</span>
           </span>
           <span className="set-group-chevron" aria-hidden="true">
-            ›
+            <Icon name="chevron" size={18} />
           </span>
         </button>
       </h3>
@@ -154,13 +156,13 @@ export function SettingsSheet({ progress, setProgress, onClose, floor, floorTitl
       <div className="settings" role="dialog" aria-label={t('Settings')} onClick={(e) => e.stopPropagation()}>
         <header className="settings-head">
           <button type="button" className="settings-close" aria-label={t('Close settings')} onClick={() => (fx.tap(), onClose())}>
-            ✕
+            <Icon name="close" size={24} />
           </button>
           <h2>{t('Settings')}</h2>
         </header>
 
         <div className="settings-body">
-          <Section id="sound" icon="🔊" title={t('Sound')} sub={t('Music, sound effects, vibration')}>
+          <Section id="sound" icon="sound" title={t('Sound')} sub={t('Music, sound effects, vibration')}>
             <Toggle
               label={t('Music')}
               on={music}
@@ -190,7 +192,7 @@ export function SettingsSheet({ progress, setProgress, onClose, floor, floorTitl
             />
           </Section>
 
-          <Section id="look" icon="🎨" title={t('Look & reading')} sub={t('Language, colours, text size, motion')}>
+          <Section id="look" icon="palette" title={t('Look & reading')} sub={t('Language, colours, text size, motion')}>
             <LanguageRow />
             <Toggle
               label={t('Colourful mode')}
@@ -224,7 +226,7 @@ export function SettingsSheet({ progress, setProgress, onClose, floor, floorTitl
             />
           </Section>
 
-          <Section id="play" icon="🎮" title={t('Playing')} sub={remindersAvailable() ? t('Tutorial tips, daily reminder') : t('Tutorial tips')}>
+          <Section id="play" icon="play_controller" title={t('Playing')} sub={remindersAvailable() ? t('Tutorial tips, daily reminder') : t('Tutorial tips')}>
             <Toggle
               label={t('Tutorial tips')}
               caption={t('Tips on the first floors of each new idea')}
@@ -235,16 +237,16 @@ export function SettingsSheet({ progress, setProgress, onClose, floor, floorTitl
           </Section>
 
           {SHOP_OPEN && (
-            <Section id="shop" icon="🛍" title={t('Subscriptions & Purchases')} sub={t('Skyline Pass, Plus, city packs, hints')}>
+            <Section id="shop" icon="bag" title={t('Subscriptions & Purchases')} sub={t('Skyline Pass, Plus, city packs, hints')}>
               <PurchaseRows hints={progress.hints} />
             </Section>
           )}
 
-          <Section id="progress" icon="💾" title={t('Your progress')} sub={t('Back up or restore your floors')}>
+          <Section id="progress" icon="save" title={t('Your progress')} sub={t('Back up or restore your floors')}>
             <BackupRows />
           </Section>
 
-          <Section id="privacy" icon="🔒" title={t('Privacy')} sub={TELEMETRY_AVAILABLE ? t('Anonymous stats, policy, terms') : t('Policy and terms')}>
+          <Section id="privacy" icon="lock" title={t('Privacy')} sub={TELEMETRY_AVAILABLE ? t('Anonymous stats, policy, terms') : t('Policy and terms')}>
             {TELEMETRY_AVAILABLE && (
               <Toggle
                 label={t('Share anonymous stats')}
@@ -266,7 +268,7 @@ export function SettingsSheet({ progress, setProgress, onClose, floor, floorTitl
             </div>
           </Section>
 
-          <Section id="help" icon="💬" title={t('Help & about')} sub={t('Send feedback, who made LoopBot')}>
+          <Section id="help" icon="help" title={t('Help & about')} sub={t('Send feedback, who made LoopBot')}>
             <div className="set-item">
               <button type="button" className="set-row set-link" onClick={() => (fx.tap(), setFeedback(true))}>
                 <span className="set-label">{t('Send feedback')}</span>

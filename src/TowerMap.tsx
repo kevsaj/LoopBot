@@ -3,6 +3,7 @@
 // LoopBot stands on the floor you're on, newly opened floors unlock with a pop,
 // and a locked floor shakes and says what opens it.
 
+import { BackButton, Icon } from './ui/Icon';
 import { useEffect, useRef, useState } from 'react';
 import { AntennaTip } from './rewards/AntennaTip';
 import type { LevelFile } from './sim/types';
@@ -404,21 +405,31 @@ export function TowerMap({ levels, tower, towers, onTowerPick, progress, current
   return (
     <div className={`tower tower-${tower}`} role="main">
       <div className="topbar">
+        <BackButton label={t('Tower {n}: back to the title screen', { n: tower })} onClick={() => (fx.tap(), onHome())} />
         <div className="floor-title">
-          <button type="button" className="back-btn" onClick={() => (fx.tap(), onHome())} aria-label={t('Tower {n}: back to the title screen', { n: tower })}>
-            ‹ {t('Tower {n}', { n: tower })}
-          </button>
-          {/* With the tower picker showing the name right below, the title stays for screen readers only. */}
+          {!pickerShown && (
+            <span className="screen-kicker" aria-hidden="true">
+              {t('Tower {n}', { n: tower })}
+            </span>
+          )}
+          {/* With the tower picker showing the name right below, the header just says "Tower map" and the
+              tower's name stays for screen readers only. */}
+          {pickerShown && (
+            <span className="floor-name" aria-hidden="true">
+              {t('Tower map')}
+            </span>
+          )}
           <h1 className={`floor-name${pickerShown ? ' sr-only' : ''}`}>{name}</h1>
         </div>
         <div className="tower-stars" role="img" aria-label={t('{n} of {total} stars', { n: totalStars, total: ids.length * 3 })}>
           ★ {totalStars} / {ids.length * 3}
         </div>
         <button type="button" className="icon-btn map-locker" aria-label={lockerNew ? t('Locker: looks and achievements, something new') : t('Locker: looks and achievements')} onClick={() => (fx.tap(), onLocker())}>
-          🏆{lockerNew && <span className="new-dot" aria-hidden="true" />}
+          <Icon name="trophy" />
+          {lockerNew && <span className="new-dot" aria-hidden="true" />}
         </button>
         <button type="button" className="icon-btn" aria-label={t('Settings')} onClick={() => (fx.tap(), onSettings())}>
-          ⚙
+          <Icon name="settings" />
         </button>
       </div>
       <div className="tower-progress" role="progressbar" aria-valuemin={0} aria-valuemax={ids.length} aria-valuenow={cleared} aria-label={t('{n} of {total} floors cleared', { n: cleared, total: ids.length })}>
@@ -433,7 +444,7 @@ export function TowerMap({ levels, tower, towers, onTowerPick, progress, current
       {!DEMO && <DailyButton className="tower-daily" progress={progress} daily={daily} onOpen={onDaily} />}
       {!DEMO && dailyUnlocked(progress) && (PLUS_VISIBLE || plusUnlocked()) && (
         <button type="button" className="link-btn daily-archive-link" onClick={() => (fx.tap(), onArchive())}>
-          📅 {t('Daily archive: replay missed days')}
+          <Icon name="calendar" size={16} /> {t('Daily archive')}
         </button>
       )}
       <div className="tower-scroll">

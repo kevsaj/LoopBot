@@ -11,7 +11,7 @@
   width: 100%;
   max-height: 170px;
   margin: 2px 0 10px;
-  border-radius: 14px;
+  border-radius: var(--r-lg);
   box-shadow: 0 0 0 1px rgba(242, 196, 106, 0.35), 0 10px 30px rgba(0, 0, 0, 0.35);
 }
 .sky-star {
@@ -39,7 +39,7 @@
   margin: 4px 0 0;
   text-align: center;
   color: #f2c46a;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-weight: 800;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -51,11 +51,11 @@
 .sky-deal {
   margin: 0 0 12px;
   padding: 12px 14px;
-  border-radius: 14px;
+  border-radius: var(--r-lg);
   background: rgba(242, 196, 106, 0.1);
   border: 1px solid rgba(242, 196, 106, 0.4);
   color: var(--ink);
-  font-size: 15px;
+  font-size: var(--fs-base);
   line-height: 1.4;
 }
 .sky-deal p {
@@ -79,11 +79,11 @@
 }
 .sky-save {
   padding: 3px 10px;
-  border-radius: 999px;
+  border-radius: var(--r-pill);
   background: #f2c46a;
   color: #2a1d05;
   font-weight: 800;
-  font-size: 14px;
+  font-size: var(--fs-md);
 }
 .sky-grid {
   list-style: none;
@@ -104,7 +104,7 @@
   gap: 10px;
   min-width: 0;
   padding: 9px 12px;
-  border-radius: 14px;
+  border-radius: var(--r-lg);
   background: var(--panel-2);
   border: 1px solid transparent;
 }
@@ -122,11 +122,11 @@
 }
 .sky-sub {
   color: var(--quiet);
-  font-size: 13px;
+  font-size: var(--fs-sm);
 }
 .sky-state {
   flex: none;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   color: var(--quiet);
 }
@@ -157,7 +157,7 @@
 }
 .big-text .sky-sub,
 .big-text .sky-state {
-  font-size: 14px;
+  font-size: var(--fs-md);
 }
 .sky-link {
   display: block;
@@ -165,7 +165,7 @@
   margin: 16px 0 0;
   min-height: 48px;
   padding: 10px 14px;
-  border-radius: 14px;
+  border-radius: var(--r-lg);
   border: 1px solid rgba(242, 196, 106, 0.45);
   background: rgba(242, 196, 106, 0.08);
   color: #f6d98a;

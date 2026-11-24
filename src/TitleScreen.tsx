@@ -2,6 +2,7 @@
 // drops onto the skyline, its eye and antenna light up, the name and the Play button arrive.
 // A tap anywhere skips straight to the end, and reduced motion shows it settled.
 
+import { Icon } from './ui/Icon';
 import { useEffect, useState } from 'react';
 import { AntennaTip } from './rewards/AntennaTip';
 import type { LevelFile } from './sim/types';
@@ -100,7 +101,8 @@ export function TitleScreen({ levels, towerLabel, progress, booted, onBooted, on
         <span className="title-skyline" />
       </div>
       <button type="button" className="icon-btn title-locker" aria-label={lockerNew ? t('Locker: looks and achievements, something new') : t('Locker: looks and achievements')} onClick={() => (fx.tap(), onLocker())}>
-        🏆{lockerNew && <span className="new-dot" aria-hidden="true" />}
+        <Icon name="trophy" />
+        {lockerNew && <span className="new-dot" aria-hidden="true" />}
       </button>
       {/* Colourful mode, one tap from home (the same switch as Settings > Look & reading). */}
       <button
@@ -111,10 +113,10 @@ export function TitleScreen({ levels, towerLabel, progress, booted, onBooted, on
         title={t('Colourful mode')}
         onClick={() => (fx.tap(), setCandy(!candy))}
       >
-        <span aria-hidden="true">🍬</span>
+        <Icon name="candy" />
       </button>
       <button type="button" className="icon-btn title-settings" aria-label={t('Settings')} onClick={() => (fx.tap(), onSettings())}>
-        ⚙
+        <Icon name="settings" />
       </button>
 
       <div className="title-hero">
@@ -152,7 +154,7 @@ export function TitleScreen({ levels, towerLabel, progress, booted, onBooted, on
         {!fresh && !DEMO && <DailyButton className="title-daily" progress={progress} daily={daily} onOpen={onDaily} />}
         {!fresh && !DEMO && onMaker && (
           <button type="button" className="pill title-maker" onClick={() => (fx.tap(), onMaker())}>
-            🛠 {t('Floor maker')}
+            <Icon name="maker" size={18} /> {t('Floor maker')}
           </button>
         )}
       </div>
