@@ -9,6 +9,7 @@ import { ACHIEVEMENTS, earnedIds } from './achievements';
 import type { Stats } from './achievements';
 import { partName, unlockedParts } from './looks';
 import { t } from '../i18n';
+import { GIFT_PARTS } from './gift';
 
 const KEY = 'loopbot.rewardsSeen';
 
@@ -54,7 +55,8 @@ export function useRewards(floors: string[], progress: Progress, daily: DailySta
     const fresh = [...all].filter((k) => !atLaunch.current.has(k));
     if (!fresh.length) return;
     atLaunch.current = new Set([...atLaunch.current, ...fresh]);
-    const next: Toast[] = fresh.map((k) => {
+    // PATCH's Floor 3 gift has its own card (GiftCard), so its parts skip the toast
+    const next: Toast[] = fresh.filter((k) => !GIFT_PARTS.includes(k)).map((k) => {
       if (k.startsWith('ach:')) {
         const a = ACHIEVEMENTS.find((x) => `ach:${x.id}` === k)!;
         return { id: k, icon: a.icon, text: t('Achievement: {title}', { title: t(a.title) }) };

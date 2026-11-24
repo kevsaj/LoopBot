@@ -1,0 +1,259 @@
+/* Early goals (src/rewards/gift.ts): the Floor 3 gift, the results card's next goal, and the tower
+   map's glowing next floor, next band and roof sign. Every animation here stops with Reduce motion
+   (the :root.reduce-motion rule in styles.css), and nothing depends on it to read. */
+
+/* --- the tower map --- */
+.tower-floor.next-up:not(.current) {
+  border-color: var(--warn);
+}
+.tower-floor.next-up {
+  animation:
+    grow 0.9s var(--ease-out) 0.2s both,
+    next-glow 2.2s ease-in-out 1.2s infinite;
+}
+@keyframes next-glow {
+  50% {
+    box-shadow:
+      0 0 0 2px var(--warn) inset,
+      0 0 18px rgba(242, 193, 78, 0.45);
+  }
+}
+.tf-gift {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--r-pill);
+  color: #1d1630;
+  background: linear-gradient(135deg, #f7d774, #f2a6c8);
+  box-shadow: 0 0 12px rgba(247, 215, 116, 0.5);
+  animation: gift-bob 1.8s ease-in-out infinite;
+}
+.tower-floor.locked.gift-floor {
+  opacity: 0.8;
+}
+@keyframes gift-bob {
+  50% {
+    transform: translateY(-2px) rotate(-6deg);
+  }
+}
+
+.next-band .tower-band {
+  animation: band-glow 2.6s ease-in-out infinite;
+}
+@keyframes band-glow {
+  50% {
+    text-shadow: 0 0 10px currentColor;
+  }
+}
+/* The next band's sign sits at its foot, right above the band you're climbing. It takes the band's
+   own colour from its .tower-band rule (styles.css) through --gate. */
+.next-gate {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-1) var(--sp-2);
+  margin: var(--sp-2) var(--sp-3) 0;
+  padding: var(--sp-2) var(--sp-3);
+  border-radius: var(--r-md);
+  border: 1px solid var(--gate, var(--accent));
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--gate, var(--accent));
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  animation: gate-glow 2.6s ease-in-out infinite;
+}
+@keyframes gate-glow {
+  50% {
+    box-shadow: 0 0 16px var(--gate, var(--accent));
+  }
+}
+.band-maintenance { --gate: #7fb6b0; }
+.band-workshop { --gate: #e0a978; }
+.band-control { --gate: #8fc4f0; }
+.band-rooftop { --gate: #f0c46a; }
+.next-chip {
+  padding: 2px var(--sp-2);
+  border-radius: var(--r-pill);
+  border: 1px solid currentColor;
+  font-size: var(--fs-2xs);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.next-new {
+  color: var(--ink);
+}
+.next-new::before {
+  content: '· ';
+  color: var(--gate, var(--accent));
+}
+
+.roof-sign {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  margin: 0 auto var(--sp-2);
+  width: fit-content;
+  max-width: 100%;
+  font-size: var(--fs-sm);
+  font-weight: 700;
+}
+.roof-vanta {
+  padding: var(--sp-1) var(--sp-3);
+  border-radius: var(--r-pill);
+  color: #ffb3b3;
+  background: rgba(255, 107, 107, 0.1);
+  border: 1px solid rgba(255, 107, 107, 0.35);
+}
+.roof-vanta-eye {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--bad);
+  box-shadow: 0 0 10px var(--bad);
+  animation: vanta-eye 2.4s ease-in-out infinite;
+}
+@keyframes vanta-eye {
+  50% {
+    transform: scale(0.6);
+    opacity: 0.6;
+  }
+}
+.roof-next {
+  min-height: var(--tap);
+  padding: 0 var(--sp-4);
+  border-radius: var(--r-pill);
+  color: var(--tp-light, var(--accent));
+  background: var(--tp-soft, rgba(124, 196, 255, 0.12));
+  border: 1px solid var(--tp-light, var(--accent));
+  animation: roof-next-glow 2.4s ease-in-out infinite;
+}
+@keyframes roof-next-glow {
+  50% {
+    box-shadow: 0 0 18px var(--tp-glow, rgba(124, 196, 255, 0.45));
+  }
+}
+
+/* --- the results card's next goal --- */
+.results-goal {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin: var(--sp-3) 0 0;
+  padding: var(--sp-2) var(--sp-3);
+  border-radius: var(--r-md);
+  background: rgba(242, 193, 78, 0.1);
+  border: 1px solid rgba(242, 193, 78, 0.4);
+  color: var(--ink);
+  font-size: var(--fs-md);
+  font-weight: 600;
+  text-align: left;
+  opacity: 0;
+}
+.results-goal .icon {
+  flex: none;
+  color: var(--warn);
+}
+.results-goal.goal-radio {
+  background: rgba(255, 107, 107, 0.08);
+  border-color: rgba(255, 107, 107, 0.35);
+}
+.results-goal.goal-radio .icon {
+  color: var(--bad);
+}
+.results-goal.goal-lock {
+  background: rgba(124, 196, 255, 0.08);
+  border-color: rgba(124, 196, 255, 0.35);
+}
+.results-goal.goal-lock .icon {
+  color: var(--accent);
+}
+.results-goal.in {
+  opacity: 1;
+  animation: goal-in 0.4s var(--ease-out);
+}
+@keyframes goal-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+/* with Reduce motion the stars land at once, so the goal is there from the start */
+:root.reduce-motion .results-goal {
+  opacity: 1;
+}
+
+/* --- PATCH's gift card --- */
+.gift-stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: 150px;
+  margin: var(--sp-2) 0;
+}
+.gift-rays {
+  position: absolute;
+  width: 170px;
+  height: 170px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(247, 215, 116, 0.35), rgba(242, 166, 200, 0.12) 55%, transparent 70%);
+  animation: gift-rays 3s ease-in-out infinite;
+}
+@keyframes gift-rays {
+  50% {
+    transform: scale(1.12);
+    opacity: 0.75;
+  }
+}
+.gift-bot {
+  position: relative;
+  animation: gift-pop 0.6s cubic-bezier(0.2, 1.6, 0.4, 1) 0.15s both;
+}
+@keyframes gift-pop {
+  from {
+    transform: translateY(40px) scale(0.4);
+    opacity: 0;
+  }
+}
+.gift-body {
+  margin: 0 0 var(--sp-3);
+  color: var(--quiet);
+  font-size: var(--fs-base);
+}
+.gift-parts {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  margin: 0 0 var(--sp-4);
+  padding: 0;
+}
+.gift-parts li {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-1) var(--sp-3) var(--sp-1) var(--sp-1);
+  border-radius: var(--r-pill);
+  background: var(--panel-2);
+  font-size: var(--fs-md);
+  font-weight: 700;
+}
+.gift-swatch {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 3px solid;
+}
+.gift-tip {
+  width: 24px;
+  height: 24px;
+  padding: 2px;
+  border-radius: 50%;
+  color: var(--bot-eye, #7ff2e0);
+  background: #221f38;
+}

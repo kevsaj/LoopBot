@@ -8,8 +8,11 @@ import { totalStars } from './achievements';
 import { PLUS_VISIBLE, plusUnlocked } from '../store/purchases';
 import { msg, t } from '../i18n';
 
-/** How a look part unlocks: tower stars, an achievement, or LoopBot Plus. */
-export type Unlock = { stars: number } | { achievement: string; label: string } | { plus: true };
+/**
+ * How a look part unlocks: tower stars, an achievement, clearing an early Tower 1 floor (the first
+ * gift, see gift.ts), or LoopBot Plus.
+ */
+export type Unlock = { stars: number } | { achievement: string; label: string } | { floor: number } | { plus: true };
 
 export interface Paint {
   id: string;
@@ -33,7 +36,7 @@ export interface EyeColor {
   glow?: { to: string; style: 'pulse' | 'shimmer' };
 }
 
-export type TipShape = 'ball' | 'star' | 'heart' | 'bolt' | 'crown' | 'ring' | 'snowflake' | 'gem';
+export type TipShape = 'ball' | 'gear' | 'star' | 'heart' | 'bolt' | 'crown' | 'ring' | 'snowflake' | 'gem';
 
 export interface Tip {
   id: TipShape;
@@ -43,6 +46,8 @@ export interface Tip {
 
 export const PAINTS: Paint[] = [
   { id: 'classic', name: msg('Classic'), top: '#f7f3ea', left: '#d9d2c4', right: '#bdb5a6', unlock: null },
+  // PATCH's gift for clearing Floor 3: a soft free pastel, nowhere near the deep Plus paints
+  { id: 'lilac', name: msg('Lilac'), top: '#ebe2ff', left: '#cbbdf0', right: '#ad9fd6', unlock: { floor: 3 } },
   { id: 'sky', name: msg('Sky'), top: '#cfe6ff', left: '#a3c6ec', right: '#82a7d1', unlock: { stars: 15 } },
   { id: 'mint', name: msg('Mint'), top: '#d3f5e6', left: '#a6dcc4', right: '#86bfa6', unlock: { stars: 30 } },
   { id: 'sunset', name: msg('Sunset'), top: '#ffd9b3', left: '#f0b07a', right: '#d0905c', unlock: { stars: 50 } },
@@ -71,6 +76,7 @@ export const EYES: EyeColor[] = [
 
 export const TIPS: Tip[] = [
   { id: 'ball', name: msg('Ball'), unlock: null },
+  { id: 'gear', name: msg('Gear'), unlock: { floor: 3 } },
   { id: 'star', name: msg('Star'), unlock: { achievement: 'perfect-10', label: msg('Perfect ten') } },
   { id: 'heart', name: msg('Heart'), unlock: { achievement: 'streak-7', label: msg('On a roll') } },
   { id: 'bolt', name: msg('Bolt'), unlock: { achievement: 'decision-maker', label: msg('Decision maker') } },
@@ -98,12 +104,14 @@ const KEY = 'loopbot.look';
 export function isUnlocked(unlock: Unlock | null, stats: Stats, earned: Set<string>): boolean {
   if (!unlock) return true;
   if ('plus' in unlock) return plusUnlocked();
+  if ('floor' in unlock) return (stats.progress.stars[stats.floors[unlock.floor - 1] ?? ''] ?? 0) > 0;
   return 'stars' in unlock ? totalStars(stats) >= unlock.stars : earned.has(unlock.achievement);
 }
 
 export function unlockLabel(unlock: Unlock | null): string {
   if (!unlock) return t('Free');
   if ('plus' in unlock) return 'Plus';
+  if ('floor' in unlock) return t('Floor {n}', { n: unlock.floor });
   return 'stars' in unlock ? `${unlock.stars} ★` : `🏆 ${t(unlock.label)}`;
 }
 
@@ -225,6 +233,13 @@ export function tipPoints(shape: TipShape, cx: number, cy: number, r: number): [
   } else if (shape === 'crown') {
     const c: [number, number][] = [[-1, 0.7], [-1.1, -0.6], [-0.5, 0], [0, -0.9], [0.5, 0], [1.1, -0.6], [1, 0.7]];
     c.forEach(([x, y]) => pts.push([cx + x * r, cy + y * r]));
+  } else if (shape === 'gear') {
+    // a cog: eight square teeth round a wheel
+    for (let i = 0; i < 32; i++) {
+      const a = -Math.PI / 2 + ((i - 0.5) * Math.PI) / 16;
+      const rr = Math.floor(i / 2) % 2 ? r * 0.78 : r * 1.15;
+      pts.push([cx + Math.cos(a) * rr, cy + Math.sin(a) * rr]);
+    }
   } else if (shape === 'snowflake') {
     // six thin arms
     for (let i = 0; i < 12; i++) {
