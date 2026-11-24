@@ -13,6 +13,7 @@ import { DEMO } from './demo';
 import { DailyButton } from './daily/DailyButton';
 import type { DailyState } from './daily';
 import { t } from './i18n';
+import { useColourful } from './colourful';
 
 interface Props {
   levels: LevelFile[];
@@ -65,6 +66,7 @@ function BigBot({ poked }: { poked: boolean }) {
 export function TitleScreen({ levels, towerLabel, progress, booted, onBooted, onPlay, onTower, onSettings, daily, onDaily, onLocker, lockerNew, onMaker }: Props) {
   const [settled, setSettled] = useState(() => booted || reducedMotion());
   const [poked, setPoked] = useState(false);
+  const [candy, setCandy] = useColourful();
   useEffect(() => {
     if (settled) return onBooted();
     const t = window.setTimeout(() => setSettled(true), INTRO_MS);
@@ -99,6 +101,17 @@ export function TitleScreen({ levels, towerLabel, progress, booted, onBooted, on
       </div>
       <button type="button" className="icon-btn title-locker" aria-label={lockerNew ? t('Locker: looks and achievements, something new') : t('Locker: looks and achievements')} onClick={() => (fx.tap(), onLocker())}>
         🏆{lockerNew && <span className="new-dot" aria-hidden="true" />}
+      </button>
+      {/* Colourful mode, one tap from home (the same switch as Settings > Look & reading). */}
+      <button
+        type="button"
+        className={`icon-btn title-candy${candy ? ' on' : ''}`}
+        aria-label={t('Colourful mode')}
+        aria-pressed={candy}
+        title={t('Colourful mode')}
+        onClick={() => (fx.tap(), setCandy(!candy))}
+      >
+        <span aria-hidden="true">🍬</span>
       </button>
       <button type="button" className="icon-btn title-settings" aria-label={t('Settings')} onClick={() => (fx.tap(), onSettings())}>
         ⚙
