@@ -25,6 +25,12 @@
   --act: #2ee886;
   --flow: #ff58a8;
   --fn: #ffe02a;
+  /* see-through grape panels over skies and boards */
+  --glass: rgba(67, 18, 122, 0.85);
+  --glass-strong: rgba(67, 18, 122, 0.9);
+  --glass-soft: rgba(67, 18, 122, 0.6);
+  --bg-glass: rgba(42, 10, 74, 0.92);
+  --ground: #1c0634;
   /* the dark ink printed on candy fills */
   --candy-ink: #24063f;
   /* a sugary shine laid over every candy button */
@@ -223,4 +229,37 @@
 }
 :root.colourful .results-backdrop.settings-screen {
   background: linear-gradient(180deg, #3a0d66 0%, #2a0a4a 60%, #3d0a52 100%);
+}
+
+/* --- paid looks keep their own colours ---
+   Colourful mode is free, so it never paints over something that's bought: a city pack's buy
+   button keeps its pack colours (with the candy shine), and Overflow keeps its lapis and gold. */
+:root.colourful .pack-sheet .pill.plus-buy {
+  background: var(--gloss), var(--pack-buy, var(--accent));
+  border-color: var(--pack-buy-line, #ffb0dc);
+  color: var(--pack-buy-ink, var(--accent-ink));
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.3), 0 6px 16px rgba(0, 0, 0, 0.25);
+}
+:root.colourful .ovf-hub {
+  --panel: #23263a;
+  --panel-2: #2c3049;
+  --line: #3a3f5c;
+  --ink: #eef0f8;
+  --quiet: #9aa0bd;
+  --accent: #7cc4ff;
+  --accent-ink: #0b1a2a;
+}
+:root.colourful .ovf-hub .icon-btn {
+  background: var(--panel);
+}
+:root.colourful .ovf-hub .pill.ovf-gold {
+  border-color: #ffe6a0;
+}
+:root.colourful .ovf-hub .pill.ovf-ghost {
+  background-color: transparent;
+  border-color: rgba(242, 196, 106, 0.4);
+}
+:root.colourful .ovf-hub .ovf-start.locked {
+  background-color: #1b2f66;
+  border-color: var(--ovf-gold);
 }

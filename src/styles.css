@@ -52,6 +52,13 @@
   --card: var(--panel);
   --card-line: rgba(255, 255, 255, 0.06);
   --scrim: rgba(8, 9, 18, 0.6);
+  /* see-through panels laid over a sky or a board (Colourful mode swaps these for grape) */
+  --glass: rgba(35, 38, 58, 0.85);
+  --glass-strong: rgba(35, 38, 58, 0.9);
+  --glass-soft: rgba(35, 38, 58, 0.6);
+  --bg-glass: rgba(27, 29, 42, 0.92);
+  /* the ground strip under the tower map */
+  --ground: #121320;
   --ease-out: cubic-bezier(0.2, 1, 0.3, 1);
 
   color-scheme: dark;
@@ -286,7 +293,7 @@ select:focus-visible {
   padding: 0 12px;
   border-radius: var(--r-pill);
   border: 1px solid var(--line);
-  background: rgba(35, 38, 58, 0.85);
+  background: var(--glass);
   font-size: var(--fs-xs);
 }
 /* The foot of the board: the tutorial tip (when there is one) stacked over the terminal line. */
@@ -1533,7 +1540,7 @@ select:focus-visible {
   position: relative;
   height: 28px;
   margin: 0 40px;
-  background: linear-gradient(#2a2e46, #23263a);
+  background: linear-gradient(var(--panel-2), var(--panel));
   clip-path: polygon(12% 100%, 50% 0, 88% 100%);
 }
 .beacon {
@@ -1689,8 +1696,8 @@ select:focus-visible {
 .tower-ground {
   text-align: center;
   padding: 10px;
-  border-radius: 0 0 12px 12px;
-  background: #121320;
+  border-radius: 0 0 var(--r-md) var(--r-md);
+  background: var(--ground);
   color: var(--quiet);
   font-size: var(--fs-xs);
 }
@@ -1911,7 +1918,7 @@ select:focus-visible {
 }
 .title-map {
   min-height: 48px;
-  background: rgba(35, 38, 58, 0.85);
+  background: var(--glass);
   animation: title-pop 0.4s cubic-bezier(0.3, 1.5, 0.5, 1) 1.3s both;
 }
 .title-stats {
@@ -2457,7 +2464,7 @@ button.set-row {
   min-height: 56px;
   color: var(--ink);
   text-align: left;
-  background: linear-gradient(100deg, rgba(242, 193, 78, 0.16), rgba(35, 38, 58, 0.9) 60%);
+  background: linear-gradient(100deg, rgba(242, 193, 78, 0.16), var(--glass-strong) 60%);
   border-color: rgba(242, 193, 78, 0.45);
 }
 .daily-main {
@@ -2535,14 +2542,14 @@ button.set-row {
   color: var(--warn);
 }
 .daily-btn.done {
-  background: rgba(35, 38, 58, 0.85);
+  background: var(--glass);
   border-color: var(--line);
 }
 .daily-btn.at-risk .daily-sub > span:first-child {
   color: var(--warn);
 }
 .daily-btn.locked {
-  background: rgba(35, 38, 58, 0.6);
+  background: var(--glass-soft);
   border-color: var(--line);
   border-style: dashed;
   color: var(--quiet);
@@ -2555,11 +2562,11 @@ button.set-row {
 }
 /* The warm-up: the daily's spot for players below Floor 11 (src/comeback.ts) */
 .daily-btn.warmup-btn {
-  background: linear-gradient(100deg, rgba(90, 209, 164, 0.18), rgba(35, 38, 58, 0.9) 60%);
+  background: linear-gradient(100deg, rgba(90, 209, 164, 0.18), var(--glass-strong) 60%);
   border-color: rgba(90, 209, 164, 0.5);
 }
 .daily-btn.warmup-btn.done {
-  background: rgba(35, 38, 58, 0.85);
+  background: var(--glass);
   border-color: var(--line);
 }
 .warmup-icon {
@@ -2656,7 +2663,7 @@ button.set-row {
   font-size: var(--fs-2xs);
 }
 .daily-boss.done {
-  background: rgba(35, 38, 58, 0.85);
+  background: var(--glass);
   border-color: var(--line);
 }
 .boss-cta {
@@ -2664,7 +2671,7 @@ button.set-row {
   margin: 4px auto 0;
   color: #ffd27a;
   border-color: rgba(242, 193, 78, 0.7);
-  background: linear-gradient(100deg, rgba(242, 193, 78, 0.22), rgba(35, 38, 58, 0.9));
+  background: linear-gradient(100deg, rgba(242, 193, 78, 0.22), var(--glass-strong));
   font-weight: 800;
 }
 .badge.streak {
@@ -3190,7 +3197,7 @@ button.set-row {
   padding: 0 16px;
   border-radius: var(--r-pill);
   border: 1px solid var(--line);
-  background: rgba(35, 38, 58, 0.8);
+  background: var(--glass);
   color: var(--quiet);
   font-weight: 600;
 }
@@ -3503,6 +3510,13 @@ button.set-row {
   min-height: 54px;
   font-size: var(--fs-xl);
 }
+/* A city pack's buy button wears that pack's colours: each pack's CSS sets --pack-buy (the fill),
+   --pack-buy-line and --pack-buy-ink on .pack-sheet.pack-<id>. Colourful mode keeps them too. */
+.pack-sheet .pill.plus-buy {
+  background: var(--pack-buy, var(--accent));
+  border-color: var(--pack-buy-line, var(--accent));
+  color: var(--pack-buy-ink, var(--accent-ink));
+}
 /* The buy button stays in reach at the foot of every store sheet, with Restore under it;
    the sheet's perks scroll above. */
 .store-cta {
@@ -3512,7 +3526,7 @@ button.set-row {
   align-items: stretch;
   padding: var(--sp-3) var(--sp-4) var(--sp-2);
   border-top: 1px solid var(--card-line);
-  background: linear-gradient(180deg, rgba(27, 29, 42, 0.92), var(--bg));
+  background: linear-gradient(180deg, var(--bg-glass), var(--bg));
 }
 .store-cta .plus-restore {
   margin-top: var(--sp-1);
@@ -4331,7 +4345,7 @@ button.set-row {
 }
 .title-maker {
   min-height: 44px;
-  background: rgba(35, 38, 58, 0.85);
+  background: var(--glass);
   animation: title-pop 0.4s cubic-bezier(0.3, 1.5, 0.5, 1) 1.5s both;
 }
 .title-screen.settled .title-maker {

@@ -51,4 +51,25 @@ describe('Colourful mode', () => {
     for (const k of ['bot', 'botL', 'botR', 'eye', 'visor']) expect(tileKeys).not.toContain(k);
     expect(CANDY_CONFETTI.length).toBeGreaterThan(5);
   });
+
+  it('swaps every surface colour token, so no plain navy panel shows through', () => {
+    const base = readFileSync(new URL('./styles.css', import.meta.url), 'utf8');
+    const root = base.slice(0, base.indexOf('}'));
+    // Every see-through surface outside :root goes through a token, not the raw navy.
+    expect(base.slice(root.length)).not.toMatch(/rgba\(35, 38, 58|rgba\(27, 29, 42|#121320/);
+    for (const name of ['bg', 'panel', 'panel-2', 'line', 'glass', 'glass-strong', 'glass-soft', 'bg-glass', 'ground']) {
+      expect(root, `--${name} in styles.css :root`).toContain(`--${name}:`);
+      expect(css, `--${name} in colourful.css`).toContain(`--${name}:`);
+    }
+  });
+
+  it('leaves paid looks alone: pack buy buttons and Overflow keep their own colours', () => {
+    expect(css).toMatch(/:root\.colourful \.pack-sheet \.pill\.plus-buy \{[^}]*var\(--pack-buy/);
+    expect(css).toContain(':root.colourful .ovf-hub {');
+    for (const pack of ['heatwave', 'twist', 'dockyard', 'twinspires', 'fractal', 'precinct']) {
+      const packCss = readFileSync(new URL(`./${pack}.css`, import.meta.url), 'utf8');
+      expect(packCss, pack).toContain('--pack-buy:');
+      expect(packCss, pack).not.toMatch(/\.pill\.plus-buy \{/);
+    }
+  });
 });

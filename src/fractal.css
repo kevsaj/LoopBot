@@ -103,10 +103,10 @@
   border-color: rgba(255, 154, 106, 0.28);
   background: linear-gradient(135deg, rgba(255, 140, 90, 0.1), rgba(255, 220, 190, 0.03));
 }
-.pack-sheet.pack-fractal .pill.plus-buy {
-  background: linear-gradient(180deg, #ffd9c4, #f07a4a);
-  border-color: #ff9a6a;
-  color: #2a1008;
+.pack-sheet.pack-fractal {
+  --pack-buy: linear-gradient(180deg, #ffd9c4, #f07a4a);
+  --pack-buy-line: #ff9a6a;
+  --pack-buy-ink: #2a1008;
 }
 .pack-fractal .plus-owned {
   color: #ffd9c4;

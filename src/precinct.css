@@ -108,10 +108,10 @@
   border-color: rgba(106, 168, 255, 0.28);
   background: linear-gradient(135deg, rgba(74, 122, 255, 0.1), rgba(255, 90, 90, 0.04));
 }
-.pack-sheet.pack-precinct404 .pill.plus-buy {
-  background: linear-gradient(180deg, #cfe0ff, #4a7ae8);
-  border-color: #6aa8ff;
-  color: #0a1430;
+.pack-sheet.pack-precinct404 {
+  --pack-buy: linear-gradient(180deg, #cfe0ff, #4a7ae8);
+  --pack-buy-line: #6aa8ff;
+  --pack-buy-ink: #0a1430;
 }
 .pack-precinct404 .plus-owned {
   color: #cfe0ff;
