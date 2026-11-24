@@ -27,4 +27,17 @@ void Promise.allSettled([restoreSaves(), readDeviceTextSize()]).finally(() => {
       <App />
     </StrictMode>,
   );
+  hideSplash();
 });
+
+/** Fades the HTML splash (index.html) once the first screen has painted underneath it. */
+function hideSplash() {
+  const splash = document.getElementById('splash');
+  if (!splash) return;
+  requestAnimationFrame(() =>
+    requestAnimationFrame(() => {
+      splash.classList.add('gone');
+      window.setTimeout(() => splash.remove(), document.documentElement.classList.contains('reduce-motion') ? 0 : 400);
+    }),
+  );
+}

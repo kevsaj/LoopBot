@@ -121,11 +121,11 @@
   flex-direction: column;
   gap: 3px;
   padding: 5px 9px;
-  border-radius: 10px;
+  border-radius: var(--r-md);
   border: 2px solid rgba(201, 184, 255, 0.85);
   background: linear-gradient(180deg, rgba(22, 20, 40, 0.92), rgba(14, 12, 28, 0.88));
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
-  font-size: 11px;
+  font-size: var(--fs-2xs);
   font-weight: 800;
   color: #f2eeff;
   pointer-events: none;

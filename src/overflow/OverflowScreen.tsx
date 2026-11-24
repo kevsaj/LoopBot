@@ -2,6 +2,7 @@
 // progress. Overflow is a paid mode, so this screen gets its own look: lapis and gold, glazed-brick
 // friezes, and art drawn in code (no image files, nothing licensed).
 
+import { BackButton, Icon } from '../ui/Icon';
 import { useState } from 'react';
 import type { ReactNode } from 'react';
 import { fx } from '../audio/feedback';
@@ -289,13 +290,10 @@ export function OverflowScreen({ state, unlocked, onBack, onSettings, onStart, o
   return (
     <main className="ovf-hub">
       <header className="topbar ovf-topbar">
-        <div className="floor-title">
-          <button type="button" className="back-btn" onClick={() => (fx.tap(), onBack())} aria-label={t('Overflow: back to the tower map')}>
-            ‹ {t('Tower map')}
-          </button>
-        </div>
+        <BackButton label={t('Overflow: back to the tower map')} onClick={() => (fx.tap(), onBack())} />
+        <div className="floor-title" />
         <button type="button" className="icon-btn" aria-label={t('Settings')} onClick={() => (fx.tap(), onSettings())}>
-          ⚙
+          <Icon name="settings" />
         </button>
       </header>
       <div className="ovf-scroll">

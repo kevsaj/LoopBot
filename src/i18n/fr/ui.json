@@ -100,7 +100,6 @@
  "Tower {n}: back to the title screen": "Tour {n} : retour à l'écran titre",
  "{n} of {total} stars": "{n} étoiles sur {total}",
  "{n} of {total} floors cleared": "{n} étages réussis sur {total}",
- "Daily archive: replay missed days": "Archives du défi : rejoue les jours manqués",
  "Floors 11 to 50 · in the full game": "Étages 11 à 50 · dans le jeu complet",
  "Floors {first} to {last}": "Étages {first} à {last}",
  "Floor {floor}, {title}, {n} star, you are here": "Étage {floor}, {title}, {n} étoile, tu es ici",
@@ -172,9 +171,7 @@
  "{place}: back": "{place} : retour",
  "Daily · {date}": "Défi · {date}",
  "Tower · Floor {n}: back to the tower map": "Tour · Étage {n} : retour à la carte de la tour",
- "Tower · Floor {n}": "Tour · Étage {n}",
  "Hint, {n} left": "Indice, il en reste {n}",
- "Hint": "Indice",
  "Send feedback about this floor": "Envoyer un commentaire sur cet étage",
  "{used} / {slots} commands": "{used} / {slots} commandes",
  "par {n}": "par {n}",
@@ -343,7 +340,6 @@
  "Turn on every switch": "Activer tous les interrupteurs",
  "box ahead": "caisse devant",
  "tile is (colour)": "case de couleur",
- "Title": "Titre",
  "Play a code": "Jouer un code",
  "Floor name": "Nom de l'étage",
  "View": "Vue",
@@ -526,7 +522,6 @@
  "Earn them free": "Gagne-les gratuitement",
  "One for every 10 floors you 3-star, one for every daily challenge, and 3 more for every 7-day streak.": "Un pour chaque tranche de 10 étages à 3 étoiles, un pour chaque défi du jour, et 3 de plus pour chaque série de 7 jours.",
  "Loading prices…": "Chargement des prix…",
- "The store isn't available right now. Try again later.": "La boutique n'est pas disponible pour le moment. Réessaie plus tard.",
  "{n} hint": "{n} indice",
  "{n} hints": "{n} indices",
  "Hints never expire. The Nudge is always free after 3 tries on a floor.": "Les indices n'expirent jamais. Le coup de pouce est toujours gratuit après 3 essais sur un étage.",
@@ -1169,5 +1164,8 @@
  "On a new device or after reinstalling.": "Sur un nouvel appareil ou après une réinstallation.",
  "When the day's puzzle is ready, unless you've played.": "Quand le casse-tête du jour est prêt, sauf si tu as déjà joué.",
  "Your floors, stars, hints and streak in one code to keep.": "Tes étages, étoiles, indices et ta série dans un code à garder.",
- "For a new phone. Replaces the progress here.": "Pour un nouveau téléphone. Remplace la progression d'ici."
+ "For a new phone. Replaces the progress here.": "Pour un nouveau téléphone. Remplace la progression d'ici.",
+ "Can't reach the store": "Impossible de joindre la boutique",
+ "Check your connection, then try again.": "Vérifie ta connexion, puis réessaie.",
+ "No floors yet": "Aucun étage pour l'instant"
 }

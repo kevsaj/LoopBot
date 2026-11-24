@@ -69,7 +69,7 @@
   right: 14px;
   min-width: 50px;
   padding: 4px 8px 6px;
-  border-radius: 10px;
+  border-radius: var(--r-md);
   border: 2px solid rgba(255, 207, 110, 0.9);
   background: linear-gradient(180deg, rgba(24, 30, 44, 0.92), rgba(16, 20, 32, 0.88));
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
@@ -78,7 +78,7 @@
 }
 .board-tally-label {
   display: block;
-  font-size: 10px;
+  font-size: var(--fs-2xs);
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -86,7 +86,7 @@
 }
 .board-tally-n {
   display: block;
-  font-size: 26px;
+  font-size: var(--fs-4xl);
   line-height: 1;
   font-weight: 800;
   font-variant-numeric: tabular-nums;

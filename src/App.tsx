@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { LEVELS } from './levels';
 import { TOWERS, towerOf } from './levels/towers';
 import { FloorScreen } from './editor/FloorScreen';
@@ -37,6 +37,9 @@ import { OverflowScreen, TerraceBanner } from './overflow/OverflowScreen';
 import { climbOn, earnsBrick, endClimb, loadOverflow, markCleared, overflowLevel, pruneOverflow, saveOverflow, skipFloor, startClimb } from './overflow';
 import type { OverflowState } from './overflow';
 import { packUnlocked } from './store/purchases';
+
+/** How deep each screen sits, for the direction of the slide between them. */
+const SCREEN_DEPTH = { title: 0, map: 1, maker: 1, overflow: 2, floor: 2, daily: 2, custom: 2, climb: 3 } as const;
 
 /** Each tower remembers its own floor: Tower 1 keeps the original key so old saves carry over. */
 const floorKey = (tower: number) => (tower === 1 ? 'loopbot.floor' : `loopbot.floor.t${tower}`);
@@ -80,6 +83,14 @@ export default function App() {
   // Every launch opens on the title screen, whose intro plays once per session; its Play button
   // goes to the next floor (Floor 1 for a new player), and the tower map is one tap further.
   const [screen, setScreen] = useState<'title' | 'map' | 'floor' | 'daily' | 'maker' | 'custom' | 'overflow' | 'climb'>('title');
+  // Screens slide in from the side you're heading: deeper (title, map, floor) from the right,
+  // back up from the left. styles.css keys the move off <html data-nav>; Reduce motion turns it off.
+  const lastScreen = useRef(screen);
+  useLayoutEffect(() => {
+    if (lastScreen.current === screen) return;
+    document.documentElement.dataset.nav = SCREEN_DEPTH[screen] >= SCREEN_DEPTH[lastScreen.current] ? 'in' : 'out';
+    lastScreen.current = screen;
+  }, [screen]);
   // The floor maker's draft, and the player-made floor being played (a test of the draft, or a code).
   const [draft, setDraft] = useMakerDraft();
   const [customFloor, setCustomFloor] = useState<{ level: LevelFile; from: 'test' | 'code' } | null>(null);

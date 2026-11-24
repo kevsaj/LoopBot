@@ -1,6 +1,7 @@
 // The floor-cleared card. Stars land one at a time; the celebration scales with them:
 // 3 stars fire confetti and a fanfare, 2 stars get a small sparkle, 1 star stays calm.
 
+import { Icon } from '../ui/Icon';
 import { useEffect, useRef, useState } from 'react';
 import { shareText, type ShareResult } from '../share';
 import { DEFAULT_HOUR, declineReminder, hourLabel, loadReminder, remindersAvailable, setReminder } from '../reminder';
@@ -151,28 +152,25 @@ export function ResultsCard({ floorNumber, tower = 1, floorCount, earned, prevBe
             {overflow.brick ? t('Three perfect in a row!') : tn(3 - overflow.streak, '{n} more perfect clear wins a brick', '{n} more perfect clears win a brick')}
           </p>
         )}
-        <table className="score">
-          <tbody>
-            <tr className={commands <= par.commands ? 'met' : ''}>
-              <td>{t('Commands')}</td>
-              <td>{commands}</td>
-              <td className="par">{custom?.noPar ? '' : t('par {n}', { n: par.commands })}</td>
-              <td className="tick">
-                {commands <= par.commands && !custom?.noPar ? '✓' : ''}
-                {!custom?.noPar && <span className="sr-only">{commands <= par.commands ? t('par met') : t('over par')}</span>}
-              </td>
-            </tr>
-            <tr className={steps <= par.steps ? 'met' : ''}>
-              <td>{t('Steps')}</td>
-              <td>{steps}</td>
-              <td className="par">{custom?.noPar ? '' : t('par {n}', { n: par.steps })}</td>
-              <td className="tick">
-                {steps <= par.steps && !custom?.noPar ? '✓' : ''}
-                {!custom?.noPar && <span className="sr-only">{steps <= par.steps ? t('par met') : t('over par')}</span>}
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div className="score" role="list">
+          {(
+            [
+              [t('Commands'), commands, par.commands],
+              [t('Steps'), steps, par.steps],
+            ] as [string, number, number][]
+          ).map(([label, n, parN]) => {
+            const met = n <= parN && !custom?.noPar;
+            return (
+              <span key={label} role="listitem" className={`score-chip${met ? ' met' : ''}`}>
+                <span className="score-label">{label}</span>
+                <span className="score-n">{n}</span>
+                {!custom?.noPar && <span className="score-par">{t('par {n}', { n: parN })}</span>}
+                {met && <Icon name="check" size={16} className="score-tick" />}
+                {!custom?.noPar && <span className="sr-only">{n <= parN ? t('par met') : t('over par')}</span>}
+              </span>
+            );
+          })}
+        </div>
         {tip && !custom?.note && <p className="tip">{tip}</p>}
         {outro && <p className="story">{outro}</p>}
         {!daily && shared && <p className="tip">{shared}</p>}
@@ -251,34 +249,25 @@ export function ResultsCard({ floorNumber, tower = 1, floorCount, earned, prevBe
           </p>
         )}
         <div className="results-actions">
-          <button type="button" className="pill" onClick={() => (fx.tap(), onRetry())}>
-            {t('Try again')}
-          </button>
-          {custom ? (
-            <button type="button" className={`pill primary${shown >= 3 ? ' nudge' : ''}`} onClick={() => (fx.tap(), onTower())}>
+          {custom || daily ? (
+            <button type="button" className={`pill primary results-main${shown >= 3 ? ' nudge' : ''}`} onClick={() => (fx.tap(), onTower())}>
               {t('Done')}
             </button>
-          ) : daily ? (
-            <>
-              <ShareButton busy={sharing} onClick={share} />
-              <button type="button" className={`pill primary${shown >= 3 ? ' nudge' : ''}`} onClick={() => (fx.tap(), onTower())}>
-                {t('Done')}
-              </button>
-            </>
+          ) : floorNumber === floorCount && !overflow ? (
+            <button type="button" className="pill primary results-main" onClick={() => (fx.tap(), onTower())}>
+              {t('Tower')}
+            </button>
           ) : (
-            <>
-              {onShareImage && <ShareButton busy={sharing} onClick={share} />}
-              {floorNumber === floorCount && !overflow ? (
-                <button type="button" className="pill primary" onClick={() => (fx.tap(), onTower())}>
-                  {t('Tower')}
-                </button>
-              ) : (
-                <button type="button" className={`pill primary${shown >= 3 ? ' nudge' : ''}`} onClick={() => (fx.tap(), onNext())}>
-                  {t('Next floor →')}
-                </button>
-              )}
-            </>
+            <button type="button" className={`pill primary results-main${shown >= 3 ? ' nudge' : ''}`} onClick={() => (fx.tap(), onNext())}>
+              {t('Next floor →')}
+            </button>
           )}
+          <div className="results-more">
+            <button type="button" className="pill" onClick={() => (fx.tap(), onRetry())}>
+              <Icon name="reset" size={18} /> {t('Try again')}
+            </button>
+            {!custom && (daily || onShareImage) && <ShareButton busy={sharing} onClick={share} />}
+          </div>
         </div>
       </div>
     </div>
@@ -288,7 +277,7 @@ export function ResultsCard({ floorNumber, tower = 1, floorCount, earned, prevBe
 function ShareButton({ busy, onClick }: { busy: boolean; onClick(): void }) {
   return (
     <button type="button" className="pill" onClick={onClick} disabled={busy} aria-busy={busy}>
-      {t('Share')}
+      <Icon name="share" size={18} /> {t('Share')}
     </button>
   );
 }

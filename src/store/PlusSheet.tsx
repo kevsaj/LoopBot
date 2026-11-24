@@ -1,7 +1,9 @@
 // The LoopBot Plus screen: what Plus includes, the store's price, Buy and Restore.
 // One-time purchase, no subscription, no ads (growth plan, section 2).
 
-import { useEffect, useState } from 'react';
+import { Icon } from '../ui/Icon';
+import { useState } from 'react';
+import { StoreOffline, useStoreLoad } from '../ui/StatusCard';
 import { fx } from '../audio/feedback';
 import { buyPlus, getPlusOffer, hasPlus, restorePurchases } from './purchases';
 import { skylineOnSale } from './purchases';
@@ -19,18 +21,10 @@ export const PLUS_PERKS: { icon: string; title: string; text: string }[] = [
 
 export function PlusSheet({ onClose }: { onClose(): void }) {
   const [owned, setOwned] = useState(hasPlus);
-  const [offer, setOffer] = useState<PlusOffer | null | 'loading'>('loading');
+  const { value: offer, retry } = useStoreLoad<PlusOffer | null>(getPlusOffer);
   const [busy, setBusy] = useState(false);
   const [note, setNote] = useState<string | null>(null);
   const [skyline, setSkyline] = useState(false);
-
-  useEffect(() => {
-    let live = true;
-    void getPlusOffer().then((o) => live && setOffer(o));
-    return () => {
-      live = false;
-    };
-  }, []);
 
   const buy = async () => {
     if (!offer || offer === 'loading' || busy) return;
@@ -64,7 +58,7 @@ export function PlusSheet({ onClose }: { onClose(): void }) {
       <div className="settings plus-sheet" role="dialog" aria-label="LoopBot Plus" onClick={(e) => e.stopPropagation()}>
         <header className="settings-head">
           <button type="button" className="settings-close" aria-label={t('Close')} onClick={() => (fx.tap(), onClose())}>
-            ✕
+            <Icon name="close" size={24} />
           </button>
           <h2>
             LoopBot <span className="plus-word">Plus</span>
@@ -86,14 +80,7 @@ export function PlusSheet({ onClose }: { onClose(): void }) {
             ))}
           </ul>
           <p className="set-caption">{t('Tower 1 and the daily challenge stay free for everyone.')}</p>
-
-          {owned ? (
-            <p className="plus-owned">✓ {t('You have LoopBot Plus')}</p>
-          ) : (
-            <button type="button" className="pill primary plus-buy" disabled={busy || !offer || offer === 'loading'} onClick={buy}>
-              {offer === 'loading' ? t('Loading price…') : offer ? t('Get Plus · {price}', { price: offer.price }) : t('Store unavailable')}
-            </button>
-          )}
+          {!owned && offer === null && <StoreOffline onRetry={retry} />}
           {note && (
             <p className="tip" role="status">
               {note}
@@ -104,12 +91,25 @@ export function PlusSheet({ onClose }: { onClose(): void }) {
               {t('Want every tower? See the Skyline Pass')} ›
             </button>
           )}
-          {!owned && (
-            <button type="button" className="plus-restore" onClick={restore} disabled={busy}>
-              {t('Restore purchases')}
-            </button>
-          )}
         </div>
+        <footer className="store-cta">
+          {owned ? (
+            <p className="plus-owned">
+              <Icon name="check" size={20} /> {t('You have LoopBot Plus')}
+            </p>
+          ) : (
+            <>
+              {offer !== null && (
+                <button type="button" className="pill primary plus-buy" disabled={busy || !offer || offer === 'loading'} onClick={buy}>
+                  {offer === 'loading' ? t('Loading price…') : offer ? t('Get Plus · {price}', { price: offer.price }) : t('Store unavailable')}
+                </button>
+              )}
+              <button type="button" className="plus-restore" onClick={restore} disabled={busy}>
+                {t('Restore purchases')}
+              </button>
+            </>
+          )}
+        </footer>
       </div>
       {skyline && (
         <SkylineSheet

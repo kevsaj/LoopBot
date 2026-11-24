@@ -32,7 +32,7 @@
 .ovf-topbar {
   min-height: 44px;
 }
-.ovf-topbar .back-btn {
+.ovf-topbar .screen-kicker {
   color: rgba(242, 196, 106, 0.85);
 }
 .ovf-scroll {
@@ -46,7 +46,7 @@
 }
 .ovf-eyebrow {
   margin: 0;
-  font-size: 11px;
+  font-size: var(--fs-2xs);
   font-weight: 700;
   letter-spacing: 0.32em;
   text-transform: uppercase;
@@ -68,7 +68,7 @@
 }
 .ovf-tagline {
   margin: 0;
-  font-size: 14px;
+  font-size: var(--fs-md);
   color: #b9b4d4;
 }
 .ovf-hero {
@@ -76,7 +76,7 @@
   max-width: 420px;
   margin: 0 auto;
   padding: 4px;
-  border-radius: 22px;
+  border-radius: var(--r-xl);
   background: var(--ovf-gold-grad);
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5), 0 14px 40px rgba(0, 0, 0, 0.55), 0 0 40px rgba(242, 196, 106, 0.15);
 }
@@ -142,7 +142,7 @@
   max-width: 420px;
   margin: 16px auto 0;
   padding: 12px 16px;
-  border-radius: 16px;
+  border-radius: var(--r-lg);
   background: linear-gradient(180deg, rgba(47, 95, 179, 0.28), rgba(27, 47, 102, 0.35));
   border: 1px solid rgba(242, 196, 106, 0.45);
   box-shadow: inset 0 1px 0 rgba(255, 230, 160, 0.15);
@@ -173,7 +173,7 @@
   text-shadow: 0 0 12px rgba(242, 196, 106, 0.5);
 }
 .ovf-record-label {
-  font-size: 11px;
+  font-size: var(--fs-2xs);
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -184,12 +184,12 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: #b9b4d4;
 }
 .ovf-record-side strong {
   color: #f4eedc;
-  font-size: 15px;
+  font-size: var(--fs-base);
 }
 
 /* the terraces trail */
@@ -219,12 +219,12 @@
   gap: 3px;
 }
 .ovf-trail-name {
-  font-size: 10.5px;
+  font-size: var(--fs-2xs);
   line-height: 1.15;
   color: #8f8aac;
 }
 .ovf-trail-floor {
-  font-size: 10px;
+  font-size: var(--fs-2xs);
   color: #6c688a;
 }
 .ovf-trail-stop.reached .ovf-trail-name {
@@ -270,7 +270,7 @@
   max-width: 420px;
   margin: 16px auto 0;
   padding: 14px;
-  border-radius: 18px;
+  border-radius: var(--r-xl);
   background: linear-gradient(180deg, #1d2350, #161a3a);
   border: 1px solid rgba(242, 196, 106, 0.5);
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 230, 160, 0.12);
@@ -285,7 +285,7 @@
   margin-bottom: 10px;
 }
 .ovf-card-title {
-  font-size: 11px;
+  font-size: var(--fs-2xs);
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -300,13 +300,13 @@
 .ovf-card-floor {
   margin: 0;
   font-family: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, 'Noto Serif', serif;
-  font-size: 24px;
+  font-size: var(--fs-3xl);
   font-weight: 700;
   color: #fff4d6;
 }
 .ovf-card-sub {
   margin: 0;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: #b9b4d4;
 }
 .ovf-actions {
@@ -357,7 +357,7 @@
   width: 100%;
   flex: none;
   min-height: 54px;
-  font-size: 17px;
+  font-size: var(--fs-lg);
 }
 .ovf-start.locked {
   background: #1b2f66;
@@ -378,7 +378,7 @@
   flex-direction: column;
   gap: 12px;
   color: #b9b4d4;
-  font-size: 14px;
+  font-size: var(--fs-md);
   line-height: 1.35;
 }
 .ovf-rules li {
@@ -391,7 +391,7 @@
   width: 30px;
   height: 30px;
   padding: 6px;
-  border-radius: 9px;
+  border-radius: var(--r-sm);
   background: rgba(47, 95, 179, 0.35);
   border: 1px solid rgba(242, 196, 106, 0.35);
   color: var(--ovf-gold);
@@ -404,7 +404,7 @@
   align-items: center;
   min-width: 0;
 }
-.ovf-line .back-btn {
+.ovf-line .screen-kicker {
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -440,7 +440,7 @@
   flex: none;
   min-height: 40px;
   padding: 0 12px;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   border-color: rgba(242, 196, 106, 0.45);
 }
 .pill.ovf-skip.armed {
@@ -459,7 +459,7 @@
   font-family: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, 'Noto Serif', serif;
   letter-spacing: 0.02em;
 }
-.floor.ovf-floor .back-btn {
+.floor.ovf-floor .screen-kicker {
   color: rgba(242, 196, 106, 0.9);
 }
 .floor.ovf-floor .board-wrap {
@@ -486,11 +486,11 @@
   align-items: center;
   gap: 5px;
   padding: 2px 9px 2px 3px;
-  border-radius: 999px;
+  border-radius: var(--r-pill);
   background: rgba(11, 16, 48, 0.72);
   border: 1px solid rgba(242, 196, 106, 0.55);
   color: var(--ovf-gold-hi);
-  font-size: 11px;
+  font-size: var(--fs-2xs);
   font-weight: 700;
   letter-spacing: 0.04em;
 }
@@ -509,7 +509,7 @@
   align-items: center;
   gap: 6px;
   padding: 26px 34px 22px;
-  border-radius: 22px;
+  border-radius: var(--r-xl);
   border: 1px solid rgba(242, 196, 106, 0.6);
   background: linear-gradient(180deg, #1d2350, #121636);
   box-shadow: 0 0 60px rgba(242, 196, 106, 0.2);
@@ -517,7 +517,7 @@
 }
 .ovf-banner-kicker {
   margin: 6px 0 0;
-  font-size: 11px;
+  font-size: var(--fs-2xs);
   font-weight: 700;
   letter-spacing: 0.3em;
   text-transform: uppercase;
@@ -526,7 +526,7 @@
 .ovf-banner-name {
   margin: 0;
   font-family: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, 'Noto Serif', serif;
-  font-size: 26px;
+  font-size: var(--fs-4xl);
   font-weight: 700;
   background: var(--ovf-gold-grad);
   -webkit-background-clip: text;
@@ -583,7 +583,7 @@
   justify-content: center;
   gap: 8px;
   margin: 2px 0 10px;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: #b9b4d4;
 }
 .ovf-pips {
@@ -609,7 +609,7 @@
   background: linear-gradient(90deg, rgba(27, 47, 102, 0.55), rgba(242, 196, 106, 0.08));
 }
 .tp-overflow .tp-badge {
-  font-size: 20px;
+  font-size: var(--fs-2xl);
   background: var(--ovf-gold-grad);
   border-color: #ffe6a0;
   color: #3a2208;

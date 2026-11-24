@@ -1,7 +1,9 @@
 // Hint packs: buy more hints if you want them (growth plan, "Hints"). Earning stays the main way:
 // every 10 floors you 3-star, every daily challenge, and Plus adds 20. No buying stars or skips.
 
-import { useEffect, useState } from 'react';
+import { Icon } from '../ui/Icon';
+import { useState } from 'react';
+import { StoreOffline, useStoreLoad } from '../ui/StatusCard';
 import { fx } from '../audio/feedback';
 import { buyHints, getHintOffers } from './purchases';
 import type { HintOffer } from './purchases';
@@ -9,17 +11,9 @@ import { t, tn } from '../i18n';
 import { rich } from '../i18n/rich';
 
 export function HintShop({ hints, onClose }: { hints: number; onClose(): void }) {
-  const [offers, setOffers] = useState<HintOffer[] | 'loading'>('loading');
+  const { value: offers, retry } = useStoreLoad<HintOffer[]>(getHintOffers);
   const [busy, setBusy] = useState(false);
   const [note, setNote] = useState<string | null>(null);
-
-  useEffect(() => {
-    let live = true;
-    void getHintOffers().then((o) => live && setOffers(o));
-    return () => {
-      live = false;
-    };
-  }, []);
 
   const buy = async (offer: HintOffer) => {
     if (busy) return;
@@ -38,7 +32,7 @@ export function HintShop({ hints, onClose }: { hints: number; onClose(): void })
       <div className="settings hint-shop" role="dialog" aria-label={t('Get more hints')} onClick={(e) => e.stopPropagation()}>
         <header className="settings-head">
           <button type="button" className="settings-close" aria-label={t('Close')} onClick={() => (fx.tap(), onClose())}>
-            ✕
+            <Icon name="close" size={24} />
           </button>
           <h2>{t('More hints')}</h2>
         </header>
@@ -59,11 +53,13 @@ export function HintShop({ hints, onClose }: { hints: number; onClose(): void })
           </ul>
           <div className="hint-packs">
             {offers === 'loading' && <p className="set-caption">{t('Loading prices…')}</p>}
-            {offers !== 'loading' && offers.length === 0 && <p className="set-caption">{t("The store isn't available right now. Try again later.")}</p>}
+            {offers !== 'loading' && offers.length === 0 && <StoreOffline onRetry={retry} />}
             {offers !== 'loading' &&
               offers.map((o) => (
                 <button key={o.hints} type="button" className="pill hint-pack" disabled={busy} onClick={() => void buy(o)}>
-                  <span className="hp-count">💡 {tn(o.hints, '{n} hint', '{n} hints')}</span>
+                  <span className="hp-count">
+                    <Icon name="hint" size={20} /> {tn(o.hints, '{n} hint', '{n} hints')}
+                  </span>
                   <span className="hp-price">{o.price}</span>
                 </button>
               ))}

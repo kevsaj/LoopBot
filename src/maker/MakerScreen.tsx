@@ -1,6 +1,8 @@
 // The floor maker: paint a floor on a flat grid, pick the rules, test-play it, then share it as a
 // code. Anyone with LoopBot can type or paste that code to play the floor.
 
+import { BackButton } from '../ui/Icon';
+import { StatusCard } from '../ui/StatusCard';
 import { useEffect, useMemo, useState } from 'react';
 import { Board } from '../board/Board';
 import { createWorld } from '../sim/world';
@@ -144,10 +146,8 @@ export function MakerScreen({ onBack, onPlay, draft, setDraft }: Props) {
   return (
     <main className="maker">
       <header className="topbar">
+        <BackButton label={t('{place}: back', { place: t('Floor maker') })} onClick={() => (fx.tap(), onBack())} />
         <div className="floor-title">
-          <button type="button" className="back-btn" onClick={() => (fx.tap(), onBack())}>
-            ‹ {t('Title')}
-          </button>
           <h1 className="floor-name">{t('Floor maker')}</h1>
         </div>
         <button type="button" className="pill maker-small" onClick={() => (fx.tap(), setSheet('code'))}>
@@ -501,7 +501,7 @@ function MyFloorsSheet({ onEdit, onPlay, onClose }: { onEdit(f: SavedFloor): voi
       <div className="results sheet mk-mine" role="dialog" aria-label={t('My floors')} onClick={(e) => e.stopPropagation()}>
         <h2>{t('My floors')}</h2>
         {list.length === 0 ? (
-          <p>{t('Floors you share show up here, so you can play, edit or send them again.')}</p>
+          <StatusCard icon="blocks" title={t('No floors yet')} text={t('Floors you share show up here, so you can play, edit or send them again.')} />
         ) : (
           <ul className="mk-list">
             {list.map((f) => (

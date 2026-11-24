@@ -1,7 +1,9 @@
 // A city pack's store screen: what the tower holds, the store's price, Buy and Restore.
 // One-time purchase, separate from LoopBot Plus (growth plan: city packs $2.99).
 
-import { useEffect, useState } from 'react';
+import { Icon } from '../ui/Icon';
+import { useState } from 'react';
+import { StoreOffline, useStoreLoad } from '../ui/StatusCard';
 import { fx } from '../audio/feedback';
 import { buyPack, getPackOffer, packUnlocked, restorePurchases } from './purchases';
 import { skylineOnSale } from './purchases';
@@ -102,19 +104,11 @@ export const PACK_INFO: Record<PackId, PackInfo> = {
 export function PackSheet({ pack, onClose }: { pack: PackId; onClose(): void }) {
   const info = PACK_INFO[pack];
   const [owned, setOwned] = useState(() => packUnlocked(pack));
-  const [offer, setOffer] = useState<PackOffer | null | 'loading'>('loading');
+  const { value: offer, retry } = useStoreLoad<PackOffer | null>(() => getPackOffer(pack));
   const [busy, setBusy] = useState(false);
   const [note, setNote] = useState<string | null>(null);
   const [skyline, setSkyline] = useState(false);
   const name = t(info.title);
-
-  useEffect(() => {
-    let live = true;
-    void getPackOffer(pack).then((o) => live && setOffer(o));
-    return () => {
-      live = false;
-    };
-  }, [pack]);
 
   const buy = async () => {
     if (!offer || offer === 'loading' || busy) return;
@@ -147,7 +141,7 @@ export function PackSheet({ pack, onClose }: { pack: PackId; onClose(): void }) 
       <div className={`settings plus-sheet pack-sheet pack-${pack}`} role="dialog" aria-label={pack === 'overflow' ? t('Overflow endless mode') : t('{pack} city pack', { pack: name })} onClick={(e) => e.stopPropagation()}>
         <header className="settings-head">
           <button type="button" className="settings-close" aria-label={t('Close')} onClick={() => (fx.tap(), onClose())}>
-            ✕
+            <Icon name="close" size={24} />
           </button>
           <h2>
             {name} <span className="pack-word">{pack === 'overflow' ? t('endless mode') : t('city pack')}</span>
@@ -170,13 +164,7 @@ export function PackSheet({ pack, onClose }: { pack: PackId; onClose(): void }) 
           </ul>
           <p className="set-caption">{pack === 'overflow' ? t('One purchase, yours to keep. Overflow is separate from LoopBot Plus. No subscription and no ads.') : t('One purchase, yours to keep. City packs are separate from LoopBot Plus. No subscription and no ads.')}</p>
 
-          {owned ? (
-            <p className="plus-owned">✓ {pack === 'overflow' ? t('Overflow is open') : t('{tower} is open', { tower: t(info.tower) })}</p>
-          ) : (
-            <button type="button" className="pill primary plus-buy" disabled={busy || !offer || offer === 'loading'} onClick={buy}>
-              {offer === 'loading' ? t('Loading price…') : offer ? t('Get {pack} · {price}', { pack: name, price: offer.price }) : t('Store unavailable')}
-            </button>
-          )}
+          {!owned && offer === null && <StoreOffline onRetry={retry} />}
           {note && (
             <p className="tip" role="status">
               {note}
@@ -187,12 +175,25 @@ export function PackSheet({ pack, onClose }: { pack: PackId; onClose(): void }) 
               {t('Want every tower? See the Skyline Pass')} ›
             </button>
           )}
-          {!owned && (
-            <button type="button" className="plus-restore" onClick={restore} disabled={busy}>
-              {t('Restore purchases')}
-            </button>
-          )}
         </div>
+        <footer className="store-cta">
+          {owned ? (
+            <p className="plus-owned">
+              <Icon name="check" size={20} /> {pack === 'overflow' ? t('Overflow is open') : t('{tower} is open', { tower: t(info.tower) })}
+            </p>
+          ) : (
+            <>
+              {offer !== null && (
+                <button type="button" className="pill primary plus-buy" disabled={busy || !offer || offer === 'loading'} onClick={buy}>
+                  {offer === 'loading' ? t('Loading price…') : offer ? t('Get {pack} · {price}', { pack: name, price: offer.price }) : t('Store unavailable')}
+                </button>
+              )}
+              <button type="button" className="plus-restore" onClick={restore} disabled={busy}>
+                {t('Restore purchases')}
+              </button>
+            </>
+          )}
+        </footer>
       </div>
       {skyline && (
         <SkylineSheet
