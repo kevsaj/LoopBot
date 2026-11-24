@@ -39,11 +39,14 @@ import { OverflowScreen, TerraceBanner } from './overflow/OverflowScreen';
 import { climbOn, earnsBrick, endClimb, loadOverflow, markCleared, overflowLevel, pruneOverflow, saveOverflow, skipFloor, startClimb } from './overflow';
 import type { OverflowState } from './overflow';
 import { packUnlocked } from './store/purchases';
+import { loadComeback, noteFirstDay, onNudgeTapped, recordWarmupClear, refreshNudge, saveComeback, warmupOpen, warmupTierFor } from './comeback';
+import type { ComebackState } from './comeback';
+import { warmupLevel } from './daily/warmup';
 import { exitAskDue, markExitAsked } from './survey';
 import { ExitCard } from './survey/SurveyCards';
 
 /** How deep each screen sits, for the direction of the slide between them. */
-const SCREEN_DEPTH = { title: 0, map: 1, maker: 1, overflow: 2, floor: 2, daily: 2, custom: 2, climb: 3 } as const;
+const SCREEN_DEPTH = { title: 0, map: 1, maker: 1, overflow: 2, floor: 2, daily: 2, warmup: 2, custom: 2, climb: 3 } as const;
 
 /** Each tower remembers its own floor: Tower 1 keeps the original key so old saves carry over. */
 const floorKey = (tower: number) => (tower === 1 ? 'loopbot.floor' : `loopbot.floor.t${tower}`);
@@ -86,7 +89,7 @@ export default function App() {
   }, []);
   // Every launch opens on the title screen, whose intro plays once per session; its Play button
   // goes to the next floor (Floor 1 for a new player), and the tower map is one tap further.
-  const [screen, setScreen] = useState<'title' | 'map' | 'floor' | 'daily' | 'maker' | 'custom' | 'overflow' | 'climb'>('title');
+  const [screen, setScreen] = useState<'title' | 'map' | 'floor' | 'daily' | 'warmup' | 'maker' | 'custom' | 'overflow' | 'climb'>('title');
   // Screens slide in from the side you're heading: deeper (title, map, floor) from the right,
   // back up from the left. styles.css keys the move off <html data-nav>; Reduce motion turns it off.
   const lastScreen = useRef(screen);
@@ -183,6 +186,54 @@ export default function App() {
   );
   const dailyRef = useRef(daily);
   dailyRef.current = daily;
+  // Players who haven't reached the daily yet: the warm-up from day 2, and the one come-back nudge (src/comeback.ts).
+  const [comeback, setComebackState] = useState<ComebackState>(() => {
+    const before = loadComeback();
+    const s = noteFirstDay(before, loadProgress());
+    if (s !== before) saveComeback(s);
+    return s;
+  });
+  const comebackRef = useRef(comeback);
+  comebackRef.current = comeback;
+  const [warmFloor, setWarmFloor] = useState<{ date: string; level: LevelFile } | null>(null);
+  const warmFrom = useRef<'title' | 'map'>('title');
+  const progressRef = useRef(progress);
+  progressRef.current = progress;
+  const openWarmup = useCallback(
+    (from: 'title' | 'map') => {
+      const date = dateKey();
+      warmFrom.current = from;
+      setProgress((p) => pruneOldDailies(date, p, date));
+      const level = warmupLevel(date, warmupTierFor(progressRef.current));
+      ride(() => {
+        setWarmFloor({ date, level });
+        setScreen('warmup');
+      });
+    },
+    [ride, setProgress],
+  );
+  const clearWarmup = useCallback(
+    (date: string, stars: number) => {
+      const { state, hints } = recordWarmupClear(comebackRef.current, date, stars);
+      saveComeback(state);
+      comebackRef.current = state;
+      setComebackState(state);
+      if (hints) setProgress((p) => ({ ...p, hints: p.hints + hints }));
+      return hints;
+    },
+    [setProgress],
+  );
+  // The come-back nudge moves to tomorrow on every launch and every new clear (or is used up).
+  const clearedCount = Object.keys(progress.stars).length;
+  useEffect(() => void refreshNudge(progressRef.current), [clearedCount, language]);
+  // Tapping the nudge opens the warm-up, when there is one today.
+  useEffect(
+    () =>
+      onNudgeTapped(() => {
+        if (warmupOpen(loadComeback(), progressRef.current)) openWarmup('title');
+      }),
+    [openWarmup],
+  );
   const clearDaily = useCallback(
     (date: string, stars: number, boss = false) => {
       const before = dailyRef.current;
@@ -286,7 +337,7 @@ export default function App() {
       listenForBack(() => {
         if (screenRef.current === 'title') return false;
         const s = screenRef.current;
-        setScreen(s === 'floor' || s === 'overflow' ? 'map' : s === 'daily' ? dailyFrom.current : s === 'custom' ? 'maker' : s === 'climb' ? 'overflow' : 'title');
+        setScreen(s === 'floor' || s === 'overflow' ? 'map' : s === 'daily' ? dailyFrom.current : s === 'warmup' ? warmFrom.current : s === 'custom' ? 'maker' : s === 'climb' ? 'overflow' : 'title');
         return true;
       }),
     [],
@@ -371,7 +422,7 @@ export default function App() {
         ? themeForFloor(safeIndex + 1, tower)
         : screen === 'climb' || screen === 'overflow'
           ? themeForOverflow(overflow.run ? overflow.run.floor : 1)
-          : screen === 'daily' || screen === 'custom'
+          : screen === 'daily' || screen === 'warmup' || screen === 'custom'
             ? 'daily'
             : 'title',
     );
@@ -391,6 +442,7 @@ export default function App() {
           onSettings={() => setSettings(true)}
           daily={daily}
           onDaily={(boss) => openDaily('title', dateKey(), boss)}
+          warmup={warmupOpen(comeback, progress) ? { best: comeback.warm[dateKey()] ?? 0, onOpen: () => openWarmup('title') } : undefined}
           onLocker={openLocker}
           lockerNew={rewards.hasNew}
           onMaker={MAKER ? () => setScreen('maker') : undefined}
@@ -456,6 +508,7 @@ export default function App() {
           onHome={() => setScreen('title')}
           daily={daily}
           onDaily={(boss) => openDaily('map', dateKey(), boss)}
+          warmup={warmupOpen(comeback, progress) ? { best: comeback.warm[dateKey()] ?? 0, onOpen: () => openWarmup('map') } : undefined}
           onArchive={() => setArchive(true)}
           onLocker={openLocker}
           lockerNew={rewards.hasNew}
@@ -502,6 +555,31 @@ export default function App() {
           overflow={{ floor: run.floor, bricks: run.bricks, perfect: run.perfect, onClear: clearOverflowFloor, onSkip: skipOverflowFloor }}
         />
         {banner === climbFloor.id && <TerraceBanner floor={run.floor} onDone={() => setBanner(null)} />}
+        {overlays}
+        {elevator}
+      </>
+    );
+  }
+  if (screen === 'warmup' && warmFloor) {
+    const { date, level: warm } = warmFloor;
+    return (
+      <>
+        <FloorScreen
+          key={warm.id}
+          level={localFloor(warm)}
+          floorNumber={0}
+          floorCount={levels.length}
+          progress={progress}
+          setProgress={setProgress}
+          onGo={go}
+          onTower={() => setScreen(warmFrom.current)}
+          custom={{
+            back: t('Warm-up'),
+            title: t('Warm-up'),
+            onClear: (_c, _s, stars) =>
+              clearWarmup(date, stars) ? t('+1 hint for the tower. A new warm-up arrives tomorrow.') : t('A new warm-up arrives tomorrow.'),
+          }}
+        />
         {overlays}
         {elevator}
       </>

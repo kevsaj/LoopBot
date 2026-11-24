@@ -2553,6 +2553,33 @@ button.set-row {
 .daily-btn.shake {
   animation: shake 0.42s ease;
 }
+/* The warm-up: the daily's spot for players below Floor 11 (src/comeback.ts) */
+.daily-btn.warmup-btn {
+  background: linear-gradient(100deg, rgba(90, 209, 164, 0.18), rgba(35, 38, 58, 0.9) 60%);
+  border-color: rgba(90, 209, 164, 0.5);
+}
+.daily-btn.warmup-btn.done {
+  background: rgba(35, 38, 58, 0.85);
+  border-color: var(--line);
+}
+.warmup-icon {
+  flex: 0 0 26px;
+  height: 26px;
+  border-radius: var(--r-sm);
+  display: grid;
+  place-items: center;
+  background: rgba(90, 209, 164, 0.2);
+  color: var(--good);
+}
+.warmup-btn .daily-sub {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+}
+.warmup-btn .daily-sub > span:last-child {
+  font-weight: 500;
+  opacity: 0.8;
+}
 .title-daily {
   animation: title-pop 0.4s cubic-bezier(0.3, 1.5, 0.5, 1) 1.4s both;
 }

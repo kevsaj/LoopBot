@@ -29,6 +29,8 @@ interface Props {
   onSettings(): void;
   daily: DailyState;
   onDaily(boss?: boolean): void;
+  /** Today's warm-up, for players who haven't reached the daily yet. */
+  warmup?: { best: number; onOpen(): void };
   onLocker(): void;
   /** The floor maker, when it's switched on. */
   onMaker?(): void;
@@ -64,7 +66,7 @@ function BigBot({ poked }: { poked: boolean }) {
   );
 }
 
-export function TitleScreen({ levels, towerLabel, progress, booted, onBooted, onPlay, onTower, onSettings, daily, onDaily, onLocker, lockerNew, onMaker }: Props) {
+export function TitleScreen({ levels, towerLabel, progress, booted, onBooted, onPlay, onTower, onSettings, daily, onDaily, warmup, onLocker, lockerNew, onMaker }: Props) {
   const [settled, setSettled] = useState(() => booted || reducedMotion());
   const [poked, setPoked] = useState(false);
   const [candy, setCandy] = useColourful();
@@ -151,7 +153,7 @@ export function TitleScreen({ levels, towerLabel, progress, booted, onBooted, on
             {t('Tower map')} <span className="title-stats">★ {stars} · {t('{n} / {total} floors', { n: cleared, total: ids.length })}</span>
           </button>
         )}
-        {!fresh && !DEMO && <DailyButton className="title-daily" progress={progress} daily={daily} onOpen={onDaily} />}
+        {!fresh && !DEMO && <DailyButton className="title-daily" progress={progress} daily={daily} onOpen={onDaily} warmup={warmup} />}
         {!fresh && !DEMO && onMaker && (
           <button type="button" className="pill title-maker" onClick={() => (fx.tap(), onMaker())}>
             <Icon name="maker" size={18} /> {t('Floor maker')}

@@ -6,6 +6,7 @@ import type { Progress } from '../progress';
 import type { DailyState } from './index';
 import { DAILY_UNLOCK_FLOOR, DIFFICULTY_LABEL, THEME_NAME, TWIST_ICON, TWIST_RULE, bossOn, currentStreak, dailyUnlocked, dateKey, difficultyOn, streakNeedsFreeze, themeComing, twistOn } from './index';
 import { fx } from '../audio/feedback';
+import { Icon } from '../ui/Icon';
 import { t, tn } from '../i18n';
 
 interface Props {
@@ -14,9 +15,11 @@ interface Props {
   daily: DailyState;
   /** Opens today's daily, or with `boss` the Sunday boss. */
   onOpen(boss?: boolean): void;
+  /** Before the daily opens: today's warm-up (src/comeback.ts), from the player's second day. */
+  warmup?: { best: number; onOpen(): void };
 }
 
-export function DailyButton({ className, progress, daily, onOpen }: Props) {
+export function DailyButton({ className, progress, daily, onOpen, warmup }: Props) {
   const [shake, setShake] = useState(false);
   const today = dateKey();
   const open = dailyUnlocked(progress);
@@ -31,6 +34,39 @@ export function DailyButton({ className, progress, daily, onOpen }: Props) {
   const boss = bossOn(today);
   const bossBest = daily.boss?.[today] ?? 0;
 
+  if (!open && warmup) {
+    const done = warmup.best > 0;
+    return (
+      <button
+        type="button"
+        className={`pill daily-btn warmup-btn ${className}${done ? ' done' : ''}`}
+        onClick={() => (fx.tap(), warmup.onOpen())}
+        aria-label={[t('Warm-up puzzle'), done ? tn(warmup.best, 'cleared today with {n} star', 'cleared today with {n} stars') : t('a quick puzzle that earns a hint'), t('Daily challenge opens after Floor {n}', { n: DAILY_UNLOCK_FLOOR })].join(', ')}
+      >
+        <span className="daily-main">
+          <span className="warmup-icon" aria-hidden="true">
+            <Icon name="hint" size={16} />
+          </span>
+          {t('Warm-up puzzle')}
+          {!done && <span className="daily-diff diff-easy">{t('New today')}</span>}
+        </span>
+        <span className="daily-sub">
+          {done ? (
+            <span className="daily-stars" aria-hidden="true">
+              {[1, 2, 3].map((i) => (
+                <span key={i} className={i <= warmup.best ? 'on' : ''}>
+                  ★
+                </span>
+              ))}
+            </span>
+          ) : (
+            <span>{t('Quick puzzle · earns a hint')}</span>
+          )}
+          <span>{t('Daily challenge opens after Floor {n}', { n: DAILY_UNLOCK_FLOOR })}</span>
+        </span>
+      </button>
+    );
+  }
   if (!open) {
     return (
       <button

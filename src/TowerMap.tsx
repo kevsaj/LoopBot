@@ -45,6 +45,8 @@ interface Props {
   onHome(): void;
   daily: DailyState;
   onDaily(boss?: boolean): void;
+  /** Today's warm-up, for players who haven't reached the daily yet. */
+  warmup?: { best: number; onOpen(): void };
   /** Opens the daily archive (LoopBot Plus). */
   onArchive(): void;
   onLocker(): void;
@@ -356,7 +358,7 @@ export function MiniBot() {
   );
 }
 
-export function TowerMap({ levels, tower, towers, onTowerPick, progress, current, onPick, onSettings, onHome, daily, onDaily, onArchive, onLocker, lockerNew, overflow }: Props) {
+export function TowerMap({ levels, tower, towers, onTowerPick, progress, current, onPick, onSettings, onHome, daily, onDaily, warmup, onArchive, onLocker, lockerNew, overflow }: Props) {
   const ids = levels.map((l) => l.id);
   const totalStars = ids.reduce((n, id) => n + (progress.stars[id] ?? 0), 0);
   const cleared = ids.filter((id) => (progress.stars[id] ?? 0) > 0).length;
@@ -458,7 +460,7 @@ export function TowerMap({ levels, tower, towers, onTowerPick, progress, current
         </span>
       </div>
       <TowerSwitch tower={tower} towers={towers} progress={progress} onPick={onTowerPick} onLocked={lockedTower} overflow={overflow} onSkyline={skylineOnSale() ? () => setSkySheet(true) : undefined} />
-      {!DEMO && <DailyButton className="tower-daily" progress={progress} daily={daily} onOpen={onDaily} />}
+      {!DEMO && <DailyButton className="tower-daily" progress={progress} daily={daily} onOpen={onDaily} warmup={warmup} />}
       {!DEMO && dailyUnlocked(progress) && (PLUS_VISIBLE || plusUnlocked()) && (
         <button type="button" className="link-btn daily-archive-link" onClick={() => (fx.tap(), onArchive())}>
           <Icon name="calendar" size={16} /> {t('Daily archive')}

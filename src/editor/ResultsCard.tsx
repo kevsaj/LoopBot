@@ -31,7 +31,9 @@ interface Props {
   /** The daily challenge: shows the streak and a share button instead of "Next floor". */
   daily?: { date: string; boss?: boolean; onBoss?(): void; streak: number; froze?: boolean; share: string };
   /** A player-made floor: no tower or streak, just a note and Done. */
-  custom?: { note: string | null; noPar?: boolean };
+  custom?: { note: string | null; noPar?: boolean; title?: string };
+  /** After the first Floor 1 clear on a phone: offer one reminder tomorrow (src/comeback.ts). */
+  nudge?: { answer(yes: boolean): Promise<boolean> };
   /** An Overflow climb: the record and brick badges, and "Next floor" climbs on. */
   overflow?: { floor: number; record: boolean; brick: boolean; streak: number };
   /** Share a picture: the solved board and program on tower floors, a spoiler-free card on the daily. */
@@ -43,7 +45,7 @@ interface Props {
 const STAR_MS = 420;
 const HEADLINE = ['', msg('Floor cleared'), msg('Nice work!'), msg('Perfect run!')];
 
-export function ResultsCard({ floorNumber, tower = 1, floorCount, earned, prevBest, commands, steps, par, outro, onClose, onRetry, onNext, onTower, daily, custom, overflow, onShareImage, onSurvey }: Props) {
+export function ResultsCard({ floorNumber, tower = 1, floorCount, earned, prevBest, commands, steps, par, outro, onClose, onRetry, onNext, onTower, daily, custom, overflow, nudge, onShareImage, onSurvey }: Props) {
   const calm = reducedMotion();
   const [shown, setShown] = useState(calm ? 3 : 0);
   const starsRef = useRef<HTMLDivElement>(null);
@@ -112,7 +114,16 @@ export function ResultsCard({ floorNumber, tower = 1, floorCount, earned, prevBe
     const on = await setReminder(true);
     setReminderNote(on ? t('Reminder set for {time}. Change it in Settings.', { time: hourLabel(DEFAULT_HOUR) }) : t('Notifications are off for LoopBot. You can allow them in your phone settings.'));
   };
-  const title = custom ? t('Your floor') : overflow ? t('Overflow · Floor {n}', { n: overflow.floor }) : daily ? (daily.boss ? t('Sunday boss · {date}', { date: shortDate(daily.date) }) : t('Daily · {date}', { date: shortDate(daily.date) })) : t('Floor {n}', { n: floorNumber });
+  // The come-back question: asked once, in the game first, so the phone's permission prompt only follows a yes.
+  const [askNudge, setAskNudge] = useState(() => !!nudge);
+  const [nudgeNote, setNudgeNote] = useState<string | null>(null);
+  const answerNudge = async (yes: boolean) => {
+    fx.tap();
+    setAskNudge(false);
+    const on = await nudge!.answer(yes);
+    if (yes) setNudgeNote(on ? t("Deal. If you don't drop by tomorrow, I'll send one reminder. Just one.") : t('Notifications are off for LoopBot. You can allow them in your phone settings.'));
+  };
+  const title = custom ? (custom.title ?? t('Your floor')) : overflow ? t('Overflow · Floor {n}', { n: overflow.floor }) : daily ? (daily.boss ? t('Sunday boss · {date}', { date: shortDate(daily.date) }) : t('Daily · {date}', { date: shortDate(daily.date) })) : t('Floor {n}', { n: floorNumber });
   // Tower 1's first floors point at the next thing to aim for: a gift, PATCH's call, loops.
   const goal = !daily && !custom && !overflow ? earlyGoal(tower, floorNumber, prevBest === 0, DEMO) : null;
   const tip =
@@ -191,6 +202,20 @@ export function ResultsCard({ floorNumber, tower = 1, floorCount, earned, prevBe
           <button type="button" className="pill boss-cta" onClick={() => (fx.tap(), daily.onBoss!())}>
             👑 {t("Try today's Sunday boss")} ›
           </button>
+        )}
+        {nudgeNote && <p className="tip">{nudgeNote}</p>}
+        {askNudge && shown >= 3 && (
+          <div className="reminder-ask">
+            <p>{t('Nice start! Want one reminder tomorrow, in case you forget to come back?')}</p>
+            <div className="reminder-ask-actions">
+              <button type="button" className="pill" onClick={() => void answerNudge(false)}>
+                {t('No thanks')}
+              </button>
+              <button type="button" className="pill primary" onClick={() => void answerNudge(true)}>
+                {t('Yes, just one')}
+              </button>
+            </div>
+          </div>
         )}
         {askReminder && shown >= 3 && (
           <div className="reminder-ask">
