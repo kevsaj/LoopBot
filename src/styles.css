@@ -2324,6 +2324,111 @@ select:focus-visible {
   place-items: center;
   text-decoration: none;
 }
+/* --- player questions: "what stopped you?" on the map, survey after Floor 5 (src/survey) --- */
+.ask-card {
+  position: fixed;
+  left: 50%;
+  bottom: calc(var(--sp-4) + env(safe-area-inset-bottom));
+  z-index: 20;
+  width: min(380px, calc(calc(100vw / var(--z, 1)) - 32px));
+  box-sizing: border-box;
+  padding: var(--sp-3) var(--sp-4) var(--sp-4);
+  border-radius: var(--r-xl);
+  background: var(--panel);
+  border: 1px solid var(--accent);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+  transform: translateX(-50%);
+  animation: ask-in 0.3s var(--ease-out) both;
+}
+@keyframes ask-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 24px);
+  }
+}
+.ask-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+}
+.ask-head h2 {
+  margin: 0;
+  font-size: var(--fs-lg);
+}
+.ask-skip {
+  min-height: var(--tap);
+  padding: 0 var(--sp-2);
+  border: 0;
+  background: none;
+  color: var(--quiet);
+  font: inherit;
+  font-size: var(--fs-md);
+  font-weight: 600;
+}
+.ask-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  margin-top: var(--sp-1);
+}
+.ask-chips .fb-mood {
+  flex: 1 1 auto;
+}
+.ask-text {
+  margin-top: var(--sp-3);
+}
+.ask-send {
+  width: 100%;
+  margin-top: var(--sp-2);
+}
+.ask-thanks {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  margin: var(--sp-2) 0;
+  font-weight: 700;
+  color: var(--good);
+}
+.survey-backdrop {
+  z-index: 12; /* above the results card it opens from */
+}
+.survey-q {
+  margin: var(--sp-3) 0 var(--sp-2);
+  font-weight: 700;
+}
+.survey-scale,
+.survey-keep {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--sp-2);
+}
+.survey-keep {
+  grid-template-columns: repeat(3, 1fr);
+}
+.survey .fb-mood {
+  padding: 0;
+  min-height: var(--tap);
+}
+.survey-ends {
+  display: flex;
+  justify-content: space-between;
+  margin: var(--sp-1) 2px 0;
+  font-size: var(--fs-xs);
+  color: var(--quiet);
+}
+.survey-link {
+  display: block;
+  min-height: var(--tap);
+  margin: var(--sp-2) auto 0;
+  font-size: var(--fs-md);
+}
+@media (prefers-reduced-motion: reduce) {
+  .ask-card {
+    animation: none;
+  }
+}
 .link-btn {
   padding: 0;
   border: 0;
