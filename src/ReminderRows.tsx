@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { fx } from './audio/feedback';
 import { hourLabel, loadReminder, remindersAvailable, setReminder } from './reminder';
 import { t } from './i18n';
+import { cancelNudge, loadComeback } from './comeback';
 
 const HOURS = Array.from({ length: 24 }, (_, h) => h);
 
@@ -38,6 +39,35 @@ export function ReminderRows() {
         </label>
       )}
       <p className={`set-caption${note ? ' fb-error' : ''}`}>{note || t("When the day's puzzle is ready, unless you've played.")}</p>
+      <NudgeRow />
     </div>
+  );
+}
+
+/** The one come-back reminder, while it's still waiting (src/comeback.ts). Switching it off ends it for good. */
+function NudgeRow() {
+  const [waiting, setWaiting] = useState(() => {
+    const s = loadComeback();
+    return s.nudge && !s.done;
+  });
+  if (!waiting) return null;
+  return (
+    <>
+      <label className="set-row">
+        <span className="set-label">{t('Come-back reminder')}</span>
+        <input
+          type="checkbox"
+          role="switch"
+          className="set-switch"
+          checked
+          onChange={() => {
+            fx.tap();
+            setWaiting(false);
+            void cancelNudge();
+          }}
+        />
+      </label>
+      <p className="set-caption">{t("One reminder, only on a day you don't play. It won't repeat.")}</p>
+    </>
   );
 }

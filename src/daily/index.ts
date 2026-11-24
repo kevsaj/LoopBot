@@ -251,7 +251,7 @@ const INTROS = [
  * other than `today`, so storage doesn't grow day after day.
  */
 export function pruneOldDailies(today: string, p: Progress, playing: string = today): Progress {
-  const keepIds = new Set([`daily-${today}`, `daily-${playing}`, bossId(today), bossId(playing)]);
+  const keepIds = new Set([`daily-${today}`, `daily-${playing}`, bossId(today), bossId(playing), `daily-warmup-${today}`]);
   try {
     const stale: string[] = [];
     for (let i = 0; i < localStorage.length; i++) {

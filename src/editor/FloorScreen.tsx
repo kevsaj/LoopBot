@@ -27,6 +27,7 @@ import type { Progress } from '../progress';
 import { recordClear, recordFail } from '../progress';
 import { maybeAskForReview } from '../review';
 import { HintSheet } from './HintSheet';
+import { answerNudge, loadComeback, shouldAskNudge } from '../comeback';
 import { ResultsCard } from './ResultsCard';
 import { cancellingTurns, partnerLine, spinNote, stepLine, twinNote, tutorialStep, TUTORIAL_TEXT } from './tutorial';
 import { track } from '../telemetry';
@@ -94,6 +95,8 @@ export interface CustomProps {
   back: string;
   /** Test play before the maker has cleared it: there's no par yet, so none is shown. */
   noPar?: boolean;
+  /** The results card's heading (default "Your floor"). */
+  title?: string;
   /** Called on every clear. It can return a line for the results card. Tower stars aren't touched. */
   onClear(commands: number, steps: number, stars: number): string | void;
 }
@@ -850,7 +853,12 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
           onRetry={reset}
           onNext={() => onGo(floorNumber)}
           onTower={onTower}
-          custom={custom && { note: customNote, noPar: custom.noPar }}
+          custom={custom && { note: customNote, noPar: custom.noPar, title: custom.title }}
+          nudge={
+            !daily && !custom && !overflow && level.id === 't1-f01' && prevBest === 0 && shouldAskNudge(loadComeback(), progress)
+              ? { answer: (yes) => answerNudge(yes, progressRef.current) }
+              : undefined
+          }
           overflow={overflow && { floor: overflow.floor, record: !!climbNote?.record, brick: !!climbNote?.brick, streak: climbNote?.brick ? 3 : earned >= 3 ? Math.min(2, overflow.perfect + 1) : 0 }}
           onShareImage={
             custom || overflow
