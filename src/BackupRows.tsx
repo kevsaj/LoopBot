@@ -66,7 +66,7 @@ export function BackupRows() {
         <p className="set-caption">
           {copied === 'show'
             ? t('Copy this code somewhere safe:')
-            : t('A code with your floors, stars, hints and streak. Paste it in a note or email it to yourself.')}
+            : t('Your floors, stars, hints and streak in one code to keep.')}
         </p>
         {copied === 'show' && <textarea className="fb-text backup-code" readOnly value={code} rows={3} onFocus={(e) => e.target.select()} />}
       </div>
@@ -95,7 +95,7 @@ export function BackupRows() {
             </button>
           </div>
         ) : (
-          <p className="set-caption">{t('For a new phone or after reinstalling. Replaces the progress on this device.')}</p>
+          <p className="set-caption">{t('For a new phone. Replaces the progress here.')}</p>
         )}
       </div>
     </>

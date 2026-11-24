@@ -1,5 +1,6 @@
-// Settings: a full screen of grouped rows (General, Your progress, Privacy, About), each row a rounded card
-// with a short caption under it. Links open on the KIS Studios site, in the phone's browser on Android.
+// Settings: a full screen of collapsible groups (Sound, Look & reading, Playing, Purchases, Your progress,
+// Privacy, Help & about). Each header says what's inside; the rows under it are rounded cards, most with
+// no caption or a short one. Links open on the KIS Studios site, in the phone's browser on Android.
 
 import { useId, useState } from 'react';
 import type { ReactNode } from 'react';
@@ -17,7 +18,8 @@ import { ownsSkyline } from './store/skyline';
 import { OVERFLOW_ON, TOWERS } from './levels/towers';
 import { bigTextOn, setBigText } from './textSize';
 import { deviceReducesMotion, reduceMotionPref, setReduceMotion } from './a11y/motion';
-import { colourfulOn, setColourful } from './colourful';
+import { useColourful } from './colourful';
+import { remindersAvailable } from './reminder';
 import { version } from '../package.json';
 import { FeedbackSheet } from './FeedbackSheet';
 import { BackupRows } from './BackupRows';
@@ -36,18 +38,20 @@ interface Props extends FeedbackContext {
   onClose(): void;
 }
 
-function Toggle({ label, caption, on, onChange, disabled }: { label: string; caption: string; on: boolean; onChange(on: boolean): void; disabled?: boolean }) {
-  // The caption is read after the switch's name by TalkBack and VoiceOver.
+function Toggle({ label, caption, on, onChange, disabled }: { label: string; caption?: string; on: boolean; onChange(on: boolean): void; disabled?: boolean }) {
+  // The caption (when there is one) is read after the switch's name by TalkBack and VoiceOver.
   const id = useId();
   return (
     <div className="set-item">
       <label className="set-row">
         <span className="set-label">{label}</span>
-        <input type="checkbox" role="switch" className="set-switch" checked={on} disabled={disabled} aria-describedby={id} onChange={(e) => onChange(e.target.checked)} />
+        <input type="checkbox" role="switch" className="set-switch" checked={on} disabled={disabled} aria-describedby={caption ? id : undefined} onChange={(e) => onChange(e.target.checked)} />
       </label>
-      <p className="set-caption" id={id}>
-        {caption}
-      </p>
+      {caption && (
+        <p className="set-caption" id={id}>
+          {caption}
+        </p>
+      )}
     </div>
   );
 }
@@ -90,8 +94,47 @@ function LanguageRow() {
           ))}
         </select>
       </label>
-      <p className="set-caption">{t("Automatic follows your device's language.")}</p>
     </div>
+  );
+}
+
+/** Which sections are open. Kept while the app runs, so Settings reopens the way you left it. */
+const openSections = new Set<string>();
+
+/**
+ * One collapsible group: a header row with an icon, the group's name and what's inside, and the rows
+ * under it when open. A real button with aria-expanded, so keyboards and screen readers can open it.
+ */
+function Section({ id, icon, title, sub, children }: { id: string; icon: string; title: string; sub: string; children: ReactNode }) {
+  const [open, setOpen] = useState(() => openSections.has(id));
+  const bodyId = useId();
+  const headId = useId();
+  const toggle = () => {
+    fx.tap();
+    if (open) openSections.delete(id);
+    else openSections.add(id);
+    setOpen(!open);
+  };
+  return (
+    <section className={`set-group${open ? ' open' : ''}`}>
+      <h3 className="set-group-title">
+        <button type="button" id={headId} className="set-group-head" aria-expanded={open} aria-controls={bodyId} onClick={toggle}>
+          <span className="set-group-icon" aria-hidden="true">
+            {icon}
+          </span>
+          <span className="set-group-text">
+            <span className="set-group-name">{title}</span>
+            <span className="set-group-sub">{sub}</span>
+          </span>
+          <span className="set-group-chevron" aria-hidden="true">
+            ›
+          </span>
+        </button>
+      </h3>
+      <div className="set-group-body" id={bodyId} role="region" aria-labelledby={headId} hidden={!open}>
+        {children}
+      </div>
+    </section>
   );
 }
 
@@ -101,7 +144,7 @@ export function SettingsSheet({ progress, setProgress, onClose, floor, floorTitl
   const [haptics, setHaptics] = useState(hapticsOn());
   const [bigText, setBigTextState] = useState(bigTextOn);
   const [calm, setCalm] = useState(reduceMotionPref);
-  const [colourful, setColourfulState] = useState(colourfulOn);
+  const [colourful, setColourfulState] = useColourful();
   const [stats, setStats] = useState(statsOn());
   const [feedback, setFeedback] = useState(false);
   if (feedback) return <FeedbackSheet floor={floor} floorTitle={floorTitle} onClose={() => setFeedback(false)} />;
@@ -117,129 +160,130 @@ export function SettingsSheet({ progress, setProgress, onClose, floor, floorTitl
         </header>
 
         <div className="settings-body">
-          <h3 className="set-section">{t('General')}</h3>
-          <LanguageRow />
-          <Toggle
-            label={t('Music')}
-            caption={t('A theme for each part of the tower')}
-            on={music}
-            onChange={(on) => {
-              setMusicOn(on);
-              setMusic(on);
-              fx.tap();
-            }}
-          />
-          <Toggle
-            label={t('Sound effects')}
-            caption={t("Clicks, LoopBot's chirps and the fanfare when you clear a floor")}
-            on={sound}
-            onChange={(on) => {
-              setMuted(!on);
-              setSound(on);
-              if (on) fx.tap();
-            }}
-          />
-          <Toggle
-            label={t('Vibration')}
-            caption={t('A small buzz on taps, bumps and cleared floors')}
-            on={haptics}
-            onChange={(on) => {
-              setHapticsOn(on);
-              setHaptics(on);
-              if (on) fx.tap();
-            }}
-          />
-          <Toggle
-            label={t('Larger text')}
-            caption={t('Bigger text for the program, the palette, the story and the menus')}
-            on={bigText}
-            onChange={(on) => {
-              setBigText(on);
-              setBigTextState(on);
-              fx.tap();
-            }}
-          />
-          <Toggle
-            label={t('Colourful mode')}
-            caption={t('Bright candy colours for the skies, tiles and buttons')}
-            on={colourful}
-            onChange={(on) => {
-              setColourful(on);
-              setColourfulState(on);
-              fx.tap();
-            }}
-          />
-          <Toggle
-            label={t('Reduce motion')}
-            caption={
-              deviceReducesMotion()
-                ? t('Your device already asks for less motion, so LoopBot keeps things calm.')
-                : t('Calmer celebrations: no confetti, bobbing, glowing eyes or typing text')
-            }
-            on={calm || deviceReducesMotion()}
-            disabled={deviceReducesMotion()}
-            onChange={(on) => {
-              setReduceMotion(on);
-              setCalm(on);
-              fx.tap();
-            }}
-          />
-          <Toggle
-            label={t('Tutorial tips')}
-            caption={t('Step-by-step tips on the first floors of each new idea')}
-            on={progress.tutorial}
-            onChange={(on) => setProgress((p) => ({ ...p, tutorial: on }))}
-          />
-
-          <ReminderRows />
-
-          {SHOP_OPEN && <PurchaseRows hints={progress.hints} />}
-
-          <h3 className="set-section">{t('Your progress')}</h3>
-          <BackupRows />
-
-          <h3 className="set-section">{t('Privacy')}</h3>
-          {TELEMETRY_AVAILABLE && (
+          <Section id="sound" icon="🔊" title={t('Sound')} sub={t('Music, sound effects, vibration')}>
             <Toggle
-              label={t('Share anonymous stats')}
-              caption={t('Which floors are tricky (runs, hints, time per floor), so we can make them better. No name, email or account.')}
-              on={stats}
+              label={t('Music')}
+              on={music}
               onChange={(on) => {
-                setStatsOn(on);
-                setStats(on);
+                setMusicOn(on);
+                setMusic(on);
                 fx.tap();
               }}
             />
-          )}
-          <div className="set-item">
-            <LinkRow href={`${SITE}/privacy`}>{t('Privacy policy')}</LinkRow>
-            <p className="set-caption">{t('LoopBot collects no personal data. Your progress stays on this device.')}</p>
-          </div>
-          <div className="set-item">
-            <LinkRow href={`${SITE}/terms`}>{t('Terms of service')}</LinkRow>
-          </div>
+            <Toggle
+              label={t('Sound effects')}
+              on={sound}
+              onChange={(on) => {
+                setMuted(!on);
+                setSound(on);
+                if (on) fx.tap();
+              }}
+            />
+            <Toggle
+              label={t('Vibration')}
+              on={haptics}
+              onChange={(on) => {
+                setHapticsOn(on);
+                setHaptics(on);
+                if (on) fx.tap();
+              }}
+            />
+          </Section>
 
-          <h3 className="set-section">{t('About')}</h3>
-          <div className="set-item">
-            <button type="button" className="set-row set-link" onClick={() => (fx.tap(), setFeedback(true))}>
-              <span className="set-label">{t('Send feedback')}</span>
-              <span className="set-chevron" aria-hidden="true">
-                ›
-              </span>
-            </button>
-            <p className="set-caption">{t('Found a bug or stuck on a floor? We read every message.')}</p>
-          </div>
-          <div className="set-item">
-            <div className="set-row">
-              <span className="set-label">{t('Version')}</span>
-              <span className="set-value">{version}</span>
+          <Section id="look" icon="🎨" title={t('Look & reading')} sub={t('Language, colours, text size, motion')}>
+            <LanguageRow />
+            <Toggle
+              label={t('Colourful mode')}
+              caption={t('Bright candy colours. Also on the home screen: 🍬')}
+              on={colourful}
+              onChange={(on) => {
+                setColourfulState(on);
+                fx.tap();
+              }}
+            />
+            <Toggle
+              label={t('Larger text')}
+              caption={t('For the program, blocks, story and menus')}
+              on={bigText}
+              onChange={(on) => {
+                setBigText(on);
+                setBigTextState(on);
+                fx.tap();
+              }}
+            />
+            <Toggle
+              label={t('Reduce motion')}
+              caption={deviceReducesMotion() ? t('On because your device asks for less motion.') : t('No confetti, bobbing, glowing eyes or typing text')}
+              on={calm || deviceReducesMotion()}
+              disabled={deviceReducesMotion()}
+              onChange={(on) => {
+                setReduceMotion(on);
+                setCalm(on);
+                fx.tap();
+              }}
+            />
+          </Section>
+
+          <Section id="play" icon="🎮" title={t('Playing')} sub={remindersAvailable() ? t('Tutorial tips, daily reminder') : t('Tutorial tips')}>
+            <Toggle
+              label={t('Tutorial tips')}
+              caption={t('Tips on the first floors of each new idea')}
+              on={progress.tutorial}
+              onChange={(on) => setProgress((p) => ({ ...p, tutorial: on }))}
+            />
+            <ReminderRows />
+          </Section>
+
+          {SHOP_OPEN && (
+            <Section id="shop" icon="🛍" title={t('Subscriptions & Purchases')} sub={t('Skyline Pass, Plus, city packs, hints')}>
+              <PurchaseRows hints={progress.hints} />
+            </Section>
+          )}
+
+          <Section id="progress" icon="💾" title={t('Your progress')} sub={t('Back up or restore your floors')}>
+            <BackupRows />
+          </Section>
+
+          <Section id="privacy" icon="🔒" title={t('Privacy')} sub={TELEMETRY_AVAILABLE ? t('Anonymous stats, policy, terms') : t('Policy and terms')}>
+            {TELEMETRY_AVAILABLE && (
+              <Toggle
+                label={t('Share anonymous stats')}
+                caption={t('Which floors are tricky, so we can fix them. No name, email or account.')}
+                on={stats}
+                onChange={(on) => {
+                  setStatsOn(on);
+                  setStats(on);
+                  fx.tap();
+                }}
+              />
+            )}
+            <div className="set-item">
+              <LinkRow href={`${SITE}/privacy`}>{t('Privacy policy')}</LinkRow>
+              <p className="set-caption">{t('No personal data. Your progress stays on this device.')}</p>
             </div>
-          </div>
-          <div className="set-item">
-            <LinkRow href="https://www.kisstudios.net/" value="KIS Studios">
-              {t('Made by')}
-            </LinkRow>
-          </div>
+            <div className="set-item">
+              <LinkRow href={`${SITE}/terms`}>{t('Terms of service')}</LinkRow>
+            </div>
+          </Section>
+
+          <Section id="help" icon="💬" title={t('Help & about')} sub={t('Send feedback, who made LoopBot')}>
+            <div className="set-item">
+              <button type="button" className="set-row set-link" onClick={() => (fx.tap(), setFeedback(true))}>
+                <span className="set-label">{t('Send feedback')}</span>
+                <span className="set-chevron" aria-hidden="true">
+                  ›
+                </span>
+              </button>
+              <p className="set-caption">{t('Found a bug or stuck on a floor? We read every message.')}</p>
+            </div>
+            <div className="set-item">
+              <LinkRow href="https://www.kisstudios.net/" value="KIS Studios">
+                {t('Made by')}
+              </LinkRow>
+            </div>
+          </Section>
+
+          <p className="settings-version">{t('Version {version}', { version })}</p>
         </div>
       </div>
     </div>
@@ -279,7 +323,6 @@ function PurchaseRows({ hints }: { hints: number }) {
   };
   return (
     <>
-      <h3 className="set-section">{t('Subscriptions & Purchases')}</h3>
       <div className="set-item">
         <button type="button" className="set-row set-link sky-row" onClick={() => (fx.tap(), setSkyline(true))}>
           <span className="set-label">{t('Skyline Pass')}</span>
@@ -288,7 +331,7 @@ function PurchaseRows({ hints }: { hints: number }) {
             ›
           </span>
         </button>
-        <p className="set-caption">{t('Everything below in one lifetime purchase, plus every tower still to come.')}</p>
+        <p className="set-caption">{t('Everything here, plus every tower still to come. One purchase.')}</p>
       </div>
       <div className="set-item">
         <button type="button" className="set-row set-link" onClick={() => (fx.tap(), setSheet(true))}>
@@ -298,32 +341,37 @@ function PurchaseRows({ hints }: { hints: number }) {
             ›
           </span>
         </button>
-        <p className="set-caption">{t('Frostline, Plus looks, the daily archive, more streak freezes and 20 hints. One purchase, no subscription.')}</p>
+        <p className="set-caption">{t('Frostline, looks, the daily archive and 20 hints. No subscription.')}</p>
       </div>
       {SOLD_PACKS.map((p) => (
         <div className="set-item" key={p.id}>
           <button type="button" className="set-row set-link" onClick={() => (fx.tap(), setPack(p.id))}>
-            <span className="set-label">{t('{city} city pack', { city: t(p.city) })}</span>
+            <span className="set-label">
+              {t('{city} city pack', { city: t(p.city) })}
+              <span className="set-label-sub">{t(p.tower)}</span>
+            </span>
             <span className="set-value">{packs.includes(p.id) ? ownedLabel() : t('Get')}</span>
             <span className="set-chevron" aria-hidden="true">
               ›
             </span>
           </button>
-          <p className="set-caption">{t('{tower}: 50 floors in its own tower. Sold on its own, not part of Plus.', { tower: t(p.tower) })}</p>
         </div>
       ))}
       {SELLS_OVERFLOW && (
         <div className="set-item">
           <button type="button" className="set-row set-link" onClick={() => (fx.tap(), setPack('overflow'))}>
-            <span className="set-label">Overflow</span>
+            <span className="set-label">
+              Overflow
+              <span className="set-label-sub">{t('The endless climb')}</span>
+            </span>
             <span className="set-value">{packs.includes('overflow') ? ownedLabel() : t('Get')}</span>
             <span className="set-chevron" aria-hidden="true">
               ›
             </span>
           </button>
-          <p className="set-caption">{t('The endless climb up the tower of Babel. Sold on its own, not part of Plus.')}</p>
         </div>
       )}
+      <p className="set-caption set-note">{t('City packs and Overflow are sold on their own, not part of Plus.')}</p>
       <div className="set-item">
         <button type="button" className="set-row set-link" onClick={() => (fx.tap(), setShop(true))}>
           <span className="set-label">{t('Hint packs')}</span>
@@ -337,7 +385,7 @@ function PurchaseRows({ hints }: { hints: number }) {
         <button type="button" className="set-row set-link" onClick={restore} disabled={busy}>
           <span className="set-label">{t('Restore purchases')}</span>
         </button>
-        <p className="set-caption">{note ?? t('Bought the Skyline Pass, Plus or a city pack on another device, or reinstalled? Restore them here.')}</p>
+        <p className="set-caption">{note ?? t('On a new device or after reinstalling.')}</p>
       </div>
       {shop && <HintShop hints={hints} onClose={() => setShop(false)} />}
       {pack && (

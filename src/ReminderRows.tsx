@@ -37,7 +37,7 @@ export function ReminderRows() {
           </select>
         </label>
       )}
-      <p className={`set-caption${note ? ' fb-error' : ''}`}>{note || t("A nudge when the day's puzzle is ready. Skipped on days you've already played.")}</p>
+      <p className={`set-caption${note ? ' fb-error' : ''}`}>{note || t("When the day's puzzle is ready, unless you've played.")}</p>
     </div>
   );
 }

@@ -9,6 +9,8 @@
 // <html> gets the class "colourful" while it's on; the CSS keys off that (end of styles.css), and each
 // board area carries data-flavour="0..5" so its sky matches its tiles.
 
+import { useEffect, useState } from 'react';
+
 const KEY = 'loopbot.colourful';
 const listeners = new Set<() => void>();
 
@@ -40,6 +42,16 @@ export function onColourfulChange(f: () => void): () => void {
 export function applyColourful() {
   if (typeof document !== 'undefined') document.documentElement.classList.toggle('colourful', colourfulOn());
   listeners.forEach((f) => f());
+}
+
+/**
+ * The switch as React state that follows every change, wherever it was made. The title screen's
+ * candy button and the Settings switch both use it, so they always agree.
+ */
+export function useColourful(): [boolean, (on: boolean) => void] {
+  const [on, setOn] = useState(colourfulOn);
+  useEffect(() => onColourfulChange(() => setOn(colourfulOn())), []);
+  return [on, setColourful];
 }
 
 /** A candy flavour: the board palette for one band. Floors alternate two pastels like a sweet-shop tray. */
