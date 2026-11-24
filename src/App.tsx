@@ -39,6 +39,8 @@ import { OverflowScreen, TerraceBanner } from './overflow/OverflowScreen';
 import { climbOn, earnsBrick, endClimb, loadOverflow, markCleared, overflowLevel, pruneOverflow, saveOverflow, skipFloor, startClimb } from './overflow';
 import type { OverflowState } from './overflow';
 import { packUnlocked } from './store/purchases';
+import { exitAskDue, markExitAsked } from './survey';
+import { ExitCard } from './survey/SurveyCards';
 
 /** How deep each screen sits, for the direction of the slide between them. */
 const SCREEN_DEPTH = { title: 0, map: 1, maker: 1, overflow: 2, floor: 2, daily: 2, custom: 2, climb: 3 } as const;
@@ -305,6 +307,19 @@ export default function App() {
     if (due) setBeat({ beat: due, then });
     else then();
   };
+  // Leaving one of the first floors for the map without ever clearing it asks, once, what stopped
+  // them (src/survey). Only right as they leave, by the button or Android Back; never on a later launch.
+  const [whyStop, setWhyStop] = useState<{ floor: string; title: string } | null>(null);
+  const prevScreen = useRef(screen);
+  useEffect(() => {
+    const from = prevScreen.current;
+    prevScreen.current = screen;
+    if (from === 'floor' && screen === 'map' && exitAskDue(level.id, (progress.stars[level.id] ?? 0) > 0)) {
+      markExitAsked();
+      setWhyStop({ floor: level.id, title: level.title });
+    } else if (screen !== 'map') setWhyStop(null);
+  }, [screen]); // eslint-disable-line react-hooks/exhaustive-deps
+  const closeWhyStop = useCallback(() => setWhyStop(null), []);
   // Achievements, unlocked looks and the toasts for anything new.
   const rewards = useRewards(t1ids, progress, daily);
   const [look, setLook] = useState<Look>(loadLook);
@@ -447,6 +462,7 @@ export default function App() {
           overflow={OVERFLOW_ON ? { best: overflow.best, locked: !packUnlocked('overflow'), onOpen: () => setScreen('overflow') } : undefined}
         />
         {settings && <SettingsSheet progress={progress} setProgress={setProgress} onClose={() => setSettings(false)} />}
+        {whyStop && !beat && <ExitCard floor={whyStop.floor} floorTitle={whyStop.title} onDone={closeWhyStop} />}
         {overlays}
         {elevator}
       </>

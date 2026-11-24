@@ -12,6 +12,7 @@
 // Music switch in Settings fades it in and out.
 
 import { onAudioReset, sharedAudio, sleepAudio, wakeAudio } from './feedback';
+import { lowEndDevice } from '../board/quality';
 
 export type Theme =
   | 'title' | 'lobby' | 'maintenance' | 'workshop' | 'control' | 'rooftop' | 'daily'
@@ -669,7 +670,10 @@ function impulse(a: AudioContext, seconds: number) {
   const rand = rng(99);
   for (let c = 0; c < 2; c++) {
     const d = buf.getChannelData(c);
-    for (let i = 0; i < len; i++) d[i] = (rand() * 2 - 1) * Math.pow(1 - i / len, 3);
+    for (let i = 0; i < len; i++) {
+      const fade = 1 - i / len;
+      d[i] = (rand() * 2 - 1) * fade * fade * fade;
+    }
   }
   return buf;
 }
@@ -679,7 +683,10 @@ function setup(a: AudioContext) {
   master = a.createGain();
   master.gain.value = 0;
   const verb = a.createConvolver();
-  verb.buffer = impulse(a, 2.2);
+  // The reverb tail: a convolver works through every sample of it all the time music plays, so
+  // cheap phones (4 GB or less, 4 cores or fewer) get a shorter room. It also builds faster on the
+  // first tap, which is when a floor is opening.
+  verb.buffer = impulse(a, lowEndDevice() ? 1.1 : 2.2);
   const wet = a.createGain();
   wet.gain.value = 0.35;
   master.connect(a.destination);
