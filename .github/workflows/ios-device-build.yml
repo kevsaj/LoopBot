@@ -62,6 +62,10 @@ jobs:
           VITE_PLUS: ${{ inputs.plus_store && '1' || '' }}
         run: |
           echo "Plus preview: ${VITE_PLUS_PREVIEW:-off}, Plus store: ${VITE_PLUS:-off}, RevenueCat key: $([ -n "$VITE_REVENUECAT_IOS_KEY" ] && echo set || echo missing)"
+          if [ "$VITE_PLUS" = "1" ] && [ -z "$VITE_REVENUECAT_IOS_KEY" ]; then
+            echo "::error::Plus store is ticked but the VITE_REVENUECAT_IOS_KEY secret is missing, so the app could not sell anything and would hide the store. Add the RevenueCat public Apple SDK key as that repository secret, or untick Plus store."
+            exit 1
+          fi
           npm ci
           npm run ios:sync
 
