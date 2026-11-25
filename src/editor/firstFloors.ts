@@ -12,6 +12,7 @@ import { Runner } from '../sim/interpreter';
 import { shortestActionPath } from '../sim/solver';
 import { applyAction, cloneWorld, createWorld, goalsMet } from '../sim/world';
 import { makeBlock } from '../sim/program';
+import { isWarmupId } from '../daily/warmup';
 
 /** Tower 1's opening floors, in order. */
 export const INTRO_FLOORS = ['t1-f01', 't1-f02', 't1-f03', 't1-f04', 't1-f05'];
@@ -23,9 +24,12 @@ export function isIntroFloor(id: string): boolean {
   return INTRO_FLOORS.includes(id);
 }
 
-/** On the intro floors, drop the palette commands this floor doesn't have yet. */
+/**
+ * On the intro floors, drop the palette commands this floor doesn't have yet. The day-2 warm-up is
+ * for the same early players, so it gets the same short palette.
+ */
 export function introPalette(level: Pick<LevelFile, 'id' | 'commands'>, palette: PaletteCommand[]): PaletteCommand[] {
-  if (!isIntroFloor(level.id)) return palette;
+  if (!isIntroFloor(level.id) && !isWarmupId(level.id)) return palette;
   return palette.filter((c) => (level.commands as string[]).includes(c));
 }
 

@@ -4,6 +4,7 @@ import { parseReference } from '../sim/program';
 import { introPalette, isIntroFloor, newCommands, nextStep, pathPreview } from './firstFloors';
 import { PALETTE_ORDER } from './commands';
 import type { LevelFile } from '../sim/types';
+import { warmupLevel } from '../daily/warmup';
 
 const level = (id: string) => LEVELS.find((l) => l.id === id) as LevelFile;
 const commandsOf = (id: string) => LEVELS.find((l) => l.id === id)?.commands;
@@ -20,6 +21,11 @@ describe('first floors', () => {
     expect(introPalette(level('t1-f01'), PALETTE_ORDER)).toEqual(['forward']);
     expect(introPalette(level('t1-f02'), PALETTE_ORDER)).toEqual(['forward', 'turn_left', 'turn_right']);
     expect(introPalette(level('t1-f06'), PALETTE_ORDER)).toEqual(PALETTE_ORDER);
+  });
+
+  it('gives the day-2 warm-up the same short palette (its players are on the intro floors)', () => {
+    expect(introPalette(warmupLevel('2026-11-25', 'turn'), PALETTE_ORDER)).toEqual(['forward', 'turn_left', 'turn_right']);
+    expect(introPalette(warmupLevel('2026-11-25', 'jumps'), PALETTE_ORDER)).toEqual(['forward', 'turn_left', 'turn_right', 'jump']);
   });
 
   it('marks the commands each intro floor brings in as new', () => {
