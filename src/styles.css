@@ -3050,6 +3050,10 @@ button.set-row {
   color: var(--ink);
   font: inherit;
   font-size: var(--fs-input);
+  /* a long choice ("Automatique (Français)") shrinks instead of pushing out of the row on narrow phones */
+  min-width: 0;
+  max-width: 65%;
+  text-overflow: ellipsis;
 }
 .reminder-ask {
   margin: 10px 0 4px;

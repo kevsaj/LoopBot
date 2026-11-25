@@ -226,6 +226,19 @@ export default function App() {
   // The come-back nudge moves to tomorrow on every launch and every new clear (or is used up).
   const clearedCount = Object.keys(progress.stars).length;
   useEffect(() => void refreshNudge(progressRef.current), [clearedCount, language]);
+  // Phones keep the app suspended for days, so coming back from the background counts as a launch:
+  // the nudge moves on (it must not arrive on a day they opened the game), and a new day re-renders
+  // so today's warm-up and daily show without a restart.
+  const [, setToday] = useState(dateKey);
+  useEffect(() => {
+    const back = () => {
+      if (document.visibilityState !== 'visible') return;
+      setToday(dateKey());
+      void refreshNudge(progressRef.current);
+    };
+    document.addEventListener('visibilitychange', back);
+    return () => document.removeEventListener('visibilitychange', back);
+  }, []);
   // Tapping the nudge opens the warm-up, when there is one today.
   useEffect(
     () =>
