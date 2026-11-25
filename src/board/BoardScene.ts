@@ -1756,7 +1756,11 @@ export class BoardScene extends Phaser.Scene {
       this.time.delayedCall(bump, () => {
         if (this.world !== w) return;
         this.cameras.main.shake(180, 0.006);
-        this.tweens.add({ targets: this.bot, x: to.sx + 3, yoyo: true, repeat: 3, duration: 40, delay: bump > 0 ? 160 : 0 });
+        // The rattle starts once LoopBot has settled on its tile: after the spring back from a bump,
+        // or after the move for a crash on arrival (a vent's scorch). It always rattles round to.sx, so
+        // it can never leave LoopBot stranded where the move began, half sunk into the next tile.
+        const settle = bump > 0 ? 160 : moved && !fresh ? dur : 0;
+        this.tweens.add({ targets: this.bot, x: { from: to.sx, to: to.sx + 3 }, yoyo: true, repeat: 3, duration: 40, delay: settle });
       });
       // a dizzy wobble after the bump
       if (!this.reduced) {
@@ -1925,7 +1929,7 @@ export class BoardScene extends Phaser.Scene {
     this.layer.sort('depth');
     if (crashed) {
       this.cameras.main.shake(180, 0.006);
-      this.tweens.add({ targets: this.echo, x: to.sx + 3, yoyo: true, repeat: 3, duration: 40, delay: dur });
+      this.tweens.add({ targets: this.echo, x: { from: to.sx, to: to.sx + 3 }, yoyo: true, repeat: 3, duration: 40, delay: dur });
       if (!this.reduced) this.tweens.chain({ targets: this.echoPose, tweens: [{ angle: 12, duration: 90, delay: dur + 120 }, { angle: -9, duration: 120 }, { angle: 0, duration: 140 }] });
     } else if (u.cleared) {
       this.tweens.add({ targets: this.echo, scale: 1.18, yoyo: true, duration: 180, delay: dur + 90, ease: 'Back.easeOut' });
