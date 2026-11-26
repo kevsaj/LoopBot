@@ -9,7 +9,7 @@ vi.mock('../store/purchases', () => ({ PLUS_VISIBLE: false, plusUnlocked: () => 
 
 const floors = Array.from({ length: 50 }, (_, i) => `t1-f${String(i + 1).padStart(2, '0')}`);
 const progress = (stars: Record<string, number>, extra: Partial<Progress> = {}): Progress => ({
-  stars, hints: 5, hintsAwarded: 0, revealed: {}, fails: {}, tutorial: false, ...extra,
+  stars, hints: 5, hintsAwarded: 0, revealed: {}, fails: {}, tutorial: false, underPar: {}, ...extra,
 });
 const noDaily = { best: {}, streak: 0, longest: 0, last: null };
 const stats = (p: Progress, daily = noDaily): Stats => ({ floors, progress: p, daily });

@@ -538,7 +538,9 @@ export function TowerMap({ levels, tower, towers, onTowerPick, progress, current
                               ? here
                                 ? tn(stars, 'Floor {floor}, {title}, {n} star, you are here', 'Floor {floor}, {title}, {n} stars, you are here', { floor: i + 1, title: l.title })
                                 : tn(stars, 'Floor {floor}, {title}, {n} star', 'Floor {floor}, {title}, {n} stars', { floor: i + 1, title: l.title })
-                              : t('Floor {n}, locked', { n: i + 1 })) + (i === gift ? `. ${t('Clear it to unlock a gift from PATCH')}` : '')
+                              : t('Floor {n}, locked', { n: i + 1 })) +
+                            (open && (progress.underPar?.[l.id] ?? 0) > 0 ? `. ${t('Beat par')}` : '') +
+                            (i === gift ? `. ${t('Clear it to unlock a gift from PATCH')}` : '')
                           }
                         >
                           <span className="tf-num">{i + 1}</span>
@@ -547,6 +549,11 @@ export function TowerMap({ levels, tower, towers, onTowerPick, progress, current
                           {i === gift && (
                             <span className="tf-gift" aria-hidden="true">
                               <Icon name="gift" size={18} />
+                            </span>
+                          )}
+                          {open && (progress.underPar?.[l.id] ?? 0) > 0 && (
+                            <span className="tf-under" aria-hidden="true" title={t('Beat par')}>
+                              💎
                             </span>
                           )}
                           {open ? (

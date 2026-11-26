@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import type { Progress } from './progress';
-import { isUnlocked, nextHintIsFree, recordClear, recordFail, revealHint, START_HINTS } from './progress';
+import { beatsPar, isUnlocked, nextHintIsFree, recordClear, recordFail, recordUnderPar, revealHint, sanitizeProgress, START_HINTS } from './progress';
 import { cancellingTurns, tutorialStep } from './editor/tutorial';
 import { emptyProgram, parseReference } from './sim/program';
 
-const fresh = (): Progress => ({ stars: {}, hints: START_HINTS, hintsAwarded: 0, revealed: {}, fails: {}, tutorial: true });
+const fresh = (): Progress => ({ stars: {}, hints: START_HINTS, hintsAwarded: 0, revealed: {}, fails: {}, tutorial: true, underPar: {} });
 
 describe('progress', () => {
   it('keeps the best stars', () => {
@@ -90,5 +90,25 @@ describe('first-run tutorial', () => {
   it('can be turned off, and stays off on cleared floors', () => {
     expect(tutorialStep({ ...base, enabled: false })).toBeNull();
     expect(tutorialStep({ ...base, clearedBefore: true })).toBeNull();
+  });
+});
+
+describe('under par', () => {
+  const par = { commands: 13, steps: 28 };
+  it('beats par with fewer commands, or fewer steps, and never over either', () => {
+    expect(beatsPar(par, 9, 28)).toBe(true);
+    expect(beatsPar(par, 13, 27)).toBe(true);
+    expect(beatsPar(par, 13, 28)).toBe(false);
+    expect(beatsPar(par, 9, 29)).toBe(false);
+    expect(beatsPar(par, 14, 20)).toBe(false);
+  });
+  it('keeps the fewest commands and survives a backup round trip', () => {
+    let p = recordUnderPar(fresh(), 't1-f48', 10);
+    p = recordUnderPar(p, 't1-f48', 11);
+    expect(p.underPar['t1-f48']).toBe(10);
+    p = recordUnderPar(p, 't1-f48', 9);
+    expect(p.underPar['t1-f48']).toBe(9);
+    expect(sanitizeProgress(JSON.parse(JSON.stringify(p))).underPar).toEqual({ 't1-f48': 9 });
+    expect(sanitizeProgress({ stars: {} }).underPar).toEqual({});
   });
 });

@@ -28,7 +28,7 @@ import { bumpMs, landMs } from '../fx/feel';
 import { reducedMotion } from '../a11y/motion';
 import { SettingsSheet } from '../SettingsSheet';
 import type { Progress } from '../progress';
-import { recordClear, recordFail } from '../progress';
+import { beatsPar, recordClear, recordFail, recordUnderPar } from '../progress';
 import { maybeAskForReview } from '../review';
 import { HintSheet } from './HintSheet';
 import { answerNudge, loadComeback, shouldAskNudge } from '../comeback';
@@ -359,7 +359,14 @@ export function FloorScreen({ level, floorNumber, floorCount, progress, setProgr
           dailyRef.current.onClear(s);
         } else {
           setPrevBest(progressRef.current.stars[level.id] ?? 0);
-          setProgress((p) => recordClear(p, level.id, s));
+          const c = countCommands(program);
+          const was = progressRef.current.underPar?.[level.id];
+          // Under par means the par is too loose, so each new best is worth a look in the stats.
+          if (beatsPar(level.par, c, o.steps) && (was === undefined || c < was)) track({ type: 'under_par', floor: level.id, commands: c, steps: o.steps });
+          setProgress((p) => {
+            const next = recordClear(p, level.id, s);
+            return beatsPar(level.par, c, o.steps) ? recordUnderPar(next, level.id, c) : next;
+          });
           maybeAskForReview(level.id, s, SPEEDS[speed].ms + 4500);
         }
         if (!v.cleared) {

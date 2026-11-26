@@ -55,6 +55,7 @@ export const ACHIEVEMENTS: Achievement[] = [
   { id: 'perfect-10', title: msg('Perfect ten'), how: msg('Get 3 stars on 10 floors'), icon: '✨', ...count(threeStarCount, 10) },
   { id: 'stars-75', title: msg('Star collector'), how: msg('Earn 75 stars in the tower'), icon: '⭐', ...count(totalStars, 75) },
   { id: 'perfectionist', title: msg('Perfectionist'), how: msg('Get 3 stars on all 50 floors'), icon: '🏆', ...count(threeStarCount, 50) },
+  { id: 'par-breaker', title: msg('Par breaker'), how: msg('Beat par on any tower floor: fewer commands than par'), icon: '💎', earned: (s) => s.floors.some((id) => (s.progress.underPar?.[id] ?? 0) > 0) },
   { id: 'nailed-it', title: msg('Nailed it'), how: msg('Clear 10 floors from Floor 11 on with no failed runs'), icon: '🎯', ...count(cleanClears, 10) },
   { id: 'no-hints', title: msg('Figured it out'), how: msg('Clear a whole band of 10 floors without a hint'), icon: '🧠', earned: bandWithoutHints },
   { id: 'daily-1', title: msg('Daily driver'), how: msg('Clear a daily challenge'), icon: '📅', ...count(dailyClears, 1) },

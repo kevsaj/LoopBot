@@ -16,6 +16,11 @@ export interface Progress {
   fails: Record<string, number>;
   /** First-run tutorial overlays on Floors 1 and 2. */
   tutorial: boolean;
+  /**
+   * Floors cleared under par (fewer commands or steps than par, and neither over): the fewest
+   * commands on such a run. Shown as a mark on the tower map and counted by "Par breaker".
+   */
+  underPar: Record<string, number>;
 }
 
 const KEY = 'loopbot.progress';
@@ -23,7 +28,7 @@ export const START_HINTS = 5;
 export const FREE_NUDGE_AFTER = 3;
 
 function fresh(): Progress {
-  return { stars: {}, hints: START_HINTS, hintsAwarded: 0, revealed: {}, fails: {}, tutorial: true };
+  return { stars: {}, hints: START_HINTS, hintsAwarded: 0, revealed: {}, fails: {}, tutorial: true, underPar: {} };
 }
 
 export function loadProgress(): Progress {
@@ -66,6 +71,7 @@ export function sanitizeProgress(v: unknown): Progress {
     revealed: numberMap(o.revealed),
     fails: numberMap(o.fails),
     tutorial: typeof o.tutorial === 'boolean' ? o.tutorial : p.tutorial,
+    underPar: numberMap(o.underPar),
   };
 }
 
@@ -89,6 +95,18 @@ export function recordClear(p: Progress, floorId: string, stars: number): Progre
     next.hintsAwarded = earned;
   }
   return next;
+}
+
+/** A run beats par when it is within both pars and under at least one of them. */
+export function beatsPar(par: { commands: number; steps: number }, commands: number, steps: number): boolean {
+  return commands <= par.commands && steps <= par.steps && (commands < par.commands || steps < par.steps);
+}
+
+/** Remembers an under-par clear, keeping the fewest commands. */
+export function recordUnderPar(p: Progress, floorId: string, commands: number): Progress {
+  const was = p.underPar?.[floorId];
+  if (was !== undefined && was <= commands) return p;
+  return { ...p, underPar: { ...p.underPar, [floorId]: commands } };
 }
 
 export function recordFail(p: Progress, floorId: string): Progress {

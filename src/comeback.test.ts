@@ -4,7 +4,7 @@ import type { ComebackState } from './comeback';
 import type { Progress } from './progress';
 
 const base: ComebackState = { first: null, warm: {}, asked: false, nudge: false, hour: 18, at: null, done: false };
-const progress = (stars: Record<string, number>, extra: Partial<Progress> = {}): Progress => ({ stars, hints: 5, hintsAwarded: 0, revealed: {}, fails: {}, tutorial: true, ...extra });
+const progress = (stars: Record<string, number>, extra: Partial<Progress> = {}): Progress => ({ stars, hints: 5, hintsAwarded: 0, revealed: {}, fails: {}, tutorial: true, underPar: {}, ...extra });
 const newbie = progress({});
 const floor1 = progress({ 't1-f01': 3 });
 
