@@ -380,7 +380,7 @@
   "title": "Réseau d'antennes",
   "hints": [
    "Le vert marque une antenne. Chacune a une longueur différente, avec un interrupteur au bout.",
-   "F1 parcourt une antenne avec un tant que, active l'interrupteur, fait demi-tour et revient. Le Principal l'appelle sur le vert."
+   "Un seul tant que peut parcourir tout le toit. Sur le vert, tourne à droite. Au mur, active l'interrupteur et fais demi-tour. En remontant, le vert te tourne de nouveau vers l'est."
   ],
   "outro": "PATCH : « Les antennes sont brouillées. Les drones n'ont plus de signal. »"
  },
