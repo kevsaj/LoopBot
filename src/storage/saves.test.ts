@@ -5,7 +5,7 @@ import { sanitizeDaily } from '../daily';
 describe('broken or hand-made saves', () => {
   it('progress keeps only fields of the right type', () => {
     const p = sanitizeProgress({ stars: { 't1-f01': 3, 't1-f02': 'x' }, hints: 'lots', revealed: [1], fails: null, tutorial: 'no', extra: 1 });
-    expect(p).toEqual({ stars: { 't1-f01': 3 }, hints: 5, hintsAwarded: 0, revealed: {}, fails: {}, tutorial: true });
+    expect(p).toEqual({ stars: { 't1-f01': 3 }, hints: 5, hintsAwarded: 0, revealed: {}, fails: {}, tutorial: true, underPar: {} });
     expect(sanitizeProgress('nope').stars).toEqual({});
     expect(sanitizeProgress(null).hints).toBe(5);
   });

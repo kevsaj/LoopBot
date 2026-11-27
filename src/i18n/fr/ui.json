@@ -1241,5 +1241,14 @@
  "Not now": "Pas maintenant",
  "▲ pick up grabs the crate in front of LoopBot.": "▲ ramasser prend la caisse devant LoopBot.",
  "Show me the next step": "Montre-moi la prochaine étape",
- "> added the next step: {command}. Press Run.": "> prochaine étape ajoutée : {command}. Appuie sur Lancer."
+ "> added the next step: {command}. Press Run.": "> prochaine étape ajoutée : {command}. Appuie sur Lancer.",
+ "Under par!": "Sous le par !",
+ "{n} command under par": "{n} commande sous le par",
+ "{n} commands under par": "{n} commandes sous le par",
+ "{n} step under par": "{n} pas sous le par",
+ "{n} steps under par": "{n} pas sous le par",
+ "PATCH: \"{n} commands? My best was {par}. Nice find!\"": "PATCH : « {n} commandes ? Mon record était {par}. Belle trouvaille ! »",
+ "Beat par": "Par battu",
+ "Par breaker": "Briseur de par",
+ "Beat par on any tower floor: fewer commands than par": "Bats le par sur un étage de tour : moins de commandes que le par"
 }

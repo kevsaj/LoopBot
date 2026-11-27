@@ -10,6 +10,9 @@
   --good: #5ad1a4;
   --bad: #ff6b6b;
   --warn: #f2c14e;
+  /* under par: a cool diamond blue, one step past the 3-star gold */
+  --under: #8ee8ff;
+  --under-ink: #062a36;
   --move: #4f8fdc;
   --turn: #8a6fe0;
   --hand: #d9a066;
@@ -1032,6 +1035,35 @@ select:focus-visible {
 .badge.best {
   background: var(--warn);
   color: #2a1f00;
+}
+.badge.under {
+  background: var(--under);
+  color: var(--under-ink);
+}
+.results.under-par h2 {
+  color: var(--under);
+  text-shadow: 0 0 18px rgba(142, 232, 255, 0.55);
+}
+.results.under-par {
+  border-color: var(--under);
+  box-shadow: 0 0 40px rgba(142, 232, 255, 0.3);
+}
+.score-chip.under {
+  background: rgba(142, 232, 255, 0.18);
+  box-shadow: 0 0 0 1px var(--under) inset;
+}
+.score-chip.under .score-tick {
+  color: var(--under);
+}
+.tip.under-note {
+  color: var(--under);
+}
+/* A tower-map floor cleared under par wears a small diamond next to its stars. */
+.tf-under {
+  flex: none;
+  font-size: var(--fs-md);
+  line-height: 1;
+  filter: drop-shadow(0 0 4px rgba(142, 232, 255, 0.7));
 }
 .badge.first {
   background: var(--panel-2);

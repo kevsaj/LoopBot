@@ -15,7 +15,7 @@ var FEEDBACK_EMAIL = 'kisstudios98@gmail.com';
 var EVENT_COLS = ['received', 'install', 'version', 'platform', 'clientTime', 'type', 'floor', 'result', 'stars', 'runs', 'hints', 'seconds', 'commands', 'steps', 'run', 'tier', 'free', 'cleared'];
 var FEEDBACK_COLS = ['received', 'version', 'platform', 'mood', 'floor', 'floorTitle', 'message'];
 var ERROR_COLS = ['received', 'install', 'version', 'platform', 'message', 'where'];
-var TYPES = { session: 1, floor_start: 1, run: 1, hint: 1, floor_clear: 1, floor_leave: 1 };
+var TYPES = { session: 1, floor_start: 1, run: 1, hint: 1, floor_clear: 1, floor_leave: 1, under_par: 1 };
 var FLOORS = 50;
 
 function doPost(e) {

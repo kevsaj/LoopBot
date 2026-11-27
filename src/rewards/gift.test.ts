@@ -7,7 +7,7 @@ vi.mock('../store/purchases', () => ({ PLUS_VISIBLE: false, plusUnlocked: () => 
 
 const floors = Array.from({ length: 50 }, (_, i) => `t1-f${String(i + 1).padStart(2, '0')}`);
 const progress = (n: number): Progress => ({
-  stars: Object.fromEntries(floors.slice(0, n).map((id) => [id, 1])), hints: 5, hintsAwarded: 0, revealed: {}, fails: {}, tutorial: false,
+  stars: Object.fromEntries(floors.slice(0, n).map((id) => [id, 1])), hints: 5, hintsAwarded: 0, revealed: {}, fails: {}, tutorial: false, underPar: {},
 });
 const stats = (n: number) => ({ floors, progress: progress(n), daily: { best: {}, streak: 0, longest: 0, last: null } });
 

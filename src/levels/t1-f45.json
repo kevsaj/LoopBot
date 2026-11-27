@@ -51,14 +51,14 @@
     "F1": 7
   },
   "par": {
-    "commands": 9,
+    "commands": 8,
     "steps": 14
   },
-  "reference": "repeat 2 { F1 } def F1 { turn_left pick_up turn_right drop jump jump jump }",
+  "reference": "repeat 2 { F1 } def F1 { turn_left pick_up turn_right drop repeat 3 { jump } }",
   "hints": [
     "Each ledge is two high. A crate makes it one step at a time.",
-    "F1: turn left, pick up the crate, turn back, drop it ahead, then jump twice. Main repeats F1.",
-    "repeat 2 { F1 } def F1 { turn_left pick_up turn_right drop jump jump jump }"
+    "F1: turn left, pick up the crate, turn back, drop it ahead, then jump three times (a repeat saves blocks). Main repeats F1.",
+    "repeat 2 { F1 } def F1 { turn_left pick_up turn_right drop repeat 3 { jump } }"
   ],
   "story": {
     "intro": null,

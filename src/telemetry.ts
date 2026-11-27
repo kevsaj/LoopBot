@@ -29,6 +29,8 @@ export type StatEvent =
   | { type: 'floor_start'; floor: string }
   | { type: 'run'; floor: string; result: 'cleared' | 'crashed' | 'ended'; commands: number; steps: number; run: number }
   | { type: 'hint'; floor: string; tier: number; free: boolean }
+  /** A clear under par: the par may be too loose, so the floor is worth a look. */
+  | { type: 'under_par'; floor: string; commands: number; steps: number }
   | { type: 'floor_clear'; floor: string; stars: number; runs: number; hints: number; seconds: number }
   | { type: 'floor_leave'; floor: string; cleared: boolean; runs: number; hints: number; seconds: number };
 

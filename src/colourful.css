@@ -263,3 +263,9 @@
   background-color: #1b2f66;
   border-color: var(--ovf-gold);
 }
+
+/* --- under par: the diamond blue wins over the candy border --- */
+:root.colourful .results.under-par {
+  border-color: var(--under);
+  box-shadow: 0 10px 40px rgba(142, 232, 255, 0.35);
+}

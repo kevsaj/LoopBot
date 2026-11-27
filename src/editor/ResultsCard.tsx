@@ -11,6 +11,7 @@ import { DEMO } from '../demo';
 import { shortDate } from '../daily';
 import { msg, t, tn } from '../i18n';
 import { earlyGoal } from '../rewards/gift';
+import { beatsPar } from '../progress';
 
 interface Props {
   floorNumber: number;
@@ -90,6 +91,10 @@ export function ResultsCard({ floorNumber, tower = 1, floorCount, earned, prevBe
   }
 
   const best = earned > prevBest && prevBest > 0;
+  // Under par: a tighter solution than the floor's own (player-made floors set par from the maker's run).
+  const under = !custom && beatsPar(par, commands, steps);
+  const fewer = par.commands - commands;
+  const headline = under ? msg('Under par!') : HEADLINE[earned];
   const [shared, setShared] = useState<string | null>(null);
   const [sharing, setSharing] = useState(false);
   const share = async () => {
@@ -135,10 +140,10 @@ export function ResultsCard({ floorNumber, tower = 1, floorCount, earned, prevBe
 
   return (
     <div className="results-backdrop" onClick={onClose}>
-      <div className={`results${overflow ? ' ovf-results' : ''}${shown >= 3 ? ` tier-${earned}` : ''}`} role="dialog" aria-label={t('{title} cleared, {n} of 3 stars', { title, n: earned })} onClick={(e) => e.stopPropagation()}>
+      <div className={`results${overflow ? ' ovf-results' : ''}${shown >= 3 ? ` tier-${earned}` : ''}${shown >= 3 && under ? ' under-par' : ''}`} role="dialog" aria-label={t('{title} cleared, {n} of 3 stars', { title, n: earned })} onClick={(e) => e.stopPropagation()}>
         {earned === 3 && shown >= 3 && <div className="results-rays" aria-hidden="true" />}
         <p className="results-floor">{title}</p>
-        <h2 className={shown >= 3 ? 'in' : ''}>{t(shown >= 3 ? HEADLINE[earned] : HEADLINE[1])}</h2>
+        <h2 className={shown >= 3 ? 'in' : ''}>{t(shown >= 3 ? headline : HEADLINE[1])}</h2>
         <div className="stars" ref={starsRef} aria-hidden="true">
           {[1, 2, 3].map((i) => (
             <span key={i} className={`star${i <= shown ? (i <= earned ? ' on land' : ' miss') : ''}`}>
@@ -147,6 +152,11 @@ export function ResultsCard({ floorNumber, tower = 1, floorCount, earned, prevBe
           ))}
         </div>
         <div className={`badges${shown >= 3 ? ' in' : ''}`}>
+          {under && (
+            <span className="badge under">
+              💎 {fewer > 0 ? tn(fewer, '{n} command under par', '{n} commands under par') : tn(par.steps - steps, '{n} step under par', '{n} steps under par')}
+            </span>
+          )}
           {best && <span className="badge best">{t('New best!')}</span>}
           {prevBest === 0 && !custom && !overflow && <span className="badge first">{daily ? (daily.boss ? t('Boss beaten') : t('Cleared today')) : t('First clear')}</span>}
           {daily && daily.streak > 0 && (
@@ -176,8 +186,9 @@ export function ResultsCard({ floorNumber, tower = 1, floorCount, earned, prevBe
             ] as [string, number, number][]
           ).map(([label, n, parN]) => {
             const met = n <= parN && !custom?.noPar;
+            const below = under && n < parN;
             return (
-              <span key={label} role="listitem" className={`score-chip${met ? ' met' : ''}`}>
+              <span key={label} role="listitem" className={`score-chip${met ? ' met' : ''}${below ? ' under' : ''}`}>
                 <span className="score-label">{label}</span>
                 <span className="score-n">{n}</span>
                 {!custom?.noPar && <span className="score-par">{t('par {n}', { n: parN })}</span>}
@@ -188,6 +199,7 @@ export function ResultsCard({ floorNumber, tower = 1, floorCount, earned, prevBe
           })}
         </div>
         {tip && !custom?.note && <p className="tip">{tip}</p>}
+        {under && fewer > 0 && <p className="tip under-note">{t('PATCH: "{n} commands? My best was {par}. Nice find!"', { n: commands, par: par.commands })}</p>}
         {outro && <p className="story">{outro}</p>}
         {goal && (
           <p className={`results-goal goal-${goal.icon}${shown >= 3 ? ' in' : ''}`}>

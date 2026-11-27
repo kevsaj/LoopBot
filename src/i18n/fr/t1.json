@@ -175,7 +175,7 @@
   "title": "Établi",
   "hints": [
    "Deux rangées d'interrupteurs reliées à un bout. Chaque interrupteur est à deux pas du précédent.",
-   "Mets le trajet et l'interrupteur dans F1. Une boucle autour de F1 F1, virage, F1, virage couvre tout l'établi."
+   "Mets le trajet et l'interrupteur dans F1. Chaque moitié de l'établi, c'est F1, puis deux fois F1 et un virage. Une boucle dans une boucle couvre tout."
   ],
   "intro": "VANTA : « Des routines. Mignon. Les miennes font tourner tout l'immeuble. »"
  },
@@ -356,7 +356,7 @@
   "title": "Monte-caisses",
   "hints": [
    "Chaque rebord fait deux de haut. Une caisse en fait deux marches.",
-   "F1 : tourner à gauche, ramasser la caisse, se retourner, la déposer devant, puis sauter deux fois. Le Principal répète F1."
+   "F1 : tourner à gauche, ramasser la caisse, se retourner, la déposer devant, puis sauter trois fois (une répétition économise des blocs). Le Principal répète F1."
   ],
   "outro": "PATCH : « Construire ton propre escalier. VANTA n'avait pas prévu ça. »"
  },
@@ -380,7 +380,7 @@
   "title": "Réseau d'antennes",
   "hints": [
    "Le vert marque une antenne. Chacune a une longueur différente, avec un interrupteur au bout.",
-   "F1 parcourt une antenne avec un tant que, active l'interrupteur, fait demi-tour et revient. Le Principal l'appelle sur le vert."
+   "Un seul tant que peut parcourir tout le toit. Sur le vert, tourne à droite. Au mur, active l'interrupteur et fais demi-tour. En remontant, le vert te tourne de nouveau vers l'est."
   ],
   "outro": "PATCH : « Les antennes sont brouillées. Les drones n'ont plus de signal. »"
  },
